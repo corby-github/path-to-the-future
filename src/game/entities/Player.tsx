@@ -1,8 +1,9 @@
 import type { Direction, PlayerState } from '../types/player';
+import { PLAYER_RADIUS } from '../coordinates';
 
 interface PlayerProps {
   state: PlayerState;
-  size?: number;
+  radius?: number;
 }
 
 const FACING_ROTATION: Record<Direction, number> = {
@@ -12,7 +13,7 @@ const FACING_ROTATION: Record<Direction, number> = {
   left: 270,
 };
 
-export function Player({ state, size = 28 }: PlayerProps) {
+export function Player({ state, radius = PLAYER_RADIUS }: PlayerProps) {
   const { position, facing } = state;
   const rotation = FACING_ROTATION[facing];
 
@@ -22,18 +23,16 @@ export function Player({ state, size = 28 }: PlayerProps) {
       style={{ pointerEvents: 'none' }}
     >
       <g transform={`rotate(${rotation})`}>
-        {/* Body */}
         <circle
           cx={0}
           cy={0}
-          r={size / 2}
+          r={radius}
           fill="#4a90e2"
           stroke="#1f3a5f"
           strokeWidth={2}
         />
-        {/* Direction notch */}
         <polygon
-          points={`0,${-size / 2 - 4} -5,${-size / 2 + 4} 5,${-size / 2 + 4}`}
+          points={`0,${-radius - 4} -5,${-radius + 4} 5,${-radius + 4}`}
           fill="#1f3a5f"
         />
       </g>

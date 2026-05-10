@@ -1,21 +1,28 @@
 import { useRef, useState } from 'react';
-import type { Vector2, Bounds } from '../types/geometry';
+import type { Vector2, Bounds, Rect } from '../types/geometry';
 import type { PlayerState } from '../types/player';
 import { useKeyboardInput } from './useKeyboardInput';
 import { useGameLoop } from './useGameLoop';
+import { resolveMovement } from './collision';
+import { PLAYER_RADIUS } from '../coordinates';
 
 interface UsePlayerMovementOptions {
   initialPosition: Vector2;
   bounds: Bounds;
+  obstacles?: Rect[];
+  radius?: number;
   speed?: number;       // pixels per second
   active?: boolean;     // pause movement during transitions, dialogues, etc.
 }
 
 const DEFAULT_SPEED = 180;
+const EMPTY_OBSTACLES: Rect[] = [];
 
 export function usePlayerMovement({
   initialPosition,
   bounds,
+  obstacles = EMPTY_OBSTACLES,
+  radius = PLAYER_RADIUS,
   speed = DEFAULT_SPEED,
   active = true,
 }: UsePlayerMovementOptions): PlayerState {
@@ -48,13 +55,18 @@ export function usePlayerMovement({
     const vx = dx * speed;
     const vy = dy * speed;
 
-    // Apply movement
-    let nextX = stateRef.current.position.x + vx * delta;
-    let nextY = stateRef.current.position.y + vy * delta;
+    const desired = {
+      x: stateRef.current.position.x + vx * delta,
+      y: stateRef.current.position.y + vy * delta,
+    };
 
-    // Boundary clamping. This is the seam where the collision system will plug in.
-    nextX = Math.max(bounds.minX, Math.min(bounds.maxX, nextX));
-    nextY = Math.max(bounds.minY, Math.min(bounds.maxY, nextY));
+    const resolved = resolveMovement(
+      stateRef.current.position,
+      desired,
+      radius,
+      obstacles,
+      bounds,
+    );
 
     // Update facing direction (favour horizontal when both are pressed)
     let facing = stateRef.current.facing;
@@ -64,7 +76,7 @@ export function usePlayerMovement({
     else if (dy < 0) facing = 'up';
 
     stateRef.current = {
-      position: { x: nextX, y: nextY },
+      position: resolved,
       velocity: { x: vx, y: vy },
       facing,
     };
