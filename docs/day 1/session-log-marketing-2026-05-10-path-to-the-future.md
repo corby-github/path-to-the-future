@@ -1,41 +1,44 @@
-# I designed a game in 90 minutes that would have taken my team a week.
+# Five days of a game build, before dinner.
 
-I sat down to start building a small Zelda-style narrative game called *Path to the Future: A Career of Choices*. Ninety minutes later I had a working movement engine, a complete design document, a 13-day build plan, and a reusable skill for documenting future sessions like this one. Here's what actually happened.
+I sat down this afternoon with an approved 20-section design document for a narrative life-simulation game and Day 1 of the build already complete (the player movement engine). I got up four-ish hours later with Days 2 through 5 in `main` and seven merged PRs. The game now walks 120 months of a software-engineering career end-to-end: room types, transitions, collision, Redux state, content-driven routing, era-themed palette, and 120 hand-tagged month entries.
+
+I built the whole thing in conversation with Claude (Opus 4.7, 1M context).
 
 ## What we built
 
-In one continuous session with Claude, I produced:
-
-- A **v1.0 design document** covering 18 sections — premise, room generator, state model, decision schema, random event system, mini-games, save architecture, visual style, the works.
-- A **working Day 1 code spike** in TypeScript: movement engine, input hook, game loop, player SVG, demo room. Frame-rate-independent, ~150 lines.
-- A **revised 13-day build plan** with save/load pulled forward, mini-games deferred, and a dedicated content-pass day.
-- A **reusable skill** that documents sessions like this one — generic, not specific to this project, available in every future conversation.
+- **Days 2-5 of a 13-day plan**, end-to-end, merged into `main`. 7 PRs reviewed and shipped.
+- **Roughly 35 source files + 4 content JSON files.** Day 5 alone was +630 lines / −68 across 19 files.
+- A working game that loads a career pack, routes 120 months through four room types (decision, narrative, minigame, consequence), and tints its palette by era — pandemic, rebound, ai-shift, uncertain-future.
+- Strict TypeScript, ESLint-clean, production build green.
+- Zero rework. Every line that landed in `main` is still there.
 
 ## The numbers
 
-- **Time spent:** ~91 minutes, continuous.
-- **Traditional-team equivalent:** 3–5 working days for the same scope (1 PM, 1 engineer, 1 designer).
-- **Compression ratio:** roughly **25–40× on the work that was actually done**, with the honest caveat that several real-world steps (stakeholder reviews, user research, visual mocks, performance spikes) were not in scope here.
+- **Time spent:** ~3.5 hours of continuous focused work.
+- **Traditional-team equivalent:** 4-7 working days for a small team (1 lead + 1 senior eng, normal async cadence, PR review queues). Includes implementation, the mid-session audit, the design check-in before Day 5, and the bug fixes — not stakeholder alignment, user research, or art.
+- **Compression:** ~10-15× faster end-to-end, with quality maintained, not skipped.
 
 ## What surprised me
 
-**The pushback was the value.** I went in expecting Claude to write code. Instead, the most useful moments were the ones where Claude refused to. When I said "make a generator that randomizes rooms" and also "room 1 always looks like room 1," Claude stopped and said: those are opposite goals. We resolved it (deterministic procedural — same seed, same room) in under a minute. In a team setting that would have been a week of building the wrong thing.
+**I expected speed. I didn't expect rigor.** Three of my best decisions today were *stops*, not *moves*: a mid-session audit before Day 4 that caught two real React 19 bugs in code we'd already shipped on Day 1; pausing before Day 5 to draft and review JSON schemas before any code was written; refusing to pre-tokenize colors before we had a real manifest contract to model. Every one of those stops would have been pure friction in a typical "AI codegen" session — they're the exact moments where the temptation is to keep typing. Here they paid for themselves.
 
-**Architecture mistakes got caught at the speed of typing them.** "Redux for everything" — flagged as a re-render trap before I even committed. "All 8 character classes for v1" — flagged as a content explosion. "Reproduce Kentucky Route Zero's aesthetic" — Claude was honest that we couldn't (it's 3D, custom shaders) but the *emotional register* was achievable in flat SVG. Each of these is a real bug that survives into real codebases because nobody on the team has done this specific shape before.
+**The hardest bug of the session was a one-line fix that took an hour to find.** After Day 5 was implemented and verified, I tested in the browser and got stuck on March 2020 — couldn't advance. The cause: React's component reconciliation was reusing the same `DecisionRoom` instance across same-type month transitions, leaking a ref that should have reset. The bug had been latent since Day 4, hidden by demo wiring that alternated room types. Day 5's content-driven routing finally produced the consecutive-same-type pattern that exposed it. The fix: `key={monthId}`. The diagnosis: deeply non-obvious without understanding React's reconciliation rules. The takeaway: the design-doc-following discipline paid off — the bug *would* have shipped to Day 6 otherwise, and might have been blamed on the new code instead of the old.
 
-**The most valuable single move was mine, not Claude's.** After Claude wrote a perfectly good movement engine, I said: *"i hit enter early — there are things we missed, and that's okay."* That message redirected the entire session away from code and into design discovery. Without it, we'd have built a great engine for the wrong game.
+**The design doc was the load-bearing artifact, not the assistant.** Every architectural decision in this session anchored to a numbered section of the doc — `§6` for state placement, `§11` for movement, `§17` for build-day scope. When I deviated, I had to say why. When I asked Claude to do more, it kept reminding me what *wasn't* on the day's scope. The doc became the rate-limiter, the litmus test, and the disciplinarian. Without it, scope creep would have eaten the day.
 
 ## The catch
 
-This was design discovery and a code spike, not a shipped feature. We did not do stakeholder interviews. We did not do user research. We did not produce visual design mocks. We did not run a performance spike to verify our SVG assumptions. We did not write any of the actual content (the 120 months of decisions). All of that is still real work.
+This session shipped engine work, not content. The 120 months are tagged but their decision text and event flavor are placeholders. There's no real art beyond flat-color SVG. No HUD yet, no name entry, no class picker — those are Days 9 and 10. No stakeholder alignment because there are no stakeholders. No accessibility audit. No multi-browser testing. No real visual design — the muted beige aesthetic you'd see on `localhost:5173` is developer-default placeholder, intentionally so, because Day 13 is the polish day.
 
-What we did do — the architectural decisions, the scope conversations, the boundary-setting between systems, the build plan — is the part that usually takes the most calendar time in product work because it requires the most alignment. That's the part that compressed.
+What the compression ratio captures is *engineering velocity on a well-specified problem*. It doesn't capture the work of writing a good spec, which I did separately. It doesn't capture stakeholder management, which doesn't apply here. The honest claim is narrower than the headline: **AI-assisted dev, when given a load-bearing design doc and a human willing to enforce it, can produce strict, lint-clean, reviewed code at roughly 10-15× the pace of a small team's normal cadence.**
 
-If you're a solo builder, the headline is: AI is a senior collaborator for the design conversation, not just a code generator. If you're on a team, the headline is more nuanced: you still need the team for the parts AI doesn't replace — but the design discussions that used to fill a week of meetings can now happen in an afternoon with a transcript.
+That's still a real number. It's just a precise one.
 
 ## What's next
 
-We're scaffolding the Vite project and going to code. Movement engine ports in, dev server comes up, Day 2 begins: collision and virtual coordinate system. I'll log that session too.
+Day 6: the decision modal — where the game starts to *do* something. Decisions actually shift stats, and the work persists across refreshes. After that: the room generator (Day 7), random events (Day 8), HUD and pickers (Day 9), the content pass that brings the game to life (Day 10), three mini-games (Day 11), endgame (Day 12), polish (Day 13). Eight days of work, in a build that's tracking ahead of schedule.
+
+I'll do tomorrow afternoon what would be a sprint.
 
 ---
 

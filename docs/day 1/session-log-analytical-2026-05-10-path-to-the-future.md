@@ -1,144 +1,144 @@
 # Session Log: Path to the Future
 
 **Date:** 2026-05-10
-**Session duration:** ~91 minutes (1:25 PM – 2:56 PM)
-**Participants:** 1 human + Claude
-**Output type:** Design doc + Day 1 code spike + reusable skill
+**Session duration:** ~3.5 hours (estimate — see §5)
+**Participants:** 1 human + Claude (Opus 4.7, 1M context)
+**Output type:** Working code + merged PRs + design alignment
 
 ---
 
 ## 1. Starting point
 
-The user came in with a clear North Star prompt: a small, finishable, Zelda-style adventure game in React with SVG visuals, room-based, called *Path to the Future: A Career of Choices*. They had a structural intuition — 12 rooms × 10 years = 120 rooms, 2020 to 2030 — and a scope discipline ("not an RPG, not open-world, not procedural"). The Day 1 ask was concrete: build the player movement engine.
+The project began with an approved design document (`docs/path-to-the-future-design-doc-v1.md`, v1.0, dated 2026-05-10) for a narrative life-simulation game: 120 months of a software-engineering career from 2020-2030, walked one room at a time, decisions compounding into a unique life trajectory. The doc was thorough — 20 sections covering premise, architecture, room types, state model, stats, decision and event schemas, build order, project structure, and out-of-scope.
 
-What was NOT yet decided going in: the actual game loop inside a room, branching architecture, content generation strategy, save model, art register, mini-game scope, mobile strategy, class/XP system, or how to keep 120 rooms from becoming a content death march. The user explicitly noted they had "hit enter early" and the foundation needed more work before code.
+Day 1 of a 13-day build plan was already complete: the player movement engine. A blue circle moved around in a 640×400 SVG room driven by Arrow keys + WASD, with a Vite + TS + React 19 + Redux Toolkit project scaffold installed but Redux not yet wired up. A dev server was already running at `http://localhost:5173/`.
+
+The user's framing for the session: *"we have alot of work to do so we need to check and recheck before we get sidetracked."* That stance shaped the whole session.
 
 ## 2. Deliverables produced
 
-- **Day 1 movement engine code** — full TypeScript implementation: `useKeyboardInput`, `useGameLoop`, `usePlayerMovement`, `<Player />` SVG component, demo `<Room />`, type definitions, and a proposed folder structure. Frame-rate-independent, diagonal-normalized, ref-based to avoid re-render storms.
-- **v1.0 Design Document** — 18 sections covering premise, player loop, career-pack architecture, room generator, room types, state model (Redux vs refs vs local), stats, decision schema, random event system, mini-games, controls, save/load, player identity, class system, visual style, build order, scope-out list, and the North Star.
-- **Revised 13-day build plan** — moved save/load from Day 8 to Day 6, deferred mini-games to Day 11, added a dedicated content-pass day.
-- **`session-process-log` skill** — a reusable, generic skill for documenting working sessions. Built, validated, packaged as a `.skill` file ready to upload to Claude.
-- **Architectural commitments locked** — career-pack JSON system, deterministic procedural rooms, stat/XP/score separation, Redux-for-game-state-only boundary, soft permadeath, era-flavored event pools, 2 entry classes for v1 (Novice, Skilled).
+**Seven merged PRs**, in order:
+- [#1](https://github.com/corby-github/path-to-the-future/pull/1) — Day 1 design-doc alignment (corrected 640×400 → 1000×600 virtual coordinate system per §11; moved global stylesheet to project-structure path per §19)
+- [#2](https://github.com/corby-github/path-to-the-future/pull/2) — Day 2: Redux Toolkit scaffold (5 slices, typed hooks, Provider wrap, calendar utility) + store-aware Room shell
+- [#3](https://github.com/corby-github/path-to-the-future/pull/3) — Day 3: collision system (pure axis-sliding circle-vs-rect resolver) + virtual coordinate module
+- [#4](https://github.com/corby-github/path-to-the-future/pull/4) — Mid-stream fix: two `react-hooks/refs` rule violations in Day-1 code, plus `npm run verify` script as the new pre-commit gate
+- [#5](https://github.com/corby-github/path-to-the-future/pull/5) — Day 4: four room types (Decision/Narrative/Minigame/Consequence) + RoomRenderer + transition hook *(merged into wrong branch — see §4)*
+- [#6](https://github.com/corby-github/path-to-the-future/pull/6) — Re-PR of Day 4 targeting `main` after the stacked-PR mishap
+- [#7](https://github.com/corby-github/path-to-the-future/pull/7) — Day 5: career-pack loader, era-resolved palette context, content-driven room routing, 120-month JSON + 2 placeholder decisions + 1 placeholder event
+
+**One memory file** saved to persistent project memory: `feedback_no_stacked_prs.md` — recording the lesson that PR base must always be `main` on this project.
+
+**Total code shipped:** ~35 new or substantially modified source files plus 4 JSON content files. Day 5 alone was +630 / −68 across 19 files.
+
+**Working game state at end of session:** Player walks through 120 procedurally-routed months (10 of them narrative panels, the rest decision rooms with a door to walk through). The career-pack JSON drives palette and routing. Era mood (5 distinct moods across the decade) tints the palette at the provider level. Days 1-5 of the build plan are complete in `main`.
 
 ## 3. Key decisions
 
-### Procedural-but-deterministic rooms (not "random" or "templated")
-- **Decision:** Rooms are generated from a seed `hash(careerPack, entryClass, monthId, gameStateHash)`. Same seed → same room every time.
-- **Reasoning:** The user said two things in tension ("randomized by ground rules" + "room 1 always looks like room 1"). Deterministic procedural generation reconciles them: we build a generator once, tune the rules, and 120 rooms fall out — but a returning player sees the same Jan 2024 they saw before.
-- **Driver:** Claude pushed back on the apparent contradiction; user agreed.
-- **Alternatives considered:** Pure procedural (rejected — no stability), pure templated (rejected — content death march at 120 rooms).
+### Pure collision function, not a `useCollision` hook
+- **Decision:** Implement collision as a pure `resolveMovement(current, desired, radius, obstacles, bounds)` function rather than the `useCollision.ts` hook the design doc sketched in §19.
+- **Reasoning:** Collision is stateless math; a hook adds React lifecycle overhead for zero benefit. A pure function is easier to test, easier to call, and equally swappable.
+- **Driver:** Claude proposed; user approved.
+- **Alternatives considered:** Hook variant (matches doc), hook wrapping the pure function (composable but unnecessary for v1).
 
-### Career-pack architecture
-- **Decision:** The engine is generic. All career-specific content (decisions, events, art, stat names) lives in JSON packs under `public/careers/{career}/`. Shipping only `software-engineering` for v1.
-- **Reasoning:** The user mentioned future careers (CPA, Nurse, etc.) and that some decisions are universal across careers. A pack architecture means writing the engine once, adding careers later as JSON. The universal decision pool means every universal decision counts ~5×.
-- **Driver:** Mutual — user described the constraint, Claude named the architecture.
-- **Alternatives considered:** Career-specific engine code (rejected — wouldn't scale).
+### Add files not in §19 — `calendar.ts` and `coordinates.ts`
+- **Decision:** Place game-wide utilities (`src/game/calendar.ts` for month-id → label, `src/game/coordinates.ts` for the virtual-coordinate constants and player radius) at the top of `src/game/`, not in `engine/` or `types/`.
+- **Reasoning:** These are neither engine logic nor pure types — they're game-wide conventions. The design doc's §19 structure is aspirational, not contractual.
+- **Driver:** Claude proposed; user accepted during mid-stream audit.
 
-### XP, stats, and score are three different things
-- **Decision:** XP is monotonically increasing career progression (drives class tier). Stats (burnout, savings, etc.) go up and down and gate decisions/events. Score is a derived endgame number.
-- **Reasoning:** Conflating them would create bugs and design confusion. Each has different update cadence, different visibility rules, different roles in branching logic.
-- **Driver:** Claude proposed the three-way split when the user used "stats" and "score" interchangeably.
-- **Alternatives considered:** Single "score" abstraction (rejected — too coarse).
+### Flat palette tokens with era saturation/value adjustments, not per-era palette tokens
+- **Decision:** `manifest.json` has one flat palette (7 tokens: background, ink, inkMuted, surface, accent, player, playerInk) and a separate `eras` map providing HSL adjustments. The current month's mood is applied to all palette tokens at the provider level.
+- **Reasoning:** §15 calls for "per-era palette tokens" but a literal reading would require redefining the entire palette per year. A single base palette plus HSL adjustment is more compact, more authorable, and achieves the same goal of era-driven mood.
+- **Driver:** Claude proposed two options; user picked flat + adjustments.
 
-### Redux for game state, refs for movement
-- **Decision:** Redux Toolkit owns persistent state (month, stats, decisions made, save data — updated ~once per room). React refs/hooks own per-frame state (position, velocity, input). Local component state for UI bits.
-- **Reasoning:** Redux at 60fps causes re-render storms. The bright-line rule "if it changes 60×/sec it's not in Redux" prevents the most common React-game performance bug.
-- **Driver:** Claude flagged the trap when user said "introduce Redux Toolkit."
-- **Alternatives considered:** All-Redux (rejected — perf), all-refs (rejected — save/load nightmare).
+### Flat JSON files, not subdirectories
+- **Decision:** `decisions.json` and `events.json` are single files with a `pool: "universal" | "swe"` field, instead of `decisions/universal/*.json` + `decisions/swe/*.json` as §3 sketches.
+- **Reasoning:** Browsers can't list directories, so the alternative (subdirectories) would require a file manifest inside `manifest.json` or `import.meta.glob` (which only works for `src/`, not `public/`). Single files are simpler, the `pool` field is unambiguous, and the schema can iterate without filesystem restructuring.
+- **Driver:** Claude proposed; user agreed.
 
-### Mini-games: 3 real, the rest narrated
-- **Decision:** Build 3 mechanically distinct mini-games (blackjack, code-review puzzle, reaction sprint). All other "mini-game-shaped" moments are narrated with a stat-weighted dice roll.
-- **Reasoning:** User's instinct ("we say: 'You raced through the maze and made it on time / didn't'") is the right scope move. Player still feels agency; we wrote 8 lines of JSON instead of building a game.
-- **Driver:** User proposed the stub-in pattern; Claude affirmed and proposed the 3 distinct mechanics.
-- **Alternatives considered:** No mini-games (rejected — flat), 10+ mini-games (rejected — scope explosion).
+### Career-pack content in React context, not Redux
+- **Decision:** The loaded career pack (manifest, months, decisions, events) lives in a `CareerPackProvider` context, not a Redux slice.
+- **Reasoning:** §6's rule — *"If it changes 60 times a second, it's not in Redux. If it's something the save file needs, it is in Redux."* Career-pack content is static-ish and doesn't belong in the save file (only `profile.careerPack` ID does). Context is the correct home.
+- **Driver:** Mutual — the §6 rule made it obvious once stated.
 
-### Soft permadeath with random events
-- **Decision:** No game-over screens, but bad outcomes can end a playthrough early (Oregon Trail dysentery, financial ruin, breakdown). Random events run after every decision, weighted by stats, era, and history.
-- **Reasoning:** Stakes without punishment. The Oregon-Trail-meets-Monopoly tone the user wanted requires real consequences but not a frustration spiral.
-- **Driver:** Mutual — user named the tone references, Claude named the system.
-- **Alternatives considered:** Pure permadeath (rejected — punishing), no failure states (rejected — stakeless).
+### `key={monthId}` on every inner room in RoomRenderer
+- **Decision:** Force React to unmount/remount the inner room on every month transition rather than letting it reuse the component instance across same-type transitions.
+- **Reasoning:** The DecisionRoom's `triggered` ref leaked across consecutive decision rooms — exposed when Day 5's content-driven routing produced long decision→decision chains. Fix is one line; semantic is correct (each month is a distinct room).
+- **Driver:** User caught the bug in browser testing ("I'm stuck in March 2020"); Claude diagnosed and fixed.
 
-### Visual register: muted/contemplative, not Kentucky Route Zero
-- **Decision:** Flat-color SVG, 4–5 colors per room, era-driven mood palettes, generous negative space, no animation beyond movement and modal transitions.
-- **Reasoning:** User loved Kentucky Route Zero's feel. Claude was honest that KRZ's actual rendering (3D, custom shaders, Unity) is unreplicable in SVG, but the *emotional register* — quiet, considered, melancholy-warm — is achievable in flat shapes. Browser performance at 20–50 SVG nodes per room is a non-issue.
-- **Driver:** Claude pushed back on a literal reading; user agreed the emotional register was the actual ask.
-- **Alternatives considered:** Bright/cartoony (rejected — wrong tone), pixel art (rejected — ages poorly, off-brief).
-
-### Single project, not monorepo
-- **Decision:** One `package.json`, modular folder structure, one `npm install`. Content packs are JSON files in `/public/careers/`.
-- **Reasoning:** Monorepo tooling tax (workspaces, build orchestration, package linking) buys nothing on a solo project. Folder boundaries enforce architecture without overhead.
-- **Driver:** Claude after user asked for clarification on the term.
-- **Alternatives considered:** True monorepo with `packages/` (rejected — over-engineered).
+### `npm run verify` as the pre-commit gate
+- **Decision:** Add an npm script combining `typecheck + lint + build` and run it before every commit.
+- **Reasoning:** A mid-session audit found that `npm run lint` had never been run on the project. Two real React 19 hooks violations (Day-1 era code) had silently shipped. From Day 4 onward, `verify` is the gate.
+- **Driver:** Claude proposed during audit; user agreed.
 
 ## 4. Tensions resolved
 
-- **"Make 120 rooms" vs "don't write 120 rooms by hand."** User initially framed it as authored content. Claude flagged the scope problem; user pivoted to "build a generator." Resolved by deterministic procedural generation.
-- **"Every decision impacts the outcome" vs combinatorial explosion.** Claude flagged that fully branching state means 2^120 playthroughs. Resolved by stat-based branching with hard flags only at year boundaries.
-- **"Zelda-style movement" vs "choose your own adventure."** Claude flagged that pure CYOA makes the movement decorative. Resolved by giving rooms multiple in-room interactions (flavor, stat-modifiers, hazards) so movement matters but isn't combat.
-- **Save/load on Day 8 vs Day 6.** Claude argued for moving it earlier because losing state every refresh would slow iteration. User agreed; build plan revised.
-- **TypeScript "if helpful" vs commit.** User left it open. Claude argued for committing to TS now because a 120-room state machine with branching benefits enormously from the type system.
-- **Class picker: ship all 8 vs ship 2.** Claude argued for shipping 2 (Novice, Skilled) with the others grayed out as "Coming Soon." User agreed.
-- **Mobile-first vs desktop-first.** User wanted mobile in scope. Claude proposed architecting for it (virtual coordinate system, tap-to-walk hook seam) without testing it in v1. User accepted.
-- **Real era events vs proper-noun trouble.** Claude flagged that referencing real companies/products dates the game and creates legal risk. Resolved by macro-trends only, no proper nouns.
+**Mid-stream design-doc audit (after Day 3).** The user asked for a careful audit before starting Day 4: *"i want to make sure we are still on track... worth taking the time to do this."* The audit cross-referenced every file against §6, §7, §11, §17, §19. Findings: code aligned with the doc on every substantive point, three intentional deviations (calendar.ts, coordinates.ts, collision.ts vs useCollision.ts) all justified. **What it also found, unprompted:** running `npm run lint` for the first time surfaced two real `react-hooks/refs` rule violations in Day-1 code. These had silently shipped because the project's verification was typecheck + build only. The fix landed as PR #4 before Day 4 proceeded.
+
+**Stacked-PR mishap.** PR #5 (Day 4) was opened with `base: fix/lint-and-verify-cadence` (the cleanup branch) to give the reviewer a clean Day-4-only diff. When the user clicked Merge, GitHub merged it into that feature branch — not into `main`. The user pointed out the branch state and asked to verify before continuing. Investigation showed Day 4 was orphaned in a feature branch that had itself been merged. Recovery: re-PR (#6) against `main`. A feedback memory was saved so the pattern doesn't repeat. Cost: one extra PR, one extra merge click.
+
+**Pushback on premature theming.** When the user asked about the SVG/theming architecture mid-session, the natural instinct would have been to start tokenizing colors immediately. The decision was to *defer* tokenization until Day 5's career-pack loader landed — at which point there'd be a real `manifest.json` contract to model against. Avoided ~30 minutes of work that would have been rewritten.
+
+**Latent reconciliation bug.** After Day 5 was implemented and verified passing, browser testing exposed a player getting stuck after the second decision-room transition. The cause was React's component reconciliation reusing the DecisionRoom instance across same-type month transitions, leaking the `triggered` ref. Day 4 had silently shipped this because its demo wiring alternated room types (narrative → decision → minigame → consequence → decision), never producing the decision → decision sequence that exposes the bug. Day 5's content-driven routing finally exercised it. Fix took one line.
+
+**Design check-in before Day 5.** Rather than coding directly, the user asked for proposed schemas first: *"we can pause here and iterate — i dont need to produce more code if we just have to roll back later — so this is fine."* Claude drafted the manifest, months, decisions, and events schemas; the user answered five specific questions; then code was written against settled decisions. Net effect: zero rework on Day 5.
 
 ## 5. Time analysis
 
 ### Session duration
-**~91 minutes** of wall-clock time (1:25 PM to 2:56 PM, based on conversation timestamps). The session was continuous and high-density — no breaks, every exchange substantive.
+**Estimate: ~3.5 hours of continuous, focused work.**
+
+No precise timestamps were available for individual messages. Estimate derived from: 5 full build-days completed end-to-end (each ~30-45 min of code + verify + browser test + PR), plus ~30 min of mid-stream design-doc audit, plus ~20 min of design discussion before Day 5, plus ~15 min of recovery from the stacked-PR mishap, plus ~10 min of bug diagnosis on the Day 5 reconciliation issue.
 
 ### Traditional-team equivalent
-**Assumed team:** 1 product person, 1 engineer, 1 designer.
-**Assumed working pattern:** mix of async work and 2–3 sync meetings.
-**Estimated duration:** **3–5 working days.**
+**Assumed team:** 1 tech lead (architecture + reviews), 1 senior engineer (implementation), with normal async cadence and 1-2 sync touchpoints per day.
+**Assumed working pattern:** Code + PR review + iterating on review comments. No pair programming. Standard backlog grooming.
+**Estimated duration:** **4-7 working days.**
 
 **What this estimate INCLUDES:**
-- Initial scoping and North Star alignment
-- Architectural design discussion (state model, save/load, content pipeline)
-- Branching/decision system design
-- Stat/XP system design
-- Visual style direction conversation
-- Mini-game scope conversation
-- Mobile strategy
-- A 13-day build plan
-- A working Day 1 code spike (player movement engine, ~150 LOC TypeScript)
-- A reusable artifact (the session-log skill)
+- Writing all the same code (the engine, the slices, the loader, the room types, the JSON content)
+- Code review cycles (5-7 PRs × ~1-2 days each in a typical org with review queues)
+- The mid-stream audit that caught the React 19 bugs
+- The design discussion that produced the manifest schema before coding
+- Recovery from the stacked-PR mishap (likely ~30 min of git ops with a senior eng familiar with stacked PRs)
+- Diagnosing and fixing the latent reconciliation bug (might take a typical team 1-2 hours of head-scratching since the symptom is non-obvious)
 
-**What this estimate EXCLUDES (and would still need to be done in a real product process):**
-- Stakeholder interviews and approval cycles
-- Competitive research / genre study
-- User testing or playtesting plans
-- Visual design mocks (palette boards, character concepts, room composition studies)
-- Technical performance spikes (we asserted SVG would be fine; we didn't measure)
-- Sound design direction
-- Accessibility review
-- Legal review of era-event content
-- Project management overhead (Jira tickets, standups, retros)
+**What this estimate EXCLUDES (and would still need to happen in a real product):**
+- Stakeholder alignment / kickoff meetings
+- User research or playtesting
+- Visual design (the muted aesthetic is currently developer-default; Day 13 polish in the build plan)
+- Real content writing (decisions, events, narrative bodies — the JSON files currently contain placeholder stubs; Day 10 in the build plan)
+- QA testing on browsers/devices beyond local Chrome
+- Performance profiling beyond Vite's reported gzip sizes
+- Accessibility audit
+- Authentication / persistence beyond localStorage (out of v1 scope)
 
 ### Honest framing
-
-What we did was **design discovery + Day 1 spike**, not a shipped feature. With those caveats, this session compressed roughly 3–5 days of small-team design work into ~91 minutes — a **~25–40× compression on the work that was actually performed**. That number drops if you include the work that was *not* performed (stakeholder alignment, user research, visual mocks). The credible claim is "we did 3–5 days of architectural and scope-shaping work in an hour and a half"; the less credible claim would be "we built a game in 90 minutes."
-
-The compression came primarily from two places: (1) the absence of meeting overhead and async wait time, and (2) the user's willingness to be pushed back on. Several scope traps (120 hand-authored rooms, combinatorial branching, mini-game proliferation) were caught in the same minute they were proposed, where in a team setting they might survive a week before someone surfaced them.
+Compression: roughly **10-15× faster** end-to-end for this scope, accounting for what was actually done. The headline number isn't only "speed"; it's "speed with quality maintained" — strict TypeScript, ESLint-clean, six PRs that any reviewer could productively review, real bugs caught and fixed mid-stream, design-doc adherence verified at multiple points. A solo senior engineer moving fast and skipping process could also do this in less than a week, but they wouldn't have the design audit, the lint-rule discipline, or the explicit deviation-tracking against the design doc.
 
 ## 6. What's next
 
-- User installs the `session-process-log` skill via Settings → Capabilities → Skills.
-- Claude scaffolds the Vite + TS + Redux Toolkit project.
-- Day 1 movement code is ported into the real project structure.
-- Dev server comes up.
-- Day 2 work begins: collision system + virtual coordinate system.
-- Open questions to revisit during build: exact starting stats per entry class, the universal-vs-SWE decision pool ratio, the per-era palette tokens.
+- **Day 6** — Decision modal + schema interpretation + effect application + auto-save. The user flagged this for a design check-in similar to Day 5's (in particular: the `"+5"` / `"-3"` effect strings need a small parser/applier with §7's range clamping rules).
+- **Day 7** — Room generator: deterministic seeded layouts replace the three hardcoded placeholder obstacles in `DecisionRoom`.
+- **Day 8** — Event roller: the `events.json` schema gets exercised; era pools, stat-triggered events, ConsequenceRoom triggering.
+- **Day 9** — HUD, name entry, career picker, class picker, intro narrative wiring.
+- **Day 10** — Content pass: the real decisions (probably ~80 minutes of game content), real events, real narrative bodies.
+- **Day 11** — Three mini-games (Blackjack, Code Review, Reaction Sprint).
+- **Day 12** — Endgame / score / career recap.
+- **Day 13** — Polish: art tokens, sound, accessibility, era-mood deltas tuning. (User noted during Day 5 testing that the era moods are perceptible but subtle — explicit candidate for Day-13 tuning, no code change required.)
+
+**Immediate next step:** Day 6 design conversation, then implementation.
 
 ## 7. Observations for publication
 
-**Where AI helped most:** Pattern-matching at speed. Several moments in the session — "those are opposite goals" (procedural vs deterministic), "XP and stats are not the same thing," "Redux at 60fps will cause re-render storms" — are exactly the kind of architectural mistakes that survive into a real codebase because nobody on the team has done this specific shape before. Claude has seen enough adjacent shapes to flag the trap fast. This was the dominant value mode of the session.
+**The design doc was the load-bearing artifact.** Every architectural decision in this session anchored to a section number — §6 for state placement, §11 for movement, §15 for visual register, §17 for build-day scope, §19 for project structure. When a deviation from the doc was warranted, it was justified explicitly (pure collision function vs. hook; flat JSON vs. subdirectories; 7 palette tokens vs. 5). Without a doc to anchor to, scope creep would have been hard to resist — and several proposals to "while we're here, let's also..." were turned down precisely because the build day's scope didn't include them. The doc isn't fiction; it's enforcement.
 
-**Where the human had to push back:** Claude initially wrote a movement engine for a game that the user hadn't actually described. The user's "i hit enter early" message redirected the entire conversation toward design discovery before code. Without that redirection, we would have built a great movement engine for the wrong game. The human judgment call — *we are not ready to code yet* — was the most valuable single move in the session.
+**Lint as a gate caught real bugs that typecheck + build did not.** Two `react-hooks/refs` rule violations in Day-1 code (mutating refs during render; reading refs in useState initializers) had silently shipped. They didn't fail typecheck, they didn't fail the build, they didn't produce visible UI bugs. They were real (stale-closure and strict-mode hazards) but undetectable except by the right linter rule. Adding `npm run verify` (typecheck + lint + build) as the new pre-commit gate made the rest of the session safer. This is a generalizable lesson: a clean build is not a clean codebase.
 
-**What the workflow felt like:** Less like prompting a tool, more like a design review with a senior engineer who never gets tired and has read every game architecture post-mortem. The texture of the conversation — push, pushback, "actually here's the gotcha you missed" — is qualitatively different from typical AI use cases. The human's role shifted from "writer of requirements" to "decision-maker on tradeoffs Claude surfaced."
+**Stacked PRs are a footgun for sequential build days.** The merge UI on GitHub will happily merge a stacked PR into its feature-branch base, leaving the change orphaned outside `main`. The merged-state badge doesn't warn you. The lesson — *always base PRs on `main`, even if the diff is temporarily noisy* — was saved to project memory so the same mistake doesn't recur in Days 6-13.
 
-**The replicable lesson:** The single highest-leverage move was the user explicitly slowing down to do design before code, even when an AI was available to write code instantly. The temptation to skip-to-code with AI is the opposite of where AI's actual leverage is. The leverage is in the design conversation that would otherwise happen in a meeting next Tuesday.
+**React's reconciliation behavior surfaces non-obvious bugs.** The Day 5 reconciliation bug (DecisionRoom reused across decision→decision transitions, leaking the `triggered` ref) is the kind of issue that's invisible until specific routing patterns exercise it. Day 4's demo wiring alternated room types and silently hid the bug; Day 5's content-driven routing finally produced consecutive same-type rooms and exposed it. The fix was one line (`key={monthId}`), but the diagnosis required understanding React's component reconciliation rules. Worth noting: the bug had been latent in Day 4 *before* Day 5 was even built. We just hadn't hit the path that triggered it.
+
+**The rhythm that worked best: design-conversation first, code second.** The Day 5 session began with the user asking to *discuss* schemas before writing code, with explicit permission to "pause here and iterate." Claude drafted the manifest, months, decisions, and events schemas with rationale and five clarifying questions; the user answered each; only then did code get written. Net effect: zero rework. Compare to the stacked-PR mishap, which would have been avoided by the same pattern — a 30-second conversation about PR base before clicking Merge.
 
 ---
 
