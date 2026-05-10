@@ -3,8 +3,9 @@ import { Player } from '../entities/Player';
 import { usePlayerMovement } from '../engine/usePlayerMovement';
 import type { Bounds } from '../types/geometry';
 
-const ROOM_WIDTH = 640;
-const ROOM_HEIGHT = 400;
+// Virtual coordinate system per design doc §11. Display scales via SVG viewBox.
+const ROOM_WIDTH = 1000;
+const ROOM_HEIGHT = 600;
 const PADDING = 20;
 
 export function Room() {
