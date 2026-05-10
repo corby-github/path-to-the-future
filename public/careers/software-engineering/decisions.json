@@ -1,0 +1,43 @@
+{
+  "decisions": [
+    {
+      "id": "univ-stay-late-vs-log-off",
+      "pool": "universal",
+      "tags": ["work-life-balance"],
+      "weight": 1.0,
+      "prompt": "It's 6:30. The launch is shaky but might survive without you. Your evening is yours if you want it.",
+      "options": [
+        {
+          "label": "Stay until it's stable",
+          "effects": { "burnout": "+5", "reputation": "+3", "technicalSkill": "+1" },
+          "flavor": "You stayed until 10. The build went green at 9:47. You won't forget that moment."
+        },
+        {
+          "label": "Log off — they'll figure it out",
+          "effects": { "burnout": "-2", "reputation": "-1", "health": "+1" },
+          "flavor": "You closed the laptop. The launch was fine without you. You wonder why you sometimes assume it won't be."
+        }
+      ]
+    },
+    {
+      "id": "univ-recruiter-call",
+      "pool": "universal",
+      "tags": ["career-movement", "ambition"],
+      "requires": { "month": ">=6" },
+      "weight": 1.0,
+      "prompt": "A recruiter from a company you've heard of is calling. You don't have to answer.",
+      "options": [
+        {
+          "label": "Take the call",
+          "effects": { "network": "+5", "reputation": "+2" },
+          "flavor": "Twenty minutes of pleasantries and a vague 'we should talk again.' Sometimes that's the whole point."
+        },
+        {
+          "label": "Let it go to voicemail",
+          "effects": { "burnout": "-1" },
+          "flavor": "You don't return it. The week is full. The recruiter, presumably, calls someone else."
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import type { Direction, PlayerState } from '../types/player';
 import { PLAYER_RADIUS } from '../coordinates';
+import { useCareerPack } from '../content/useCareerPack';
 
 interface PlayerProps {
   state: PlayerState;
@@ -14,6 +15,7 @@ const FACING_ROTATION: Record<Direction, number> = {
 };
 
 export function Player({ state, radius = PLAYER_RADIUS }: PlayerProps) {
+  const { palette } = useCareerPack();
   const { position, facing } = state;
   const rotation = FACING_ROTATION[facing];
 
@@ -27,13 +29,13 @@ export function Player({ state, radius = PLAYER_RADIUS }: PlayerProps) {
           cx={0}
           cy={0}
           r={radius}
-          fill="#4a90e2"
-          stroke="#1f3a5f"
+          fill={palette.player}
+          stroke={palette.playerInk}
           strokeWidth={2}
         />
         <polygon
           points={`0,${-radius - 4} -5,${-radius + 4} 5,${-radius + 4}`}
-          fill="#1f3a5f"
+          fill={palette.playerInk}
         />
       </g>
     </g>

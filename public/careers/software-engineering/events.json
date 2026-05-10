@@ -1,0 +1,15 @@
+{
+  "events": [
+    {
+      "id": "evt-univ-bank-error",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["lucky"],
+      "weight": 0.1,
+      "trigger": { "month": ">=2" },
+      "title": "Bank error in your favor.",
+      "body": "A clerical error credits your account by $1,200. Three weeks later, it has not been reversed.",
+      "effects": { "savings": "+1200" }
+    }
+  ]
+}

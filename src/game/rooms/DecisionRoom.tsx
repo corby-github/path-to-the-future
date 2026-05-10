@@ -8,6 +8,7 @@ import {
   ROOM_PADDING,
   PLAYER_RADIUS,
 } from '../coordinates';
+import { useCareerPack } from '../content/useCareerPack';
 import type { DecisionRoomConfig } from '../types/room';
 import type { Rect } from '../types/geometry';
 
@@ -40,6 +41,7 @@ function playerOverlapsDoor(px: number, py: number): boolean {
 }
 
 export function DecisionRoom({ config, onExit }: Props) {
+  const { palette } = useCareerPack();
   const playerState = usePlayerMovement({
     initialPosition: { x: 80, y: ROOM_VIEWBOX.height / 2 },
     bounds: ROOM_BOUNDS,
@@ -62,12 +64,18 @@ export function DecisionRoom({ config, onExit }: Props) {
       height={ROOM_VIEWBOX.height}
       viewBox={`0 0 ${ROOM_VIEWBOX.width} ${ROOM_VIEWBOX.height}`}
       style={{
-        background: '#f5f1e8',
-        border: '2px solid #2c2c2c',
+        background: palette.background,
+        border: `2px solid ${palette.ink}`,
         display: 'block',
       }}
     >
-      <rect x={0} y={0} width={ROOM_VIEWBOX.width} height={ROOM_VIEWBOX.height} fill="#f5f1e8" />
+      <rect
+        x={0}
+        y={0}
+        width={ROOM_VIEWBOX.width}
+        height={ROOM_VIEWBOX.height}
+        fill={palette.background}
+      />
 
       <rect
         x={ROOM_PADDING - 10}
@@ -75,7 +83,7 @@ export function DecisionRoom({ config, onExit }: Props) {
         width={ROOM_VIEWBOX.width - (ROOM_PADDING - 10) * 2}
         height={ROOM_VIEWBOX.height - (ROOM_PADDING - 10) * 2}
         fill="none"
-        stroke="#2c2c2c"
+        stroke={palette.ink}
         strokeWidth={2}
       />
 
@@ -84,8 +92,8 @@ export function DecisionRoom({ config, onExit }: Props) {
         y={DOOR.y}
         width={DOOR.width}
         height={DOOR.height}
-        fill="#8b6240"
-        stroke="#3e2817"
+        fill={palette.accent}
+        stroke={palette.ink}
         strokeWidth={2}
         rx={2}
       />
@@ -93,7 +101,7 @@ export function DecisionRoom({ config, onExit }: Props) {
         cx={DOOR.x + DOOR.width - 8}
         cy={DOOR.y + DOOR.height / 2}
         r={2.5}
-        fill="#3e2817"
+        fill={palette.ink}
       />
 
       {DEMO_OBSTACLES.map((o, i) => (
@@ -103,8 +111,8 @@ export function DecisionRoom({ config, onExit }: Props) {
           y={o.y}
           width={o.width}
           height={o.height}
-          fill="#cfc8b6"
-          stroke="#5b5340"
+          fill={palette.surface}
+          stroke={palette.ink}
           strokeWidth={2}
           rx={4}
         />
@@ -118,7 +126,7 @@ export function DecisionRoom({ config, onExit }: Props) {
         textAnchor="middle"
         fontFamily="sans-serif"
         fontSize={11}
-        fill="#888"
+        fill={palette.inkMuted}
       >
         {monthLabel(config.monthId)} · Walk to the door →
       </text>

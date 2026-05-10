@@ -1,0 +1,50 @@
+{
+  "id": "software-engineering",
+  "name": "Software Engineering",
+  "tagline": "A career of choices.",
+
+  "palette": {
+    "background": "#f5f1e8",
+    "ink": "#2c2c2c",
+    "inkMuted": "#888888",
+    "surface": "#cfc8b6",
+    "accent": "#8b6240",
+    "player": "#4a90e2",
+    "playerInk": "#1f3a5f"
+  },
+
+  "eras": {
+    "default":          { "saturation": 1.0,  "lightness": 1.0,  "hueShift":  0 },
+    "pandemic":         { "saturation": 0.7,  "lightness": 1.05, "hueShift": -8 },
+    "rebound":          { "saturation": 0.95, "lightness": 1.0,  "hueShift":  0 },
+    "ai-shift":         { "saturation": 1.05, "lightness": 1.0,  "hueShift":  4 },
+    "uncertain-future": { "saturation": 0.85, "lightness": 0.95, "hueShift": -3 }
+  },
+
+  "entryClasses": {
+    "novice": {
+      "label": "Novice Initiate",
+      "startingXp": 0,
+      "startingStats": {
+        "burnout": 10,
+        "savings": 1000,
+        "network": 5,
+        "health": 90,
+        "technicalSkill": 15,
+        "reputation": 0
+      }
+    },
+    "skilled": {
+      "label": "Skilled Operative",
+      "startingXp": 5000,
+      "startingStats": {
+        "burnout": 20,
+        "savings": 40000,
+        "network": 60,
+        "health": 80,
+        "technicalSkill": 55,
+        "reputation": 10
+      }
+    }
+  }
+}

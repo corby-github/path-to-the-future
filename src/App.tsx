@@ -1,37 +1,10 @@
 import { RoomRenderer } from './game/rooms/RoomRenderer';
-import { useAppSelector } from './game/state/hooks';
-import type { RoomConfig } from './game/types/room';
-
-// Day-4 placeholder routing: hard-codes a few room types so all four
-// renderers are exercised. Day 5 replaces this with the career-pack
-// content loader (months.json + the room generator).
-function deriveRoomConfig(monthId: number): RoomConfig {
-  if (monthId === 1) {
-    return {
-      monthId,
-      roomType: 'narrative',
-      title: 'The world is about to go quiet.',
-      body: 'It is January 2020. You are starting your career. The next ten years are yours to shape — one month at a time.',
-      continueLabel: 'Begin',
-    };
-  }
-  if (monthId === 3) {
-    return { monthId, roomType: 'minigame', variant: 'code-review' };
-  }
-  if (monthId === 5) {
-    return {
-      monthId,
-      roomType: 'consequence',
-      title: 'Something significant just happened.',
-      body: 'The shape of your year shifts. A meeting goes long. A decision compounds. You feel the year turn.',
-    };
-  }
-  return { monthId, roomType: 'decision' };
-}
+import { useCareerPack } from './game/content/useCareerPack';
+import { roomConfigForMonth } from './game/content/roomConfigForMonth';
 
 export default function App() {
-  const monthId = useAppSelector((s) => s.progress.currentMonth);
-  const config = deriveRoomConfig(monthId);
+  const { currentMonth } = useCareerPack();
+  const config = roomConfigForMonth(currentMonth);
 
   return (
     <div
