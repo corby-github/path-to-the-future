@@ -4,7 +4,13 @@ type LoopCallback = (deltaSeconds: number) => void;
 
 export function useGameLoop(callback: LoopCallback, active = true) {
   const callbackRef = useRef(callback);
-  callbackRef.current = callback;
+
+  // Keep the ref pointed at the latest callback. Doing this in an effect
+  // (rather than during render) avoids mutating refs at render time, which
+  // React 19's react-hooks/refs rule rightly disallows.
+  useEffect(() => {
+    callbackRef.current = callback;
+  });
 
   useEffect(() => {
     if (!active) return;
