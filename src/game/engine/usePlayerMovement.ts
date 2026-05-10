@@ -36,7 +36,13 @@ export function usePlayerMovement({
   });
 
   // Render-state — updated each frame for React to redraw the SVG.
-  const [renderState, setRenderState] = useState<PlayerState>(stateRef.current);
+  // Lazy initializer creates an independent object so the ref and the
+  // state slice don't alias each other.
+  const [renderState, setRenderState] = useState<PlayerState>(() => ({
+    position: { ...initialPosition },
+    velocity: { x: 0, y: 0 },
+    facing: 'down',
+  }));
 
   useGameLoop((delta) => {
     const { up, down, left, right } = input.current;
