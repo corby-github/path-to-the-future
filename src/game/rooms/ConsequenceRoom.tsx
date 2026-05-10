@@ -1,5 +1,6 @@
 import { ROOM_VIEWBOX } from '../coordinates';
 import { monthLabel } from '../calendar';
+import { useCareerPack } from '../content/useCareerPack';
 import type { ConsequenceRoomConfig } from '../types/room';
 
 interface Props {
@@ -8,14 +9,16 @@ interface Props {
 }
 
 export function ConsequenceRoom({ config, onContinue }: Props) {
+  const { palette } = useCareerPack();
+
   return (
     <div
       style={{
         width: ROOM_VIEWBOX.width,
         height: ROOM_VIEWBOX.height,
-        background: '#f5f1e8',
-        color: '#2c2c2c',
-        border: '2px solid #2c2c2c',
+        background: palette.background,
+        color: palette.ink,
+        border: `2px solid ${palette.ink}`,
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
@@ -25,7 +28,7 @@ export function ConsequenceRoom({ config, onContinue }: Props) {
         fontFamily: 'system-ui, sans-serif',
       }}
     >
-      <p style={{ fontSize: 12, letterSpacing: '0.1em', opacity: 0.6, margin: 0, marginBottom: 16, textTransform: 'uppercase' }}>
+      <p style={{ fontSize: 12, letterSpacing: '0.1em', color: palette.inkMuted, margin: 0, marginBottom: 16, textTransform: 'uppercase' }}>
         {monthLabel(config.monthId)} · Consequence
       </p>
       <h2 style={{ fontSize: 30, fontWeight: 400, margin: 0, marginBottom: 24, textAlign: 'center', lineHeight: 1.25 }}>
@@ -39,8 +42,8 @@ export function ConsequenceRoom({ config, onContinue }: Props) {
         style={{
           padding: '12px 32px',
           background: 'transparent',
-          color: '#2c2c2c',
-          border: '1px solid #2c2c2c',
+          color: palette.ink,
+          border: `1px solid ${palette.ink}`,
           fontSize: 13,
           letterSpacing: '0.08em',
           textTransform: 'uppercase',

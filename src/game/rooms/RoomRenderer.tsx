@@ -12,19 +12,23 @@ interface Props {
 export function RoomRenderer({ config }: Props) {
   const { fading, fadeMs, exitRoom } = useRoomTransition();
 
+  // key on monthId forces an unmount/remount on every month change so
+  // per-room state (triggered refs, player position) doesn't leak between
+  // consecutive rooms of the same type — most notably decision → decision,
+  // where React would otherwise reuse the component instance.
   let inner: React.ReactNode;
   switch (config.roomType) {
     case 'decision':
-      inner = <DecisionRoom config={config} onExit={exitRoom} />;
+      inner = <DecisionRoom key={config.monthId} config={config} onExit={exitRoom} />;
       break;
     case 'narrative':
-      inner = <NarrativeRoom config={config} onContinue={exitRoom} />;
+      inner = <NarrativeRoom key={config.monthId} config={config} onContinue={exitRoom} />;
       break;
     case 'minigame':
-      inner = <MinigameRoom config={config} onComplete={exitRoom} />;
+      inner = <MinigameRoom key={config.monthId} config={config} onComplete={exitRoom} />;
       break;
     case 'consequence':
-      inner = <ConsequenceRoom config={config} onContinue={exitRoom} />;
+      inner = <ConsequenceRoom key={config.monthId} config={config} onContinue={exitRoom} />;
       break;
   }
 
