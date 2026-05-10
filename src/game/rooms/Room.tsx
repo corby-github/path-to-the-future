@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { Player } from '../entities/Player';
 import { usePlayerMovement } from '../engine/usePlayerMovement';
+import { useAppSelector } from '../state/hooks';
+import { monthLabel } from '../calendar';
 import type { Bounds } from '../types/geometry';
 
 // Virtual coordinate system per design doc §11. Display scales via SVG viewBox.
@@ -20,6 +22,8 @@ export function Room() {
     initialPosition: { x: ROOM_WIDTH / 2, y: ROOM_HEIGHT / 2 },
     bounds,
   });
+
+  const currentMonth = useAppSelector((state) => state.progress.currentMonth);
 
   return (
     <svg
@@ -57,7 +61,7 @@ export function Room() {
         fontSize={11}
         fill="#888"
       >
-        January 2020 · Use Arrow Keys or WASD to move
+        {monthLabel(currentMonth)} · Use Arrow Keys or WASD to move
       </text>
     </svg>
   );
