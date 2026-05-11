@@ -1,10 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppSelector } from '../state/hooks';
 import { interpolate } from '../content/interpolate';
 import { ScenePlayer } from './ScenePlayer';
 import { EffectChips } from './EffectChips';
 import type { EventDef } from '../types/careerPack';
+
+// Matches the hintStyle in DecisionModal — shared footer-hint treatment.
+const hintStyle: CSSProperties = {
+  fontSize: 13,
+  margin: 0,
+  opacity: 0.7,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
+};
 
 type Phase = 'scene' | 'body';
 
@@ -73,65 +82,57 @@ export function EventModal({ event, onContinue }: Props) {
           />
         )}
         {phase === 'body' && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <p
-              style={{
-                fontSize: 13,
-                color: palette.inkMuted,
-                margin: 0,
-                marginBottom: 12,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Event
-            </p>
-            <h2 style={{ fontSize: 24, fontWeight: 500, margin: 0, marginBottom: 20, lineHeight: 1.3 }}>
-              {interpolate(event.title, vars)}
-            </h2>
-            <p
-              style={{
-                fontSize: 15,
-                lineHeight: 1.7,
-                margin: 0,
-                marginBottom: 24,
-                opacity: 0.9,
-              }}
-            >
-              {interpolate(event.body, vars)}
-            </p>
-            <EffectChips effects={event.effects} />
-            <button
-              onClick={onContinue}
-              style={{
-                padding: '12px 32px',
-                background: 'transparent',
-                color: palette.ink,
-                border: `1px solid ${palette.ink}`,
-                fontSize: 13,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
-                fontFamily: 'system-ui, sans-serif',
-                alignSelf: 'flex-start',
-              }}
-            >
-              OK
-            </button>
-            <p
-              style={{
-                fontSize: 11,
-                color: palette.inkMuted,
-                margin: 0,
-                marginTop: 'auto',
-                paddingTop: 16,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-              }}
-            >
+          <>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <p
+                style={{
+                  fontSize: 13,
+                  color: palette.inkMuted,
+                  margin: 0,
+                  marginBottom: 12,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Event
+              </p>
+              <h2 style={{ fontSize: 24, fontWeight: 500, margin: 0, marginBottom: 20, lineHeight: 1.3 }}>
+                {interpolate(event.title, vars)}
+              </h2>
+              <p
+                style={{
+                  fontSize: 15,
+                  lineHeight: 1.7,
+                  margin: 0,
+                  marginBottom: 24,
+                  opacity: 0.9,
+                }}
+              >
+                {interpolate(event.body, vars)}
+              </p>
+              <EffectChips effects={event.effects} />
+              <button
+                onClick={onContinue}
+                style={{
+                  padding: '12px 32px',
+                  background: 'transparent',
+                  color: palette.ink,
+                  border: `1px solid ${palette.ink}`,
+                  fontSize: 13,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  fontFamily: 'system-ui, sans-serif',
+                  alignSelf: 'flex-start',
+                }}
+              >
+                OK
+              </button>
+            </div>
+            <p style={{ ...hintStyle, marginTop: 16, color: palette.ink }}>
               Press Enter or click OK
             </p>
-          </div>
+          </>
         )}
       </div>
     </div>

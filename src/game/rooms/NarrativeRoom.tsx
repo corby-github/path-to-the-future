@@ -28,8 +28,10 @@ export function NarrativeRoom({ config, onContinue }: Props) {
   return (
     <div
       style={{
-        width: ROOM_VIEWBOX.width,
-        height: ROOM_VIEWBOX.height,
+        // Responsive sizing matching DecisionRoom's canvas. Aspect ratio
+        // keeps the 1000:600 layout intent for narrative copy.
+        width: 'var(--canvas-display-width)',
+        aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
         background: palette.background,
         color: palette.ink,
         border: `1px solid ${palette.surface}`,

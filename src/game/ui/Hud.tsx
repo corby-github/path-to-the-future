@@ -2,25 +2,29 @@ import type { CSSProperties } from 'react';
 import { useAppSelector } from '../state/hooks';
 import { useCareerPack } from '../content/useCareerPack';
 import { StatChip } from './StatChip';
+import { useCurrentRoom } from './currentRoomContextValue';
 
-// Top-anchored player HUD. Renders identity (name · class tier · current month)
-// on the left and 8 stat chips (XP + the seven §7 stats) on the right.
-// Reads from Redux (`profile`, `progress`, `stats`) and the career pack for
-// palette + class label lookup. Per §7, the relationship chip is hidden when
-// the value is null (player is single).
+// Top-anchored player HUD. Identity column on the left (name · class · month
+// + current room), eight stat chips on the right (XP + the seven §7 stats).
+// Reads from Redux (`profile`, `progress`, `stats`), the career pack for
+// palette + class label lookup, and CurrentRoomContext for the room
+// template the player is currently in. Per §7, the relationship chip is
+// hidden when the value is null (player is single).
 export function Hud() {
   const { pack, palette, currentMonth } = useCareerPack();
   const profile = useAppSelector((s) => s.profile);
   const progress = useAppSelector((s) => s.progress);
   const stats = useAppSelector((s) => s.stats);
+  const { template } = useCurrentRoom();
 
   const classLabel =
     pack.manifest.entryClasses[progress.classTier]?.label ?? progress.classTier;
   const monthLabel = formatMonth(currentMonth.year, currentMonth.monthNum);
 
   const containerStyle: CSSProperties = {
-    width: '100%',
-    maxWidth: 1000,
+    // Match the canvas's responsive width so the HUD and canvas stay
+    // visually aligned on viewport-constrained screens.
+    width: 'var(--canvas-display-width)',
     boxSizing: 'border-box',
     display: 'flex',
     alignItems: 'center',
@@ -64,13 +68,39 @@ export function Hud() {
     flex: 1,
   };
 
+  // Location column on the far right, mirroring the identity column's
+  // two-row structure: primary (month/year) above secondary (room template).
+  // Right-aligned with a left-side divider to mirror identity's right divider.
+  const locationStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    paddingLeft: 14,
+    borderLeft: `1px solid ${palette.surface}`,
+    minWidth: 120,
+  };
+
+  const locationPrimaryStyle: CSSProperties = {
+    fontSize: 14,
+    fontWeight: 600,
+    color: palette.ink,
+    lineHeight: 1.2,
+    textAlign: 'right',
+  };
+
+  const locationMetaStyle: CSSProperties = {
+    fontSize: 11,
+    color: palette.inkMuted,
+    letterSpacing: '0.04em',
+    marginTop: 2,
+    textAlign: 'right',
+  };
+
   return (
     <div style={containerStyle} role="status" aria-label="Player status">
       <div style={identityStyle}>
         <span style={nameStyle}>{profile.name || '…'}</span>
-        <span style={metaStyle}>
-          {classLabel} · {monthLabel}
-        </span>
+        <span style={metaStyle}>{classLabel}</span>
       </div>
 
       <div style={statsWrapStyle}>
@@ -124,6 +154,11 @@ export function Hud() {
           displayValue={formatReputation(stats.reputation)}
           palette={palette}
         />
+      </div>
+
+      <div style={locationStyle}>
+        <span style={locationPrimaryStyle}>{monthLabel}</span>
+        {template && <span style={locationMetaStyle}>{template}</span>}
       </div>
     </div>
   );

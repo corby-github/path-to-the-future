@@ -1,12 +1,12 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from 'react-redux';
 import { Player } from '../entities/Player';
 import { usePlayerMovement } from '../engine/usePlayerMovement';
-import { monthLabel } from '../calendar';
 import { ROOM_VIEWBOX, ROOM_BOUNDS } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { useDevControls } from '../dev/useDevControls';
+import { useCurrentRoom } from '../ui/currentRoomContextValue';
 import { selectDecision } from '../content/selectDecision';
 import { parseEffect } from '../content/applyEffects';
 import { applyStatEffect } from '../state/slices/statsSlice';
@@ -27,6 +27,13 @@ import type { RootState } from '../state/store';
 
 const BASE_SPEED = 180;
 const DEFAULT_EVENT_CHANCE = 0.4;
+// "Going through the door" fade — Zelda-style. When the player enters the
+// door, the canvas fades to 0 opacity (dark app background shows through)
+// over DOOR_FADE_MS, and the decision modal pops at MODAL_POP_DELAY_MS so
+// it lands on a fully-faded canvas. Status bar / HUD stay visible (they're
+// chrome, not the game world).
+const DOOR_FADE_MS = 300;
+const MODAL_POP_DELAY_MS = 300;
 // After Continue: close the modal, dispatch effects (HUD floating-delta
 // runs ~900ms), and swap the status bar to a "time passes" line. The pause
 // outlives the HUD pop by ~500ms so the message has its own beat to land
@@ -57,6 +64,7 @@ export function DecisionRoom({ config, onExit }: Props) {
   const stats = useAppSelector((s) => s.stats);
   const flags = useAppSelector((s) => s.flags);
   const { speedMultiplier, forcedLayout, eventMode } = useDevControls();
+  const { setTemplate } = useCurrentRoom();
 
   const [layout] = useState(() => {
     const seed = computeRoomSeed({
@@ -86,6 +94,15 @@ export function DecisionRoom({ config, onExit }: Props) {
     return lines[Math.floor(Math.random() * lines.length)];
   }, [pack.manifest.monthTransitions]);
 
+  // Publish this room's layout id to the HUD via CurrentRoomContext so the
+  // identity column can show "Aug 2020 · open-office". Clears on unmount so
+  // a non-decision room (Narrative / Consequence) doesn't show a stale
+  // template.
+  useEffect(() => {
+    setTemplate(layout.templateId);
+    return () => setTemplate(null);
+  }, [layout.templateId, setTemplate]);
+
   const ctx = useMemo(() => ({
     stats,
     flags,
@@ -107,17 +124,22 @@ export function DecisionRoom({ config, onExit }: Props) {
     if (triggered.current) return;
     if (!playerInsideDoor(layout.door, state.position.x, state.position.y)) return;
     triggered.current = true;
+    // committed=true starts the canvas fade-out immediately (via CSS
+    // transition on the SVG below). Modal pop / exit are deferred so the
+    // fade reads as a discrete "you stepped through" moment.
     setCommitted(true);
     const picked = selectDecision({
       decisions: pack.decisions,
       ctx,
       monthId: config.monthId,
     });
-    if (picked) {
-      setActiveDecision(picked);
-    } else {
-      onExit();
-    }
+    window.setTimeout(() => {
+      if (picked) {
+        setActiveDecision(picked);
+      } else {
+        onExit();
+      }
+    }, MODAL_POP_DELAY_MS);
   }, [layout.door, pack.decisions, ctx, config.monthId, onExit]);
 
   const playerState = usePlayerMovement({
@@ -202,8 +224,10 @@ export function DecisionRoom({ config, onExit }: Props) {
     // before any modal/transition starts. This gives the stat change its own
     // discrete "beat" instead of racing the room fade.
     window.setTimeout(() => {
-      setTransitionMessage(null);
       if (event) {
+        // Clear the message so the status bar reverts behind the event
+        // modal (no exit happening — we stay in this room for the event).
+        setTransitionMessage(null);
         dispatch(recordEvent({
           monthId: config.monthId,
           eventId: event.id,
@@ -212,6 +236,11 @@ export function DecisionRoom({ config, onExit }: Props) {
         setActiveEvent(event);
         // event.effects are also deferred — see handleEventContinue.
       } else {
+        // DON'T clear the message before onExit — clearing re-keys the
+        // status-bar span and starts a fade-in animation that fights the
+        // RoomRenderer's wrapper fade-out. Leave the message in place;
+        // the wrapper fade carries it out cleanly, and the next room
+        // mounts with its own default status content.
         onExit();
       }
     }, POST_EFFECT_PAUSE_MS);
@@ -233,8 +262,9 @@ export function DecisionRoom({ config, onExit }: Props) {
     // Same "time passes" overlay treatment as the decision-continue beat.
     setTransitionMessage(pickTransitionMessage());
     // Hold for ~the HUD animation duration before triggering room exit.
+    // Don't clear the message — it should fade with the wrapper, not via
+    // an inner re-key animation that fights the cross-fade.
     window.setTimeout(() => {
-      setTransitionMessage(null);
       onExit();
     }, POST_EFFECT_PAUSE_MS);
   }, [activeEvent, dispatch, onExit, pickTransitionMessage]);
@@ -246,6 +276,9 @@ export function DecisionRoom({ config, onExit }: Props) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'stretch',
+          // Width tracks the canvas display so HUD/status/canvas stay aligned
+          // when the viewport shrinks (matches --canvas-display-width).
+          width: 'var(--canvas-display-width)',
           // Match the App-level 16px gap so the status bar sits visually
           // centered between the HUD above and the canvas below.
           gap: 16,
@@ -279,14 +312,11 @@ export function DecisionRoom({ config, onExit }: Props) {
               fontStyle: transitionMessage ? 'italic' : 'normal',
             }}
           >
-            {transitionMessage
-              ?? `${monthLabel(config.monthId)} · ${layout.templateId} · Walk into the door →`}
+            {transitionMessage ?? 'Walk into the door →'}
           </span>
         </div>
 
         <svg
-          width={ROOM_VIEWBOX.width}
-          height={ROOM_VIEWBOX.height}
           viewBox={`0 0 ${ROOM_VIEWBOX.width} ${ROOM_VIEWBOX.height}`}
           style={{
             // Card treatment to match the HUD strip above. Dropping the hard
@@ -297,6 +327,19 @@ export function DecisionRoom({ config, onExit }: Props) {
             border: `1px solid ${palette.surface}`,
             borderRadius: 6,
             display: 'block',
+            // Responsive: width fills the parent column (which itself is
+            // bounded by --canvas-display-width). Height auto-derives from
+            // the viewBox's 5:3 aspect ratio. Internal coordinates and all
+            // room layouts remain on the 1000×600 virtual grid.
+            width: '100%',
+            height: 'auto',
+            // Zelda-style "stepping through the door" fade. When committed
+            // (door triggered), the canvas fades to 0 over DOOR_FADE_MS —
+            // dark app background shows through. Modal pop is delayed to
+            // land on the faded canvas. Restores naturally on the next
+            // room (new instance, committed=false from the start).
+            opacity: committed ? 0 : 1,
+            transition: `opacity ${DOOR_FADE_MS}ms ease`,
           }}
         >
           <rect

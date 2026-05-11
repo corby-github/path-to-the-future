@@ -16,6 +16,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root {
+  /* Width the game canvas (and HUD strip) display at. Per design doc §11,
+     the room viewBox is locked at 1000×600 — this variable scales the
+     DISPLAY size to fit the viewport's available height without touching
+     internal coordinates. The math:
+       - cap at 100vw (never wider than the viewport itself — we use vw
+         instead of % to avoid resolving against intermediate parents
+         that have no determinate width, which collapses the layout)
+       - cap at 1000px (logical/native size, no upscaling)
+       - cap at (available-height * 5/3) so the 1000:600 aspect ratio fits
+         the (viewport − chrome) height. CHROME_RESERVE = 240px covers top
+         padding (16) + DevPanel (~36) + HUD (~70) + status bar (~24) +
+         gaps (~64) + bottom padding (32). */
+  --canvas-display-width: min(100vw, 1000px, calc((100vh - 240px) * 5 / 3));
+}
+
 /* Decision-modal scene-line fade. 200ms fade-in, 1200ms hold, 200ms fade-out
    across a 1600ms total duration (or whatever lineMs ScenePlayer is given —
    the keyframe is a ratio, the duration is set by JSX). Re-keyed in JSX so

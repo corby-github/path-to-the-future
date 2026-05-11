@@ -86,58 +86,68 @@ export function ScenePlayer({ scene, vars, onComplete, lineMs }: Props) {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
         cursor: 'pointer',
       }}
     >
-      <p
-        key={index}
-        style={{
-          fontSize: 22,
-          lineHeight: 1.5,
-          margin: 0,
-          marginBottom: 24,
-          textAlign: 'center',
-          fontStyle: 'italic',
-          maxWidth: 560,
-          animation: `scene-line-fade ${effectiveLineMs}ms ease forwards`,
-        }}
-      >
-        {interpolate(line, resolvedVars)}
-      </p>
-
-      {/* "Alive" indicator — three dots, staggered opacity pulse, always
-          present below the scene line so the moment never feels static. */}
+      {/* Centered scene content: line + the pulsing dots indicator. */}
       <div
         style={{
+          flex: 1,
           display: 'flex',
-          gap: 7,
-          marginBottom: 32,
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
-        aria-hidden="true"
       >
-        {[0, 0.16, 0.32].map((delay) => (
-          <span
-            key={delay}
-            style={{
-              width: 5,
-              height: 5,
-              borderRadius: '50%',
-              background: palette.inkMuted,
-              animation: `scene-dot-pulse 1.4s ${delay}s ease-in-out infinite`,
-            }}
-          />
-        ))}
+        <p
+          key={index}
+          style={{
+            fontSize: 22,
+            lineHeight: 1.5,
+            margin: 0,
+            marginBottom: 24,
+            textAlign: 'center',
+            fontStyle: 'italic',
+            maxWidth: 560,
+            animation: `scene-line-fade ${effectiveLineMs}ms ease forwards`,
+          }}
+        >
+          {interpolate(line, resolvedVars)}
+        </p>
+
+        {/* "Alive" indicator — three dots, staggered opacity pulse, always
+            present below the scene line so the moment never feels static. */}
+        <div
+          style={{ display: 'flex', gap: 7 }}
+          aria-hidden="true"
+        >
+          {[0, 0.16, 0.32].map((delay) => (
+            <span
+              key={delay}
+              style={{
+                width: 5,
+                height: 5,
+                borderRadius: '50%',
+                background: palette.inkMuted,
+                animation: `scene-dot-pulse 1.4s ${delay}s ease-in-out infinite`,
+              }}
+            />
+          ))}
+        </div>
       </div>
 
+      {/* Footer hint, anchored to the bottom of the scene container (which
+          is the bottom of the parent modal for in-modal usage). Matches
+          DecisionModal / EventModal hint styling. */}
       <p
         style={{
-          fontSize: 11,
-          color: palette.inkMuted,
+          fontSize: 13,
           margin: 0,
+          color: palette.ink,
+          opacity: 0.7,
           letterSpacing: '0.06em',
           textTransform: 'uppercase',
+          textAlign: 'center',
         }}
       >
         Any key for next line · [Esc] to skip scene
