@@ -4,7 +4,7 @@
       "id": "obj-coffee-machine",
       "kind": "object",
       "art": "coffee-machine",
-      "tags": ["office", "flavor"],
+      "tags": ["office", "flavor", "hardware"],
       "weight": 1.0,
       "dialogues": [
         {
@@ -18,15 +18,146 @@
       ]
     },
     {
+      "id": "obj-whiteboard",
+      "kind": "object",
+      "art": "whiteboard",
+      "tags": ["office", "flavor", "tech"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The whiteboard has someone's half-erased system diagram. Whoever drew it gave up at the database layer."
+        },
+        {
+          "tier": 1,
+          "prompt": "Someone wrote 'YAGNI' in giant letters across the top of the board, three months ago, and nobody has erased it. I think it was Sharpie. *Sigh*"
+        }
+      ]
+    },
+    {
+      "id": "obj-monitor",
+      "kind": "object",
+      "art": "monitor",
+      "tags": ["office", "flavor", "hardware"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "Your second monitor has an old Slack thread open. The thread is from a project that shipped six months ago."
+        },
+        {
+          "tier": 1,
+          "prompt": "Your screen has thirty tabs open. None of them are the one you were looking for."
+        }
+      ]
+    },
+    {
+      "id": "obj-printer",
+      "kind": "object",
+      "art": "printer",
+      "tags": ["office", "flavor", "hardware", "humor"],
+      "weight": 0.7,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The printer makes a sound like clearing its throat. It hasn't printed anything in eight months."
+        },
+        {
+          "tier": 1,
+          "prompt": "There's a sticky note on the printer that says 'IT KNOWS'. The note is taped over another note that says the same thing."
+        }
+      ]
+    },
+    {
+      "id": "obj-plant",
+      "kind": "object",
+      "art": "plant",
+      "tags": ["office", "flavor"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The plant in the corner is, against all reasonable expectation, still alive."
+        },
+        {
+          "tier": 1,
+          "prompt": "Someone watered the plant. The leaves look, somehow, suspicious about it."
+        }
+      ]
+    },
+    {
+      "id": "obj-calendar",
+      "kind": "object",
+      "art": "calendar",
+      "tags": ["office", "flavor"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The wall calendar shows three months ago. Someone has X'd through every day up to a Wednesday."
+        },
+        {
+          "tier": 1,
+          "prompt": "A wall calendar. Someone has circled a random day in November and written 'breathe'."
+        }
+      ]
+    },
+    {
+      "id": "obj-stress-ball",
+      "kind": "object",
+      "art": "stress-ball",
+      "tags": ["office", "flavor", "humor"],
+      "weight": 0.8,
+      "dialogues": [
+        {
+          "tier": 2,
+          "prompt": "A stress ball on the desk. It has been squeezed past the point where it can really be called a ball.",
+          "options": [
+            {
+              "label": "Squeeze it",
+              "effects": { "burnout": "-2" },
+              "flavor": "Three quick squeezes. Two long ones. Slightly better, very briefly."
+            },
+            {
+              "label": "Leave it",
+              "effects": {},
+              "flavor": "You walked past it. It will be there tomorrow."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obj-water-cooler",
+      "kind": "object",
+      "art": "water-cooler",
+      "tags": ["office", "flavor", "humor"],
+      "weight": 0.7,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The water cooler jug is empty. The replacement jug is on the floor beside it, where it has been for a week."
+        },
+        {
+          "tier": 1,
+          "prompt": "Someone left their coffee mug on top of the cooler. The mug says 'WORLD'S OKAYEST DAD'."
+        }
+      ]
+    },
+    {
       "id": "npc-intern",
       "kind": "npc",
       "art": "person-intern",
-      "tags": ["coworker"],
+      "tags": ["coworker", "newhire"],
       "weight": 1.0,
       "dialogues": [
         {
           "tier": 1,
           "prompt": "The intern looks up. \"Wait, is the standup canceled? Or does it just feel that way?\""
+        },
+        {
+          "tier": 1,
+          "prompt": "The intern is reading a documentation page that doesn't exist. They're going to find out in about ten minutes."
         },
         {
           "tier": 2,
@@ -41,6 +172,170 @@
               "label": "Maybe later",
               "effects": {},
               "flavor": "You say later. You both know later sometimes means never."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-senior-eng",
+      "kind": "npc",
+      "art": "person-senior",
+      "tags": ["coworker", "senior", "mentor"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The senior engineer glances up from a 200-line stack trace. \"It's always the cache.\""
+        },
+        {
+          "tier": 2,
+          "prompt": "The senior catches you in the kitchen. \"Got a sec? I want to push back on a design call you made.\"",
+          "options": [
+            {
+              "label": "Hear them out",
+              "effects": { "technicalSkill": "+2", "reputation": "+1", "burnout": "+1" },
+              "flavor": "Their argument was harder to dismiss than you expected. You spent the afternoon redoing the part you'd just finished."
+            },
+            {
+              "label": "Promise to look at the docs later",
+              "effects": { "reputation": "-1" },
+              "flavor": "You closed the conversation politely. The 'later' became 'never.' They knew."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-pm",
+      "kind": "npc",
+      "art": "person-pm",
+      "tags": ["coworker", "pm", "meetings"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The PM types a status update with the focus of someone defusing a bomb."
+        },
+        {
+          "tier": 2,
+          "prompt": "The PM corners you with a smile. \"Quick favor — can you scope this thing for me before Friday?\"",
+          "options": [
+            {
+              "label": "Sure, send the link",
+              "effects": { "burnout": "+1", "network": "+2" },
+              "flavor": "It was three things. None of them fit on a page."
+            },
+            {
+              "label": "I'll let you know",
+              "effects": {},
+              "flavor": "You said next week. They said no rush — like everyone who says no rush."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-designer",
+      "kind": "npc",
+      "art": "person-designer",
+      "tags": ["coworker", "design"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The designer adjusts a kerning value by 0.5 pixels and squints. \"Better.\""
+        },
+        {
+          "tier": 1,
+          "prompt": "The designer hovers over a button color in Figma. They've been there for twenty minutes."
+        }
+      ]
+    },
+    {
+      "id": "npc-peer-eng",
+      "kind": "npc",
+      "art": "person-peer",
+      "tags": ["coworker", "peer"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "A coworker walks by. \"Hey — did you see the staging incident? Yeah. It was the cache.\""
+        },
+        {
+          "tier": 2,
+          "prompt": "Your peer leans over the cubicle wall. \"Wanna grab lunch?\"",
+          "options": [
+            {
+              "label": "Yeah, let's go",
+              "effects": { "network": "+3", "burnout": "-1" },
+              "flavor": "Two hours later you're at your desk, still smiling at something they said."
+            },
+            {
+              "label": "Today's no good",
+              "effects": { "network": "-1" },
+              "flavor": "They went without you. They didn't bring it up tomorrow."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-newhire",
+      "kind": "npc",
+      "art": "person-newhire",
+      "tags": ["coworker", "newhire"],
+      "requires": { "month": ">=6" },
+      "weight": 0.8,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The new hire is looking at the org chart with the expression of someone solving a puzzle."
+        },
+        {
+          "tier": 2,
+          "prompt": "The new hire asks where the bathroom is. Then where the kitchen is. Then if you have time for coffee.",
+          "options": [
+            {
+              "label": "Make time",
+              "effects": { "network": "+2", "reputation": "+1" },
+              "flavor": "Twenty minutes. You answered every question. They sent a thank-you message at 6pm."
+            },
+            {
+              "label": "Some other day",
+              "effects": { "network": "-1", "burnout": "-1" },
+              "flavor": "You said next week. You both knew it meant later. Or never."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-skip-level",
+      "kind": "npc",
+      "art": "person-skip-level",
+      "tags": ["coworker", "skip-level"],
+      "requires": { "month": ">=12" },
+      "weight": 0.4,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "Your skip-level walks past, gives you a small nod, keeps walking. The nod was, you think, encouraging."
+        },
+        {
+          "tier": 2,
+          "prompt": "The skip-level catches your eye. \"Hey — got a minute to chat about what you're working on?\"",
+          "options": [
+            {
+              "label": "Walk them through it",
+              "effects": { "reputation": "+3", "burnout": "+1" },
+              "flavor": "They listened. They asked one question. It was a good question."
+            },
+            {
+              "label": "Now's not great",
+              "effects": { "reputation": "-2" },
+              "flavor": "They understood. They told three other people on their team they 'tried.'"
             }
           ]
         }

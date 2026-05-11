@@ -18,8 +18,9 @@ import { passesRequires } from '../content/evaluateRequires';
 import { DecisionModal } from '../ui/DecisionModal';
 import { EventModal } from '../ui/EventModal';
 import { NPCModal } from '../ui/NPCModal';
-import { computeRoomSeed, seededRandom, pickFrom } from './generator/seedRng';
+import { computeRoomSeed } from './generator/seedRng';
 import { generateRoom } from './generator/populate';
+import { placeInteractables, type PlacedInteractable } from './generator/placeInteractables';
 import type { DecisionRoomConfig } from '../types/room';
 import type { DecisionDef, EventDef, InteractableDef, InteractableDialogue } from '../types/careerPack';
 import type { StatKey } from '../content/applyEffects';
@@ -29,30 +30,26 @@ import type { RootState } from '../state/store';
 
 const BASE_SPEED = 180;
 const DEFAULT_EVENT_CHANCE = 0.4;
-// Day 13a — interactables. Spawn a single interactable at a fixed corner of
-// the room for end-to-end validation. Real generator placement (multiple,
-// theme-weighted, layout-aware) is 13b work.
-const INTERACTABLE_SPAWN: Vector2 = { x: 200, y: 130 };
 const INTERACTABLE_HALF_W = 28;
 const INTERACTABLE_HALF_H = 36;
-// Player center within this many virtual units of the interactable center
-// counts as "adjacent" — E-key opens the modal.
+// Player center within this many virtual units of an interactable center
+// counts as "adjacent" — E-key opens the modal for the nearest one.
 const INTERACT_PROXIMITY = 75;
-// Distinct salt so the interactable picker doesn't co-vary with decision /
+// Distinct salt so interactable placement doesn't co-vary with decision /
 // event picks at the same monthId.
 const INTERACTABLE_SEED_SALT = 991;
-const DIALOGUE_SEED_SALT = 1009;
 
 // NPC wander parameters. NPCs random-walk within a small zone around their
-// spawn so the player can reliably find them. They stop when the player is
-// adjacent (so the [E] hint reads as a stable target) and when any modal is
-// open. Objects are stationary — these knobs don't apply.
-const NPC_WANDER_RADIUS = 80;            // px each axis from spawn
-const NPC_SPEED_MIN = 40;                // virtual units / sec
+// PLACED spawn so the player can reliably find them. They stop when the
+// player is adjacent to any of them and when any modal is open. Objects are
+// stationary — these knobs don't apply.
+const NPC_WANDER_RADIUS = 80;
+const NPC_SPEED_MIN = 40;
 const NPC_SPEED_MAX = 70;
 const NPC_DIRECTION_CHANGE_MIN_MS = 1500;
 const NPC_DIRECTION_CHANGE_MAX_MS = 3000;
-const NPC_IDLE_PROBABILITY = 0.3;        // chance the new "direction" is idle
+const NPC_IDLE_PROBABILITY = 0.3;
+
 // "Going through the door" fade — Zelda-style. When the player enters the
 // door, the canvas fades to 0 opacity (dark app background shows through)
 // over DOOR_FADE_MS, and the decision modal pops at MODAL_POP_DELAY_MS so
@@ -108,25 +105,24 @@ export function DecisionRoom({ config, onExit }: Props) {
     return generateRoom(seed, forcedLayout);
   });
 
+  // Interactables placed in this room (1-3, seeded, non-overlapping with
+  // spawn / door / obstacles / each other). Stable for the room's lifetime.
+  const [placements] = useState<PlacedInteractable[]>(() => {
+    const seedCtx = { stats, flags, currentMonth: config.monthId };
+    return placeInteractables({
+      seed: config.monthId + INTERACTABLE_SEED_SALT,
+      pool: pack.interactables,
+      ctx: seedCtx,
+      spawn: layout.spawn,
+      door: layout.door,
+      obstacles: layout.obstacles,
+    });
+    // Placement is deterministic for the room's lifetime — useState's lazy
+    // initializer runs once on mount and never re-evaluates.
+  });
+
   const [activeDecision, setActiveDecision] = useState<DecisionDef | null>(null);
   const [activeEvent, setActiveEvent] = useState<EventDef | null>(null);
-  // The one interactable hosted in this room (or null if no eligible match).
-  // Picked deterministically from the pack at mount; doesn't change while
-  // the room is alive.
-  const [interactable] = useState<InteractableDef | null>(() => {
-    const ctx = { stats, flags, currentMonth: config.monthId };
-    const eligible = pack.interactables.filter((i) => passesRequires(i.requires, ctx));
-    if (eligible.length === 0) return null;
-    const rng = seededRandom(config.monthId + INTERACTABLE_SEED_SALT);
-    return pickFrom(rng, eligible);
-  });
-  // Active dialogue is set when the player engages the interactable. Random
-  // pick from the interactable's dialogues, filtered by requires.
-  const [activeInteractable, setActiveInteractable] = useState<InteractableDef | null>(null);
-  const [activeDialogue, setActiveDialogue] = useState<InteractableDialogue | null>(null);
-  // Player adjacency to the interactable — drives the visual highlight and
-  // gates the E-key engagement.
-  const [adjacent, setAdjacent] = useState(false);
   // The chosen option index, set when the player picks but BEFORE effects
   // apply. Effects are dispatched in handleDecisionContinue so the HUD
   // animation fires after the modal closes (when the player can see it),
@@ -136,9 +132,20 @@ export function DecisionRoom({ config, onExit }: Props) {
   // Continue beat. Random pick from `manifest.monthTransitions`. Set when
   // the pause starts, cleared when it ends. Null = no overlay rendered.
   const [transitionMessage, setTransitionMessage] = useState<string | null>(null);
-  // NPC live position. Objects keep this at the spawn (they're stationary);
-  // NPCs random-walk inside a bounded zone via the NPC-movement effect below.
-  const [npcPos, setNpcPos] = useState<Vector2>(INTERACTABLE_SPAWN);
+
+  // Active dialogue state — set when the player engages with an interactable.
+  const [activeInteractable, setActiveInteractable] = useState<InteractableDef | null>(null);
+  const [activeDialogue, setActiveDialogue] = useState<InteractableDialogue | null>(null);
+
+  // Index into placements of the nearest interactable within proximity, or
+  // null when none. Drives the halo / [E] hint and gates the E-key.
+  const [adjacentIndex, setAdjacentIndex] = useState<number | null>(null);
+
+  // Per-interactable live position. Objects sit at their spawn; NPCs drift
+  // via the random-walk RAF below. Parallel array indexed against placements.
+  const [npcPositions, setNpcPositions] = useState<Vector2[]>(() =>
+    placements.map((p) => ({ ...p.spawn })),
+  );
 
   const pickTransitionMessage = useCallback((): string | null => {
     const lines = pack.manifest.monthTransitions;
@@ -172,48 +179,46 @@ export function DecisionRoom({ config, onExit }: Props) {
   const triggered = useRef(false);
   const [committed, setCommitted] = useState(false);
 
-  // Live position refs so the NPC-movement RAF (below) can see player + npc
-  // positions without re-binding the loop every frame. Synced via effects.
-  const playerPosRef = useRef<Vector2>(layout.spawn);
-  const npcPosRef = useRef<Vector2>(npcPos);
+  // Live positions ref so the NPC-movement RAF (below) can see the latest
+  // positions without re-binding the loop every frame. Synced via effect.
+  const npcPositionsRef = useRef<Vector2[]>(npcPositions);
   useEffect(() => {
-    npcPosRef.current = npcPos;
-  }, [npcPos]);
+    npcPositionsRef.current = npcPositions;
+  }, [npcPositions]);
 
-  // "Should NPC move?" gate. NPCs stop when the player is adjacent (so the
-  // [E] target reads as stable), when any modal is open, and after door
-  // commit. Mirrored to a ref so the RAF closure stays cheap.
+  // "Should NPCs move?" gate. They stop when the player is adjacent to any
+  // of them (so the [E] target reads as stable), when any modal is open,
+  // and after door commit. Mirrored to a ref so the RAF closure stays cheap.
   const npcShouldMoveRef = useRef(true);
   useEffect(() => {
     npcShouldMoveRef.current =
-      !adjacent &&
+      adjacentIndex === null &&
       activeDecision === null &&
       activeEvent === null &&
+      activeInteractable === null &&
       !committed;
-    // activeInteractable is read directly in JSX below; included here for
-    // completeness — the modal pauses movement too.
-  }, [adjacent, activeDecision, activeEvent, committed]);
+  }, [adjacentIndex, activeDecision, activeEvent, activeInteractable, committed]);
 
   const handleTick = useCallback((state: PlayerState) => {
-    playerPosRef.current = state.position;
-
-    // Update adjacency to the room's interactable on every tick so the visual
-    // hint and the E-key gate stay in sync with the player position.
-    if (interactable) {
-      const ipos = interactable.kind === 'npc' ? npcPosRef.current : INTERACTABLE_SPAWN;
+    // Find the nearest interactable within proximity. NPCs use their live
+    // wander position; objects use their fixed spawn.
+    let nearest: number | null = null;
+    let nearestDist = INTERACT_PROXIMITY;
+    for (let i = 0; i < placements.length; i++) {
+      const p = placements[i];
+      const ipos = p.def.kind === 'npc' ? npcPositionsRef.current[i] : p.spawn;
+      if (!ipos) continue;
       const d = distance(state.position.x, state.position.y, ipos.x, ipos.y);
-      setAdjacent((cur) => {
-        const next = d <= INTERACT_PROXIMITY;
-        return next === cur ? cur : next;
-      });
+      if (d < nearestDist) {
+        nearestDist = d;
+        nearest = i;
+      }
     }
+    setAdjacentIndex((cur) => (cur === nearest ? cur : nearest));
 
     if (triggered.current) return;
     if (!playerInsideDoor(layout.door, state.position.x, state.position.y)) return;
     triggered.current = true;
-    // committed=true starts the canvas fade-out immediately (via CSS
-    // transition on the SVG below). Modal pop / exit are deferred so the
-    // fade reads as a discrete "you stepped through" moment.
     setCommitted(true);
     const picked = selectDecision({
       decisions: pack.decisions,
@@ -227,7 +232,7 @@ export function DecisionRoom({ config, onExit }: Props) {
         onExit();
       }
     }, MODAL_POP_DELAY_MS);
-  }, [layout.door, pack.decisions, ctx, config.monthId, onExit, interactable]);
+  }, [layout.door, pack.decisions, ctx, config.monthId, onExit, placements]);
 
   const playerState = usePlayerMovement({
     initialPosition: layout.spawn,
@@ -242,32 +247,34 @@ export function DecisionRoom({ config, onExit }: Props) {
     onTick: handleTick,
   });
 
-  // E-key opens the interactable when the player is adjacent and no other
-  // modal is active. Picks a random dialogue eligible by requires; seeded so
-  // the same room state yields the same opening line.
+  // E-key opens the nearest interactable's modal when the player is adjacent
+  // and no other modal is active. Picks a random eligible dialogue.
   useEffect(() => {
-    if (!interactable) return;
+    if (placements.length === 0) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key !== 'e' && e.key !== 'E') return;
       if (committed) return;
       if (activeDecision || activeEvent || activeInteractable) return;
-      if (!adjacent) return;
+      if (adjacentIndex === null) return;
       e.preventDefault();
+      const target = placements[adjacentIndex];
+      if (!target) return;
       const reqCtx = { stats, flags, currentMonth: config.monthId };
-      const eligibleDialogues = interactable.dialogues.filter((d) =>
+      const eligible = target.def.dialogues.filter((d) =>
         passesRequires(d.requires, reqCtx),
       );
-      if (eligibleDialogues.length === 0) return;
-      const rng = seededRandom(config.monthId + DIALOGUE_SEED_SALT);
-      const picked = pickFrom(rng, eligibleDialogues);
-      setActiveInteractable(interactable);
+      if (eligible.length === 0) return;
+      // Random pick — fresh variety on repeat interactions, no determinism
+      // needed since the player only encounters this room once.
+      const picked = eligible[Math.floor(Math.random() * eligible.length)];
+      setActiveInteractable(target.def);
       setActiveDialogue(picked);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [
-    interactable,
-    adjacent,
+    placements,
+    adjacentIndex,
     committed,
     activeDecision,
     activeEvent,
@@ -282,74 +289,88 @@ export function DecisionRoom({ config, onExit }: Props) {
     setActiveDialogue(null);
   }, []);
 
-  // NPC random-walk loop. Runs while the interactable is an NPC and the room
-  // is alive. Re-renders the SVG on every frame via setNpcPos. State updates
-  // happen inside the RAF callback (async) so we don't trip the
-  // setState-in-effect lint rule.
+  // NPC random-walk loop. One RAF iterates all NPCs each frame; per-NPC
+  // direction + decision-time tracked in a local array (only mutated inside
+  // the RAF callback so React state isn't churned for direction changes).
+  // Position changes do go through setNpcPositions (async via setTimeout/RAF,
+  // so the setState-in-effect lint rule isn't tripped).
   useEffect(() => {
-    if (!interactable || interactable.kind !== 'npc') return;
+    if (placements.length === 0) return;
+    const hasAnyNpc = placements.some((p) => p.def.kind === 'npc');
+    if (!hasAnyNpc) return;
+
+    interface NpcMotionState {
+      dx: number;
+      dy: number;
+      nextChangeAt: number;
+    }
+    const motion: NpcMotionState[] = placements.map(() => ({
+      dx: 0,
+      dy: 0,
+      nextChangeAt: 0, // 0 forces an immediate first direction-pick
+    }));
+
     let raf: number | null = null;
     let last = performance.now();
-    let nextDirectionChange = last; // immediate first direction
-    let dx = 0;
-    let dy = 0;
 
     const tick = (now: number) => {
       const dt = (now - last) / 1000;
       last = now;
 
-      // Skip movement when gated — but keep the RAF alive so we resume
-      // cleanly when the gate flips off.
-      if (!npcShouldMoveRef.current || activeInteractable !== null) {
+      if (!npcShouldMoveRef.current) {
         raf = requestAnimationFrame(tick);
         return;
       }
 
-      // Time to pick a new direction? 30% chance of idling for the next
-      // window; otherwise a random heading at a random speed in range.
-      if (now >= nextDirectionChange) {
-        if (Math.random() < NPC_IDLE_PROBABILITY) {
-          dx = 0;
-          dy = 0;
-        } else {
-          const angle = Math.random() * 2 * Math.PI;
-          const speed = NPC_SPEED_MIN + Math.random() * (NPC_SPEED_MAX - NPC_SPEED_MIN);
-          dx = Math.cos(angle) * speed;
-          dy = Math.sin(angle) * speed;
-        }
-        nextDirectionChange =
-          now +
-          NPC_DIRECTION_CHANGE_MIN_MS +
-          Math.random() * (NPC_DIRECTION_CHANGE_MAX_MS - NPC_DIRECTION_CHANGE_MIN_MS);
-      }
+      setNpcPositions((cur) => {
+        // Map old → new; preserve object positions unchanged. For NPCs,
+        // advance direction-of-the-moment, position, and bound to wander
+        // zone around their PLACED spawn.
+        return cur.map((pos, i) => {
+          const p = placements[i];
+          if (p.def.kind !== 'npc') return pos;
+          const m = motion[i];
 
-      setNpcPos((cur) => {
-        let nx = cur.x + dx * dt;
-        let ny = cur.y + dy * dt;
-        // Bound to wander zone around spawn. On contact with a wall, clamp
-        // and zero that axis's velocity so the next direction-change cycle
-        // picks a fresh heading.
-        const minX = INTERACTABLE_SPAWN.x - NPC_WANDER_RADIUS;
-        const maxX = INTERACTABLE_SPAWN.x + NPC_WANDER_RADIUS;
-        const minY = INTERACTABLE_SPAWN.y - NPC_WANDER_RADIUS;
-        const maxY = INTERACTABLE_SPAWN.y + NPC_WANDER_RADIUS;
-        if (nx < minX) {
-          nx = minX;
-          dx = 0;
-        }
-        if (nx > maxX) {
-          nx = maxX;
-          dx = 0;
-        }
-        if (ny < minY) {
-          ny = minY;
-          dy = 0;
-        }
-        if (ny > maxY) {
-          ny = maxY;
-          dy = 0;
-        }
-        return { x: nx, y: ny };
+          if (now >= m.nextChangeAt) {
+            if (Math.random() < NPC_IDLE_PROBABILITY) {
+              m.dx = 0;
+              m.dy = 0;
+            } else {
+              const angle = Math.random() * 2 * Math.PI;
+              const speed = NPC_SPEED_MIN + Math.random() * (NPC_SPEED_MAX - NPC_SPEED_MIN);
+              m.dx = Math.cos(angle) * speed;
+              m.dy = Math.sin(angle) * speed;
+            }
+            m.nextChangeAt =
+              now +
+              NPC_DIRECTION_CHANGE_MIN_MS +
+              Math.random() * (NPC_DIRECTION_CHANGE_MAX_MS - NPC_DIRECTION_CHANGE_MIN_MS);
+          }
+
+          let nx = pos.x + m.dx * dt;
+          let ny = pos.y + m.dy * dt;
+          const minX = p.spawn.x - NPC_WANDER_RADIUS;
+          const maxX = p.spawn.x + NPC_WANDER_RADIUS;
+          const minY = p.spawn.y - NPC_WANDER_RADIUS;
+          const maxY = p.spawn.y + NPC_WANDER_RADIUS;
+          if (nx < minX) {
+            nx = minX;
+            m.dx = 0;
+          }
+          if (nx > maxX) {
+            nx = maxX;
+            m.dx = 0;
+          }
+          if (ny < minY) {
+            ny = minY;
+            m.dy = 0;
+          }
+          if (ny > maxY) {
+            ny = maxY;
+            m.dy = 0;
+          }
+          return { x: nx, y: ny };
+        });
       });
 
       raf = requestAnimationFrame(tick);
@@ -359,7 +380,7 @@ export function DecisionRoom({ config, onExit }: Props) {
     return () => {
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [interactable, activeInteractable]);
+  }, [placements]);
 
   const handleChoose = useCallback((index: number) => {
     if (!activeDecision) return;
@@ -384,7 +405,6 @@ export function DecisionRoom({ config, onExit }: Props) {
   const pickEvent = useCallback((): EventDef | null => {
     if (eventMode === 'never') return null;
     if (eventMode !== 'auto') {
-      // Force a specific event by id (dev panel selection).
       return findEventById(pack.events, eventMode);
     }
     const chance = pack.manifest.eventChance ?? DEFAULT_EVENT_CHANCE;
@@ -403,8 +423,6 @@ export function DecisionRoom({ config, onExit }: Props) {
   }, [eventMode, pack.events, pack.manifest.eventChance, monthEntry.era, store, config.monthId]);
 
   const handleDecisionContinue = useCallback(() => {
-    // Apply the chosen decision's effects (deferred from handleChoose) so the
-    // HUD animation lands when the modal closes, not behind it.
     if (activeDecision && pendingOptionIndex !== null) {
       const option = activeDecision.options[pendingOptionIndex];
       for (const [stat, expr] of Object.entries(option.effects)) {
@@ -419,24 +437,14 @@ export function DecisionRoom({ config, onExit }: Props) {
     }
     setPendingOptionIndex(null);
 
-    // Close the decision modal immediately so the HUD is visible while the
-    // floating-delta animation plays.
     setActiveDecision(null);
 
-    // Roll against POST-decision state (pickEvent reads live store).
     const event = pickEvent();
 
-    // Show the "time passes" overlay during the 900ms beat. Canvas blurs;
-    // line floats centered. Both fade with the same keyframe.
     setTransitionMessage(pickTransitionMessage());
 
-    // Hold for ~the HUD animation duration so the player sees the full pop
-    // before any modal/transition starts. This gives the stat change its own
-    // discrete "beat" instead of racing the room fade.
     window.setTimeout(() => {
       if (event) {
-        // Clear the message so the status bar reverts behind the event
-        // modal (no exit happening — we stay in this room for the event).
         setTransitionMessage(null);
         dispatch(recordEvent({
           monthId: config.monthId,
@@ -444,36 +452,21 @@ export function DecisionRoom({ config, onExit }: Props) {
           timestamp: Date.now(),
         }));
         setActiveEvent(event);
-        // event.effects are also deferred — see handleEventContinue.
       } else {
-        // DON'T clear the message before onExit — clearing re-keys the
-        // status-bar span and starts a fade-in animation that fights the
-        // RoomRenderer's wrapper fade-out. Leave the message in place;
-        // the wrapper fade carries it out cleanly, and the next room
-        // mounts with its own default status content.
         onExit();
       }
     }, POST_EFFECT_PAUSE_MS);
   }, [activeDecision, pendingOptionIndex, pickEvent, dispatch, config.monthId, onExit, pickTransitionMessage]);
 
   const handleEventContinue = useCallback(() => {
-    // Apply event effects on Continue (deferred from when the event was
-    // rolled, for the same HUD-animation-visibility reason as decisions).
     if (activeEvent) {
       applyEvent(activeEvent, dispatch);
     }
-    // advanceMonths handling: if the event jumped time, dispatch the extra
-    // skip BEFORE the normal +1 fade. Total advance = event.advanceMonths.
     if (activeEvent?.advanceMonths && activeEvent.advanceMonths > 1) {
       dispatch(skipMonths(activeEvent.advanceMonths - 1));
     }
-    // Close the event modal so the HUD is visible during the animation.
     setActiveEvent(null);
-    // Same "time passes" overlay treatment as the decision-continue beat.
     setTransitionMessage(pickTransitionMessage());
-    // Hold for ~the HUD animation duration before triggering room exit.
-    // Don't clear the message — it should fade with the wrapper, not via
-    // an inner re-key animation that fights the cross-fade.
     window.setTimeout(() => {
       onExit();
     }, POST_EFFECT_PAUSE_MS);
@@ -486,20 +479,11 @@ export function DecisionRoom({ config, onExit }: Props) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'stretch',
-          // Width tracks the canvas display so HUD/status/canvas stay aligned
-          // when the viewport shrinks (matches --canvas-display-width).
           width: 'var(--canvas-display-width)',
-          // Match the App-level 16px gap so the status bar sits visually
-          // centered between the HUD above and the canvas below.
           gap: 16,
         }}
       >
-        {/* Status / current-task bar. Sits between the HUD and the canvas so
-            the reading flow is: identity (HUD) → context + next action (this
-            bar) → game (canvas). The same slot doubles as the post-Continue
-            "time passes" line — when transitionMessage is set, the bar
-            shows that instead of the instructional copy. Re-keyed per swap
-            so each text change retriggers the fade. */}
+        {/* Status / current-task bar. */}
         <div
           style={{
             display: 'flex',
@@ -510,8 +494,6 @@ export function DecisionRoom({ config, onExit }: Props) {
             fontWeight: 500,
             color: palette.surface,
             letterSpacing: '0.03em',
-            // Reserve vertical room so the bar height doesn't jump between
-            // single-line states.
             minHeight: 20,
           }}
         >
@@ -526,38 +508,22 @@ export function DecisionRoom({ config, onExit }: Props) {
           </span>
         </div>
 
-        {/* Canvas wrapper holds the wireframe border so it persists after the
-            SVG contents fade on door-commit. This keeps the room bounds
-            visible during the modal beat — the player sees an empty frame
-            instead of feeling like the whole board vanished. */}
+        {/* Canvas wrapper — wireframe border survives the door-commit fade. */}
         <div
           style={{
             border: `1px solid ${palette.surface}`,
             borderRadius: 6,
             overflow: 'hidden',
-            // Suppress the inline-baseline gap below the SVG.
             lineHeight: 0,
           }}
         >
         <svg
           viewBox={`0 0 ${ROOM_VIEWBOX.width} ${ROOM_VIEWBOX.height}`}
           style={{
-            // Card treatment to match the HUD strip above. Border lives on
-            // the wrapper div now (see above) so it survives the door fade.
             background: palette.background,
             display: 'block',
-            // Responsive: width fills the parent column (which itself is
-            // bounded by --canvas-display-width). Height auto-derives from
-            // the viewBox's 5:3 aspect ratio. Internal coordinates and all
-            // room layouts remain on the 1000×600 virtual grid.
             width: '100%',
             height: 'auto',
-            // Zelda-style "stepping through the door" fade. When committed
-            // (door triggered), the canvas fades to 0 over DOOR_FADE_MS —
-            // dark app background shows through; the wireframe border (on
-            // the wrapper) stays visible. Modal pop is delayed to land on
-            // the faded canvas. Restores naturally on the next room (new
-            // instance, committed=false from the start).
             opacity: committed ? 0 : 1,
             transition: `opacity ${DOOR_FADE_MS}ms ease`,
           }}
@@ -601,16 +567,17 @@ export function DecisionRoom({ config, onExit }: Props) {
             />
           ))}
 
-          {/* Interactable (NPC or object). 13a renders a kind-distinct
-              placeholder shape — real sprites come in 13b. NPCs render at
-              their live position (random walk); objects stay at spawn. */}
-          {interactable && (() => {
-            const ipos = interactable.kind === 'npc' ? npcPos : INTERACTABLE_SPAWN;
+          {/* Interactables. Day 13b.1 renders kind-distinct placeholders;
+              real sprites land in 13b.2. NPCs at live wander position;
+              objects at their fixed placed spawn. Adjacency halo + [E]
+              hint only render on the NEAREST in-range interactable. */}
+          {placements.map((p, i) => {
+            const ipos = p.def.kind === 'npc' ? (npcPositions[i] ?? p.spawn) : p.spawn;
+            const isNearest = adjacentIndex === i && !activeInteractable;
             return (
-              <g>
-                {interactable.kind === 'npc' ? (
+              <g key={p.def.id + '-' + i}>
+                {p.def.kind === 'npc' ? (
                   <>
-                    {/* Body */}
                     <rect
                       x={ipos.x - 18}
                       y={ipos.y - 8}
@@ -621,7 +588,6 @@ export function DecisionRoom({ config, onExit }: Props) {
                       stroke={palette.ink}
                       strokeWidth={2}
                     />
-                    {/* Head */}
                     <circle
                       cx={ipos.x}
                       cy={ipos.y - 22}
@@ -643,8 +609,7 @@ export function DecisionRoom({ config, onExit }: Props) {
                     strokeWidth={2}
                   />
                 )}
-                {/* Adjacency halo + [E] hint when player is in range. */}
-                {adjacent && !activeInteractable && (
+                {isNearest && (
                   <>
                     <rect
                       x={ipos.x - INTERACTABLE_HALF_W - 4}
@@ -667,13 +632,13 @@ export function DecisionRoom({ config, onExit }: Props) {
                       fontWeight={600}
                       fill={palette.ink}
                     >
-                      [E] talk
+                      [E] {p.def.kind === 'npc' ? 'talk' : 'look'}
                     </text>
                   </>
                 )}
               </g>
             );
-          })()}
+          })}
 
           <Player state={playerState} />
         </svg>
