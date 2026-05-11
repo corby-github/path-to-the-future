@@ -1,8 +1,17 @@
 import { useDevControls } from './useDevControls';
 import { useCareerPack } from '../content/useCareerPack';
+import { useAppDispatch } from '../state/hooks';
+import { setCurrentMonth } from '../state/slices/progressSlice';
 import { LAYOUT_TEMPLATES } from '../rooms/generator/layouts';
 
 const SPEED_OPTIONS = [1, 2, 3, 4];
+
+// Hand-picked month slots that host minigames (see months.json).
+const MINIGAME_JUMPS = [
+  { value: 32, label: 'Blackjack (m32 · Aug 2022)' },
+  { value: 60, label: 'Code Review (m60 · Dec 2024)' },
+  { value: 90, label: 'Stacker (m90 · Jun 2027)' },
+];
 
 const selectStyle = {
   background: '#222',
@@ -23,6 +32,7 @@ export function DevPanel() {
     setEventMode,
   } = useDevControls();
   const { pack } = useCareerPack();
+  const dispatch = useAppDispatch();
 
   return (
     <div
@@ -85,6 +95,27 @@ export function DevPanel() {
           {pack.events.map((ev) => (
             <option key={ev.id} value={ev.id}>
               force: {ev.id}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span>minigame</span>
+        <select
+          value=""
+          onChange={(e) => {
+            const m = Number(e.target.value);
+            if (m) dispatch(setCurrentMonth(m));
+            // Reset to placeholder so the same option can be re-picked.
+            e.target.value = '';
+          }}
+          style={selectStyle}
+        >
+          <option value="">jump to…</option>
+          {MINIGAME_JUMPS.map((j) => (
+            <option key={j.value} value={j.value}>
+              {j.label}
             </option>
           ))}
         </select>

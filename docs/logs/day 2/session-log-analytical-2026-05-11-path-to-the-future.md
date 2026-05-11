@@ -1,7 +1,7 @@
 # Session Log: Path to the Future — Day 2
 
 **Date:** 2026-05-11
-**Focused-work duration:** ~1h 45m (6:15pm – 8:00pm, user-reported — see §5)
+**Focused-work duration:** ~1h 45m (6:15am – 8:00am, user-reported — see §5)
 **Participants:** 1 human + Claude (Opus 4.7, 1M context)
 **Output type:** Working code + merged PRs + design-doc additions
 **Continues:** `day 1/session-log-analytical-2026-05-10-path-to-the-future.md`
@@ -106,7 +106,7 @@ Today began with the user returning from the break: *"do you need a refresher or
 ## 5. Time analysis
 
 ### Focused-work duration
-**User-reported: 1 hour 45 minutes (6:15pm – 8:00pm).**
+**User-reported: 1 hour 45 minutes (6:15am – 8:00am).**
 
 This is the user's wall-clock window of active engagement on this project today, end-to-end. It includes design conversations, code review, browser verification, and the diagnosis cycles for the two runtime bugs. The user noted that the *previous* "4 hours" estimate in this log was inflated because the AI conversation thread spanned other context (including a ~45-minute walk that was outside this work window) and the conflation made the compression ratio look smaller than it really was.
 
