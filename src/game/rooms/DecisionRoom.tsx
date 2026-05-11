@@ -24,12 +24,13 @@ import type { PlayerState } from '../types/player';
 const BASE_SPEED = 180;
 
 // Day-4 placeholder obstacles. Replaced by the room generator on Day 7.
-// The shelf-top + shelf-bottom split leaves a vertical gap at y:290–350 so
-// the player can walk due east from spawn (y:300) straight to the door.
+// The shelf split leaves an 80-unit vertical gap at y:260–340 — comfortably
+// clears the player's 28-unit vertical extent (radius 14) at spawn-height
+// (y:300) so a straight east walk doesn't clip the player's head.
 const DEMO_OBSTACLES: Rect[] = [
   { x: 400, y: 80, width: 200, height: 60 },     // desk
-  { x: 760, y: 200, width: 60, height: 90 },     // shelf-top    (200–290)
-  { x: 760, y: 350, width: 60, height: 90 },     // shelf-bottom (350–440)
+  { x: 760, y: 200, width: 60, height: 60 },     // shelf-top    (200–260)
+  { x: 760, y: 340, width: 60, height: 100 },    // shelf-bottom (340–440)
   { x: 160, y: 420, width: 240, height: 60 },    // table
 ];
 

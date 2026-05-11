@@ -129,6 +129,7 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
       <div
         style={{
           width: 'min(720px, 90vw)',
+          minHeight: 360,
           maxHeight: '85vh',
           overflowY: 'auto',
           background: palette.background,
@@ -136,10 +137,12 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
           border: `2px solid ${palette.ink}`,
           padding: '40px 48px',
           boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {phase === 'options' && (
-          <>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <p style={{ fontSize: 16, lineHeight: 1.7, margin: 0, marginBottom: 32 }}>
               {interpolate(decision.prompt, vars)}
             </p>
@@ -156,12 +159,12 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
                       padding: '12px 16px',
                       background: isActive ? palette.surface : 'transparent',
                       color: palette.ink,
-                      border: `${isActive ? 3 : 1}px solid ${palette.ink}`,
+                      border: `1px solid ${palette.ink}`,
                       fontSize: 14,
                       lineHeight: 1.5,
                       cursor: 'pointer',
                       fontFamily: 'system-ui, sans-serif',
-                      transition: 'background 120ms, border-width 120ms',
+                      transition: 'background 120ms',
                     }}
                   >
                     <span style={{ opacity: 0.6, marginRight: 12 }}>{i + 1}.</span>
@@ -175,21 +178,22 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
                 fontSize: 11,
                 color: palette.inkMuted,
                 margin: 0,
-                marginTop: 24,
+                marginTop: 'auto',
+                paddingTop: 24,
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
               }}
             >
               ↑↓ choose · Enter or 1–{decision.options.length} to confirm
             </p>
-          </>
+          </div>
         )}
 
         {phase === 'scene' && scene[sceneIndex] !== undefined && (
           <div
             onClick={advanceScene}
             style={{
-              minHeight: 200,
+              flex: 1,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -227,7 +231,7 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
         )}
 
         {phase === 'flavor' && chosen && (
-          <>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <p
               style={{
                 fontSize: 13,
@@ -275,14 +279,15 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
                 fontSize: 11,
                 color: palette.inkMuted,
                 margin: 0,
-                marginTop: 16,
+                marginTop: 'auto',
+                paddingTop: 16,
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
               }}
             >
               Press Enter or click Continue
             </p>
-          </>
+          </div>
         )}
       </div>
     </div>
