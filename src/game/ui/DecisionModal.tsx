@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type CSSProperties } from 'react';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppSelector } from '../state/hooks';
 import { interpolate } from '../content/interpolate';
@@ -7,6 +7,18 @@ import { EffectChips } from './EffectChips';
 import type { DecisionDef } from '../types/careerPack';
 
 type Phase = 'options' | 'scene' | 'flavor';
+
+// Shared "footer hint" style for modal phases. Pulled out so all hints
+// (options, flavor, event-body, scene-player) match: slightly darker than
+// inkMuted and slightly larger than the previous 11px so the anchor reads
+// clearly at the bottom of the modal.
+const hintStyle: CSSProperties = {
+  fontSize: 13,
+  margin: 0,
+  opacity: 0.7,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
+};
 
 interface Props {
   decision: DecisionDef;
@@ -105,51 +117,43 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
         }}
       >
         {phase === 'options' && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <p style={{ fontSize: 16, lineHeight: 1.7, margin: 0, marginBottom: 32 }}>
-              {interpolate(decision.prompt, vars)}
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {decision.options.map((opt, i) => {
-                const isActive = highlighted === i;
-                return (
-                  <button
-                    key={i}
-                    onClick={() => pick(i)}
-                    onMouseEnter={() => setHighlighted(i)}
-                    style={{
-                      textAlign: 'left',
-                      padding: '12px 16px',
-                      background: isActive ? palette.surface : 'transparent',
-                      color: palette.ink,
-                      border: `1px solid ${palette.ink}`,
-                      fontSize: 14,
-                      lineHeight: 1.5,
-                      cursor: 'pointer',
-                      fontFamily: 'system-ui, sans-serif',
-                      transition: 'background 120ms',
-                    }}
-                  >
-                    <span style={{ opacity: 0.6, marginRight: 12 }}>{i + 1}.</span>
-                    {interpolate(opt.label, vars)}
-                  </button>
-                );
-              })}
+          <>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <p style={{ fontSize: 16, lineHeight: 1.7, margin: 0, marginBottom: 32 }}>
+                {interpolate(decision.prompt, vars)}
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {decision.options.map((opt, i) => {
+                  const isActive = highlighted === i;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => pick(i)}
+                      onMouseEnter={() => setHighlighted(i)}
+                      style={{
+                        textAlign: 'left',
+                        padding: '12px 16px',
+                        background: isActive ? palette.surface : 'transparent',
+                        color: palette.ink,
+                        border: `1px solid ${palette.ink}`,
+                        fontSize: 14,
+                        lineHeight: 1.5,
+                        cursor: 'pointer',
+                        fontFamily: 'system-ui, sans-serif',
+                        transition: 'background 120ms',
+                      }}
+                    >
+                      <span style={{ opacity: 0.6, marginRight: 12 }}>{i + 1}.</span>
+                      {interpolate(opt.label, vars)}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-            <p
-              style={{
-                fontSize: 11,
-                color: palette.inkMuted,
-                margin: 0,
-                marginTop: 'auto',
-                paddingTop: 24,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-              }}
-            >
+            <p style={{ ...hintStyle, marginTop: 24, color: palette.ink }}>
               ↑↓ choose · Enter or 1–{decision.options.length} to confirm
             </p>
-          </div>
+          </>
         )}
 
         {phase === 'scene' && scene.length > 0 && (
@@ -161,65 +165,57 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
         )}
 
         {phase === 'flavor' && chosen && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <p
-              style={{
-                fontSize: 13,
-                color: palette.inkMuted,
-                margin: 0,
-                marginBottom: 12,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-              }}
-            >
-              You chose
-            </p>
-            <p style={{ fontSize: 18, fontWeight: 500, margin: 0, marginBottom: 24 }}>
-              {interpolate(chosen.label, vars)}
-            </p>
-            <p
-              style={{
-                fontSize: 15,
-                lineHeight: 1.7,
-                margin: 0,
-                marginBottom: 24,
-                opacity: 0.9,
-              }}
-            >
-              {interpolate(chosen.flavor ?? '', vars)}
-            </p>
-            <EffectChips effects={chosen.effects} />
-            <button
-              onClick={onContinue}
-              style={{
-                padding: '12px 32px',
-                background: 'transparent',
-                color: palette.ink,
-                border: `1px solid ${palette.ink}`,
-                fontSize: 13,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
-                fontFamily: 'system-ui, sans-serif',
-                alignSelf: 'flex-start',
-              }}
-            >
-              Continue
-            </button>
-            <p
-              style={{
-                fontSize: 11,
-                color: palette.inkMuted,
-                margin: 0,
-                marginTop: 'auto',
-                paddingTop: 16,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-              }}
-            >
+          <>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <p
+                style={{
+                  fontSize: 13,
+                  color: palette.inkMuted,
+                  margin: 0,
+                  marginBottom: 12,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                You chose
+              </p>
+              <p style={{ fontSize: 18, fontWeight: 500, margin: 0, marginBottom: 24 }}>
+                {interpolate(chosen.label, vars)}
+              </p>
+              <p
+                style={{
+                  fontSize: 15,
+                  lineHeight: 1.7,
+                  margin: 0,
+                  marginBottom: 24,
+                  opacity: 0.9,
+                }}
+              >
+                {interpolate(chosen.flavor ?? '', vars)}
+              </p>
+              <EffectChips effects={chosen.effects} />
+              <button
+                onClick={onContinue}
+                style={{
+                  padding: '12px 32px',
+                  background: 'transparent',
+                  color: palette.ink,
+                  border: `1px solid ${palette.ink}`,
+                  fontSize: 13,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  fontFamily: 'system-ui, sans-serif',
+                  alignSelf: 'flex-start',
+                }}
+              >
+                Continue
+              </button>
+            </div>
+            <p style={{ ...hintStyle, marginTop: 16, color: palette.ink }}>
               Press Enter or click Continue
             </p>
-          </div>
+          </>
         )}
       </div>
     </div>

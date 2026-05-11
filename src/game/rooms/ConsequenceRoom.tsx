@@ -27,8 +27,8 @@ export function ConsequenceRoom({ config, onContinue }: Props) {
   return (
     <div
       style={{
-        width: ROOM_VIEWBOX.width,
-        height: ROOM_VIEWBOX.height,
+        width: 'var(--canvas-display-width)',
+        aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
         background: palette.background,
         color: palette.ink,
         border: `1px solid ${palette.surface}`,

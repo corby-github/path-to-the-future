@@ -4,6 +4,7 @@ import { roomConfigForMonth } from './game/content/roomConfigForMonth';
 import { DevPanel } from './game/dev/DevPanel';
 import { Hud } from './game/ui/Hud';
 import { InitFlow } from './game/ui/InitFlow';
+import { CurrentRoomProvider } from './game/ui/CurrentRoomContext';
 import { useAppSelector } from './game/state/hooks';
 
 export default function App() {
@@ -23,23 +24,28 @@ function Game() {
   const config = roomConfigForMonth(currentMonth);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        minHeight: '100vh',
-        fontFamily: 'sans-serif',
-        background: '#1a1a1a',
-        color: '#eee',
-        gap: 16,
-        padding: '16px 0',
-      }}
-    >
-      {import.meta.env.DEV && <DevPanel />}
-      <Hud />
-      <RoomRenderer config={config} />
-    </div>
+    <CurrentRoomProvider>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          minHeight: '100vh',
+          fontFamily: 'sans-serif',
+          background: '#1a1a1a',
+          color: '#eee',
+          gap: 16,
+          // Top 16 (padding) + 16 (gap) = 32px before first element. Mirror
+          // that below the last element with 32px bottom padding so the
+          // canvas has matching breathing room.
+          padding: '16px 0 32px 0',
+        }}
+      >
+        {import.meta.env.DEV && <DevPanel />}
+        <Hud />
+        <RoomRenderer config={config} />
+      </div>
+    </CurrentRoomProvider>
   );
 }
