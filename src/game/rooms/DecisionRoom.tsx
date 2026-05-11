@@ -48,8 +48,8 @@ const DIALOGUE_SEED_SALT = 1009;
 // adjacent (so the [E] hint reads as a stable target) and when any modal is
 // open. Objects are stationary — these knobs don't apply.
 const NPC_WANDER_RADIUS = 80;            // px each axis from spawn
-const NPC_SPEED_MIN = 25;                // virtual units / sec
-const NPC_SPEED_MAX = 45;
+const NPC_SPEED_MIN = 40;                // virtual units / sec
+const NPC_SPEED_MAX = 70;
 const NPC_DIRECTION_CHANGE_MIN_MS = 1500;
 const NPC_DIRECTION_CHANGE_MAX_MS = 3000;
 const NPC_IDLE_PROBABILITY = 0.3;        // chance the new "direction" is idle
