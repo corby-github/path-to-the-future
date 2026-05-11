@@ -56,6 +56,391 @@
         "Was that breakfast?"
       ],
       "effects": { "health": "-2", "burnout": "+2" }
+    },
+    {
+      "id": "evt-univ-old-friend",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["relationship", "lucky"],
+      "weight": 0.6,
+      "title": "An old friend in town.",
+      "body": "Someone you haven't seen in years messages: in town one night. Coffee?",
+      "scene": [
+        "A buzz on your phone.",
+        "A name you didn't expect.",
+        "You say yes before you think."
+      ],
+      "effects": { "network": "+3", "burnout": "-2" }
+    },
+    {
+      "id": "evt-swe-blog-traction",
+      "pool": "swe",
+      "era": ["any"],
+      "tags": ["visibility", "lucky"],
+      "weight": 0.4,
+      "trigger": { "technicalSkill": ">30" },
+      "title": "A post finds its audience.",
+      "body": "Something you wrote a month ago surfaces somewhere. Strangers on the internet are arguing about a paragraph you barely remember writing.",
+      "effects": { "reputation": "+4", "network": "+2" }
+    },
+    {
+      "id": "evt-univ-return-office",
+      "pool": "universal",
+      "era": ["rebound"],
+      "tags": ["era"],
+      "weight": 0.7,
+      "title": "Return-to-office.",
+      "body": "The email says three days a week, starting next month. The reply-all thread is a study in restraint.",
+      "scene": [
+        "An all-staff email.",
+        "Subject: 'Looking ahead.'",
+        "Three days. Starting Monday."
+      ],
+      "effects": { "burnout": "+3", "network": "+2" }
+    },
+    {
+      "id": "evt-univ-ai-tooling",
+      "pool": "universal",
+      "era": ["ai-shift"],
+      "tags": ["era", "lucky"],
+      "weight": 0.6,
+      "title": "The tooling lands.",
+      "body": "A new tool eats a task that used to take three days and spits the answer back in twenty minutes. You spend the afternoon staring at the ceiling.",
+      "effects": { "burnout": "-3", "technicalSkill": "+1" }
+    },
+    {
+      "id": "evt-univ-talk-invite",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["reputation", "lucky"],
+      "weight": 0.6,
+      "trigger": { "reputation": ">40" },
+      "title": "An invitation.",
+      "body": "A meetup organizer reaches out. Would you give the keynote next month? It pays nothing. It would be good for you.",
+      "effects": { "network": "+5", "reputation": "+2", "burnout": "+2" }
+    },
+    {
+      "id": "evt-univ-found-twenty",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["lucky", "humor"],
+      "weight": 0.5,
+      "title": "A twenty in a coat pocket.",
+      "body": "You pull a jacket out of the closet for the first time since last fall. There is a folded twenty in the inner pocket. You have no memory of putting it there.",
+      "effects": { "savings": "+20" }
+    },
+    {
+      "id": "evt-univ-deleted-tab",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["unlucky", "humor"],
+      "weight": 0.5,
+      "title": "Wrong tab. Wrong button.",
+      "body": "You meant to close a different tab. Forty minutes of work, gone. There was an autosave. You hope.",
+      "scene": [
+        "A click.",
+        "A blank window.",
+        "A long blink."
+      ],
+      "effects": { "burnout": "+2" }
+    },
+    {
+      "id": "evt-univ-rent-hike",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["money"],
+      "weight": 0.5,
+      "title": "A letter from the landlord.",
+      "body": "The lease renewal arrives. The rent is one hundred and twenty dollars higher than last year. The cover letter calls it a 'modest market adjustment.'",
+      "effects": { "savings": "-1200", "burnout": "+2" }
+    },
+    {
+      "id": "evt-swe-recruiter-blast",
+      "pool": "swe",
+      "era": ["any"],
+      "tags": ["humor"],
+      "weight": 0.5,
+      "title": "InMail.",
+      "body": "A recruiter at a six-month-old startup messages about a 'unique opportunity.' The company has already pivoted twice. The recruiter, apparently, doesn't know this.",
+      "effects": {}
+    },
+    {
+      "id": "evt-swe-stackoverflow-rep",
+      "pool": "swe",
+      "era": ["any"],
+      "tags": ["visibility", "lucky", "humor"],
+      "weight": 0.4,
+      "trigger": { "technicalSkill": ">25" },
+      "title": "An old answer ages well.",
+      "body": "A four-year-old answer you wrote on a forum hits a milestone of upvotes. Strangers are still finding it useful. You don't remember writing it.",
+      "effects": { "reputation": "+3" }
+    },
+    {
+      "id": "evt-univ-flight-delay",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["lucky", "humor"],
+      "weight": 0.5,
+      "title": "Three hours in an airport bar.",
+      "body": "Your flight is delayed three hours. The person at the next stool turns out to be in your industry. By boarding, you've exchanged contact info and a half-baked plan.",
+      "effects": { "network": "+4", "burnout": "+1" }
+    },
+    {
+      "id": "evt-univ-lost-wallet",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["unlucky"],
+      "weight": 0.4,
+      "title": "A wallet, briefly missing.",
+      "body": "You left it in a cab. The driver returned it the next day, untouched. You tipped him for the second ride twice as much.",
+      "effects": { "savings": "-80", "burnout": "-1" }
+    },
+    {
+      "id": "evt-univ-good-physical",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["lucky"],
+      "weight": 0.4,
+      "trigger": { "month": ">=12" },
+      "title": "An annual checkup.",
+      "body": "You went to the doctor for the first time in a while. The blood work came back unremarkable. Unremarkable is the best kind of result.",
+      "effects": { "health": "+3", "burnout": "-2" }
+    },
+    {
+      "id": "evt-univ-storm",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["flavor"],
+      "weight": 0.3,
+      "title": "A storm and a power outage.",
+      "body": "The power went out at 10pm. You sat in the dark for two hours. You read by phone light. It felt nice not to be reachable.",
+      "scene": [
+        "A flicker.",
+        "A long click.",
+        "The dark."
+      ],
+      "effects": { "burnout": "-2" }
+    },
+    {
+      "id": "evt-era-pandemic-zoom-fatigue",
+      "pool": "universal",
+      "era": ["pandemic"],
+      "tags": ["era"],
+      "weight": 0.6,
+      "title": "Seven calls today.",
+      "body": "Your face has been on a screen for nine hours. You don't remember half of what was decided. You don't think anything was.",
+      "effects": { "burnout": "+3", "health": "-1" }
+    },
+    {
+      "id": "evt-era-pandemic-roommate-friction",
+      "pool": "universal",
+      "era": ["pandemic"],
+      "tags": ["era"],
+      "weight": 0.5,
+      "title": "Two desks, one apartment.",
+      "body": "Your roommate's standup is the same time as your sync. You take yours from the bathroom. It's been like this for nine weeks.",
+      "effects": { "burnout": "+2", "network": "-1" }
+    },
+    {
+      "id": "evt-era-pandemic-walk-routine",
+      "pool": "universal",
+      "era": ["pandemic"],
+      "tags": ["era", "lucky"],
+      "weight": 0.6,
+      "title": "The afternoon walk.",
+      "body": "You started taking a 3pm walk around the block. Then four blocks. Then six. By month three, you knew every dog by name.",
+      "effects": { "burnout": "-3", "health": "+3" }
+    },
+    {
+      "id": "evt-era-pandemic-furlough-friend",
+      "pool": "universal",
+      "era": ["pandemic"],
+      "tags": ["era"],
+      "weight": 0.5,
+      "title": "A friend got the call.",
+      "body": "A friend at another company was furloughed. They texted to say they were 'fine, really.' You sent them a long voice memo back. You haven't been furloughed. That feels like more luck than choice.",
+      "effects": { "network": "+2", "burnout": "+2" }
+    },
+    {
+      "id": "evt-era-rebound-promo-wave",
+      "pool": "universal",
+      "era": ["rebound"],
+      "tags": ["era", "lucky"],
+      "weight": 0.5,
+      "trigger": { "month": ">=30" },
+      "title": "Everyone's getting promoted.",
+      "body": "The company's promotion cycle hits hard this year. Two of your peers leveled up. The Slack #promotions channel is louder than usual.",
+      "effects": { "reputation": "+2", "burnout": "+1" }
+    },
+    {
+      "id": "evt-era-rebound-comp-jump",
+      "pool": "universal",
+      "era": ["rebound"],
+      "tags": ["era", "lucky"],
+      "weight": 0.5,
+      "title": "Comp bands, recalibrated.",
+      "body": "HR sends an email. The bands moved. Your base went up by eight percent. The email used the phrase 'reflecting market realities.'",
+      "effects": { "savings": "+3200", "burnout": "-1" }
+    },
+    {
+      "id": "evt-era-rebound-leaving-wave",
+      "pool": "universal",
+      "era": ["rebound"],
+      "tags": ["era"],
+      "weight": 0.5,
+      "title": "Everyone's leaving.",
+      "body": "Three goodbye lunches in one month. Two of them for people you actually liked. The other one had really good cake.",
+      "effects": { "burnout": "+2", "network": "+1" }
+    },
+    {
+      "id": "evt-era-ai-shift-junior-anxiety",
+      "pool": "universal",
+      "era": ["ai-shift"],
+      "tags": ["era"],
+      "weight": 0.5,
+      "title": "The juniors are scared.",
+      "body": "A junior asks you, over coffee, whether they should still be doing this. You don't have a clean answer. You give them one anyway.",
+      "effects": { "reputation": "+2", "burnout": "+1" }
+    },
+    {
+      "id": "evt-era-ai-shift-adjacent-layoffs",
+      "pool": "universal",
+      "era": ["ai-shift"],
+      "tags": ["era"],
+      "weight": 0.4,
+      "title": "A neighboring team gets cut.",
+      "body": "The org chart looks different on Monday. You knew three of them. They posted open-to-work within the week. You wrote three references.",
+      "effects": { "burnout": "+3", "network": "+1" }
+    },
+    {
+      "id": "evt-era-ai-shift-tooling-evangelism",
+      "pool": "universal",
+      "era": ["ai-shift"],
+      "tags": ["era", "humor"],
+      "weight": 0.5,
+      "title": "Everyone's an evangelist.",
+      "body": "A teammate has, this week, recommended the new tooling to you in three separate channels. You've tried it. It's fine. You don't have the heart to say so.",
+      "effects": { "burnout": "+1" }
+    },
+    {
+      "id": "evt-era-uncertain-decade-mark",
+      "pool": "universal",
+      "era": ["uncertain-future"],
+      "tags": ["era"],
+      "weight": 0.5,
+      "title": "Ten years.",
+      "body": "You stumble onto a photo from 2020. Your face is different. The kitchen is different. The version of you in the photo could not have predicted the version of you holding the phone.",
+      "effects": { "burnout": "-1" }
+    },
+    {
+      "id": "evt-era-uncertain-old-codebase",
+      "pool": "universal",
+      "era": ["uncertain-future"],
+      "tags": ["era", "lucky"],
+      "weight": 0.4,
+      "title": "Code you wrote, still running.",
+      "body": "Someone messages: that service you wrote five years ago is still in production. It has not been touched. It has not gone down. The new team treats it with religious caution.",
+      "effects": { "reputation": "+3", "technicalSkill": "+1" }
+    },
+    {
+      "id": "evt-era-uncertain-becoming-mentor",
+      "pool": "universal",
+      "era": ["uncertain-future"],
+      "tags": ["era"],
+      "weight": 0.5,
+      "title": "Becoming the person you used to ask.",
+      "body": "A junior asks you a question you remember asking, at the start. You answer it differently than the answer you got. Better, you think.",
+      "effects": { "reputation": "+2", "network": "+2" }
+    },
+    {
+      "id": "evt-era-uncertain-cycle-reborn",
+      "pool": "universal",
+      "era": ["uncertain-future"],
+      "tags": ["era", "humor"],
+      "weight": 0.4,
+      "title": "Everything old is new.",
+      "body": "A pattern your team mocked in 2022 is the topic of a keynote this week. Three engineers in their twenties are very excited about it. You don't say anything.",
+      "effects": {}
+    },
+    {
+      "id": "evt-era-uncertain-economy",
+      "pool": "universal",
+      "era": ["uncertain-future"],
+      "tags": ["era"],
+      "weight": 0.4,
+      "title": "Hiring freeze.",
+      "body": "The annual all-hands is shorter than usual. The word 'discipline' appears three times. Internal mobility is encouraged. External mobility is not.",
+      "effects": { "burnout": "+2" }
+    },
+    {
+      "id": "evt-stat-burnout-doctor",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["stress"],
+      "weight": 0.7,
+      "trigger": { "burnout": ">80" },
+      "title": "A doctor's visit.",
+      "body": "You went in for one thing. The doctor asked about sleep. You answered honestly for the first time in months.",
+      "effects": { "burnout": "-5", "health": "+2", "savings": "-200" }
+    },
+    {
+      "id": "evt-stat-low-health-cold",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["stress"],
+      "weight": 0.6,
+      "trigger": { "health": "<40" },
+      "title": "A cold that lasts ten days.",
+      "body": "It started Monday. By Thursday, you'd cancelled the week. By Sunday, you remembered that lying on the couch was something the body sometimes requires.",
+      "effects": { "burnout": "-3", "health": "+3", "reputation": "-1" }
+    },
+    {
+      "id": "evt-stat-high-network-intro",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["lucky"],
+      "weight": 0.5,
+      "trigger": { "network": ">50" },
+      "title": "An introduction.",
+      "body": "Someone in your network connects you to someone interesting. No agenda. Just 'I think you two should talk.' You did. You're glad you did.",
+      "effects": { "network": "+5", "reputation": "+2" }
+    },
+    {
+      "id": "evt-stat-low-savings-card",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["money", "stress"],
+      "weight": 0.6,
+      "trigger": { "savings": "<800" },
+      "title": "Card, declined.",
+      "body": "At the grocery checkout. The cashier said nothing. You used a different card. You stood in the parking lot for a minute before driving home.",
+      "effects": { "burnout": "+3", "health": "-1" }
+    },
+    {
+      "id": "evt-swe-flow-state",
+      "pool": "swe",
+      "era": ["any"],
+      "tags": ["lucky"],
+      "weight": 0.4,
+      "trigger": { "technicalSkill": ">35" },
+      "title": "An afternoon you'll remember.",
+      "body": "Six hours felt like one. You wrote the thing in your head and then the thing on the screen and they matched. You closed your laptop and went outside while it was still light.",
+      "effects": { "burnout": "-4", "technicalSkill": "+2", "health": "+1" }
+    },
+    {
+      "id": "evt-univ-voice-reminder-mishap",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["humor", "unlucky"],
+      "weight": 0.5,
+      "title": "AM, PM.",
+      "body": "You told your phone to remind you about the 8 AM standup. It heard '8 PM.' You realized this at 8:02 that evening, when the reminder cheerfully went off. Maybe your boss didn't notice. There's always next week's standup.",
+      "scene": [
+        "A voice command, last night.",
+        "A reminder, twelve hours late.",
+        "Oh no. Oh well."
+      ],
+      "effects": { "reputation": "-2", "burnout": "+1" }
     }
   ]
 }
