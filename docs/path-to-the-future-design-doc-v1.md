@@ -711,9 +711,18 @@ ships 2 starter entries (1 NPC, 1 object); 13b expands.
 empty array. No breaking change for any existing pack.
 
 **Placement.** Day 13a hardcodes a single interactable per decision room at
-position `(200, 130)`, picked deterministically from the pack via a seeded
-random (`monthId + INTERACTABLE_SEED_SALT`). Day 13b moves placement into the
-room generator (multiple per room, weighted by month theme, layout-aware).
+spawn position `(200, 130)`, picked deterministically from the pack via a
+seeded random (`monthId + INTERACTABLE_SEED_SALT`). Day 13b moves placement
+into the room generator (multiple per room, weighted by month theme,
+layout-aware).
+
+**Motion (v1.1).** Objects are stationary. NPCs **random-walk** within a
+±80px wander zone around their spawn at 25–45 virtual units/sec (≈⅕ player
+speed). New heading every 1.5–3 seconds; 30% chance per direction-change
+to idle for that window. NPC stops moving when the player is adjacent
+(keeps the [E] hint as a stable target), when any modal is open, and after
+door commit. NPCs currently walk through obstacles — collision-aware
+pathing is deferred to a later day.
 
 **Proximity + trigger.** `DecisionRoom`'s tick handler computes distance from
 the player to the interactable. Within `INTERACT_PROXIMITY` (75 virtual units),
