@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { store } from './game/state/store'
 import { CareerPackProvider } from './game/content/CareerPackProvider'
+import { DevControlsProvider } from './game/dev/DevControlsProvider'
 import './styles/global.css'
 import App from './App.tsx'
 
@@ -14,7 +15,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
       <CareerPackProvider>
-        <App />
+        <DevControlsProvider>
+          <App />
+        </DevControlsProvider>
       </CareerPackProvider>
     </Provider>
   </StrictMode>,

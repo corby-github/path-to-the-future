@@ -1,6 +1,7 @@
 import { RoomRenderer } from './game/rooms/RoomRenderer';
 import { useCareerPack } from './game/content/useCareerPack';
 import { roomConfigForMonth } from './game/content/roomConfigForMonth';
+import { DevPanel } from './game/dev/DevPanel';
 
 export default function App() {
   const { currentMonth } = useCareerPack();
@@ -24,6 +25,7 @@ export default function App() {
         <h1 style={{ margin: 0 }}>Path to the Future</h1>
         <p style={{ margin: '4px 0', opacity: 0.7 }}>A career of choices</p>
       </header>
+      {import.meta.env.DEV && <DevPanel />}
       <RoomRenderer config={config} />
     </div>
   );

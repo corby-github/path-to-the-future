@@ -9,11 +9,21 @@
       "options": [
         {
           "label": "Stay until it's stable",
+          "scene": [
+            "The build crashes.",
+            "Panic.",
+            "The build goes green."
+          ],
           "effects": { "burnout": "+5", "reputation": "+3", "technicalSkill": "+1" },
           "flavor": "You stayed until 10. The build went green at 9:47. You won't forget that moment."
         },
         {
           "label": "Log off — they'll figure it out",
+          "scene": [
+            "You close the laptop.",
+            "The world keeps spinning.",
+            "Dinner is hot."
+          ],
           "effects": { "burnout": "-2", "reputation": "-1", "health": "+1" },
           "flavor": "You closed the laptop. The launch was fine without you. You wonder why you sometimes assume it won't be."
         }
@@ -29,6 +39,11 @@
       "options": [
         {
           "label": "Take the call",
+          "scene": [
+            "You take the call.",
+            "Pleasantries.",
+            "The job sounds boring."
+          ],
           "effects": { "network": "+5", "reputation": "+2" },
           "flavor": "Twenty minutes of pleasantries and a vague 'we should talk again.' Sometimes that's the whole point."
         },

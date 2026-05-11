@@ -15,3 +15,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Decision-modal scene-line fade. 200ms fade-in, 1200ms hold, 200ms fade-out
+   across a 1600ms total duration. Re-keyed in JSX so each line restarts the
+   animation cleanly. */
+@keyframes scene-line-fade {
+  0%    { opacity: 0; }
+  12.5% { opacity: 1; }
+  87.5% { opacity: 1; }
+  100%  { opacity: 0; }
+}
