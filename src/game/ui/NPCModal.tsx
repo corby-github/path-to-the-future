@@ -57,6 +57,13 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
   // Defer effects to close-time (mirrors DecisionRoom pattern — HUD floating
   // delta should land after the modal closes, not silently behind it).
   const handleClose = useCallback(() => {
+    // Baseline social-interaction reward: talking to an NPC at all earns +1
+    // network. Tier 2 picks layer their own effects on top — including
+    // possible network costs (e.g. "Maybe later" → -1 network) — and those
+    // are additive with this baseline. Objects don't grant the baseline.
+    if (interactable.kind === 'npc') {
+      dispatch(applyStatEffect({ stat: 'network', op: '+', magnitude: 1 }));
+    }
     if (chosen) {
       for (const [stat, expr] of Object.entries(chosen.effects)) {
         const parsed = parseEffect(expr);
@@ -69,7 +76,7 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
       }
     }
     onClose();
-  }, [chosen, dispatch, onClose]);
+  }, [interactable, chosen, dispatch, onClose]);
 
   const handleAdvance = useCallback(() => {
     // Tier 1 prompt: advance closes the modal.

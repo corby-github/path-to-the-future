@@ -601,7 +601,7 @@
             "A handshake."
           ],
           "effects": { "burnout": "+2", "network": "+2" },
-          "flavor": "You picked the second one. They were quieter than the last. They left their dishes a little longer than you preferred."
+          "flavor": "You picked the second one. They were quieter than the last. But... they let their dishes 'soak' a little longer than you prefer."
         }
       ]
     },

@@ -1,8 +1,45 @@
-import type { CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useAppSelector } from '../state/hooks';
 import { useCareerPack } from '../content/useCareerPack';
 import { StatChip } from './StatChip';
 import { useCurrentRoom } from './currentRoomContextValue';
+
+// Month-change feedback. Pulse the label + emit a "+N mo" floater whenever
+// monthId advances (or jumps via event.advanceMonths). The two signals
+// together: pulse = "the month changed" (subtle), floater = "by how much"
+// (loud for the multi-month-jump case the dev call surfaced).
+//
+// Tiered prominence — bigger jumps deserve bigger signals because they
+// represent more "time lost." Thresholds in months:
+//   1     → small (13px, 1200ms)
+//   2-5   → medium (18px, 1900ms)
+//   6+    → large (24px, 2700ms), wording flips to "months pass"
+const MONTH_DELTA_TIER_SMALL_MS = 1200;
+const MONTH_DELTA_TIER_MEDIUM_MS = 1900;
+const MONTH_DELTA_TIER_LARGE_MS = 2700;
+
+interface MonthDelta {
+  id: number;
+  text: string;
+  positive: boolean;
+  magnitude: number;
+  durationMs: number;
+}
+
+function tierForMagnitude(abs: number): { fontSize: number; durationMs: number; topOffset: number } {
+  if (abs >= 6) return { fontSize: 24, durationMs: MONTH_DELTA_TIER_LARGE_MS, topOffset: -10 };
+  if (abs >= 2) return { fontSize: 18, durationMs: MONTH_DELTA_TIER_MEDIUM_MS, topOffset: -8 };
+  return { fontSize: 13, durationMs: MONTH_DELTA_TIER_SMALL_MS, topOffset: -6 };
+}
+
+function formatMonthDelta(diff: number): string {
+  const abs = Math.abs(diff);
+  const sign = diff > 0 ? '+' : '−'; // U+2212
+  // For 6+ months ("a lot of time lost"), use the longer wording so the
+  // emit has weight beyond just a bigger number.
+  if (abs >= 6) return `${sign}${abs} months pass`;
+  return `${sign}${abs} mo`;
+}
 
 // Top-anchored player HUD. Identity column on the left (name · class · month
 // + current room), eight stat chips on the right (XP + the seven §7 stats).
@@ -20,6 +57,36 @@ export function Hud() {
   const classLabel =
     pack.manifest.entryClasses[progress.classTier]?.label ?? progress.classTier;
   const monthLabel = formatMonth(currentMonth.year, currentMonth.monthNum);
+
+  // Month-change emit. Track prev monthId via ref; on change, push a floater
+  // and let it auto-clear after the animation duration.
+  const prevMonthIdRef = useRef<number>(currentMonth.id);
+  const deltaIdCounter = useRef(0);
+  const [monthDeltas, setMonthDeltas] = useState<MonthDelta[]>([]);
+
+  useEffect(() => {
+    const prev = prevMonthIdRef.current;
+    prevMonthIdRef.current = currentMonth.id;
+    if (prev === currentMonth.id) return;
+
+    const diff = currentMonth.id - prev;
+    if (diff === 0) return;
+    const abs = Math.abs(diff);
+    const { durationMs } = tierForMagnitude(abs);
+    const id = ++deltaIdCounter.current;
+    const text = formatMonthDelta(diff);
+    setMonthDeltas((d) => [...d, {
+      id,
+      text,
+      positive: diff > 0,
+      magnitude: abs,
+      durationMs,
+    }]);
+    const timeout = window.setTimeout(() => {
+      setMonthDeltas((d) => d.filter((m) => m.id !== id));
+    }, durationMs);
+    return () => window.clearTimeout(timeout);
+  }, [currentMonth.id]);
 
   const containerStyle: CSSProperties = {
     // Match the canvas's responsive width so the HUD and canvas stay
@@ -156,9 +223,47 @@ export function Hud() {
         />
       </div>
 
-      <div style={locationStyle}>
-        <span style={locationPrimaryStyle}>{monthLabel}</span>
+      <div style={{ ...locationStyle, position: 'relative' }}>
+        {/* Re-keyed on monthId so the pulse animation restarts cleanly per
+            change. The transformOrigin sticks to the right edge so the
+            scale-up doesn't push the chip into the stats column. */}
+        <span
+          key={`month-${currentMonth.id}`}
+          style={{
+            ...locationPrimaryStyle,
+            display: 'inline-block',
+            transformOrigin: 'right center',
+            animation: 'month-pulse 600ms ease-out',
+          }}
+        >
+          {monthLabel}
+        </span>
         {template && <span style={locationMetaStyle}>{template}</span>}
+        {monthDeltas.map((d) => {
+          const tier = tierForMagnitude(d.magnitude);
+          return (
+            <span
+              key={d.id}
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: tier.topOffset,
+                transform: 'translate(-50%, 4px)',
+                fontSize: tier.fontSize,
+                fontWeight: 700,
+                color: d.positive ? palette.positive : palette.accent,
+                pointerEvents: 'none',
+                fontVariantNumeric: 'tabular-nums',
+                letterSpacing: '0.02em',
+                whiteSpace: 'nowrap',
+                animation: `month-delta-float ${d.durationMs}ms ease-out forwards`,
+                willChange: 'transform, opacity',
+              }}
+            >
+              {d.text}
+            </span>
+          );
+        })}
       </div>
     </div>
   );
