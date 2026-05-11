@@ -58,6 +58,10 @@ export interface DecisionOption {
   label: string;
   effects: Record<string, string>;
   flavor?: string;
+  // Optional cinematic scene played after the option is chosen and before the
+  // flavor confirmation. Each entry is a single line; lines fade in/out
+  // sequentially. Missing or empty = skip straight to flavor.
+  scene?: string[];
 }
 
 export interface DecisionDef {

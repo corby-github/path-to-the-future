@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Vector2, Bounds, Rect } from '../types/geometry';
 import type { PlayerState } from '../types/player';
 import { useKeyboardInput } from './useKeyboardInput';
@@ -13,6 +13,7 @@ interface UsePlayerMovementOptions {
   radius?: number;
   speed?: number;       // pixels per second
   active?: boolean;     // pause movement during transitions, dialogues, etc.
+  onTick?: (state: PlayerState) => void;  // fires inside the rAF loop each frame
 }
 
 const DEFAULT_SPEED = 180;
@@ -25,6 +26,7 @@ export function usePlayerMovement({
   radius = PLAYER_RADIUS,
   speed = DEFAULT_SPEED,
   active = true,
+  onTick,
 }: UsePlayerMovementOptions): PlayerState {
   const input = useKeyboardInput();
 
@@ -43,6 +45,13 @@ export function usePlayerMovement({
     velocity: { x: 0, y: 0 },
     facing: 'down',
   }));
+
+  // Keep the latest onTick pointer accessible from the game loop without
+  // re-registering the loop on every callback identity change.
+  const onTickRef = useRef(onTick);
+  useEffect(() => {
+    onTickRef.current = onTick;
+  });
 
   useGameLoop((delta) => {
     const { up, down, left, right } = input.current;
@@ -88,6 +97,7 @@ export function usePlayerMovement({
     };
 
     setRenderState(stateRef.current);
+    onTickRef.current?.(stateRef.current);
   }, active);
 
   return renderState;
