@@ -2,11 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { Player } from '../entities/Player';
 import { usePlayerMovement } from '../engine/usePlayerMovement';
 import { monthLabel } from '../calendar';
-import {
-  ROOM_VIEWBOX,
-  ROOM_BOUNDS,
-  ROOM_PADDING,
-} from '../coordinates';
+import { ROOM_VIEWBOX, ROOM_BOUNDS, ROOM_PADDING } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { useDevControls } from '../dev/useDevControls';
@@ -15,49 +11,47 @@ import { parseEffect } from '../content/applyEffects';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { recordDecision } from '../state/slices/historySlice';
 import { DecisionModal } from '../ui/DecisionModal';
+import { computeRoomSeed } from './generator/seedRng';
+import { generateRoom } from './generator/populate';
 import type { DecisionRoomConfig } from '../types/room';
-import type { Rect } from '../types/geometry';
 import type { DecisionDef } from '../types/careerPack';
 import type { StatKey } from '../content/applyEffects';
 import type { PlayerState } from '../types/player';
+import type { Rect } from '../types/geometry';
 
 const BASE_SPEED = 180;
-
-// Day-4 placeholder obstacles. Replaced by the room generator on Day 7.
-// The shelf split leaves an 80-unit vertical gap at y:260–340 — comfortably
-// clears the player's 28-unit vertical extent (radius 14) at spawn-height
-// (y:300) so a straight east walk doesn't clip the player's head.
-const DEMO_OBSTACLES: Rect[] = [
-  { x: 400, y: 80, width: 200, height: 60 },     // desk
-  { x: 760, y: 200, width: 60, height: 60 },     // shelf-top    (200–260)
-  { x: 760, y: 340, width: 60, height: 100 },    // shelf-bottom (340–440)
-  { x: 160, y: 420, width: 240, height: 60 },    // table
-];
-
-const DOOR: Rect = {
-  x: ROOM_VIEWBOX.width - ROOM_PADDING - 40,
-  y: ROOM_VIEWBOX.height / 2 - 50,
-  width: 40,
-  height: 100,
-};
 
 interface Props {
   config: DecisionRoomConfig;
   onExit: () => void;
 }
 
-// Player must walk into the door — center inside the rect, not just edge touch.
-function playerInsideDoor(px: number, py: number): boolean {
-  return px >= DOOR.x && px <= DOOR.x + DOOR.width
-      && py >= DOOR.y && py <= DOOR.y + DOOR.height;
+function playerInsideDoor(door: Rect, px: number, py: number): boolean {
+  return px >= door.x && px <= door.x + door.width
+      && py >= door.y && py <= door.y + door.height;
 }
 
 export function DecisionRoom({ config, onExit }: Props) {
   const { palette, pack } = useCareerPack();
   const dispatch = useAppDispatch();
+  const profile = useAppSelector((s) => s.profile);
+  const progress = useAppSelector((s) => s.progress);
   const stats = useAppSelector((s) => s.stats);
   const flags = useAppSelector((s) => s.flags);
-  const { speedMultiplier } = useDevControls();
+  const { speedMultiplier, forcedLayout } = useDevControls();
+
+  // Generate the room ONCE at mount via a useState lazy initializer. State
+  // changes mid-modal (e.g., picking a decision that shifts stats) don't
+  // regenerate the room — the player would see obstacles teleporting.
+  const [layout] = useState(() => {
+    const seed = computeRoomSeed({
+      packId: profile.careerPack,
+      entryClass: profile.entryClass,
+      monthId: config.monthId,
+      state: { progress, stats, flags },
+    });
+    return generateRoom(seed, forcedLayout);
+  });
 
   const [activeDecision, setActiveDecision] = useState<DecisionDef | null>(null);
 
@@ -71,7 +65,7 @@ export function DecisionRoom({ config, onExit }: Props) {
 
   const handleTick = useCallback((state: PlayerState) => {
     if (triggered.current) return;
-    if (!playerInsideDoor(state.position.x, state.position.y)) return;
+    if (!playerInsideDoor(layout.door, state.position.x, state.position.y)) return;
     triggered.current = true;
     const picked = selectDecision({
       decisions: pack.decisions,
@@ -83,12 +77,12 @@ export function DecisionRoom({ config, onExit }: Props) {
     } else {
       onExit();
     }
-  }, [pack.decisions, ctx, config.monthId, onExit]);
+  }, [layout.door, pack.decisions, ctx, config.monthId, onExit]);
 
   const playerState = usePlayerMovement({
-    initialPosition: { x: 80, y: ROOM_VIEWBOX.height / 2 },
+    initialPosition: layout.spawn,
     bounds: ROOM_BOUNDS,
-    obstacles: DEMO_OBSTACLES,
+    obstacles: layout.obstacles,
     active: activeDecision === null,
     speed: BASE_SPEED * speedMultiplier,
     onTick: handleTick,
@@ -150,23 +144,23 @@ export function DecisionRoom({ config, onExit }: Props) {
         />
 
         <rect
-          x={DOOR.x}
-          y={DOOR.y}
-          width={DOOR.width}
-          height={DOOR.height}
+          x={layout.door.x}
+          y={layout.door.y}
+          width={layout.door.width}
+          height={layout.door.height}
           fill={palette.accent}
           stroke={palette.ink}
           strokeWidth={2}
           rx={2}
         />
         <circle
-          cx={DOOR.x + DOOR.width - 8}
-          cy={DOOR.y + DOOR.height / 2}
+          cx={layout.door.x + layout.door.width - 8}
+          cy={layout.door.y + layout.door.height / 2}
           r={2.5}
           fill={palette.ink}
         />
 
-        {DEMO_OBSTACLES.map((o, i) => (
+        {layout.obstacles.map((o, i) => (
           <rect
             key={i}
             x={o.x}
@@ -190,7 +184,7 @@ export function DecisionRoom({ config, onExit }: Props) {
           fontSize={11}
           fill={palette.inkMuted}
         >
-          {monthLabel(config.monthId)} · Walk into the door →
+          {monthLabel(config.monthId)} · {layout.templateId} · Walk into the door →
         </text>
       </svg>
 

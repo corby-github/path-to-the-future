@@ -1,17 +1,6 @@
 import type { DecisionDef } from '../types/careerPack';
 import { passesRequires, type RequiresContext } from './evaluateRequires';
-
-// mulberry32 — small, fast, deterministic seeded PRNG. Same seed → same sequence.
-function seededRandom(seed: number): () => number {
-  let s = seed >>> 0;
-  return () => {
-    s = (s + 0x6d2b79f5) >>> 0;
-    let t = s;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+import { seededRandom } from '../rooms/generator/seedRng';
 
 export interface SelectDecisionInput {
   decisions: DecisionDef[];
