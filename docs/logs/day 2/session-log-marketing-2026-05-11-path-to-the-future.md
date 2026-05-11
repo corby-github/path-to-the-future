@@ -1,6 +1,6 @@
-# Three more days of the game build, in one 105-minute evening
+# Three more days of the game build, in one 105-minute sitting
 
-This is part two. Yesterday's session covered the engine and the structure — Days 1 through 5 of a 13-day plan, the day I documented over dinner. Today was the day the game started to *do* something. Walking into a door now opens a decision modal. Choices shift stats. State persists across page refreshes. Rooms generate from a seed. Random events fire after decisions. Three more build days landed in one evening — 6:15 to 8:00 PM, 1 hour 45 minutes from "I'm back" to "PR opened."
+This is part two. Yesterday's session covered the engine and the structure — Days 1 through 5 of a 13-day plan, the day I documented over dinner. Today was the day the game started to *do* something. Walking into a door now opens a decision modal. Choices shift stats. State persists across page refreshes. Rooms generate from a seed. Random events fire after decisions. Three more build days landed in one sitting — 6:15 AM to 8:00 AM, 1 hour 45 minutes from "I'm back" to "PR opened."
 
 I built it in conversation with Claude (Opus 4.7, 1M context), continuing yesterday's session.
 
