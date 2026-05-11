@@ -2,8 +2,23 @@ import { RoomRenderer } from './game/rooms/RoomRenderer';
 import { useCareerPack } from './game/content/useCareerPack';
 import { roomConfigForMonth } from './game/content/roomConfigForMonth';
 import { DevPanel } from './game/dev/DevPanel';
+import { Hud } from './game/ui/Hud';
+import { InitFlow } from './game/ui/InitFlow';
+import { useAppSelector } from './game/state/hooks';
 
 export default function App() {
+  const initComplete = useAppSelector((s) => s.profile.initComplete);
+
+  // Init flow renders its own full-screen cream surface; the dark game wrapper
+  // is only mounted after the player completes career → name → class → intro.
+  if (!initComplete) {
+    return <InitFlow onComplete={() => undefined} />;
+  }
+
+  return <Game />;
+}
+
+function Game() {
   const { currentMonth } = useCareerPack();
   const config = roomConfigForMonth(currentMonth);
 
@@ -13,18 +28,16 @@ export default function App() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         minHeight: '100vh',
         fontFamily: 'sans-serif',
         background: '#1a1a1a',
         color: '#eee',
         gap: 16,
+        padding: '16px 0',
       }}
     >
-      <header style={{ textAlign: 'center' }}>
-        <h1 style={{ margin: 0 }}>Path to the Future</h1>
-        <p style={{ margin: '4px 0', opacity: 0.7 }}>A career of choices</p>
-      </header>
+      <Hud />
       {import.meta.env.DEV && <DevPanel />}
       <RoomRenderer config={config} />
     </div>

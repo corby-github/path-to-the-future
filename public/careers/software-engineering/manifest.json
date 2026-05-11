@@ -47,5 +47,12 @@
         "reputation": 10
       }
     }
-  }
+  },
+
+  "intro": [
+    "March 2020.",
+    "The world has gone quiet, {playerName}.",
+    "Offices empty. Inboxes loud.",
+    "Every choice from here writes the next ten years."
+  ]
 }

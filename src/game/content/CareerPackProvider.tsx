@@ -31,8 +31,14 @@ function fallbackScreen(message: string, isError: boolean) {
   );
 }
 
+// Used before the user reaches the career picker — gives the pre-init UI a
+// pack to render against (palette, intro, etc.). Once the user picks, the
+// profile's careerPack id is set and the provider re-fetches.
+const DEFAULT_PACK_ID = 'software-engineering';
+
 export function CareerPackProvider({ children }: Props) {
-  const packId = useAppSelector((s) => s.profile.careerPack);
+  const profilePackId = useAppSelector((s) => s.profile.careerPack);
+  const packId = profilePackId || DEFAULT_PACK_ID;
   const currentMonthId = useAppSelector((s) => s.progress.currentMonth);
 
   const [pack, setPack] = useState<CareerPack | null>(null);

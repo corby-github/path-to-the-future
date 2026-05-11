@@ -40,6 +40,10 @@ export interface Manifest {
   // Probability that an event fires after each decision (0..1).
   // Optional with a default of 0.4 if omitted.
   eventChance?: number;
+  // Pre-game narrative shown after class pick, before the first month (§16).
+  // Each entry is a single line; lines fade in/out sequentially via ScenePlayer.
+  // Supports {playerName} interpolation.
+  intro?: string[];
 }
 
 export type MonthRoomType = 'decision' | 'minigame' | 'narrative' | 'consequence';
