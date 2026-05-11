@@ -156,12 +156,12 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
                       padding: '12px 16px',
                       background: isActive ? palette.surface : 'transparent',
                       color: palette.ink,
-                      border: `${isActive ? 3 : 1}px solid ${palette.ink}`,
+                      border: `1px solid ${palette.ink}`,
                       fontSize: 14,
                       lineHeight: 1.5,
                       cursor: 'pointer',
                       fontFamily: 'system-ui, sans-serif',
-                      transition: 'background 120ms, border-width 120ms',
+                      transition: 'background 120ms',
                     }}
                   >
                     <span style={{ opacity: 0.6, marginRight: 12 }}>{i + 1}.</span>
