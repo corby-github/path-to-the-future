@@ -4,6 +4,7 @@ import { roomConfigForMonth } from './game/content/roomConfigForMonth';
 import { DevPanel } from './game/dev/DevPanel';
 import { Hud } from './game/ui/Hud';
 import { InitFlow } from './game/ui/InitFlow';
+import { EndgameScreen } from './game/ui/EndgameScreen';
 import { CurrentRoomProvider } from './game/ui/CurrentRoomContext';
 import { useAppSelector } from './game/state/hooks';
 
@@ -21,6 +22,7 @@ export default function App() {
 
 function Game() {
   const { currentMonth } = useCareerPack();
+  const gameOver = useAppSelector((s) => s.progress.gameOver);
   const config = roomConfigForMonth(currentMonth);
 
   return (
@@ -44,7 +46,7 @@ function Game() {
       >
         {import.meta.env.DEV && <DevPanel />}
         <Hud />
-        <RoomRenderer config={config} />
+        {gameOver ? <EndgameScreen /> : <RoomRenderer config={config} />}
       </div>
     </CurrentRoomProvider>
   );

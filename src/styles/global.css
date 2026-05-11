@@ -68,3 +68,16 @@ body {
   0%, 80%, 100% { opacity: 0.2; }
   40%           { opacity: 1; }
 }
+
+/* Credits-screen scroll. Inner content starts at the top of the band (the
+   first line is already in view) and rises until it's fully past above the
+   top (-100% of its own height). A brief animation-delay before the first
+   iteration (set inline as `animationDelay`) gives the reader a beat to
+   register the top lines before motion begins. With `animation-fill-mode:
+   backwards`, the element renders at the 0% state during that delay so
+   there's no flash. Duration is computed per content height in JS so the
+   scroll speed stays roughly constant regardless of credits length. */
+@keyframes credits-scroll {
+  from { transform: translateY(var(--scroll-start, 10px)); }
+  to   { transform: translateY(-100%); }
+}
