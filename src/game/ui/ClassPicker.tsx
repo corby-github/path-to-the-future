@@ -143,7 +143,7 @@ export function ClassPicker({ onSelect }: Props) {
             marginTop: -8,
           }}
         >
-          This is where you'll start, not where you'll end up (hopfully). Play your cards right.
+          This is where you'll start, not where you'll end up (hopefully). Play your cards right.
         </p>
 
         <div style={optionsStyle}>
