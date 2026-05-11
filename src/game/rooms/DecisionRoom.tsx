@@ -29,10 +29,10 @@ import type { RootState } from '../state/store';
 
 const BASE_SPEED = 180;
 const DEFAULT_EVENT_CHANCE = 0.4;
-// Day 13a — interactables. Place a single interactable at a fixed corner of
+// Day 13a — interactables. Spawn a single interactable at a fixed corner of
 // the room for end-to-end validation. Real generator placement (multiple,
 // theme-weighted, layout-aware) is 13b work.
-const INTERACTABLE_POS: Vector2 = { x: 200, y: 130 };
+const INTERACTABLE_SPAWN: Vector2 = { x: 200, y: 130 };
 const INTERACTABLE_HALF_W = 28;
 const INTERACTABLE_HALF_H = 36;
 // Player center within this many virtual units of the interactable center
@@ -42,6 +42,17 @@ const INTERACT_PROXIMITY = 75;
 // event picks at the same monthId.
 const INTERACTABLE_SEED_SALT = 991;
 const DIALOGUE_SEED_SALT = 1009;
+
+// NPC wander parameters. NPCs random-walk within a small zone around their
+// spawn so the player can reliably find them. They stop when the player is
+// adjacent (so the [E] hint reads as a stable target) and when any modal is
+// open. Objects are stationary — these knobs don't apply.
+const NPC_WANDER_RADIUS = 80;            // px each axis from spawn
+const NPC_SPEED_MIN = 25;                // virtual units / sec
+const NPC_SPEED_MAX = 45;
+const NPC_DIRECTION_CHANGE_MIN_MS = 1500;
+const NPC_DIRECTION_CHANGE_MAX_MS = 3000;
+const NPC_IDLE_PROBABILITY = 0.3;        // chance the new "direction" is idle
 // "Going through the door" fade — Zelda-style. When the player enters the
 // door, the canvas fades to 0 opacity (dark app background shows through)
 // over DOOR_FADE_MS, and the decision modal pops at MODAL_POP_DELAY_MS so
@@ -125,6 +136,9 @@ export function DecisionRoom({ config, onExit }: Props) {
   // Continue beat. Random pick from `manifest.monthTransitions`. Set when
   // the pause starts, cleared when it ends. Null = no overlay rendered.
   const [transitionMessage, setTransitionMessage] = useState<string | null>(null);
+  // NPC live position. Objects keep this at the spawn (they're stationary);
+  // NPCs random-walk inside a bounded zone via the NPC-movement effect below.
+  const [npcPos, setNpcPos] = useState<Vector2>(INTERACTABLE_SPAWN);
 
   const pickTransitionMessage = useCallback((): string | null => {
     const lines = pack.manifest.monthTransitions;
@@ -158,16 +172,36 @@ export function DecisionRoom({ config, onExit }: Props) {
   const triggered = useRef(false);
   const [committed, setCommitted] = useState(false);
 
+  // Live position refs so the NPC-movement RAF (below) can see player + npc
+  // positions without re-binding the loop every frame. Synced via effects.
+  const playerPosRef = useRef<Vector2>(layout.spawn);
+  const npcPosRef = useRef<Vector2>(npcPos);
+  useEffect(() => {
+    npcPosRef.current = npcPos;
+  }, [npcPos]);
+
+  // "Should NPC move?" gate. NPCs stop when the player is adjacent (so the
+  // [E] target reads as stable), when any modal is open, and after door
+  // commit. Mirrored to a ref so the RAF closure stays cheap.
+  const npcShouldMoveRef = useRef(true);
+  useEffect(() => {
+    npcShouldMoveRef.current =
+      !adjacent &&
+      activeDecision === null &&
+      activeEvent === null &&
+      !committed;
+    // activeInteractable is read directly in JSX below; included here for
+    // completeness — the modal pauses movement too.
+  }, [adjacent, activeDecision, activeEvent, committed]);
+
   const handleTick = useCallback((state: PlayerState) => {
+    playerPosRef.current = state.position;
+
     // Update adjacency to the room's interactable on every tick so the visual
     // hint and the E-key gate stay in sync with the player position.
     if (interactable) {
-      const d = distance(
-        state.position.x,
-        state.position.y,
-        INTERACTABLE_POS.x,
-        INTERACTABLE_POS.y,
-      );
+      const ipos = interactable.kind === 'npc' ? npcPosRef.current : INTERACTABLE_SPAWN;
+      const d = distance(state.position.x, state.position.y, ipos.x, ipos.y);
       setAdjacent((cur) => {
         const next = d <= INTERACT_PROXIMITY;
         return next === cur ? cur : next;
@@ -247,6 +281,85 @@ export function DecisionRoom({ config, onExit }: Props) {
     setActiveInteractable(null);
     setActiveDialogue(null);
   }, []);
+
+  // NPC random-walk loop. Runs while the interactable is an NPC and the room
+  // is alive. Re-renders the SVG on every frame via setNpcPos. State updates
+  // happen inside the RAF callback (async) so we don't trip the
+  // setState-in-effect lint rule.
+  useEffect(() => {
+    if (!interactable || interactable.kind !== 'npc') return;
+    let raf: number | null = null;
+    let last = performance.now();
+    let nextDirectionChange = last; // immediate first direction
+    let dx = 0;
+    let dy = 0;
+
+    const tick = (now: number) => {
+      const dt = (now - last) / 1000;
+      last = now;
+
+      // Skip movement when gated — but keep the RAF alive so we resume
+      // cleanly when the gate flips off.
+      if (!npcShouldMoveRef.current || activeInteractable !== null) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+
+      // Time to pick a new direction? 30% chance of idling for the next
+      // window; otherwise a random heading at a random speed in range.
+      if (now >= nextDirectionChange) {
+        if (Math.random() < NPC_IDLE_PROBABILITY) {
+          dx = 0;
+          dy = 0;
+        } else {
+          const angle = Math.random() * 2 * Math.PI;
+          const speed = NPC_SPEED_MIN + Math.random() * (NPC_SPEED_MAX - NPC_SPEED_MIN);
+          dx = Math.cos(angle) * speed;
+          dy = Math.sin(angle) * speed;
+        }
+        nextDirectionChange =
+          now +
+          NPC_DIRECTION_CHANGE_MIN_MS +
+          Math.random() * (NPC_DIRECTION_CHANGE_MAX_MS - NPC_DIRECTION_CHANGE_MIN_MS);
+      }
+
+      setNpcPos((cur) => {
+        let nx = cur.x + dx * dt;
+        let ny = cur.y + dy * dt;
+        // Bound to wander zone around spawn. On contact with a wall, clamp
+        // and zero that axis's velocity so the next direction-change cycle
+        // picks a fresh heading.
+        const minX = INTERACTABLE_SPAWN.x - NPC_WANDER_RADIUS;
+        const maxX = INTERACTABLE_SPAWN.x + NPC_WANDER_RADIUS;
+        const minY = INTERACTABLE_SPAWN.y - NPC_WANDER_RADIUS;
+        const maxY = INTERACTABLE_SPAWN.y + NPC_WANDER_RADIUS;
+        if (nx < minX) {
+          nx = minX;
+          dx = 0;
+        }
+        if (nx > maxX) {
+          nx = maxX;
+          dx = 0;
+        }
+        if (ny < minY) {
+          ny = minY;
+          dy = 0;
+        }
+        if (ny > maxY) {
+          ny = maxY;
+          dy = 0;
+        }
+        return { x: nx, y: ny };
+      });
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [interactable, activeInteractable]);
 
   const handleChoose = useCallback((index: number) => {
     if (!activeDecision) return;
@@ -489,74 +602,78 @@ export function DecisionRoom({ config, onExit }: Props) {
           ))}
 
           {/* Interactable (NPC or object). 13a renders a kind-distinct
-              placeholder shape — real sprites come in 13b. */}
-          {interactable && (
-            <g>
-              {interactable.kind === 'npc' ? (
-                <>
-                  {/* Body */}
+              placeholder shape — real sprites come in 13b. NPCs render at
+              their live position (random walk); objects stay at spawn. */}
+          {interactable && (() => {
+            const ipos = interactable.kind === 'npc' ? npcPos : INTERACTABLE_SPAWN;
+            return (
+              <g>
+                {interactable.kind === 'npc' ? (
+                  <>
+                    {/* Body */}
+                    <rect
+                      x={ipos.x - 18}
+                      y={ipos.y - 8}
+                      width={36}
+                      height={48}
+                      rx={6}
+                      fill={palette.accent}
+                      stroke={palette.ink}
+                      strokeWidth={2}
+                    />
+                    {/* Head */}
+                    <circle
+                      cx={ipos.x}
+                      cy={ipos.y - 22}
+                      r={14}
+                      fill={palette.accent}
+                      stroke={palette.ink}
+                      strokeWidth={2}
+                    />
+                  </>
+                ) : (
                   <rect
-                    x={INTERACTABLE_POS.x - 18}
-                    y={INTERACTABLE_POS.y - 8}
-                    width={36}
-                    height={48}
-                    rx={6}
-                    fill={palette.accent}
+                    x={ipos.x - 26}
+                    y={ipos.y - 26}
+                    width={52}
+                    height={52}
+                    rx={4}
+                    fill={palette.surface}
                     stroke={palette.ink}
                     strokeWidth={2}
                   />
-                  {/* Head */}
-                  <circle
-                    cx={INTERACTABLE_POS.x}
-                    cy={INTERACTABLE_POS.y - 22}
-                    r={14}
-                    fill={palette.accent}
-                    stroke={palette.ink}
-                    strokeWidth={2}
-                  />
-                </>
-              ) : (
-                <rect
-                  x={INTERACTABLE_POS.x - 26}
-                  y={INTERACTABLE_POS.y - 26}
-                  width={52}
-                  height={52}
-                  rx={4}
-                  fill={palette.surface}
-                  stroke={palette.ink}
-                  strokeWidth={2}
-                />
-              )}
-              {/* Adjacency halo + [E] hint when player is in range. */}
-              {adjacent && !activeInteractable && (
-                <>
-                  <rect
-                    x={INTERACTABLE_POS.x - INTERACTABLE_HALF_W - 4}
-                    y={INTERACTABLE_POS.y - INTERACTABLE_HALF_H - 4}
-                    width={(INTERACTABLE_HALF_W + 4) * 2}
-                    height={(INTERACTABLE_HALF_H + 4) * 2}
-                    rx={8}
-                    fill="none"
-                    stroke={palette.accent}
-                    strokeWidth={2}
-                    strokeDasharray="6 4"
-                    opacity={0.85}
-                  />
-                  <text
-                    x={INTERACTABLE_POS.x}
-                    y={INTERACTABLE_POS.y - INTERACTABLE_HALF_H - 12}
-                    textAnchor="middle"
-                    fontSize={14}
-                    fontFamily="system-ui, sans-serif"
-                    fontWeight={600}
-                    fill={palette.ink}
-                  >
-                    [E] talk
-                  </text>
-                </>
-              )}
-            </g>
-          )}
+                )}
+                {/* Adjacency halo + [E] hint when player is in range. */}
+                {adjacent && !activeInteractable && (
+                  <>
+                    <rect
+                      x={ipos.x - INTERACTABLE_HALF_W - 4}
+                      y={ipos.y - INTERACTABLE_HALF_H - 4}
+                      width={(INTERACTABLE_HALF_W + 4) * 2}
+                      height={(INTERACTABLE_HALF_H + 4) * 2}
+                      rx={8}
+                      fill="none"
+                      stroke={palette.accent}
+                      strokeWidth={2}
+                      strokeDasharray="6 4"
+                      opacity={0.85}
+                    />
+                    <text
+                      x={ipos.x}
+                      y={ipos.y - INTERACTABLE_HALF_H - 12}
+                      textAnchor="middle"
+                      fontSize={14}
+                      fontFamily="system-ui, sans-serif"
+                      fontWeight={600}
+                      fill={palette.ink}
+                    >
+                      [E] talk
+                    </text>
+                  </>
+                )}
+              </g>
+            );
+          })()}
 
           <Player state={playerState} />
         </svg>
