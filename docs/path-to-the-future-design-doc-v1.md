@@ -25,6 +25,8 @@ A narrative life-simulation game in which the player navigates 10 years (2020–
 
 **Tagline:** *A career of choices.*
 
+**Style:** A choose-your-own-adventure where every decision you make impacts the outcome
+
 **Tone:** Bittersweet, contemplative, occasionally playful. Life happens. You make the best of it.
 
 **Length:** 45–90 minutes per playthrough. Replayable.
