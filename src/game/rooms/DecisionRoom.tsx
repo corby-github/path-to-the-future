@@ -187,18 +187,31 @@ export function DecisionRoom({ config, onExit }: Props) {
     npcPositionsRef.current = npcPositions;
   }, [npcPositions]);
 
-  // "Should NPCs move?" gate. They stop when the player is adjacent to any
-  // of them (so the [E] target reads as stable), when any modal is open,
-  // and after door commit. Mirrored to a ref so the RAF closure stays cheap.
-  const npcShouldMoveRef = useRef(true);
+  // Per-NPC pause logic. Refs mirror state so the RAF closure stays cheap.
+  //
+  // GLOBAL pause (all NPCs stop): committed (player walked through door),
+  // any DecisionModal or EventModal open. These are room-level "the world
+  // pauses" beats — everyone freezes.
+  //
+  // PER-NPC pause: an NPC stops when (a) the player is adjacent to them
+  // (the [E] target needs to be stable), or (b) the player is engaged with
+  // THAT NPC's modal (talking to them). Other NPCs keep wandering — and
+  // object interactions (printer, plant, etc.) never pause NPCs.
+  const globalPauseRef = useRef(false);
   useEffect(() => {
-    npcShouldMoveRef.current =
-      adjacentIndex === null &&
-      activeDecision === null &&
-      activeEvent === null &&
-      activeInteractable === null &&
-      !committed;
-  }, [adjacentIndex, activeDecision, activeEvent, activeInteractable, committed]);
+    globalPauseRef.current =
+      committed || activeDecision !== null || activeEvent !== null;
+  }, [committed, activeDecision, activeEvent]);
+
+  const adjacentIndexRef = useRef<number | null>(null);
+  useEffect(() => {
+    adjacentIndexRef.current = adjacentIndex;
+  }, [adjacentIndex]);
+
+  const activeInteractableIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    activeInteractableIdRef.current = activeInteractable?.id ?? null;
+  }, [activeInteractable]);
 
   const handleTick = useCallback((state: PlayerState) => {
     // Find the nearest interactable within proximity. NPCs use their live
@@ -318,18 +331,24 @@ export function DecisionRoom({ config, onExit }: Props) {
       const dt = (now - last) / 1000;
       last = now;
 
-      if (!npcShouldMoveRef.current) {
+      // Global pause (door commit / decision / event modal) freezes all NPCs.
+      // Per-NPC paused-state is checked inside the map below.
+      if (globalPauseRef.current) {
         raf = requestAnimationFrame(tick);
         return;
       }
 
       setNpcPositions((cur) => {
-        // Map old → new; preserve object positions unchanged. For NPCs,
-        // advance direction-of-the-moment, position, and bound to wander
-        // zone around their PLACED spawn.
+        // Map old → new. Objects stay at spawn. Each NPC checks its own
+        // pause: adjacent to player OR currently being talked to.
         return cur.map((pos, i) => {
           const p = placements[i];
           if (p.def.kind !== 'npc') return pos;
+
+          // Per-NPC pause checks.
+          if (adjacentIndexRef.current === i) return pos;
+          if (activeInteractableIdRef.current === p.def.id) return pos;
+
           const m = motion[i];
 
           if (now >= m.nextChangeAt) {
@@ -463,11 +482,20 @@ export function DecisionRoom({ config, onExit }: Props) {
     if (activeEvent) {
       applyEvent(activeEvent, dispatch);
     }
-    if (activeEvent?.advanceMonths && activeEvent.advanceMonths > 1) {
-      dispatch(skipMonths(activeEvent.advanceMonths - 1));
+    const jump = activeEvent?.advanceMonths ?? 1;
+    if (jump > 1) {
+      dispatch(skipMonths(jump - 1));
     }
     setActiveEvent(null);
-    setTransitionMessage(pickTransitionMessage());
+    // For multi-month jumps, replace the random "life goes on" line with an
+    // explicit "N months pass." in the status bar — the HUD floater says
+    // the same thing, but the status-bar message gives a second beat at a
+    // larger reading register.
+    if (jump > 1) {
+      setTransitionMessage(`${jump} months pass.`);
+    } else {
+      setTransitionMessage(pickTransitionMessage());
+    }
     window.setTimeout(() => {
       onExit();
     }, POST_EFFECT_PAUSE_MS);

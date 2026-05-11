@@ -102,3 +102,22 @@ body {
   from { opacity: 0; transform: scale(0.96); }
   to   { opacity: 1; transform: scale(1); }
 }
+
+/* HUD month-label pulse on month change. Brief scale-up so the player sees
+   the label react when time advances — paired with a "+N mo" emit (below)
+   for the magnitude signal. Re-keyed in JSX per monthId so each change
+   restarts the animation cleanly. */
+@keyframes month-pulse {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+/* HUD month-change floater. Same family as stat-delta-float but starts a bit
+   higher and rises further so it reads as bigger / more meaningful than a
+   regular stat tick. ~1200ms total. */
+@keyframes month-delta-float {
+  0%   { opacity: 0; transform: translate(-50%, 4px); }
+  15%  { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -34px); }
+}
