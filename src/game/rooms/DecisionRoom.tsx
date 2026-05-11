@@ -9,17 +9,22 @@ import { useDevControls } from '../dev/useDevControls';
 import { selectDecision } from '../content/selectDecision';
 import { parseEffect } from '../content/applyEffects';
 import { applyStatEffect } from '../state/slices/statsSlice';
-import { recordDecision } from '../state/slices/historySlice';
+import { recordDecision, recordEvent } from '../state/slices/historySlice';
+import { skipMonths } from '../state/slices/progressSlice';
+import { rollEvents, findEventById } from '../content/rollEvents';
+import { applyEvent } from '../content/applyEvent';
 import { DecisionModal } from '../ui/DecisionModal';
+import { EventModal } from '../ui/EventModal';
 import { computeRoomSeed } from './generator/seedRng';
 import { generateRoom } from './generator/populate';
 import type { DecisionRoomConfig } from '../types/room';
-import type { DecisionDef } from '../types/careerPack';
+import type { DecisionDef, EventDef } from '../types/careerPack';
 import type { StatKey } from '../content/applyEffects';
 import type { PlayerState } from '../types/player';
 import type { Rect } from '../types/geometry';
 
 const BASE_SPEED = 180;
+const DEFAULT_EVENT_CHANCE = 0.4;
 
 interface Props {
   config: DecisionRoomConfig;
@@ -32,17 +37,14 @@ function playerInsideDoor(door: Rect, px: number, py: number): boolean {
 }
 
 export function DecisionRoom({ config, onExit }: Props) {
-  const { palette, pack } = useCareerPack();
+  const { palette, pack, currentMonth: monthEntry } = useCareerPack();
   const dispatch = useAppDispatch();
   const profile = useAppSelector((s) => s.profile);
   const progress = useAppSelector((s) => s.progress);
   const stats = useAppSelector((s) => s.stats);
   const flags = useAppSelector((s) => s.flags);
-  const { speedMultiplier, forcedLayout } = useDevControls();
+  const { speedMultiplier, forcedLayout, eventMode } = useDevControls();
 
-  // Generate the room ONCE at mount via a useState lazy initializer. State
-  // changes mid-modal (e.g., picking a decision that shifts stats) don't
-  // regenerate the room — the player would see obstacles teleporting.
   const [layout] = useState(() => {
     const seed = computeRoomSeed({
       packId: profile.careerPack,
@@ -54,6 +56,7 @@ export function DecisionRoom({ config, onExit }: Props) {
   });
 
   const [activeDecision, setActiveDecision] = useState<DecisionDef | null>(null);
+  const [activeEvent, setActiveEvent] = useState<EventDef | null>(null);
 
   const ctx = useMemo(() => ({
     stats,
@@ -83,7 +86,7 @@ export function DecisionRoom({ config, onExit }: Props) {
     initialPosition: layout.spawn,
     bounds: ROOM_BOUNDS,
     obstacles: layout.obstacles,
-    active: activeDecision === null,
+    active: activeDecision === null && activeEvent === null,
     speed: BASE_SPEED * speedMultiplier,
     onTick: handleTick,
   });
@@ -108,10 +111,50 @@ export function DecisionRoom({ config, onExit }: Props) {
     }));
   }, [activeDecision, dispatch, config.monthId]);
 
-  const handleContinue = useCallback(() => {
-    setActiveDecision(null);
+  // Roll an event after the decision flavor's Continue. Returns the event to
+  // fire next (or null to skip straight to fade).
+  const pickEvent = useCallback((): EventDef | null => {
+    if (eventMode === 'never') return null;
+    if (eventMode !== 'auto') {
+      // Force a specific event by id (dev panel selection).
+      return findEventById(pack.events, eventMode);
+    }
+    const chance = pack.manifest.eventChance ?? DEFAULT_EVENT_CHANCE;
+    return rollEvents({
+      events: pack.events,
+      eventChance: chance,
+      era: monthEntry.era,
+      ctx,
+      monthId: config.monthId,
+    });
+  }, [eventMode, pack.events, pack.manifest.eventChance, monthEntry.era, ctx, config.monthId]);
+
+  const handleDecisionContinue = useCallback(() => {
+    const event = pickEvent();
+    if (event) {
+      applyEvent(event, dispatch);
+      dispatch(recordEvent({
+        monthId: config.monthId,
+        eventId: event.id,
+        timestamp: Date.now(),
+      }));
+      setActiveDecision(null);
+      setActiveEvent(event);
+    } else {
+      setActiveDecision(null);
+      onExit();
+    }
+  }, [pickEvent, dispatch, config.monthId, onExit]);
+
+  const handleEventContinue = useCallback(() => {
+    // advanceMonths handling: if the event jumped time, dispatch the extra
+    // skip BEFORE the normal +1 fade. Total advance = event.advanceMonths.
+    if (activeEvent?.advanceMonths && activeEvent.advanceMonths > 1) {
+      dispatch(skipMonths(activeEvent.advanceMonths - 1));
+    }
+    setActiveEvent(null);
     onExit();
-  }, [onExit]);
+  }, [activeEvent, dispatch, onExit]);
 
   return (
     <>
@@ -192,7 +235,14 @@ export function DecisionRoom({ config, onExit }: Props) {
         <DecisionModal
           decision={activeDecision}
           onChoose={handleChoose}
-          onContinue={handleContinue}
+          onContinue={handleDecisionContinue}
+        />
+      )}
+
+      {activeEvent && (
+        <EventModal
+          event={activeEvent}
+          onContinue={handleEventContinue}
         />
       )}
     </>

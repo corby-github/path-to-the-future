@@ -25,7 +25,6 @@ function assertDoorAccessible(layout: RoomLayout): void {
   if (!import.meta.env.DEV) return;
   for (const o of layout.obstacles) {
     if (rectsIntersect(o, layout.door)) {
-      // eslint-disable-next-line no-console
       console.warn(
         `[room-generator] Template "${layout.templateId}" has an obstacle ` +
         `intersecting the door rect. This will likely produce an un-exitable room.`,

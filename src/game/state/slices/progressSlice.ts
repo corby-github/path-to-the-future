@@ -34,8 +34,21 @@ const progressSlice = createSlice({
     setClassTier(state, action: PayloadAction<string>) {
       state.classTier = action.payload;
     },
+    // Jump multiple months at once (event.advanceMonths). Marks each skipped
+    // month as completed and clamps at 120.
+    skipMonths(state, action: PayloadAction<number>) {
+      const n = action.payload;
+      if (n <= 0) return;
+      for (let i = 0; i < n; i++) {
+        const id = state.currentMonth + i;
+        if (id >= 1 && id <= 120 && !state.completedMonths.includes(id)) {
+          state.completedMonths.push(id);
+        }
+      }
+      state.currentMonth = Math.min(120, state.currentMonth + n);
+    },
   },
 });
 
-export const { completeMonth, setCurrentMonth, addXp, setClassTier } = progressSlice.actions;
+export const { completeMonth, setCurrentMonth, addXp, setClassTier, skipMonths } = progressSlice.actions;
 export default progressSlice.reducer;
