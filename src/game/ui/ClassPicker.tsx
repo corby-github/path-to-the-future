@@ -133,7 +133,7 @@ export function ClassPicker({ onSelect }: Props) {
       <div style={cardStyle}>
         <h1 style={titleStyle}>Choose your starting class</h1>
         <p style={subtitleStyle}>
-          Two playable in v1. You'll climb the rest as you gain XP.
+          You'll climb the rest as you gain XP.
         </p>
         <p
           style={{
@@ -143,7 +143,7 @@ export function ClassPicker({ onSelect }: Props) {
             marginTop: -8,
           }}
         >
-          Where you start. Not where you'll end. Play your cards right.
+          This is where you'll start, not where you'll end up (hopfully). Play your cards right.
         </p>
 
         <div style={optionsStyle}>
