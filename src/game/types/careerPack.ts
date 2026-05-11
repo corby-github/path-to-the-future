@@ -37,6 +37,9 @@ export interface Manifest {
   palette: Palette;
   eras: Record<string, EraMood>;
   entryClasses: Record<string, EntryClass>;
+  // Probability that an event fires after each decision (0..1).
+  // Optional with a default of 0.4 if omitted.
+  eventChance?: number;
 }
 
 export type MonthRoomType = 'decision' | 'minigame' | 'narrative' | 'consequence';
@@ -83,7 +86,9 @@ export interface EventDef {
   trigger?: Record<string, string>;
   title: string;
   body: string;
+  scene?: string[];
   effects: Record<string, string>;
+  flags?: Partial<{ inRelationship: boolean; hasKids: boolean; inGradSchool: boolean }>;
   advanceMonths?: number;
   consequence?: string;
   endsGame?: boolean;

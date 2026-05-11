@@ -7,12 +7,20 @@ export interface DecisionRecord {
   timestamp: number;
 }
 
+export interface EventRecord {
+  monthId: number;
+  eventId: string;
+  timestamp: number;
+}
+
 export interface HistoryState {
   decisions: DecisionRecord[];
+  events: EventRecord[];
 }
 
 const initialState: HistoryState = {
   decisions: [],
+  events: [],
 };
 
 const historySlice = createSlice({
@@ -22,11 +30,14 @@ const historySlice = createSlice({
     recordDecision(state, action: PayloadAction<DecisionRecord>) {
       state.decisions.push(action.payload);
     },
+    recordEvent(state, action: PayloadAction<EventRecord>) {
+      state.events.push(action.payload);
+    },
     resetHistory() {
       return initialState;
     },
   },
 });
 
-export const { recordDecision, resetHistory } = historySlice.actions;
+export const { recordDecision, recordEvent, resetHistory } = historySlice.actions;
 export default historySlice.reducer;

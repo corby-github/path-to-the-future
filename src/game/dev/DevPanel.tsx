@@ -1,4 +1,5 @@
 import { useDevControls } from './useDevControls';
+import { useCareerPack } from '../content/useCareerPack';
 import { LAYOUT_TEMPLATES } from '../rooms/generator/layouts';
 
 const SPEED_OPTIONS = [1, 2, 3, 4];
@@ -18,7 +19,10 @@ export function DevPanel() {
     setSpeedMultiplier,
     forcedLayout,
     setForcedLayout,
+    eventMode,
+    setEventMode,
   } = useDevControls();
+  const { pack } = useCareerPack();
 
   return (
     <div
@@ -33,6 +37,7 @@ export function DevPanel() {
         fontSize: 11,
         color: '#aaa',
         letterSpacing: '0.04em',
+        flexWrap: 'wrap',
       }}
     >
       <span style={{ color: '#e88', fontWeight: 600 }}>DEV</span>
@@ -63,6 +68,23 @@ export function DevPanel() {
           {LAYOUT_TEMPLATES.map((t) => (
             <option key={t.id} value={t.id}>
               {t.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span>events</span>
+        <select
+          value={eventMode}
+          onChange={(e) => setEventMode(e.target.value)}
+          style={selectStyle}
+        >
+          <option value="auto">auto</option>
+          <option value="never">never</option>
+          {pack.events.map((ev) => (
+            <option key={ev.id} value={ev.id}>
+              force: {ev.id}
             </option>
           ))}
         </select>

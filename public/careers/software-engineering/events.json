@@ -1,15 +1,61 @@
 {
   "events": [
     {
+      "id": "evt-univ-sunset",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["flavor"],
+      "weight": 1.0,
+      "title": "A moment.",
+      "body": "You stopped on the walk home for the sunset. Five minutes. Five minutes you would have spent looking at your phone.",
+      "effects": {}
+    },
+    {
       "id": "evt-univ-bank-error",
       "pool": "universal",
       "era": ["any"],
       "tags": ["lucky"],
-      "weight": 0.1,
+      "weight": 0.3,
       "trigger": { "month": ">=2" },
       "title": "Bank error in your favor.",
       "body": "A clerical error credits your account by $1,200. Three weeks later, it has not been reversed.",
+      "scene": [
+        "Your phone buzzes.",
+        "A bank notification.",
+        "Wait. That's not right."
+      ],
       "effects": { "savings": "+1200" }
+    },
+    {
+      "id": "evt-univ-pandemic-close",
+      "pool": "universal",
+      "era": ["pandemic"],
+      "tags": ["era"],
+      "weight": 0.8,
+      "title": "The office closes.",
+      "body": "An email arrives. Effective immediately. You don't know when you'll be back.",
+      "scene": [
+        "An all-staff email.",
+        "Subject line: 'Effective immediately.'",
+        "You read it twice."
+      ],
+      "effects": { "burnout": "+3" }
+    },
+    {
+      "id": "evt-univ-skip-breakfast",
+      "pool": "universal",
+      "era": ["any"],
+      "tags": ["stress"],
+      "weight": 1.0,
+      "trigger": { "burnout": ">70" },
+      "title": "Skipping breakfast again.",
+      "body": "You realize halfway through the standup that you haven't eaten today. Third time this week.",
+      "scene": [
+        "Coffee.",
+        "Tab after tab.",
+        "Was that breakfast?"
+      ],
+      "effects": { "health": "-2", "burnout": "+2" }
     }
   ]
 }

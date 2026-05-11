@@ -2,6 +2,7 @@
   "id": "software-engineering",
   "name": "Software Engineering",
   "tagline": "A career of choices.",
+  "eventChance": 0.4,
 
   "palette": {
     "background": "#f5f1e8",
