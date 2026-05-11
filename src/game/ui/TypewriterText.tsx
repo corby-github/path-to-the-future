@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 // §8b "Modal Presentation for NPCs & Objects."
 //
@@ -77,6 +77,11 @@ export function TypewriterText({
 
   const [visible, setVisible] = useState(0);
 
+  // Skip signal — flipped true by handleInteract during reveal, checked by
+  // the step loop so the next setTimeout doesn't undo the external jump-to-end.
+  // Reset to false on every text change (new emission cycle).
+  const skippedRef = useRef(false);
+
   // Derived completion — once all visible chars are emitted (or empty text),
   // the reveal is complete. Computed during render so we avoid the
   // setState-in-effect lint rule (no separate `complete` state to sync).
@@ -95,13 +100,14 @@ export function TypewriterText({
   // the effect body and don't trigger the cascading-render lint rule.
   useEffect(() => {
     if (totalChars === 0) return;
+    skippedRef.current = false;
     let cancelled = false;
     let timer: number | null = null;
     let tokenIdx = 0;
     let charsEmitted = 0;
 
     const step = () => {
-      if (cancelled) return;
+      if (cancelled || skippedRef.current) return;
       while (tokenIdx < tokens.length) {
         const tok = tokens[tokenIdx];
         if (tok.kind === 'pause') {
@@ -132,7 +138,10 @@ export function TypewriterText({
 
   const handleInteract = useCallback(() => {
     if (!complete && skipOnInteract) {
-      // Skip-to-end: jump visible to total. Derived `complete` flips true.
+      // Skip-to-end: signal the step loop to stop AND jump visible to
+      // total. Without the ref signal, the next setTimeout would resume
+      // emitting from its local counter and bounce visible backward.
+      skippedRef.current = true;
       setVisible(totalChars);
       return;
     }

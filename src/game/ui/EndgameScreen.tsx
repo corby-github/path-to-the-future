@@ -386,7 +386,7 @@ export function EndgameScreen() {
         display: 'flex',
         flexDirection: 'column',
         padding: '20px 32px',
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: 'inherit',
         gap: 12,
         minHeight: 0,
       }}

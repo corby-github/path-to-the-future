@@ -56,7 +56,7 @@ export function EventModal({ event, onContinue }: Props) {
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 100,
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: 'inherit',
       }}
     >
       <div
@@ -122,7 +122,7 @@ export function EventModal({ event, onContinue }: Props) {
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                   cursor: 'pointer',
-                  fontFamily: 'system-ui, sans-serif',
+                  fontFamily: 'inherit',
                   alignSelf: 'flex-start',
                 }}
               >

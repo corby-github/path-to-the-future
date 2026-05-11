@@ -230,7 +230,7 @@ export function Blackjack({ monthId, onComplete }: Props) {
         display: 'flex',
         flexDirection: 'column',
         padding: '32px 48px',
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: 'inherit',
       }}
     >
       <p

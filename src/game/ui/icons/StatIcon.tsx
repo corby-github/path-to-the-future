@@ -25,7 +25,7 @@ interface Props {
 }
 
 const FONT_STACK =
-  "-apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif";
+  "inherit";
 
 // Body fragments — see docs/icons-preview/stat-icons.html for the original
 // design exploration. Treatment A: line-art bodies with filled accents, plus

@@ -9,7 +9,7 @@ body,
 }
 
 body {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-game);
   background: #1a1a1a;
   color: #eee;
   -webkit-font-smoothing: antialiased;
@@ -30,6 +30,13 @@ body {
          padding (16) + DevPanel (~36) + HUD (~70) + status bar (~24) +
          gaps (~64) + bottom padding (32). */
   --canvas-display-width: min(100vw, 1000px, calc((100vh - 240px) * 5 / 3));
+
+  /* The game font. Single source of truth — swap this one declaration to
+     change the entire UI's typography. The post-13a sweep collapsed all
+     inline fontFamily references to 'inherit' (except real monospace
+     blocks: DevPanel chrome, CodeReview snippets, Blackjack card faces),
+     so this var → body → inherit cascade reaches everywhere. */
+  --font-game: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
 /* Decision-modal scene-line fade. 200ms fade-in, 1200ms hold, 200ms fade-out
