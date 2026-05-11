@@ -1,9 +1,21 @@
-# Path to the Future: Design Document v1.0
+# Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 1.0
-**Status:** Approved, ready for implementation
-**Last updated:** 2026-05-10
+**Document version:** 1.1
+**Status:** Living spec · Days 1–12 merged · Day 13 in progress (13a-c phasing)
+**Last updated:** 2026-05-11
+
+---
+
+## Change log
+
+This document is living. Every meaningful revision lands here so future
+sessions (or contributors) can read the spec at any version cleanly.
+
+| Version | Date       | Author                    | Summary |
+|---------|------------|---------------------------|---------|
+| v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
+| v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
 
 ---
 
@@ -12,6 +24,8 @@
 A narrative life-simulation game in which the player navigates 10 years (2020–2030) of a software engineering career, one month at a time. Each month is a "room" the player walks through, encountering decisions that compound into a unique life trajectory. Random events, era-flavored crises, and the player's own choices shape who they become by 2030.
 
 **Tagline:** *A career of choices.*
+
+**Style:** A choose-your-own-adventure where every decision you make impacts the outcome
 
 **Tone:** Bittersweet, contemplative, occasionally playful. Life happens. You make the best of it.
 
@@ -106,14 +120,22 @@ Every room config has a `roomType` field. The renderer picks the right component
 
 ```ts
 {
-  profile: { name, careerPack, entryClass, createdAt },
-  progress: { currentMonth, completedMonths[], xp, classTier },
+  profile: { name, careerPack, entryClass, createdAt, initComplete },
+  progress: { currentMonth, completedMonths[], xp, classTier, gameOver },
   stats: { burnout, savings, network, health, relationship, technicalSkill, reputation },
   flags: { inRelationship, hasKids, inGradSchool, ... },
-  history: { decisions: [{ monthId, decisionId, optionTaken, timestamp }] },
+  history: { decisions: [{ monthId, decisionId, optionTaken, timestamp }],
+             events:    [{ monthId, eventId, timestamp }] },
   meta: { version, lastSaveAt }
 }
 ```
+
+**v1.1 additions:**
+- `profile.initComplete` (added Day 9) — flips true once the player completes
+  Career → Name → Class → Intro. Drives `App.tsx` routing between `<InitFlow>` and `<Game>`.
+- `progress.gameOver` (added Day 12) — flips true on `completeMonth(120)`. Drives
+  `App.tsx` routing between `<RoomRenderer>` and `<EndgameScreen>` (§21).
+- `history.events` (always present; spelled out in v1.1 — was implicit in v1.0).
 
 ### React refs/hooks (per-frame, never persisted)
 
@@ -143,7 +165,7 @@ UI: modal open/closed, hovered interactable, etc.
 
 **XP** is separate, monotonically increasing, drives class tier (Novice → Junior → Skilled → ...).
 
-**Score** is derived at endgame from final stat state, XP, and decision history. Not surfaced during play.
+**Score** is derived at endgame from final stat state, XP, and decision history. Not surfaced during play. See §21 for the v1 formula.
 
 ---
 
@@ -258,9 +280,15 @@ Events can:
 
 | Mini-game           | Mechanic    | Triggered by                                  |
 |---------------------|-------------|-----------------------------------------------|
-| **Blackjack**       | Chance      | Vegas / gambling decisions                    |
-| **Code Review**     | Skill       | Senior-tier work decisions (find the bug)     |
-| **Reaction Sprint** | Twitch      | High-pressure deadline decisions              |
+| **Blackjack**       | Chance — hit/stand only, dealer plays to 17, $200 stake | Vegas / gambling decisions |
+| **Code Review**     | Skill — one hand-authored snippet, find the bug from 4 options | Senior-tier work decisions |
+| **Reaction Sprint** (Stacker) | Timing — block slides L↔R; **SPACE** locks; land inside the highlighted column. 5 blocks visible from start, bottom-up activation, speed ramps per block | High-pressure deadline decisions |
+
+**v1.1 note:** Reaction Sprint shipped as the "Stacker" mechanic (Day 11). The
+original "twitch" framing was reshaped to a keyboard-driven timing game — see
+`src/game/minigames/Stacker.tsx`. Win threshold: 4-5 stacks. Partial: 2-3.
+Fail: 0-1. Slot placements in v1: month 32 (Blackjack), month 60 (Code Review),
+month 90 (Stacker).
 
 All other "mini-game-shaped" moments are **narrated and resolved with a stat-weighted dice roll, not played out interactively.**
 
@@ -277,18 +305,40 @@ This pattern is the single biggest scope-saving decision in the doc.
 - **Tablet/mobile (architected, not tested for v1):** Tap-to-walk. Player walks toward tap point until reached or new tap supplied. Not pathfinding — just "go toward this point."
 - **Virtual coordinate system:** all rooms are 1000×600 internally. Display scales via SVG `viewBox`.
 
+### v1.1 — interaction key
+
+- **E** — interact with the nearest NPC or object when the player is within
+  proximity (~75 virtual units). Opens the §8b modal (see §23). Mouse is
+  not required; keyboard-first per project policy.
+- Door triggering remains walk-into-door (no key required).
+- All modals support keyboard navigation: ↑↓←→ to choose, Enter/Space to
+  confirm, Esc where applicable, 1-N direct hotkeys for option lists.
+
 ---
 
 ## 12. Save / Load
 
 - **localStorage only.** No cookies, no backend.
-- **Multi-profile** on one browser:
+- **Multi-profile** on one browser (per §12 spec; v1 ships with a single key while the multi-profile flow is deferred):
   - `pttf:profiles` → list of profile names
   - `pttf:active` → current profile
   - `pttf:save:{name}` → full Redux state
 - **Auto-save** after every room transition.
 - **Sign out** clears active pointer; profile data remains.
 - **No security or auth** in v1. Whoever opens the browser, plays.
+
+### STATE_VERSION (v1.1)
+
+Lives in `src/game/state/persistence.ts`. Bumped on any **breaking change to
+the persisted shape**; old saves are auto-discarded on load.
+
+| Version | Day  | Change |
+|---------|------|--------|
+| 1.0.0   | 6    | Initial persistence (single-key `pttf:save:default`). |
+| 1.1.0   | 9    | `profile` gains `initComplete`; `careerPack` / `entryClass` no longer default to hardcoded SWE. |
+| 1.2.0   | 12   | `progress` gains `gameOver`. |
+
+`metaSlice.initialState.version` imports `STATE_VERSION` so fresh saves stay synced.
 
 ---
 
@@ -336,6 +386,13 @@ XP accumulates monthly + via decisions. Class tier updates automatically as XP c
 - **No animation beyond movement and modal transitions.** Stillness is the style.
 - **Style enforced by tokens** in the career pack. No room may use off-palette colors.
 
+### v1.1 — Modal-scoped retro font
+
+The NPC/object dialog box (§8b implementation in §23) uses **Pixelify Sans**
+loaded from Google Fonts. This is intentionally scoped to that one modal —
+the typewriter reveal IS the SNES homage; the rest of the UI keeps Inter so
+the bittersweet/contemplative register stays clean. Don't expand it.
+
 ---
 
 ## 16. Init Flow
@@ -357,30 +414,46 @@ XP accumulates monthly + via decisions. Class tier updates automatically as XP c
 
 If a saved profile is detected on load, skip directly to resume; offer "sign out / new profile" from the HUD.
 
+**v1.1 keyboard parity:** All pickers honor full keyboard navigation — ↑↓←→
+cycles through playable entries (skipping locked ones), Enter/Space confirms,
+mouse hover gives focus parity. First playable entry is auto-selected on mount
+so keyboard users can press Enter immediately. The Class picker shows the
+italic line *"Where you start. Not where you'll end up (hopefully). Play your
+cards right."* below its subtitle.
+
 ---
 
 ## 17. Build Order
 
-| Day | Deliverable |
-|-----|-------------|
-| 1   | ✅ Player movement engine (done) |
-| 2   | Vite + TS + Redux Toolkit project scaffold; integrate Day 1 movement |
-| 3   | Collision system + virtual coordinate system |
-| 4   | Room types + room renderer + basic transition |
-| 5   | Career pack loader + state management (Redux slices) |
-| 6   | Decision system (modal, schema, effect application) + auto-save |
-| 7   | Room generator (deterministic seeded layouts) |
-| 8   | Random event system + era flavoring |
-| 9   | HUD + class system + name entry + intro narrative |
-| 10  | Content pass: write SWE career pack (decisions, events, months) |
-| 11  | Mini-games (3) |
-| 12  | Endgame / score / career recap |
-| 13  | Polish: art tokens, sound (?), accessibility |
+| Day | Deliverable | Status |
+|-----|-------------|--------|
+| 1   | Player movement engine | ✅ |
+| 2   | Vite + TS + Redux Toolkit project scaffold; integrate Day 1 movement | ✅ |
+| 3   | Collision system + virtual coordinate system | ✅ |
+| 4   | Room types + room renderer + basic transition | ✅ |
+| 5   | Career pack loader + state management (Redux slices) | ✅ |
+| 6   | Decision system (modal, schema, effect application) + auto-save | ✅ |
+| 7   | Room generator (deterministic seeded layouts) | ✅ |
+| 8   | Random event system + era flavoring | ✅ |
+| 9   | HUD + class system + name entry + intro narrative | ✅ |
+| 10  | Content pass: write SWE career pack (decisions, events, months) | ✅ |
+| 11  | Mini-games (3) | ✅ |
+| 12  | Endgame / score / career recap + credits | ✅ |
+| 13a | NPCs & objects — interactables system (§23) | ✅ |
+| 13b | Content fill: more NPCs/objects + room-generator placement + sprite art | ⏳ |
+| 13c | Polish: art tokens, sound (?), accessibility, era mood, viewport | ⏳ |
 
 **Notes:**
 - Save/load moved to Day 6 (was Day 8) — without it, iteration on Day 7+ becomes painful.
 - Mini-games deferred to Day 11.
 - Day 10 is the writing day. That's where the 80 minutes of playable content lives.
+
+**v1.1 Day 13 split:** Originally one "Polish" day. At build time we discovered
+the §8b NPC/object spec had not been implemented — rooms had no inhabited
+content. Day 13 was reshaped into three sub-days: **13a** ships the interactables
+engine + 2 starter entries (this PR), **13b** fills out the content + integrates
+with the room generator + adds sprite art, **13c** is the original polish list
+plus an a11y audit of the new modal flow.
 
 ---
 
@@ -406,14 +479,18 @@ path-to-the-future/
 ├── package.json
 ├── vite.config.ts
 ├── tsconfig.json
+├── index.html                          ← Pixelify Sans font link (v1.1)
 ├── public/
+│   ├── credits.json                    ← v1.1 — credits system content (§22)
+│   ├── endgame-taglines.json           ← v1.1 — random tagline pool (§21)
 │   └── careers/
-│       └── software-engineering/      ← JSON content lives here
+│       └── software-engineering/       ← JSON content lives here
 │           ├── manifest.json
 │           ├── months.json
-│           ├── decisions/
-│           ├── events/
-│           └── art/
+│           ├── decisions.json          ← single file, pool field per entry
+│           ├── events.json             ← single file, pool field per entry
+│           ├── interactables.json      ← v1.1 — NPCs / objects (§23)
+│           └── spouse-names.json       ← v1.1 — relationship-system content
 └── src/
     ├── App.tsx
     ├── main.tsx
@@ -421,14 +498,10 @@ path-to-the-future/
     │   ├── engine/                    ← pure logic hooks (no JSX)
     │   │   ├── usePlayerMovement.ts
     │   │   ├── useKeyboardInput.ts
-    │   │   ├── useTouchInput.ts
     │   │   ├── useGameLoop.ts
-    │   │   ├── useCollision.ts
     │   │   └── useRoomTransition.ts
     │   ├── entities/                  ← rendered things
-    │   │   ├── Player.tsx
-    │   │   ├── Interactable.tsx
-    │   │   └── Hazard.tsx
+    │   │   └── Player.tsx
     │   ├── rooms/
     │   │   ├── RoomRenderer.tsx       ← picks DecisionRoom / Minigame / etc.
     │   │   ├── DecisionRoom.tsx
@@ -441,46 +514,233 @@ path-to-the-future/
     │   │       └── populate.ts
     │   ├── content/
     │   │   ├── loader.ts              ← loads career pack JSON
-    │   │   └── interpolate.ts         ← {playerName} substitution
+    │   │   ├── interpolate.ts         ← {playerName} substitution
+    │   │   ├── applyEffects.ts        ← effect parser + stat ranges
+    │   │   ├── applyEvent.ts
+    │   │   ├── applyEraMood.ts        ← HSL shifts on palette per era
+    │   │   ├── careers.ts             ← career list constant
+    │   │   ├── classes.ts             ← class tier constant
+    │   │   ├── computeScore.ts        ← v1.1 — endgame score (§21)
+    │   │   ├── evaluateRequires.ts
+    │   │   ├── rollEvents.ts
+    │   │   ├── selectDecision.ts
+    │   │   ├── roomConfigForMonth.ts
+    │   │   ├── CareerPackProvider.tsx
+    │   │   ├── careerPackContext.ts
+    │   │   └── useCareerPack.ts
     │   ├── state/
     │   │   ├── store.ts               ← Redux store config
+    │   │   ├── hooks.ts
     │   │   ├── slices/
     │   │   │   ├── profileSlice.ts
     │   │   │   ├── progressSlice.ts
     │   │   │   ├── statsSlice.ts
     │   │   │   ├── flagsSlice.ts
-    │   │   │   └── historySlice.ts
-    │   │   └── persistence.ts         ← localStorage save/load
+    │   │   │   ├── historySlice.ts
+    │   │   │   └── metaSlice.ts
+    │   │   └── persistence.ts         ← localStorage save/load + STATE_VERSION
     │   ├── ui/
-    │   │   ├── HUD.tsx
+    │   │   ├── Hud.tsx
     │   │   ├── DecisionModal.tsx
+    │   │   ├── EventModal.tsx
+    │   │   ├── ScenePlayer.tsx
+    │   │   ├── EffectChips.tsx
     │   │   ├── CareerPicker.tsx
     │   │   ├── ClassPicker.tsx
-    │   │   └── NameEntry.tsx
-    │   ├── minigames/
+    │   │   ├── NameEntry.tsx
+    │   │   ├── IntroScene.tsx
+    │   │   ├── InitFlow.tsx
+    │   │   ├── CurrentRoomContext.tsx ← Provider
+    │   │   ├── currentRoomContextValue.ts ← hook
+    │   │   ├── icons/StatIcon.tsx
+    │   │   ├── EndgameScreen.tsx      ← v1.1 (§21)
+    │   │   ├── CreditsScreen.tsx      ← v1.1 (§22)
+    │   │   ├── NPCModal.tsx           ← v1.1 (§23)
+    │   │   └── TypewriterText.tsx     ← v1.1 (§8b implementation)
+    │   ├── minigames/                 ← v1.1 — Day 11 deliverables
     │   │   ├── Blackjack.tsx
     │   │   ├── CodeReview.tsx
-    │   │   └── ReactionSprint.tsx
+    │   │   └── Stacker.tsx
+    │   ├── dev/
+    │   │   ├── DevPanel.tsx
+    │   │   ├── DevControlsContext.ts
+    │   │   ├── DevControlsProvider.tsx
+    │   │   └── useDevControls.ts
+    │   ├── coordinates.ts             ← virtual 1000×600 coords
+    │   ├── calendar.ts                ← monthId → "Aug 2020"
     │   └── types/
     │       ├── geometry.ts
     │       ├── player.ts
     │       ├── room.ts
-    │       ├── decision.ts
-    │       ├── event.ts
-    │       └── careerPack.ts
+    │       └── careerPack.ts          ← Manifest, MonthEntry, DecisionDef,
+    │                                     EventDef, InteractableDef (v1.1),
+    │                                     InteractableDialogue (v1.1)
     └── styles/
-        └── global.css
+        └── global.css                 ← keyframes for HUD delta, status swap,
+                                          scene dots, credits scroll, typewriter
+                                          caret blink, NPC modal pop
 ```
 
 ---
 
 ## 20. Open Questions (Defer to Build Time)
 
-- **Spouse-name list** — when relationship begins, we draw from a name pool. Generate this in Day 10 content pass.
+- ✅ **Spouse-name list** — generated in Day 10. Lives at `public/careers/software-engineering/spouse-names.json` (40 names). Not yet consumed by an engine relationship-system; that lands when relationship/marriage events are authored (a later day).
 - **Number of layout templates** — start with 4, add more if rooms feel repetitive.
-- **Mini-game art** — keep within the same flat-SVG vocabulary as rooms.
-- **Endgame screen** — likely a "career recap" timeline showing key decisions + final stats. Day 12.
+- ⏳ **Mini-game art** — keep within the same flat-SVG vocabulary as rooms. Currently using placeholder shapes; sprite work is part of Day 13b.
+- ✅ **Endgame screen** — shipped Day 12. See §21.
 
 ---
 
-*End of design document v1.0.*
+## 21. Endgame & Recap (v1.1)
+
+Added Day 12.
+
+**Trigger.** `progress.gameOver` flips true inside the `completeMonth` reducer
+when the player completes month 120 (or, theoretically, when an `endsGame: true`
+event fires — wired in the schema but no events use it yet). `App.tsx` routes to
+`<EndgameScreen />` instead of `<RoomRenderer />` when `gameOver` is true. Once
+true, the only escape is "Begin again" which dispatches a full state reset.
+
+**Score formula** (`src/game/content/computeScore.ts`). Returns a breakdown
+shown on the recap screen so the player can see which dimensions paid off:
+
+```
+experience      = progress.xp
+savings         = floor(stats.savings / 10)
+wellbeing       = (network + health + technicalSkill + max(0, reputation)) × 25
+burnoutPenalty  = -stats.burnout × 15
+relationshipBonus = (stats.relationship !== null) ? stats.relationship × 20 : 0
+decisions       = history.decisions.length × 25
+total           = sum
+```
+
+Weights are tunable — interpretability over precision.
+
+**Recap screen** (`EndgameScreen.tsx`). Layout:
+- Title `Ten years done.` + `{Name}'s Career`
+- Random italic tagline pulled from `public/endgame-taglines.json` (one rolled
+  per view; editable so new lines can be added later)
+- **Final stats** panel (all 7 stats with their final values, `palette.background`
+  fill with `palette.surface` border for readability)
+- **Class + XP + Score breakdown** panel (line-item with total)
+- **Decision timeline** — scrollable list grouped by year, every decision the
+  player made shown as `Month — option taken`
+- Two actions: **Credits** and **Begin again**, with keyboard nav (←→ cycles
+  focus, Enter/Space confirms)
+
+**Replay.** "Begin again" routes through the credits screen first (see §22) so
+the player gets a moment to register what they made before nuking the save.
+Confirmation step is: *"If we do this, there's no going back. I know how
+fickle you can be."* On confirm: `resetProfile`, `resetProgress`, `resetStats`,
+`resetFlags`, `resetHistory`, `resetMeta` all dispatched, `clearPersistedState`
+called. App re-renders → `initComplete` is false → `<InitFlow>` renders.
+
+---
+
+## 22. Credits System (v1.1)
+
+Added Day 12.
+
+A self-contained credits screen, JSON-driven so content can be edited without
+touching code. The credits are the project's "statement" — a record that the
+build was a collaboration between Corby Hoback and Claude Code, with both
+serious and self-deprecating roles.
+
+**Content** (`public/credits.json`): project metadata (title, tagline, version,
+copyright, timeSpent, builtWith), a list of links (GitHub, LinkedIn, etc.),
+27 credit roles mixing real (Architect, Engineer, Programmers, Code Reviewer,
+Bug Reporter) with cheeky (Department of Bittersweet, Off-By-One Error Spotter,
+Person Who Said 'What If We Just Use SVG', Reader of System Reminders),
+special-thanks lines, a bold `timeStatement` rendered prominently, the closing
+line, and a `legalNotice` ("All other names belong to the people who made the
+things we love. We are not them.") in fine print.
+
+**Screen** (`CreditsScreen.tsx`). Auto-scrolling credit roll inside a fixed
+height "band" with a soft top/bottom fade mask. First line starts visible at
+the top with a **2s hold** before motion (a beat to register what the player
+is looking at), then continuous scroll. After the first iteration, **loops
+infinitely** at constant speed (~55 px/sec, computed from content height so
+the speed is uniform regardless of credits length). The static area below
+the band shows the bold time-statement, then the italic closing line, then
+the links, then a fine-print line with copyright · version · time · build
+tool · legal notice.
+
+**Two entry modes:**
+- **'browse'** — Credits button on endgame. `[Close]` button (Enter / Space /
+  Esc all close).
+- **'replay'** — Begin Again button on endgame. Top banner reads `BEFORE YOU
+  DO THIS AGAIN…`. Static action area replaces Close with the funny confirm
+  prompt + `[No, take me back]` / `[Yes, begin again]` buttons (←→ toggle,
+  Enter/Space commits the focused choice, Esc cancels). Defaults focus to
+  cancel so a stray Enter doesn't blow away the save.
+
+---
+
+## 23. Interactables — NPCs & Objects (v1.1)
+
+Added Day 13a. This is the implementation of the §8b modal presentation spec
+plus the surrounding system §8b couldn't describe on its own (schema, content,
+room placement, proximity trigger).
+
+**Schema** (in `careerPack.ts`):
+
+```ts
+interface InteractableDef {
+  id: string;
+  kind: 'npc' | 'object';
+  art: string;                        // sprite token (real art in 13b)
+  tags: string[];                     // 'office', 'coworker', etc.
+  weight: number;                     // generator weighting (used in 13b)
+  requires?: Record<string, string>;  // eligibility gate (same expr lang as decisions)
+  dialogues: InteractableDialogue[];
+}
+
+interface InteractableDialogue {
+  tier: 1 | 2;                        // 1 = read-only flavor, 2 = options
+  prompt: string;                     // supports [[pause:N]] tags
+  options?: { label: string; effects: Record<string,string>; flavor?: string }[];
+  requires?: Record<string, string>;
+}
+```
+
+**Content.** `public/careers/software-engineering/interactables.json`. Day 13a
+ships 2 starter entries (1 NPC, 1 object); 13b expands.
+
+**Loader.** Tolerant — older career packs without the file fall through to an
+empty array. No breaking change for any existing pack.
+
+**Placement.** Day 13a hardcodes a single interactable per decision room at
+position `(200, 130)`, picked deterministically from the pack via a seeded
+random (`monthId + INTERACTABLE_SEED_SALT`). Day 13b moves placement into the
+room generator (multiple per room, weighted by month theme, layout-aware).
+
+**Proximity + trigger.** `DecisionRoom`'s tick handler computes distance from
+the player to the interactable. Within `INTERACT_PROXIMITY` (75 virtual units),
+`adjacent` flips true; a dashed `palette.accent` halo + `[E] talk` label render
+above the interactable. Pressing **E** (when adjacent, no other modal active,
+not committed to the door) picks a random eligible dialogue and opens the
+modal. Movement is paused while the modal is open, matching the decision /
+event / minigame pattern.
+
+**TypewriterText** (`src/game/ui/TypewriterText.tsx`). Implements §8b's
+character-reveal: 30ms/char default, punctuation pauses (+60ms `,`, +180ms
+`.!?`, +120ms `—`), inline `[[pause:N]]` hold tags, skip-to-end on first
+press, advance on second, blinking `▌` caret. Derived completion state to
+avoid `setState`-in-effect; reset semantics rely on `key` prop remount.
+
+**NPCModal** (`src/game/ui/NPCModal.tsx`). Distinct visual from the systemic
+DecisionModal — fade-in scale (0.96 → 1.0 over 200ms), Pixelify Sans (§15),
+chunky ink border, inset bezel. Tier 1: prompt with typewriter → `▼` ready
+indicator → any-key close. Tier 2: prompt → options panel (↑↓←→ + 1-N + Enter
+/ Space + Esc) → flavor with typewriter → effects dispatched on advance
+(deferred so the HUD floating-delta lands after modal close, matching the
+DecisionRoom pattern).
+
+**Door fade preserves canvas bounds.** The room SVG's border was moved to a
+wrapper div so it persists through the door-commit fade. Modals land on a
+visible-but-empty room outline instead of black.
+
+---
+
+*End of design document v1.1.*

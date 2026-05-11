@@ -107,9 +107,32 @@ export interface EventDef {
   endsGame?: boolean;
 }
 
+// NPC / object dialogue per §8b. tier=1 is read-only flavor (no options,
+// any key advances/closes). tier=2 is an interactive prompt with options
+// that carry stat effects, similar to DecisionDef options but lighter-touch.
+export interface InteractableDialogue {
+  tier: 1 | 2;
+  prompt: string;
+  options?: { label: string; effects: Record<string, string>; flavor?: string }[];
+  requires?: Record<string, string>;
+}
+
+export interface InteractableDef {
+  id: string;
+  kind: 'npc' | 'object';
+  // Sprite token — later resolved to SVG art. For Day 13a we render
+  // kind-based shapes; real art tokens come in 13b.
+  art: string;
+  tags: string[];
+  weight: number;
+  requires?: Record<string, string>;
+  dialogues: InteractableDialogue[];
+}
+
 export interface CareerPack {
   manifest: Manifest;
   months: MonthEntry[];
   decisions: DecisionDef[];
   events: EventDef[];
+  interactables: InteractableDef[];
 }

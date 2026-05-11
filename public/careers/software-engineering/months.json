@@ -1,6 +1,6 @@
 {
   "months": [
-    { "id":   1, "year": 2020, "monthNum":  1, "era": "pandemic", "theme": "uncertainty", "roomType": "narrative", "title": "The world is about to change.", "body": "It is January 2020. The pandemic is changing everything. The next ten years are yours to shape — one month at a time.", "continueLabel": "Begin" },
+    { "id":   1, "year": 2020, "monthNum":  1, "era": "pandemic", "theme": "uncertainty", "roomType": "narrative", "title": "The world is about to change.", "body": "It is January 2020. The pandemic has created uncertainty for you. For everyone. The next ten years are yours to shape — one month at a time.", "continueLabel": "Begin" },
     { "id":   2, "year": 2020, "monthNum":  2, "era": "pandemic", "theme": "uncertainty" },
     { "id":   3, "year": 2020, "monthNum":  3, "era": "pandemic", "theme": "rupture" },
     { "id":   4, "year": 2020, "monthNum":  4, "era": "pandemic", "theme": "rupture" },

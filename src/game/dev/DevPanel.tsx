@@ -88,7 +88,7 @@ export function DevPanel() {
         <select
           value={eventMode}
           onChange={(e) => setEventMode(e.target.value)}
-          style={selectStyle}
+          style={{ ...selectStyle, maxWidth: 180, width: 180 }}
         >
           <option value="auto">auto</option>
           <option value="never">never</option>

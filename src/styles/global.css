@@ -81,3 +81,17 @@ body {
   from { transform: translateY(var(--scroll-start, 10px)); }
   to   { transform: translateY(-100%); }
 }
+
+/* Typewriter caret blink for NPC/object modal text reveal per §8b.
+   ~530ms cycle matches classic SNES dialog box pacing. The character is
+   "▌" (left-half block) — a slim cursor that doesn't crowd punctuation. */
+@keyframes typewriter-caret-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* NPC/object modal entrance per §8b — subtle fade + scale, 200ms ease-out. */
+@keyframes npc-modal-pop {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
