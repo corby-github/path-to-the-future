@@ -4,7 +4,8 @@ export const SAVE_KEY = 'pttf:save:default';
 // Bump on any breaking change to the persisted shape. Old saves are discarded.
 // 1.1.0: Day 9 — profile gains `initComplete`; careerPack/entryClass no longer
 //        default to hardcoded SWE values (they're driven by the init flow).
-export const STATE_VERSION = '1.1.0';
+// 1.2.0: Day 12 — progress gains `gameOver`; drives EndgameScreen routing.
+export const STATE_VERSION = '1.2.0';
 
 export function loadPersistedState(): unknown {
   try {

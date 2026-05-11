@@ -1,7 +1,7 @@
 import { useDevControls } from './useDevControls';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch } from '../state/hooks';
-import { setCurrentMonth } from '../state/slices/progressSlice';
+import { setCurrentMonth, setGameOver } from '../state/slices/progressSlice';
 import { LAYOUT_TEMPLATES } from '../rooms/generator/layouts';
 
 const SPEED_OPTIONS = [1, 2, 3, 4];
@@ -119,6 +119,20 @@ export function DevPanel() {
             </option>
           ))}
         </select>
+      </label>
+
+      <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span>endgame</span>
+        <button
+          onClick={() => dispatch(setGameOver(true))}
+          style={{
+            ...selectStyle,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          trigger
+        </button>
       </label>
     </div>
   );

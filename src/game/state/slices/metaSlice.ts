@@ -1,12 +1,15 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { STATE_VERSION } from '../persistence';
 
 export interface MetaState {
   version: string;
   lastSaveAt: number | null;
 }
 
+// Pulled from persistence.STATE_VERSION so bumping the schema in one place
+// (persistence.ts) cascades to fresh saves without a second literal to forget.
 const initialState: MetaState = {
-  version: '1.1.0',
+  version: STATE_VERSION,
   lastSaveAt: null,
 };
 

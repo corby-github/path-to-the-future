@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useCareerPack } from '../content/useCareerPack';
 import { CAREERS } from '../content/careers';
 
@@ -6,15 +6,64 @@ import { CAREERS } from '../content/careers';
 // entries (in v1, just Software Engineering) are selectable. Others appear
 // grayed with a "Coming Soon" tag.
 //
+// Keyboard: ↑↓ (or ←→) cycles through PLAYABLE entries only; Enter/Space
+// confirms the current pick and advances. Mouse two-step (click option →
+// click Continue) is preserved.
+//
 // Calls `onSelect(careerId)` when the user clicks Continue.
 
 interface Props {
   onSelect: (careerId: string) => void;
 }
 
+// Index in CAREERS of the first playable entry — used to auto-select on mount
+// so keyboard users can hit Enter immediately.
+function firstPlayableIndex(): number {
+  return CAREERS.findIndex((c) => c.playable);
+}
+
+function adjacentPlayableIndex(current: number, dir: 1 | -1): number {
+  let i = current;
+  for (let step = 0; step < CAREERS.length; step++) {
+    i = (i + dir + CAREERS.length) % CAREERS.length;
+    if (CAREERS[i]?.playable) return i;
+  }
+  return current;
+}
+
 export function CareerPicker({ onSelect }: Props) {
   const { palette } = useCareerPack();
-  const [pickedId, setPickedId] = useState<string | null>(null);
+  const [pickedId, setPickedId] = useState<string | null>(() => {
+    const idx = firstPlayableIndex();
+    return idx >= 0 ? CAREERS[idx].id : null;
+  });
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        setPickedId((cur) => {
+          const idx = cur ? CAREERS.findIndex((c) => c.id === cur) : -1;
+          const next = adjacentPlayableIndex(idx >= 0 ? idx : 0, 1);
+          return CAREERS[next].id;
+        });
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setPickedId((cur) => {
+          const idx = cur ? CAREERS.findIndex((c) => c.id === cur) : -1;
+          const next = adjacentPlayableIndex(idx >= 0 ? idx : 0, -1);
+          return CAREERS[next].id;
+        });
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        if (pickedId) {
+          e.preventDefault();
+          onSelect(pickedId);
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [pickedId, onSelect]);
 
   const screenStyle: CSSProperties = {
     display: 'flex',

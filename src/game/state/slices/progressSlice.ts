@@ -5,6 +5,10 @@ export interface ProgressState {
   completedMonths: number[];
   xp: number;
   classTier: string;
+  // True once the player has completed month 120 (or an endsGame event fired).
+  // Drives App.tsx routing to <EndgameScreen /> instead of <RoomRenderer />.
+  // Once true, the only escape is "Begin again" which dispatches resetProgress.
+  gameOver: boolean;
 }
 
 const initialState: ProgressState = {
@@ -12,6 +16,7 @@ const initialState: ProgressState = {
   completedMonths: [],
   xp: 0,
   classTier: 'novice',
+  gameOver: false,
 };
 
 const progressSlice = createSlice({
@@ -24,6 +29,8 @@ const progressSlice = createSlice({
         state.completedMonths.push(id);
       }
       state.currentMonth = Math.min(120, id + 1);
+      // Last month completed → game over.
+      if (id >= 120) state.gameOver = true;
     },
     setCurrentMonth(state, action: PayloadAction<number>) {
       state.currentMonth = Math.max(1, Math.min(120, action.payload));
@@ -46,9 +53,26 @@ const progressSlice = createSlice({
         }
       }
       state.currentMonth = Math.min(120, state.currentMonth + n);
+      if (state.currentMonth >= 120 && state.completedMonths.includes(120)) {
+        state.gameOver = true;
+      }
+    },
+    setGameOver(state, action: PayloadAction<boolean>) {
+      state.gameOver = action.payload;
+    },
+    resetProgress() {
+      return initialState;
     },
   },
 });
 
-export const { completeMonth, setCurrentMonth, addXp, setClassTier, skipMonths } = progressSlice.actions;
+export const {
+  completeMonth,
+  setCurrentMonth,
+  addXp,
+  setClassTier,
+  skipMonths,
+  setGameOver,
+  resetProgress,
+} = progressSlice.actions;
 export default progressSlice.reducer;

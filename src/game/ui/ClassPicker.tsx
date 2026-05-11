@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { useCareerPack } from '../content/useCareerPack';
 import { CLASSES } from '../content/classes';
 
@@ -6,6 +6,8 @@ import { CLASSES } from '../content/classes';
 // is determined at runtime by checking the loaded career pack's
 // `manifest.entryClasses` map. In v1 (SWE pack), only `novice` and `skilled`
 // have entries, so the other six show as "Coming Soon".
+//
+// Keyboard: ↑↓←→ cycles through PLAYABLE entries only; Enter/Space confirms.
 //
 // Calls `onSelect(classId)` when the user clicks Continue.
 
@@ -15,7 +17,57 @@ interface Props {
 
 export function ClassPicker({ onSelect }: Props) {
   const { pack, palette } = useCareerPack();
-  const [pickedId, setPickedId] = useState<string | null>(null);
+
+  // Which class ids are playable for this career pack (from manifest).
+  // Stable per pack mount — computed once.
+  const playableIds = useMemo(
+    () => new Set(Object.keys(pack.manifest.entryClasses)),
+    [pack.manifest.entryClasses],
+  );
+
+  const adjacentPlayableIndex = useMemo(
+    () => (current: number, dir: 1 | -1): number => {
+      let i = current;
+      for (let step = 0; step < CLASSES.length; step++) {
+        i = (i + dir + CLASSES.length) % CLASSES.length;
+        if (playableIds.has(CLASSES[i].id)) return i;
+      }
+      return current;
+    },
+    [playableIds],
+  );
+
+  const [pickedId, setPickedId] = useState<string | null>(() => {
+    const first = CLASSES.find((c) => playableIds.has(c.id));
+    return first?.id ?? null;
+  });
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        setPickedId((cur) => {
+          const idx = cur ? CLASSES.findIndex((c) => c.id === cur) : -1;
+          const next = adjacentPlayableIndex(idx >= 0 ? idx : 0, 1);
+          return CLASSES[next].id;
+        });
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setPickedId((cur) => {
+          const idx = cur ? CLASSES.findIndex((c) => c.id === cur) : -1;
+          const next = adjacentPlayableIndex(idx >= 0 ? idx : 0, -1);
+          return CLASSES[next].id;
+        });
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        if (pickedId) {
+          e.preventDefault();
+          onSelect(pickedId);
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [pickedId, onSelect, adjacentPlayableIndex]);
 
   const screenStyle: CSSProperties = {
     display: 'flex',
@@ -81,7 +133,17 @@ export function ClassPicker({ onSelect }: Props) {
       <div style={cardStyle}>
         <h1 style={titleStyle}>Choose your starting class</h1>
         <p style={subtitleStyle}>
-          Two playable in v1. You'll climb the rest as you gain XP.
+          You'll climb the rest as you gain XP.
+        </p>
+        <p
+          style={{
+            ...subtitleStyle,
+            fontStyle: 'italic',
+            opacity: 0.85,
+            marginTop: -8,
+          }}
+        >
+          This is where you'll start, not where you'll end up (hopefully). Play your cards right.
         </p>
 
         <div style={optionsStyle}>
