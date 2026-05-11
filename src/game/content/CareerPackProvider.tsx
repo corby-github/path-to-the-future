@@ -83,6 +83,7 @@ export function CareerPackProvider({ children }: Props) {
       inkMuted: applyEraMood(base.inkMuted, mood),
       surface: applyEraMood(base.surface, mood),
       accent: applyEraMood(base.accent, mood),
+      positive: applyEraMood(base.positive, mood),
       player: applyEraMood(base.player, mood),
       playerInk: applyEraMood(base.playerInk, mood),
     };

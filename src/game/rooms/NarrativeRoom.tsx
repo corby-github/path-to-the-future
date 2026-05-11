@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { monthLabel } from '../calendar';
 import { useCareerPack } from '../content/useCareerPack';
@@ -11,6 +12,19 @@ interface Props {
 export function NarrativeRoom({ config, onContinue }: Props) {
   const { palette } = useCareerPack();
 
+  // Enter / Space dismisses, matching DecisionModal flavor + EventModal body.
+  // Without this, year-change narrative screens were mouse-only.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onContinue();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onContinue]);
+
   return (
     <div
       style={{
@@ -18,7 +32,8 @@ export function NarrativeRoom({ config, onContinue }: Props) {
         height: ROOM_VIEWBOX.height,
         background: palette.background,
         color: palette.ink,
-        border: `2px solid ${palette.ink}`,
+        border: `1px solid ${palette.surface}`,
+        borderRadius: 6,
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',

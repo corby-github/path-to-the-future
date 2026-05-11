@@ -1,7 +1,7 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties } from 'react';
 import { useAppSelector } from '../state/hooks';
 import { useCareerPack } from '../content/useCareerPack';
-import { StatIcon, type StatIconName } from './icons/StatIcon';
+import { StatChip } from './StatChip';
 
 // Top-anchored player HUD. Renders identity (name · class tier · current month)
 // on the left and 8 stat chips (XP + the seven §7 stats) on the right.
@@ -74,26 +74,54 @@ export function Hud() {
       </div>
 
       <div style={statsWrapStyle}>
-        <StatChip name="xp" value={formatXp(progress.xp)} palette={palette} />
-        <StatChip name="burnout" value={stats.burnout} palette={palette} />
-        <StatChip name="savings" value={formatMoney(stats.savings)} palette={palette} />
-        <StatChip name="health" value={stats.health} palette={palette} />
-        <StatChip name="network" value={stats.network} palette={palette} />
+        <StatChip
+          name="xp"
+          numericValue={progress.xp}
+          displayValue={formatXp(progress.xp)}
+          palette={palette}
+        />
+        <StatChip
+          name="burnout"
+          numericValue={stats.burnout}
+          displayValue={stats.burnout}
+          palette={palette}
+        />
+        <StatChip
+          name="savings"
+          numericValue={stats.savings}
+          displayValue={formatMoney(stats.savings)}
+          palette={palette}
+        />
+        <StatChip
+          name="health"
+          numericValue={stats.health}
+          displayValue={stats.health}
+          palette={palette}
+        />
+        <StatChip
+          name="network"
+          numericValue={stats.network}
+          displayValue={stats.network}
+          palette={palette}
+        />
         {stats.relationship !== null && (
           <StatChip
             name="relationship"
-            value={stats.relationship}
+            numericValue={stats.relationship}
+            displayValue={stats.relationship}
             palette={palette}
           />
         )}
         <StatChip
           name="technicalSkill"
-          value={stats.technicalSkill}
+          numericValue={stats.technicalSkill}
+          displayValue={stats.technicalSkill}
           palette={palette}
         />
         <StatChip
           name="reputation"
-          value={formatReputation(stats.reputation)}
+          numericValue={stats.reputation}
+          displayValue={formatReputation(stats.reputation)}
           palette={palette}
         />
       </div>
@@ -101,31 +129,7 @@ export function Hud() {
   );
 }
 
-// ---- internal helpers ----
-
-interface StatChipProps {
-  name: StatIconName;
-  value: ReactNode;
-  palette: ReturnType<typeof useCareerPack>['palette'];
-}
-
-function StatChip({ name, value, palette }: StatChipProps) {
-  const style: CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 5,
-    fontSize: 12,
-    fontVariantNumeric: 'tabular-nums',
-    color: palette.ink,
-    whiteSpace: 'nowrap',
-  };
-  return (
-    <span style={style}>
-      <StatIcon name={name} size={20} />
-      {value}
-    </span>
-  );
-}
+// ---- formatters ----
 
 const MONTH_NAMES = [
   'Jan',

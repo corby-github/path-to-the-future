@@ -2,15 +2,22 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useCareerPack } from '../content/useCareerPack';
 import { interpolate } from '../content/interpolate';
 
-const SCENE_LINE_MS = 1600;
+const DEFAULT_SCENE_LINE_MS = 1600;
 
 interface Props {
   scene: string[];
   vars?: Record<string, string | undefined>;
   onComplete: () => void;
+  /**
+   * Per-line dwell time before auto-advance, in milliseconds. Defaults to
+   * 1600ms (decision-scene cadence). Atmospheric intros / longer reads should
+   * pass a larger value (e.g., 3500ms).
+   */
+  lineMs?: number;
 }
 
-export function ScenePlayer({ scene, vars, onComplete }: Props) {
+export function ScenePlayer({ scene, vars, onComplete, lineMs }: Props) {
+  const effectiveLineMs = lineMs ?? DEFAULT_SCENE_LINE_MS;
   const { palette } = useCareerPack();
   const [index, setIndex] = useState(0);
 
@@ -30,7 +37,7 @@ export function ScenePlayer({ scene, vars, onComplete }: Props) {
     onComplete();
   }, [onComplete]);
 
-  // Auto-advance every SCENE_LINE_MS. Timer callbacks run async after the
+  // Auto-advance every effectiveLineMs. Timer callbacks run async after the
   // render is committed, so setState/onComplete calls here are safe.
   useEffect(() => {
     const t = window.setTimeout(() => {
@@ -39,9 +46,9 @@ export function ScenePlayer({ scene, vars, onComplete }: Props) {
       } else {
         setIndex(index + 1);
       }
-    }, SCENE_LINE_MS);
+    }, effectiveLineMs);
     return () => window.clearTimeout(t);
-  }, [index, scene.length, onComplete]);
+  }, [index, scene.length, onComplete, effectiveLineMs]);
 
   // Stable keyboard handler that reads the latest advance/skip via refs, so
   // we don't tear down + re-register the window listener every time `index`
@@ -90,15 +97,40 @@ export function ScenePlayer({ scene, vars, onComplete }: Props) {
           fontSize: 22,
           lineHeight: 1.5,
           margin: 0,
-          marginBottom: 48,
+          marginBottom: 24,
           textAlign: 'center',
           fontStyle: 'italic',
           maxWidth: 560,
-          animation: `scene-line-fade ${SCENE_LINE_MS}ms ease forwards`,
+          animation: `scene-line-fade ${effectiveLineMs}ms ease forwards`,
         }}
       >
         {interpolate(line, resolvedVars)}
       </p>
+
+      {/* "Alive" indicator — three dots, staggered opacity pulse, always
+          present below the scene line so the moment never feels static. */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 7,
+          marginBottom: 32,
+        }}
+        aria-hidden="true"
+      >
+        {[0, 0.16, 0.32].map((delay) => (
+          <span
+            key={delay}
+            style={{
+              width: 5,
+              height: 5,
+              borderRadius: '50%',
+              background: palette.inkMuted,
+              animation: `scene-dot-pulse 1.4s ${delay}s ease-in-out infinite`,
+            }}
+          />
+        ))}
+      </div>
+
       <p
         style={{
           fontSize: 11,

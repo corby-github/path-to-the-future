@@ -10,6 +10,7 @@
     "inkMuted": "#888888",
     "surface": "#cfc8b6",
     "accent": "#8b6240",
+    "positive": "#7a8f5c",
     "player": "#4a90e2",
     "playerInk": "#1f3a5f"
   },
@@ -54,5 +55,15 @@
     "The world has gone quiet, {playerName}.",
     "Offices empty. Inboxes loud.",
     "Every choice from here writes the next ten years."
+  ],
+
+  "monthTransitions": [
+    "... and life goes on",
+    "... another month passes",
+    "... you press on",
+    "... another day, another dollar",
+    "... onward and upward",
+    "... the calendar turns",
+    "... time moves forward"
   ]
 }
