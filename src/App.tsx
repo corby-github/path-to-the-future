@@ -34,7 +34,7 @@ function Game() {
           alignItems: 'center',
           justifyContent: 'flex-start',
           minHeight: '100vh',
-          fontFamily: 'sans-serif',
+          fontFamily: 'inherit',
           background: '#1a1a1a',
           color: '#eee',
           gap: 16,

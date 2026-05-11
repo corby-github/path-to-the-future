@@ -21,7 +21,7 @@ function fallbackScreen(message: string, isError: boolean) {
         justifyContent: 'center',
         background: '#1a1a1a',
         color: isError ? '#e88' : '#888',
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: 'inherit',
         fontSize: 14,
         letterSpacing: '0.04em',
       }}

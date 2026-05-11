@@ -42,7 +42,7 @@ export function NarrativeRoom({ config, onContinue }: Props) {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '60px 80px',
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: 'inherit',
       }}
     >
       <p style={{ fontSize: 12, letterSpacing: '0.1em', color: palette.inkMuted, margin: 0, marginBottom: 24, textTransform: 'uppercase' }}>
@@ -65,7 +65,7 @@ export function NarrativeRoom({ config, onContinue }: Props) {
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
           cursor: 'pointer',
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: 'inherit',
         }}
       >
         {config.continueLabel ?? 'Continue'}

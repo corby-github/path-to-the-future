@@ -127,7 +127,7 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
         display: 'flex',
         flexDirection: 'column',
         padding: '24px 48px',
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: 'inherit',
         position: 'relative',
         overflow: 'hidden',
       }}

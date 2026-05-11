@@ -21,6 +21,7 @@ import { NPCModal } from '../ui/NPCModal';
 import { computeRoomSeed } from './generator/seedRng';
 import { generateRoom } from './generator/populate';
 import { placeInteractables, type PlacedInteractable } from './generator/placeInteractables';
+import { InteractableSprite } from './sprites/InteractableSprite';
 import type { DecisionRoomConfig } from '../types/room';
 import type { DecisionDef, EventDef, InteractableDef, InteractableDialogue } from '../types/careerPack';
 import type { StatKey } from '../content/applyEffects';
@@ -489,7 +490,7 @@ export function DecisionRoom({ config, onExit }: Props) {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif",
+            fontFamily: "inherit",
             fontSize: 14,
             fontWeight: 500,
             color: palette.surface,
@@ -567,48 +568,23 @@ export function DecisionRoom({ config, onExit }: Props) {
             />
           ))}
 
-          {/* Interactables. Day 13b.1 renders kind-distinct placeholders;
-              real sprites land in 13b.2. NPCs at live wander position;
-              objects at their fixed placed spawn. Adjacency halo + [E]
-              hint only render on the NEAREST in-range interactable. */}
+          {/* Interactables. Real sprites land per the `art` token via
+              <InteractableSprite> (Day 13b.2). NPCs render at their live
+              wander position; objects at the fixed placed spawn. The
+              adjacency halo + [E] hint render on the nearest in-range
+              interactable only. */}
           {placements.map((p, i) => {
             const ipos = p.def.kind === 'npc' ? (npcPositions[i] ?? p.spawn) : p.spawn;
             const isNearest = adjacentIndex === i && !activeInteractable;
             return (
               <g key={p.def.id + '-' + i}>
-                {p.def.kind === 'npc' ? (
-                  <>
-                    <rect
-                      x={ipos.x - 18}
-                      y={ipos.y - 8}
-                      width={36}
-                      height={48}
-                      rx={6}
-                      fill={palette.accent}
-                      stroke={palette.ink}
-                      strokeWidth={2}
-                    />
-                    <circle
-                      cx={ipos.x}
-                      cy={ipos.y - 22}
-                      r={14}
-                      fill={palette.accent}
-                      stroke={palette.ink}
-                      strokeWidth={2}
-                    />
-                  </>
-                ) : (
-                  <rect
-                    x={ipos.x - 26}
-                    y={ipos.y - 26}
-                    width={52}
-                    height={52}
-                    rx={4}
-                    fill={palette.surface}
-                    stroke={palette.ink}
-                    strokeWidth={2}
-                  />
-                )}
+                <InteractableSprite
+                  art={p.def.art}
+                  kind={p.def.kind}
+                  x={ipos.x}
+                  y={ipos.y}
+                  palette={palette}
+                />
                 {isNearest && (
                   <>
                     <rect
@@ -628,7 +604,7 @@ export function DecisionRoom({ config, onExit }: Props) {
                       y={ipos.y - INTERACTABLE_HALF_H - 12}
                       textAnchor="middle"
                       fontSize={14}
-                      fontFamily="system-ui, sans-serif"
+                      
                       fontWeight={600}
                       fill={palette.ink}
                     >

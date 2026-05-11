@@ -191,7 +191,7 @@ export function Stacker({ monthId, onComplete }: Props) {
         display: 'flex',
         flexDirection: 'column',
         padding: '24px 32px',
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: 'inherit',
       }}
     >
       <p

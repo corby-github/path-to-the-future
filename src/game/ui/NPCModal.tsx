@@ -16,7 +16,10 @@ interface Props {
   onClose: () => void;
 }
 
-const SNES_FONT = '"Pixelify Sans", "SF Mono", Menlo, monospace';
+// NPC dialog uses the same game font as the rest of the UI now (post-13b.2).
+// Kept as a named constant so dialog-specific typography overrides can land
+// in one place if we ever want them.
+const NPC_DIALOG_FONT = 'inherit';
 
 type Phase = 'prompt' | 'options' | 'flavor';
 
@@ -146,7 +149,7 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
     display: 'flex',
     flexDirection: 'column',
     gap: 12,
-    fontFamily: SNES_FONT,
+    fontFamily: NPC_DIALOG_FONT,
     fontSize: 16,
     lineHeight: 1.55,
     // Subtle fade-in scale per §8b.
@@ -161,7 +164,7 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
     color: palette.ink,
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
-    fontFamily: SNES_FONT,
+    fontFamily: NPC_DIALOG_FONT,
   };
 
   return (
@@ -208,7 +211,7 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
                       fontSize: 15,
                       lineHeight: 1.4,
                       cursor: 'pointer',
-                      fontFamily: SNES_FONT,
+                      fontFamily: NPC_DIALOG_FONT,
                       transition: 'background 120ms',
                     }}
                   >

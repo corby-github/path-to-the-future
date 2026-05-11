@@ -33,7 +33,7 @@ export function NameEntry({ onSubmit }: Props) {
     background: palette.background,
     color: palette.ink,
     fontFamily:
-      "-apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif",
+      "inherit",
     padding: 32,
   };
 

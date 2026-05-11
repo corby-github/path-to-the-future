@@ -34,7 +34,7 @@ export function Hud() {
     color: palette.ink,
     border: `1px solid ${palette.surface}`,
     borderRadius: 6,
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif",
+    fontFamily: "inherit",
     flexWrap: 'wrap',
   };
 

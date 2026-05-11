@@ -109,7 +109,7 @@ export function CodeReview({ monthId, onComplete }: Props) {
         display: 'flex',
         flexDirection: 'column',
         padding: '32px 48px',
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: 'inherit',
       }}
     >
       <p style={{ fontSize: 12, letterSpacing: '0.1em', color: palette.inkMuted, margin: 0, marginBottom: 12, textTransform: 'uppercase' }}>

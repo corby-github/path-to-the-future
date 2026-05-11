@@ -98,7 +98,7 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 100,
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: 'inherit',
       }}
     >
       <div
@@ -139,7 +139,7 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
                         fontSize: 14,
                         lineHeight: 1.5,
                         cursor: 'pointer',
-                        fontFamily: 'system-ui, sans-serif',
+                        fontFamily: 'inherit',
                         transition: 'background 120ms',
                       }}
                     >
@@ -205,7 +205,7 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                   cursor: 'pointer',
-                  fontFamily: 'system-ui, sans-serif',
+                  fontFamily: 'inherit',
                   alignSelf: 'flex-start',
                 }}
               >
