@@ -3,6 +3,7 @@ import { useCareerPack } from '../content/useCareerPack';
 import { useAppSelector } from '../state/hooks';
 import { interpolate } from '../content/interpolate';
 import { ScenePlayer } from './ScenePlayer';
+import { EffectChips } from './EffectChips';
 import type { EventDef } from '../types/careerPack';
 
 type Phase = 'scene' | 'body';
@@ -93,12 +94,13 @@ export function EventModal({ event, onContinue }: Props) {
                 fontSize: 15,
                 lineHeight: 1.7,
                 margin: 0,
-                marginBottom: 32,
+                marginBottom: 24,
                 opacity: 0.9,
               }}
             >
               {interpolate(event.body, vars)}
             </p>
+            <EffectChips effects={event.effects} />
             <button
               onClick={onContinue}
               style={{

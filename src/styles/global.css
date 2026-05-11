@@ -17,11 +17,38 @@ body {
 }
 
 /* Decision-modal scene-line fade. 200ms fade-in, 1200ms hold, 200ms fade-out
-   across a 1600ms total duration. Re-keyed in JSX so each line restarts the
-   animation cleanly. */
+   across a 1600ms total duration (or whatever lineMs ScenePlayer is given —
+   the keyframe is a ratio, the duration is set by JSX). Re-keyed in JSX so
+   each line restarts the animation cleanly. */
 @keyframes scene-line-fade {
   0%    { opacity: 0; }
   12.5% { opacity: 1; }
   87.5% { opacity: 1; }
   100%  { opacity: 0; }
+}
+
+/* HUD stat-delta float. Used by StatChip when a stat value changes — a small
+   "+N" / "-N" element pops out of the chip, rises, and fades. ~900ms total. */
+@keyframes stat-delta-float {
+  0%   { opacity: 0; transform: translate(-50%, 6px); }
+  15%  { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -28px); }
+}
+
+/* Status-bar text crossfade. Used when the status bar's content swaps
+   (e.g., normal instructional text → "...time passes" transition message
+   on post-Continue). Re-keyed on the React side per text change so each
+   swap retriggers cleanly. */
+@keyframes status-swap-fade {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Scene-player "alive" indicator. Three dots below the scene line, each
+   opacity-pulsing on a staggered timing so the row reads as a continuous
+   rolling wave. Independent of lineMs — runs continuously while the scene
+   is showing. */
+@keyframes scene-dot-pulse {
+  0%, 80%, 100% { opacity: 0.2; }
+  40%           { opacity: 1; }
 }

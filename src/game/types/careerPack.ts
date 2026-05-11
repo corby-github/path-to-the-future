@@ -4,6 +4,10 @@ export interface Palette {
   inkMuted: string;
   surface: string;
   accent: string;
+  // Positive-delta color. Used for HUD floating "+N" deltas and EffectChips
+  // positive values. Must be a muted hue that survives era-mood HSL shifts
+  // (e.g., a sage / olive green next to the warm-brown accent).
+  positive: string;
   player: string;
   playerInk: string;
 }
@@ -44,6 +48,11 @@ export interface Manifest {
   // Each entry is a single line; lines fade in/out sequentially via ScenePlayer.
   // Supports {playerName} interpolation.
   intro?: string[];
+  // Short flavor lines randomly drawn during the post-decision / post-event
+  // beat (canvas blurs, this line floats centered while the HUD animates).
+  // Career-pack themed: SWE uses "...and life goes on" / etc.; a nurse pack
+  // might use shift-themed copy.
+  monthTransitions?: string[];
 }
 
 export type MonthRoomType = 'decision' | 'minigame' | 'narrative' | 'consequence';

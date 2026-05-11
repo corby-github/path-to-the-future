@@ -37,8 +37,8 @@ function Game() {
         padding: '16px 0',
       }}
     >
-      <Hud />
       {import.meta.env.DEV && <DevPanel />}
+      <Hud />
       <RoomRenderer config={config} />
     </div>
   );

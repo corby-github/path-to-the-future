@@ -48,6 +48,7 @@ export function IntroScene({ onComplete }: Props) {
         scene={lines}
         vars={{ playerName: profile.name }}
         onComplete={onComplete}
+        lineMs={3500}
       />
     </div>
   );
