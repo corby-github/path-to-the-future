@@ -1,7 +1,10 @@
 // Day-6 single-profile save key. Day 9 (name entry) migrates to per-profile keys
 // (pttf:profiles, pttf:active, pttf:save:{name}) per design doc §12.
 export const SAVE_KEY = 'pttf:save:default';
-export const STATE_VERSION = '1.0.0';
+// Bump on any breaking change to the persisted shape. Old saves are discarded.
+// 1.1.0: Day 9 — profile gains `initComplete`; careerPack/entryClass no longer
+//        default to hardcoded SWE values (they're driven by the init flow).
+export const STATE_VERSION = '1.1.0';
 
 export function loadPersistedState(): unknown {
   try {

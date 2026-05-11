@@ -5,13 +5,17 @@ export interface ProfileState {
   careerPack: string;
   entryClass: string;
   createdAt: number | null;
+  // True once the player has completed the full init flow (career → name →
+  // class → intro). Drives whether App renders InitFlow or the game.
+  initComplete: boolean;
 }
 
 const initialState: ProfileState = {
   name: '',
-  careerPack: 'software-engineering',
-  entryClass: 'novice',
+  careerPack: '',
+  entryClass: '',
   createdAt: null,
+  initComplete: false,
 };
 
 const profileSlice = createSlice({
