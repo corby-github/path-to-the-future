@@ -1,0 +1,50 @@
+{
+  "interactables": [
+    {
+      "id": "obj-coffee-machine",
+      "kind": "object",
+      "art": "coffee-machine",
+      "tags": ["office", "flavor"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The coffee machine hums. The pot is half full. The pot has been half full for three hours."
+        },
+        {
+          "tier": 1,
+          "prompt": "Someone wrote 'pls clean me — humanity is counting on you' on a sticky note above the carafe. The note is older than the carafe."
+        }
+      ]
+    },
+    {
+      "id": "npc-intern",
+      "kind": "npc",
+      "art": "person-intern",
+      "tags": ["coworker"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The intern looks up. \"Wait, is the standup canceled? Or does it just feel that way?\""
+        },
+        {
+          "tier": 2,
+          "prompt": "The intern catches you in the hallway. \"Got a sec? Quick question about the staging deploy.\"",
+          "options": [
+            {
+              "label": "Sure, walk and talk",
+              "effects": { "burnout": "+1", "reputation": "+1" },
+              "flavor": "Five minutes turns into fifteen. They had it almost right."
+            },
+            {
+              "label": "Maybe later",
+              "effects": {},
+              "flavor": "You say later. You both know later sometimes means never."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

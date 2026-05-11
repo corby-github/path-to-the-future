@@ -14,19 +14,34 @@ import { recordDecision, recordEvent } from '../state/slices/historySlice';
 import { skipMonths } from '../state/slices/progressSlice';
 import { rollEvents, findEventById } from '../content/rollEvents';
 import { applyEvent } from '../content/applyEvent';
+import { passesRequires } from '../content/evaluateRequires';
 import { DecisionModal } from '../ui/DecisionModal';
 import { EventModal } from '../ui/EventModal';
-import { computeRoomSeed } from './generator/seedRng';
+import { NPCModal } from '../ui/NPCModal';
+import { computeRoomSeed, seededRandom, pickFrom } from './generator/seedRng';
 import { generateRoom } from './generator/populate';
 import type { DecisionRoomConfig } from '../types/room';
-import type { DecisionDef, EventDef } from '../types/careerPack';
+import type { DecisionDef, EventDef, InteractableDef, InteractableDialogue } from '../types/careerPack';
 import type { StatKey } from '../content/applyEffects';
 import type { PlayerState } from '../types/player';
-import type { Rect } from '../types/geometry';
+import type { Rect, Vector2 } from '../types/geometry';
 import type { RootState } from '../state/store';
 
 const BASE_SPEED = 180;
 const DEFAULT_EVENT_CHANCE = 0.4;
+// Day 13a — interactables. Place a single interactable at a fixed corner of
+// the room for end-to-end validation. Real generator placement (multiple,
+// theme-weighted, layout-aware) is 13b work.
+const INTERACTABLE_POS: Vector2 = { x: 200, y: 130 };
+const INTERACTABLE_HALF_W = 28;
+const INTERACTABLE_HALF_H = 36;
+// Player center within this many virtual units of the interactable center
+// counts as "adjacent" — E-key opens the modal.
+const INTERACT_PROXIMITY = 75;
+// Distinct salt so the interactable picker doesn't co-vary with decision /
+// event picks at the same monthId.
+const INTERACTABLE_SEED_SALT = 991;
+const DIALOGUE_SEED_SALT = 1009;
 // "Going through the door" fade — Zelda-style. When the player enters the
 // door, the canvas fades to 0 opacity (dark app background shows through)
 // over DOOR_FADE_MS, and the decision modal pops at MODAL_POP_DELAY_MS so
@@ -49,6 +64,12 @@ interface Props {
 function playerInsideDoor(door: Rect, px: number, py: number): boolean {
   return px >= door.x && px <= door.x + door.width
       && py >= door.y && py <= door.y + door.height;
+}
+
+function distance(ax: number, ay: number, bx: number, by: number): number {
+  const dx = ax - bx;
+  const dy = ay - by;
+  return Math.sqrt(dx * dx + dy * dy);
 }
 
 export function DecisionRoom({ config, onExit }: Props) {
@@ -78,6 +99,23 @@ export function DecisionRoom({ config, onExit }: Props) {
 
   const [activeDecision, setActiveDecision] = useState<DecisionDef | null>(null);
   const [activeEvent, setActiveEvent] = useState<EventDef | null>(null);
+  // The one interactable hosted in this room (or null if no eligible match).
+  // Picked deterministically from the pack at mount; doesn't change while
+  // the room is alive.
+  const [interactable] = useState<InteractableDef | null>(() => {
+    const ctx = { stats, flags, currentMonth: config.monthId };
+    const eligible = pack.interactables.filter((i) => passesRequires(i.requires, ctx));
+    if (eligible.length === 0) return null;
+    const rng = seededRandom(config.monthId + INTERACTABLE_SEED_SALT);
+    return pickFrom(rng, eligible);
+  });
+  // Active dialogue is set when the player engages the interactable. Random
+  // pick from the interactable's dialogues, filtered by requires.
+  const [activeInteractable, setActiveInteractable] = useState<InteractableDef | null>(null);
+  const [activeDialogue, setActiveDialogue] = useState<InteractableDialogue | null>(null);
+  // Player adjacency to the interactable — drives the visual highlight and
+  // gates the E-key engagement.
+  const [adjacent, setAdjacent] = useState(false);
   // The chosen option index, set when the player picks but BEFORE effects
   // apply. Effects are dispatched in handleDecisionContinue so the HUD
   // animation fires after the modal closes (when the player can see it),
@@ -121,6 +159,21 @@ export function DecisionRoom({ config, onExit }: Props) {
   const [committed, setCommitted] = useState(false);
 
   const handleTick = useCallback((state: PlayerState) => {
+    // Update adjacency to the room's interactable on every tick so the visual
+    // hint and the E-key gate stay in sync with the player position.
+    if (interactable) {
+      const d = distance(
+        state.position.x,
+        state.position.y,
+        INTERACTABLE_POS.x,
+        INTERACTABLE_POS.y,
+      );
+      setAdjacent((cur) => {
+        const next = d <= INTERACT_PROXIMITY;
+        return next === cur ? cur : next;
+      });
+    }
+
     if (triggered.current) return;
     if (!playerInsideDoor(layout.door, state.position.x, state.position.y)) return;
     triggered.current = true;
@@ -140,16 +193,60 @@ export function DecisionRoom({ config, onExit }: Props) {
         onExit();
       }
     }, MODAL_POP_DELAY_MS);
-  }, [layout.door, pack.decisions, ctx, config.monthId, onExit]);
+  }, [layout.door, pack.decisions, ctx, config.monthId, onExit, interactable]);
 
   const playerState = usePlayerMovement({
     initialPosition: layout.spawn,
     bounds: ROOM_BOUNDS,
     obstacles: layout.obstacles,
-    active: !committed && activeDecision === null && activeEvent === null,
+    active:
+      !committed &&
+      activeDecision === null &&
+      activeEvent === null &&
+      activeInteractable === null,
     speed: BASE_SPEED * speedMultiplier,
     onTick: handleTick,
   });
+
+  // E-key opens the interactable when the player is adjacent and no other
+  // modal is active. Picks a random dialogue eligible by requires; seeded so
+  // the same room state yields the same opening line.
+  useEffect(() => {
+    if (!interactable) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== 'e' && e.key !== 'E') return;
+      if (committed) return;
+      if (activeDecision || activeEvent || activeInteractable) return;
+      if (!adjacent) return;
+      e.preventDefault();
+      const reqCtx = { stats, flags, currentMonth: config.monthId };
+      const eligibleDialogues = interactable.dialogues.filter((d) =>
+        passesRequires(d.requires, reqCtx),
+      );
+      if (eligibleDialogues.length === 0) return;
+      const rng = seededRandom(config.monthId + DIALOGUE_SEED_SALT);
+      const picked = pickFrom(rng, eligibleDialogues);
+      setActiveInteractable(interactable);
+      setActiveDialogue(picked);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [
+    interactable,
+    adjacent,
+    committed,
+    activeDecision,
+    activeEvent,
+    activeInteractable,
+    stats,
+    flags,
+    config.monthId,
+  ]);
+
+  const handleInteractableClose = useCallback(() => {
+    setActiveInteractable(null);
+    setActiveDialogue(null);
+  }, []);
 
   const handleChoose = useCallback((index: number) => {
     if (!activeDecision) return;
@@ -316,16 +413,25 @@ export function DecisionRoom({ config, onExit }: Props) {
           </span>
         </div>
 
+        {/* Canvas wrapper holds the wireframe border so it persists after the
+            SVG contents fade on door-commit. This keeps the room bounds
+            visible during the modal beat — the player sees an empty frame
+            instead of feeling like the whole board vanished. */}
+        <div
+          style={{
+            border: `1px solid ${palette.surface}`,
+            borderRadius: 6,
+            overflow: 'hidden',
+            // Suppress the inline-baseline gap below the SVG.
+            lineHeight: 0,
+          }}
+        >
         <svg
           viewBox={`0 0 ${ROOM_VIEWBOX.width} ${ROOM_VIEWBOX.height}`}
           style={{
-            // Card treatment to match the HUD strip above. Dropping the hard
-            // 2px ink border + the inner-frame rect: the door and obstacles
-            // are visual markers enough, and the §15 "generous negative
-            // space" rule reads better without a heavy frame.
+            // Card treatment to match the HUD strip above. Border lives on
+            // the wrapper div now (see above) so it survives the door fade.
             background: palette.background,
-            border: `1px solid ${palette.surface}`,
-            borderRadius: 6,
             display: 'block',
             // Responsive: width fills the parent column (which itself is
             // bounded by --canvas-display-width). Height auto-derives from
@@ -335,9 +441,10 @@ export function DecisionRoom({ config, onExit }: Props) {
             height: 'auto',
             // Zelda-style "stepping through the door" fade. When committed
             // (door triggered), the canvas fades to 0 over DOOR_FADE_MS —
-            // dark app background shows through. Modal pop is delayed to
-            // land on the faded canvas. Restores naturally on the next
-            // room (new instance, committed=false from the start).
+            // dark app background shows through; the wireframe border (on
+            // the wrapper) stays visible. Modal pop is delayed to land on
+            // the faded canvas. Restores naturally on the next room (new
+            // instance, committed=false from the start).
             opacity: committed ? 0 : 1,
             transition: `opacity ${DOOR_FADE_MS}ms ease`,
           }}
@@ -381,8 +488,79 @@ export function DecisionRoom({ config, onExit }: Props) {
             />
           ))}
 
+          {/* Interactable (NPC or object). 13a renders a kind-distinct
+              placeholder shape — real sprites come in 13b. */}
+          {interactable && (
+            <g>
+              {interactable.kind === 'npc' ? (
+                <>
+                  {/* Body */}
+                  <rect
+                    x={INTERACTABLE_POS.x - 18}
+                    y={INTERACTABLE_POS.y - 8}
+                    width={36}
+                    height={48}
+                    rx={6}
+                    fill={palette.accent}
+                    stroke={palette.ink}
+                    strokeWidth={2}
+                  />
+                  {/* Head */}
+                  <circle
+                    cx={INTERACTABLE_POS.x}
+                    cy={INTERACTABLE_POS.y - 22}
+                    r={14}
+                    fill={palette.accent}
+                    stroke={palette.ink}
+                    strokeWidth={2}
+                  />
+                </>
+              ) : (
+                <rect
+                  x={INTERACTABLE_POS.x - 26}
+                  y={INTERACTABLE_POS.y - 26}
+                  width={52}
+                  height={52}
+                  rx={4}
+                  fill={palette.surface}
+                  stroke={palette.ink}
+                  strokeWidth={2}
+                />
+              )}
+              {/* Adjacency halo + [E] hint when player is in range. */}
+              {adjacent && !activeInteractable && (
+                <>
+                  <rect
+                    x={INTERACTABLE_POS.x - INTERACTABLE_HALF_W - 4}
+                    y={INTERACTABLE_POS.y - INTERACTABLE_HALF_H - 4}
+                    width={(INTERACTABLE_HALF_W + 4) * 2}
+                    height={(INTERACTABLE_HALF_H + 4) * 2}
+                    rx={8}
+                    fill="none"
+                    stroke={palette.accent}
+                    strokeWidth={2}
+                    strokeDasharray="6 4"
+                    opacity={0.85}
+                  />
+                  <text
+                    x={INTERACTABLE_POS.x}
+                    y={INTERACTABLE_POS.y - INTERACTABLE_HALF_H - 12}
+                    textAnchor="middle"
+                    fontSize={14}
+                    fontFamily="system-ui, sans-serif"
+                    fontWeight={600}
+                    fill={palette.ink}
+                  >
+                    [E] talk
+                  </text>
+                </>
+              )}
+            </g>
+          )}
+
           <Player state={playerState} />
         </svg>
+        </div>
       </div>
 
       {activeDecision && (
@@ -397,6 +575,14 @@ export function DecisionRoom({ config, onExit }: Props) {
         <EventModal
           event={activeEvent}
           onContinue={handleEventContinue}
+        />
+      )}
+
+      {activeInteractable && activeDialogue && (
+        <NPCModal
+          interactable={activeInteractable}
+          dialogue={activeDialogue}
+          onClose={handleInteractableClose}
         />
       )}
     </>
