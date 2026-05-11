@@ -195,6 +195,40 @@ Every universal decision counts 5× when we add the next career pack.
 
 ---
 
+## 8b. Modal Presentation for NPCs & Objects
+
+NPC and object interactions use a typewriter text reveal evoking the dialog boxes of NES/SNES-era adventure games (Zelda, Final Fantasy, Pokémon). This is distinct from the §8 door decision modal — that one snaps in (the world is acting on you), while NPC/object modals reveal at a human reading cadence (you are engaging deliberately).
+
+### Entrance
+- Modal fades in with a subtle scale (0.96 → 1.0) over ~200ms, ease-out.
+- Backdrop dims behind the modal (rgba black at ~40% opacity).
+
+### Text reveal
+- The prompt string renders one character at a time at a fixed cadence.
+- **Default speed:** 30ms per character. Settable globally via `manifest.json` (`typewriterSpeedMs`) and overridable per modal instance.
+- **Punctuation pauses:** `,` adds +60ms; `.` `!` `?` add +180ms; `—` adds +120ms. Natural rhythm without explicit timing markup.
+- **Tag support for explicit pauses:** `[[pause:500]]` inserts a 500ms hold mid-string. Use sparingly — for dramatic beats.
+- A blinking caret (`▌`) sits at the current reveal position during the animation.
+
+### Skip-to-end
+- Any key press / tap during reveal immediately completes the text (does not advance past it).
+- A second press, after full reveal, advances focus to the options (or closes the modal for read-only flavor).
+
+### Options (Tier 2 only)
+- Options are hidden during prompt reveal.
+- After reveal completes, options fade in sequentially (~80ms stagger).
+- A small `▼` indicator appears at the bottom of the prompt box once reveal is complete, signaling "ready for input."
+
+### Sound (deferred to Day 13)
+A soft per-character tick (like classic dialog boxes) is a Day 13 polish candidate. v1 ships visual-only.
+
+### Implementation note
+A single `<TypewriterText>` component handles Tier 1 (read-only flavor) and Tier 2 (interaction) modals. Props: `text`, `speedMs` (default 30), `onComplete`, `skipOnInteract` (default true). Encapsulates punctuation-pause rules and `[[pause:N]]` tag parsing internally.
+
+The Tier 3 door decision modal (§8) does **not** use this component — it intentionally snaps in to feel different (systemic vs. embodied).
+
+---
+
 ## 9. Random Event System
 
 After every decision, `rollEvents(state, monthId)` runs. Pulls from:
