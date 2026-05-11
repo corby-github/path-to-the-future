@@ -1,7 +1,7 @@
 # Session Log: Path to the Future — Day 2
 
 **Date:** 2026-05-11
-**Session duration:** ~4 hours (estimate — see §5)
+**Focused-work duration:** ~1h 45m (6:15pm – 8:00pm, user-reported — see §5)
 **Participants:** 1 human + Claude (Opus 4.7, 1M context)
 **Output type:** Working code + merged PRs + design-doc additions
 **Continues:** `day 1/session-log-analytical-2026-05-10-path-to-the-future.md`
@@ -105,22 +105,28 @@ Today began with the user returning from the break: *"do you need a refresher or
 
 ## 5. Time analysis
 
-### Session duration
-**Estimate: ~4 hours of focused work.**
+### Focused-work duration
+**User-reported: 1 hour 45 minutes (6:15pm – 8:00pm).**
 
-Breakdown: Day 6 (~90 min including the latent-bug diagnosis), Day 6 polish (~20 min), §8b design conversation + doc commit (~25 min), Day 7 (~50 min), Day 8 build + late bug fix (~75 min). Five PRs merged; sixth being opened now.
+This is the user's wall-clock window of active engagement on this project today, end-to-end. It includes design conversations, code review, browser verification, and the diagnosis cycles for the two runtime bugs. The user noted that the *previous* "4 hours" estimate in this log was inflated because the AI conversation thread spanned other context (including a ~45-minute walk that was outside this work window) and the conflation made the compression ratio look smaller than it really was.
+
+Going forward, the user plans to start a fresh AI session per day to make timing more directly measurable from the conversation itself. For this Day-2 log, the human-reported number is the source of truth.
 
 ### Traditional-team equivalent
 **Assumed team:** 1 tech lead (architecture + reviews), 1 senior engineer (implementation), plus content / design adjacencies coordinated by the lead.
 **Assumed working pattern:** standard async cadence, 1–2 sync touchpoints per day, PR-review queues. No pair programming.
-**Estimated duration: 6–10 working days.**
+**Estimated duration: 5–8 working days.**
+
+A senior engineer moving fast can plausibly land Day-6-shaped or Day-8-shaped scope in a focused 1-2 days each; the PR-review overhead and the bug-diagnosis time are the variables.
 
 **INCLUDES:** writing all the code (modal, scene system, persistence, generator, event system, ScenePlayer extraction); the mid-stream design conversations that produced schemas before coding; the polish-after-merge cycles; diagnosing the two real bugs (component reuse + setState-during-render) which would take a typical engineer hours each because the symptoms don't immediately point to the cause; authoring and integrating the §8b doc section; the `combineReducers` refactor to break the circular type with `preloadedState`.
 
 **EXCLUDES:** stakeholder alignment, PM rituals, planning meetings; real visual design and sound (Day 13 polish); real content writing (Day 10) — the JSON files contain placeholders, not authored prose; QA across browsers/devices; performance profiling; accessibility audit.
 
 ### Honest framing
-This session compressed roughly **10-15× faster** end-to-end vs. a typical small team's cadence, with quality maintained — strict TypeScript, ESLint-clean, real bugs caught and fixed pre-merge, design-doc adherence verified at multiple points. Same ratio as yesterday's session, sustained across the second day.
+1.75 hours of focused work vs. 5-8 team working days (40-64 team hours) puts the compression at roughly **25-35× faster** end-to-end, with quality maintained — strict TypeScript, ESLint-clean, real bugs caught and fixed pre-merge, design-doc adherence verified at multiple points.
+
+The multiplier is sharper than yesterday's because today's window was a tighter, more focused two-hour push rather than a multi-hour after-dinner stretch. Both estimates depend on the team-equivalent assumption; the user-reported time is the firmest number in the chain.
 
 The thing the multiplier captures isn't just speed; it's *speed with the same quality bar*. Without the user's discipline (browse-test before merging, "check and recheck"), this session would have happily shipped both the Day 6 reconciliation bug and the Day 8 setState warning to a future session, where they'd compound and be harder to diagnose.
 
