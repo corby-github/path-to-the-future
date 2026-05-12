@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { useStore } from 'react-redux';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { completeMonth } from '../state/slices/progressSlice';
+import { completeMonth, cueMonthAdvance } from '../state/slices/progressSlice';
 import { markSaved } from '../state/slices/metaSlice';
 import { persistState } from '../state/persistence';
 import type { RootState } from '../state/store';
@@ -24,6 +24,11 @@ export function useRoomTransition(): RoomTransition {
   const exitRoom = useCallback(() => {
     if (fadingRef.current) return;
     fadingRef.current = true;
+    // Issue #30 — cue the HUD month-emit BEFORE flipping fade. The `+1 mo`
+    // floater now fires AS the canvas dims, not 220ms later when the room
+    // remounts. Reads as cause-and-effect ("a month passed, so the world
+    // dimmed") instead of empty-then-explanation.
+    dispatch(cueMonthAdvance());
     setFading(true);
     window.setTimeout(() => {
       dispatch(completeMonth(currentMonth));

@@ -103,6 +103,21 @@ body {
   to   { opacity: 1; transform: scale(1); }
 }
 
+/* Decision/Event modal entrance per §4.1 — the modal that lands after the
+   door fade. Same family as npc-modal-pop (fade + light scale) but applied
+   to the BACKDROP layer so the dimmed overlay also eases in instead of
+   snap-appearing on top of the still-fading canvas. Paired with
+   MODAL_POP_DELAY_MS > DOOR_FADE_MS so the canvas has a settled-dark beat
+   before this fires. */
+@keyframes decision-modal-pop {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes decision-modal-dialog-pop {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
 /* HUD month-label pulse on month change. Brief scale-up so the player sees
    the label react when time advances — paired with a "+N mo" emit (below)
    for the magnitude signal. Re-keyed in JSX per monthId so each change

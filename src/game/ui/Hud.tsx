@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useAppSelector } from '../state/hooks';
 import { useCareerPack } from '../content/useCareerPack';
 import { StatChip } from './StatChip';
@@ -55,6 +55,7 @@ export function Hud() {
   const profile = useAppSelector((s) => s.profile);
   const progress = useAppSelector((s) => s.progress);
   const stats = useAppSelector((s) => s.stats);
+  const cueNonce = useAppSelector((s) => s.progress.monthAdvanceCueNonce);
   const { template } = useCurrentRoom();
 
   const classLabel =
@@ -67,13 +68,17 @@ export function Hud() {
   const deltaIdCounter = useRef(0);
   const [monthDeltas, setMonthDeltas] = useState<MonthDelta[]>([]);
 
-  useEffect(() => {
-    const prev = prevMonthIdRef.current;
-    prevMonthIdRef.current = currentMonth.id;
-    if (prev === currentMonth.id) return;
+  // Issue #30 — fade-start cue handshake. `useRoomTransition.exitRoom`
+  // bumps `monthAdvanceCueNonce` at the instant the canvas begins to fade
+  // (before the 220ms wait → `completeMonth` dispatch). The Hud emits the
+  // `+1 mo` floater on that cue and arms `suppressNextCompleteEmitRef` so
+  // the subsequent natural `currentMonth.id +1` advance doesn't emit a
+  // duplicate. Multi-month `skipMonths` jumps don't go through the cue
+  // path — they emit naturally via the currentMonth.id effect.
+  const prevCueNonceRef = useRef<number>(cueNonce);
+  const suppressNextCompleteEmitRef = useRef<boolean>(false);
 
-    const diff = currentMonth.id - prev;
-    if (diff === 0) return;
+  const pushMonthDelta = useCallback((diff: number) => {
     const abs = Math.abs(diff);
     const { durationMs } = tierForMagnitude(abs);
     const id = ++deltaIdCounter.current;
@@ -85,11 +90,36 @@ export function Hud() {
       magnitude: abs,
       durationMs,
     }]);
-    const timeout = window.setTimeout(() => {
+    window.setTimeout(() => {
       setMonthDeltas((d) => d.filter((m) => m.id !== id));
     }, durationMs);
-    return () => window.clearTimeout(timeout);
-  }, [currentMonth.id]);
+  }, []);
+
+  useEffect(() => {
+    const prev = prevCueNonceRef.current;
+    prevCueNonceRef.current = cueNonce;
+    if (prev === cueNonce) return;
+    // Cue is always a +1 advance (completeMonth advances by exactly 1).
+    pushMonthDelta(1);
+    suppressNextCompleteEmitRef.current = true;
+  }, [cueNonce, pushMonthDelta]);
+
+  useEffect(() => {
+    const prev = prevMonthIdRef.current;
+    prevMonthIdRef.current = currentMonth.id;
+    if (prev === currentMonth.id) return;
+
+    const diff = currentMonth.id - prev;
+    if (diff === 0) return;
+    // Dedup against the fade-start cue. The cue emits +1 at fade-start;
+    // the subsequent completeMonth advances currentMonth.id by 1, which
+    // would otherwise re-emit. Swallow it.
+    if (diff === 1 && suppressNextCompleteEmitRef.current) {
+      suppressNextCompleteEmitRef.current = false;
+      return;
+    }
+    pushMonthDelta(diff);
+  }, [currentMonth.id, pushMonthDelta]);
 
   const containerStyle: CSSProperties = {
     // Match the canvas's responsive width so the HUD and canvas stay

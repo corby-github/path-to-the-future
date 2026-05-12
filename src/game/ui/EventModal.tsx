@@ -61,6 +61,8 @@ export function EventModal({ event, onContinue }: Props) {
         justifyContent: 'center',
         zIndex: 100,
         fontFamily: 'inherit',
+        // §4.1 — match DecisionModal entrance choreography.
+        animation: 'decision-modal-pop 220ms ease-out',
       }}
     >
       <div
@@ -77,6 +79,7 @@ export function EventModal({ event, onContinue }: Props) {
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
+          animation: 'decision-modal-dialog-pop 240ms ease-out',
         }}
       >
         <div

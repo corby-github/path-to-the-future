@@ -103,6 +103,9 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
         justifyContent: 'center',
         zIndex: 100,
         fontFamily: 'inherit',
+        // §4.1 — backdrop eases in over 220ms instead of snap-appearing
+        // (was racing the 300ms door fade pre-#30).
+        animation: 'decision-modal-pop 220ms ease-out',
       }}
     >
       <div
@@ -120,6 +123,9 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
+          // §4.1 — dialog box rides in slightly after the backdrop with a
+          // light scale-up. Total entrance reads as one deliberate beat.
+          animation: 'decision-modal-dialog-pop 240ms ease-out',
         }}
       >
         {phase === 'options' && (

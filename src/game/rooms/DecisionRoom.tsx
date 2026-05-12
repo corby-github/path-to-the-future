@@ -96,14 +96,23 @@ const NPC_IDLE_PROBABILITY = 0.3;
 // over DOOR_FADE_MS, and the decision modal pops at MODAL_POP_DELAY_MS so
 // it lands on a fully-faded canvas. Status bar / HUD stay visible (they're
 // chrome, not the game world).
+// MODAL_POP_DELAY_MS is intentionally LONGER than DOOR_FADE_MS so the canvas
+// has a small "settled dark" beat (~200ms) before the modal arrives — pre-#30
+// they were equal (both 300ms) and the modal snap-in raced the fade's final
+// frames, reading as the fade being interrupted. The modal itself now fades
+// in via the `decision-modal-pop` keyframe (see global.css), so the arrival
+// is choreographed: canvas dims → dark beat → modal eases in.
 const DOOR_FADE_MS = 300;
-const MODAL_POP_DELAY_MS = 300;
+const MODAL_POP_DELAY_MS = 500;
 // After Continue: close the modal, dispatch effects (HUD floating-delta
-// runs ~900ms), and swap the status bar to a "time passes" line. The pause
-// outlives the HUD pop by ~500ms so the message has its own beat to land
-// after the numbers settle. POST_EFFECT_PAUSE_MS controls when the next
-// state fires (event modal or room fade).
-const POST_EFFECT_PAUSE_MS = 1400;
+// runs ~900ms), and swap the status bar to a "time passes" line.
+// POST_EFFECT_PAUSE_MS controls when the next state fires (event modal or
+// room fade). Tightened from 1400 → 900 in #30: the original 1400 made the
+// transition feel ceremonial because the message lingered well past the
+// HUD pop. 900 aligns the message hang with the HUD-delta animation —
+// status, stat numbers, and fade-start now all land in one beat instead
+// of four sequential events.
+const POST_EFFECT_PAUSE_MS = 900;
 
 interface Props {
   config: DecisionRoomConfig;
