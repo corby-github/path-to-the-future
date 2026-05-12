@@ -1,10 +1,16 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { classTierForXp } from '../../content/classes';
 
-// Flat per-decision XP grant. 120 decisions × 50 = 6000 XP → a clean Novice
-// run lands mid-Skilled by month 120 (Junior threshold at ~month 20, Skilled
-// at ~month 100). Tune here if the arc feels too fast or too slow.
+// XP economy. Baseline accumulation (per decision) is small and steady; the
+// jumps come from minigame wins and decision options tagged with an explicit
+// `xp` effect (promotions, new jobs, big stretches). 120-decision arcs land
+// a "play it safe" Novice in low-Skilled (~6000 XP) and a "go for it" run
+// in mid-to-high-Skilled (~9-13000 XP). Vanguard (15000+) stays out of reach
+// for v1.
 export const XP_PER_DECISION = 50;
+export const XP_MINIGAME_WIN = 250;
+export const XP_MINIGAME_PARTIAL = 100;
+export const XP_MINIGAME_FAIL = 25;
 
 export interface ProgressState {
   currentMonth: number;

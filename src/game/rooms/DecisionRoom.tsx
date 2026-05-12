@@ -448,14 +448,21 @@ export function DecisionRoom({ config, onExit }: Props) {
       for (const [stat, expr] of Object.entries(option.effects)) {
         const parsed = parseEffect(expr);
         if (!parsed) continue;
+        // `xp` is not a StatKey — it routes to addXp, additive on top of the
+        // baseline grant below. Author bonuses like `"xp": "+300"` on options
+        // that represent promotions, new jobs, or big stretches.
+        if (stat === 'xp') {
+          dispatch(addXp(parsed.op === '-' ? -parsed.magnitude : parsed.magnitude));
+          continue;
+        }
         dispatch(applyStatEffect({
           stat: stat as StatKey,
           op: parsed.op,
           magnitude: parsed.magnitude,
         }));
       }
-      // Every committed decision grants flat XP — addXp recomputes classTier
-      // so promotions land automatically.
+      // Every committed decision grants baseline XP — addXp recomputes
+      // classTier so promotions land automatically.
       dispatch(addXp(XP_PER_DECISION));
     }
     setPendingOptionIndex(null);

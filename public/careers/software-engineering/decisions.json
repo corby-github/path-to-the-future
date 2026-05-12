@@ -14,7 +14,7 @@
             "Panic.",
             "The build goes green."
           ],
-          "effects": { "burnout": "+5", "reputation": "+3", "technicalSkill": "+1" },
+          "effects": { "burnout": "+5", "reputation": "+3", "technicalSkill": "+1", "xp": "+150" },
           "flavor": "You stayed until 10. The build went green at 9:47. You won't forget that moment."
         },
         {
@@ -104,7 +104,7 @@
             "Evenings end late.",
             "Something ships."
           ],
-          "effects": { "burnout": "+8", "reputation": "+4", "technicalSkill": "+2", "health": "-3" },
+          "effects": { "burnout": "+8", "reputation": "+4", "technicalSkill": "+2", "health": "-3", "xp": "+150" },
           "flavor": "You shipped two months early. People noticed. You haven't seen your friends since spring."
         },
         {
@@ -134,7 +134,7 @@
             "A meeting that runs long.",
             "Approval. Cautious."
           ],
-          "effects": { "burnout": "+5", "reputation": "+5", "technicalSkill": "+3" },
+          "effects": { "burnout": "+5", "reputation": "+5", "technicalSkill": "+3", "xp": "+150" },
           "flavor": "You got the green light. Three months of your life are now spoken for. Worth it, probably."
         },
         {
@@ -159,7 +159,7 @@
             "3:14am: a page.",
             "You fix it half-asleep."
           ],
-          "effects": { "burnout": "+4", "reputation": "+5", "network": "+2", "health": "-2" },
+          "effects": { "burnout": "+4", "reputation": "+5", "network": "+2", "health": "-2", "xp": "+150" },
           "flavor": "You took two weeks. One quiet night, one rough one. The lead remembers."
         },
         {
@@ -184,7 +184,7 @@
             "Two hundred words.",
             "Send."
           ],
-          "effects": { "burnout": "+2", "reputation": "+3", "network": "+2" },
+          "effects": { "burnout": "+2", "reputation": "+3", "network": "+2", "xp": "+150" },
           "flavor": "You hit submit at 11:58 Friday. Acceptance or rejection — either way, the abstract exists."
         },
         {
@@ -520,7 +520,7 @@
             "Empty rooms.",
             "An unfamiliar key in a new door."
           ],
-          "effects": { "savings": "+3500", "network": "-12", "burnout": "+5", "reputation": "+4" },
+          "effects": { "savings": "+3500", "network": "-12", "burnout": "+5", "reputation": "+4", "xp": "+300" },
           "flavor": "You moved. The first month was a checklist. The second was lonelier than expected. The third, you started to recognize a barista."
         },
         {
@@ -640,12 +640,12 @@
       "options": [
         {
           "label": "Stay deep in the code",
-          "effects": { "technicalSkill": "+4", "reputation": "+2", "burnout": "-1" },
+          "effects": { "technicalSkill": "+4", "reputation": "+2", "burnout": "-1", "xp": "+300" },
           "flavor": "You took the senior IC. You kept your hands on the keyboard. People asked you 'when are you going to be a lead?' for two years."
         },
         {
           "label": "Take the lead role",
-          "effects": { "technicalSkill": "-1", "reputation": "+5", "network": "+4", "burnout": "+3" },
+          "effects": { "technicalSkill": "-1", "reputation": "+5", "network": "+4", "burnout": "+3", "xp": "+300" },
           "flavor": "You took the title. The work changed. You spent more time in docs than in the editor. Sometimes you missed it."
         }
       ]
@@ -660,12 +660,12 @@
       "options": [
         {
           "label": "People manager",
-          "effects": { "technicalSkill": "-3", "reputation": "+4", "network": "+5", "burnout": "+4" },
+          "effects": { "technicalSkill": "-3", "reputation": "+4", "network": "+5", "burnout": "+4", "xp": "+300" },
           "flavor": "You took it. Your calendar filled with one-on-ones. You learned that the hardest part of management is being patient on Wednesday afternoons."
         },
         {
           "label": "Tech lead",
-          "effects": { "technicalSkill": "+3", "reputation": "+3", "burnout": "+2" },
+          "effects": { "technicalSkill": "+3", "reputation": "+3", "burnout": "+2", "xp": "+300" },
           "flavor": "You took it. Your calendar filled with design reviews. The code you wrote got smaller and stranger. It was usually load-bearing."
         }
       ]
@@ -685,7 +685,7 @@
             "A first-night syllabus.",
             "Coffee at 11pm."
           ],
-          "effects": { "savings": "-10000", "technicalSkill": "+5", "reputation": "+3", "burnout": "+4" },
+          "effects": { "savings": "-10000", "technicalSkill": "+5", "reputation": "+3", "burnout": "+4", "xp": "+300" },
           "flavor": "Two years of nights. You finished. You don't know yet if it mattered. You suspect it did, somewhere, quietly."
         },
         {
@@ -710,7 +710,7 @@
             "An options grant.",
             "A folding chair."
           ],
-          "effects": { "savings": "-3000", "technicalSkill": "+3", "reputation": "+2", "burnout": "+6", "network": "+3" },
+          "effects": { "savings": "-3000", "technicalSkill": "+3", "reputation": "+2", "burnout": "+6", "network": "+3", "xp": "+300" },
           "flavor": "You joined. The first six months were exhilarating. You wrote a small piece of the codebase that will outlive most of the rest of it."
         },
         {
@@ -730,7 +730,7 @@
       "options": [
         {
           "label": "Commit to it",
-          "effects": { "burnout": "+2", "reputation": "+4", "network": "+3" },
+          "effects": { "burnout": "+2", "reputation": "+4", "network": "+3", "xp": "+150" },
           "flavor": "You did the weekly thirties. Six months in, they shipped something hard. They credited you. You credited them. Both were a little true."
         },
         {
@@ -755,7 +755,7 @@
             "A long silence.",
             "A nod."
           ],
-          "effects": { "technicalSkill": "+3", "reputation": "+5", "burnout": "+3" },
+          "effects": { "technicalSkill": "+3", "reputation": "+5", "burnout": "+3", "xp": "+150" },
           "flavor": "You held the line. You were respectful. You were also, ten minutes in, clearly correct. The staff engineer sent a friendly message after."
         },
         {
