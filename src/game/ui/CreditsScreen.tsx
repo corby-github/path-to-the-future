@@ -46,6 +46,20 @@ const HOLD_BEFORE_SCROLL_SEC = 2;
 // in the transparent edge of the mask gradient and looks washed out.
 const SCROLL_TOP_OFFSET_PX = 20;
 
+// Random "are you sure you want to start over?" lines shown above the
+// Yes / No buttons in replay-confirm mode. One is picked per view (stable
+// for the duration of the confirmation; re-rolled each time the player
+// opens Begin Again). Same comedic register as `endgame-taglines.json`
+// per §1 Inspirations — dry, slightly absurd, willing to undercut its
+// own seriousness. Note typographic apostrophes + non-breaking hyphens
+// in some lines — kept intentionally for visual polish.
+const REPLAY_CONFIRM_MESSAGES: readonly string[] = [
+  "Sure, let’s reset. I’ll pretend I didn’t watch you agonize over every decision last time.",
+  "If you do this, your entire save file evaporates like a low‑level slime in sunlight. Poof. Gone. Hope you weren’t attached.",
+  "Okay, but just so we’re clear: pressing this means your progress packs its bags and leaves forever. No refunds. No take‑backs. And yes, I’m judging you a little.",
+  "Starting over, huh. Bold choice. I’ll just… sweep your old progress into this little bin here. No, don’t look. It’s embarrassing.",
+];
+
 export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
   const { palette } = useCareerPack();
   const [data, setData] = useState<CreditsData | null>(null);
@@ -53,6 +67,12 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
   // Replay-mode keyboard focus. Defaults to 'cancel' (less-destructive) so a
   // careless Enter doesn't blow away a save.
   const [focusedReplay, setFocusedReplay] = useState<'cancel' | 'confirm'>('cancel');
+  // Pick one of the silly confirmation lines on mount. Stable for the
+  // duration of THIS confirmation view; re-rolls if the player closes and
+  // re-opens (CreditsScreen unmounts/remounts when creditsMode toggles).
+  const [confirmMessage] = useState<string>(
+    () => REPLAY_CONFIRM_MESSAGES[Math.floor(Math.random() * REPLAY_CONFIRM_MESSAGES.length)],
+  );
   const innerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -352,15 +372,23 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
           <>
             <p
               style={{
-                margin: 0,
-                fontSize: 14,
+                margin: '4px 0',
+                fontSize: 16,
                 fontStyle: 'italic',
+                fontWeight: 600,
                 textAlign: 'center',
-                maxWidth: 540,
-                opacity: 0.9,
+                maxWidth: 580,
+                // Warm rust red — clearly different from the cream/brown
+                // SWE palette so the "destructive action" beat lands. Not
+                // alarm-red (out of tone with the contemplative register);
+                // a confident "are you absolutely sure" red.
+                color: '#b54a3a',
+                opacity: 1,
+                letterSpacing: '0.01em',
+                lineHeight: 1.5,
               }}
             >
-              If we do this, there's no going back. I know how fickle you can be.
+              {confirmMessage}
             </p>
             <div data-region="actions" style={{ display: 'flex', gap: 12, marginTop: 4 }}>
               <button
