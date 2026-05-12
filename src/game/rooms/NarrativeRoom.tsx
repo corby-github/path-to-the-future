@@ -27,6 +27,8 @@ export function NarrativeRoom({ config, onContinue }: Props) {
 
   return (
     <div
+      data-component="NarrativeRoom"
+      data-month-id={config.monthId}
       style={{
         // Responsive sizing matching DecisionRoom's canvas. Aspect ratio
         // keeps the 1000:600 layout intent for narrative copy.
@@ -55,6 +57,7 @@ export function NarrativeRoom({ config, onContinue }: Props) {
         {config.body}
       </p>
       <button
+        data-action="continue"
         onClick={onContinue}
         style={{
           padding: '12px 32px',

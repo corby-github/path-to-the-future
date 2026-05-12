@@ -28,6 +28,7 @@ function Game() {
   return (
     <CurrentRoomProvider>
       <div
+        data-component="Game"
         style={{
           display: 'flex',
           flexDirection: 'column',

@@ -43,7 +43,7 @@ export function IntroScene({ onComplete }: Props) {
   }
 
   return (
-    <div style={screenStyle}>
+    <div data-component="IntroScene" style={screenStyle}>
       <ScenePlayer
         scene={lines}
         vars={{ playerName: profile.name }}

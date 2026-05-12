@@ -514,6 +514,8 @@ export function DecisionRoom({ config, onExit }: Props) {
   return (
     <>
       <div
+        data-component="DecisionRoom"
+        data-month-id={config.monthId}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -524,6 +526,7 @@ export function DecisionRoom({ config, onExit }: Props) {
       >
         {/* Status / current-task bar. */}
         <div
+          data-region="status-bar"
           style={{
             display: 'flex',
             justifyContent: 'center',
@@ -549,6 +552,7 @@ export function DecisionRoom({ config, onExit }: Props) {
 
         {/* Canvas wrapper — wireframe border survives the door-commit fade. */}
         <div
+          data-region="canvas"
           style={{
             border: `1px solid ${palette.surface}`,
             borderRadius: 6,
@@ -615,7 +619,12 @@ export function DecisionRoom({ config, onExit }: Props) {
             const ipos = p.def.kind === 'npc' ? (npcPositions[i] ?? p.spawn) : p.spawn;
             const isNearest = adjacentIndex === i && !activeInteractable;
             return (
-              <g key={p.def.id + '-' + i}>
+              <g
+                key={p.def.id + '-' + i}
+                data-interactable-id={p.def.id}
+                data-interactable-kind={p.def.kind}
+                data-adjacent={isNearest || undefined}
+              >
                 <InteractableSprite
                   art={p.def.art}
                   kind={p.def.kind}

@@ -230,6 +230,9 @@ export function Blackjack({ monthId, onComplete }: Props) {
 
   return (
     <div
+      data-component="Blackjack"
+      data-phase={phase}
+      data-result={result ?? undefined}
       style={{
         width: 'var(--canvas-display-width)',
         aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,

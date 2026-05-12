@@ -72,6 +72,7 @@ function ScoreRow({ label, value, palette, emphasis }: ScoreRowProps) {
 function StatsPanel({ stats, palette }: { stats: StatsState; palette: Palette }) {
   return (
     <div
+      data-region="stats-panel"
       style={{
         flex: 1,
         background: palette.background,
@@ -119,6 +120,7 @@ function ScorePanel({
 }) {
   return (
     <div
+      data-region="score-panel"
       style={{
         flex: 1,
         background: palette.background,
@@ -184,6 +186,7 @@ function DecisionTimeline({
 }) {
   return (
     <div
+      data-region="career-timeline"
       style={{
         flex: 1,
         minHeight: 0,
@@ -375,6 +378,7 @@ export function EndgameScreen() {
 
   return (
     <div
+      data-component="EndgameScreen"
       style={{
         width: 'var(--canvas-display-width)',
         aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
@@ -391,7 +395,7 @@ export function EndgameScreen() {
         minHeight: 0,
       }}
     >
-      <div style={{ textAlign: 'center' }}>
+      <div data-region="header" style={{ textAlign: 'center' }}>
         <p
           style={{
             margin: 0,
@@ -421,15 +425,17 @@ export function EndgameScreen() {
         )}
       </div>
 
-      <div style={{ display: 'flex', gap: 12, alignItems: 'stretch' }}>
+      <div data-region="panels" style={{ display: 'flex', gap: 12, alignItems: 'stretch' }}>
         <StatsPanel stats={stats} palette={palette} />
         <ScorePanel breakdown={score} classLabel={tier.label} xp={progress.xp} palette={palette} />
       </div>
 
       <DecisionTimeline byYear={byYear} palette={palette} />
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
+      <div data-region="actions" style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
         <button
+          data-action="credits"
+          data-active={focusedAction === 'credits' || undefined}
           onClick={() => setCreditsMode('browse')}
           onMouseEnter={() => setFocusedAction('credits')}
           style={{
@@ -440,6 +446,8 @@ export function EndgameScreen() {
           Credits
         </button>
         <button
+          data-action="begin-again"
+          data-active={focusedAction === 'replay' || undefined}
           onClick={() => setCreditsMode('replay')}
           onMouseEnter={() => setFocusedAction('replay')}
           style={{

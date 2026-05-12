@@ -34,6 +34,9 @@ export function RoomRenderer({ config }: Props) {
 
   return (
     <div
+      data-component="RoomRenderer"
+      data-room-type={config.roomType}
+      data-month-id={config.monthId}
       style={{
         opacity: fading ? 0 : 1,
         transition: `opacity ${fadeMs}ms ease`,
