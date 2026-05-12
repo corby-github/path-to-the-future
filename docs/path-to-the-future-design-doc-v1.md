@@ -17,6 +17,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 | v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
 | v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. **§23 NPCModal** gains a *Speaker header + icon (v1.2)* subsection per #28: kind-aware header above the prompt (`"Intern says…"` / `"Plant."`) plus a full-opacity sprite icon on the left as a fixed-width column. Shared `labelFor` / `speakerHeaderFor` helpers extracted to `src/game/content/interactableLabel.ts`. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
+| v2.0    | 2026-05-12 | Corby Hoback · Claude Code | **Multi-career architecture, formalized.** Engine has always loaded career-specific content from packs (§3), but the implicit assumption — never written down — was that every pack would use the SWE-shaped stat model from §7. v2.0 owns that the model is SWE-coded and gives packs two escape hatches: (1) **`manifest.statLabels`** — an optional `Record<StatKey, string>` letting a pack relabel the seven canonical stats in the HUD without touching engine code or decision JSON (e.g. Student pack relabels `technicalSkill` → "Grades", `savings` → "Money", `burnout` → "Stress"). (2) **Pack-additive `flags`** — packs may rely on `flags` fields that older saves don't have, defaulting gracefully (precedent: `meta.tutorialDismissed` in v1.3.3). New §26 *Career Packs: Beyond SWE* documents the relabel mechanism, the expanded 9-career roster, and the Student pack in detail (10-year 13→22 arc, post-HS fork at month ~66 as the structural centerpiece, the three new flags — `parentTrust`, `hasJob`, `postHSPath` — that gate its back-half decision pool). §26 also names what's deferred: a future pack-defined stat schema refactor (Option C in the design discussion), per-pack score formula, per-pack endgame framing copy, and per-pack arc length. §16 *Init Flow* career listing updated to match the new roster; "only SWE selectable in v1" line removed since v2.0 anticipates Student becoming playable. No engine code change required to ship this version of the doc — the `statLabels` plumbing is small (one HUD lookup + one optional manifest field), and the rest is content. No STATE_VERSION bump (Student's new flags are additive with graceful defaults). The honest framing in §26 — that `technicalSkill` is SWE-coded and the score formula in §21 references it by name — is the contribution that matters most; future packs will be built knowing where the joints are. |
 | v1.3.4  | 2026-05-12 | Corby Hoback · Claude Code | **Finale month (December 2029) + polish bundle.** (1) **Finale layout.** Month 120 gets a special two-door layout on the right edge — a top "locked" door (examinable interactable, [E] try → opens `NPCModal` with the synthetic `LOCKED_DOOR_INTERACTABLE` containing *"This one is locked! You don't seem to have the key... oh well."*) and a bottom forward door that routes to a hardcoded `FINALE_DECISION`. The "Something about a key" foreshadowing from the rewind status pool (§11.1) pays off here. (2) **Finale decision.** Prompt: *"Ten years. Did any of that stick?"* Three deadpan options + flavors, each in a distinct rhetorical register: *"Bits did. Most didn't."* → *"Sounds about right."*; *"Not really. I'll leave it here."* → *"Fair. The door's right there."*; *"Hard to say. It mostly felt like a Tuesday."* → *"Tuesdays do most of the work."* (the Tuesday echo lifts the *"Same coffee stain"* banality motif from §11.1). Empty effects across all options — the run's score is computed before this pick lands. (3) **Finale flavor phase.** `DecisionModal` gains a `finale?: boolean` prop. When true, the flavor phase swaps the generic *"YOU CHOSE"* + icon-left layout for a centered *"Well, then."* / chosen-line / italic-flavor / **"End"** button beat. (4) **New sprite token** `locked-door` in `InteractableSprite.tsx` — padlock with shackle + body + keyhole. (5) **DevPanel** *"endgame: trigger"* button becomes a **`trigger ▼`** dropdown with three options: `endgame` (dispatch `setGameOver(true)`), `tutorial` (new `resetTutorial` action flips `meta.tutorialDismissed` back to false so the next DecisionRoom re-shows the coachmark), `finale month` (`setCurrentMonth(120)`). (6) **Tutorial overlay repositioned.** Was viewport-anchored (pushed off the canvas on widescreens, hovered above the status bar instead of next to it). Now `position: absolute` inside the DecisionRoom container (which is `width: var(--canvas-display-width); position: relative`), so the bubble anchors to the canvas frame. Per-step paddings hand-tuned: top-center for the status-bar tip, dead-center for the objects/people tip, middle-right for the door tip. No state-shape change, no STATE_VERSION bump. |
 | v1.3.3  | 2026-05-12 | Corby Hoback · Claude Code | **Day 13c polish bundle + first-run tutorial.** (1) **a11y pass:** `NPCModal` gets a focus trap, focus restore, `aria-modal="true"`, and a real `aria-label` derived from `labelFor(interactable)`; `EffectChips` chips get per-chip `aria-label` like "Burnout +5" (composed via local `STAT_NAMES_FOR_AT` map) with visual children explicitly hidden from AT; `CareerPicker` / `ClassPicker` options containers get `role="group"` + `aria-label`; `NameEntry` counter gets `aria-live="polite" aria-atomic`. New `@media (prefers-reduced-motion: reduce)` block in `global.css` collapses every keyframe + transition to 1ms (not `none` — `animationend` handlers in ScenePlayer would otherwise stall). (2) **Era mood tuning** in `public/careers/software-engineering/manifest.json`: pandemic pushed harder (saturation 0.7 → 0.55, hueShift -8 → -14 — drained-of-warmth feel without blowing out highlights); ai-shift pushed harder (saturation 1.05 → 1.18, lightness 1.0 → 1.02, hueShift +4 → +10 — sharper "rendered" vibe). Rebound and uncertain-future unchanged. (3) **Cross-viewport review:** code audit at 1024 / 1440 / narrow-laptop widths; the `--canvas-display-width` `min()` formula scales cleanly, modals use `min(WxPx, NN%)`, flex containers have `minWidth: 0` where needed. No code changes — flagged as reviewed. Known borderline: `palette.positive` contrast vs background measures 3.15-3.35:1 across eras (passes WCAG AA for large text/UI 3.0, below 4.5 for normal text). Held for future palette tuning decision rather than landed in this bundle. (4) **First-run tutorial.** New `meta.tutorialDismissed` flag (graceful default for older saves — no STATE_VERSION bump) + `dismissTutorial` reducer. `TutorialOverlay` renders a 3-step coachmark bubble (status bar / interactables / door) on the player's first DecisionRoom; Space/Enter/→ advance, ← back, Esc skip. Gameplay is paused via `tutorialActive` (player movement + E-key + door entry all gated). Dismissal dispatches `dismissTutorial` and immediately persists so the flag survives a reload. Resets on Begin Again via `resetMeta`. Replay mode never shows the tutorial. (5) **Begin-again confirmation** in `CreditsScreen` retuned: font-size 16 → 15px, line-height 1.5 → 1 for tighter visual weight on the destructive-action line. |
 | v1.3.2  | 2026-05-12 | Corby Hoback · Claude Code | Issue #26 — **endgame timeline readability**. EndgameScreen keeps its 1000×600 canvas frame (consistency with the rest of the app — no out-of-game scroll). Stats + score panels sit inline below the header; the **Career timeline** moves to a dedicated full-canvas view (`CareerTimelineScreen` — ↑↓/PgUp/PgDn/Home/End scroll, Close button, Enter/Space/Esc close) reached via a third recap action button. Three-action recap keyboard nav with wrap-around: **Career Timeline** · **Credits** · **Begin again**. Date column in the timeline widened to 124px with `whiteSpace: nowrap` — `February 2021` no longer wraps inside an 80px column (root cause of the visual collision with option text). §21 rewritten. |
@@ -661,12 +662,18 @@ picker labels, or body copy.
 
 1. **Title screen** (v1.2 — see §16.0)
 
-2. **Career picker** (only SWE selectable in v1)
+2. **Career picker** — Software Engineering is the only career playable today;
+   others are scaffolded in the picker as 🔒 *Coming Soon*. The full roster
+   (see §26) is the v2.0 design surface, not a v1 shipping commitment:
    - Software Engineering ✅
-   - CPA / Personal Finance 🔒
-   - Medical Supplier 🔒
-   - Nurse 🔒
-   - Security / Police Officer 🔒
+   - Accounting 🔒
+   - Medical Device Sales 🔒
+   - Nursing 🔒
+   - Law Enforcement 🔒
+   - Teaching 🔒
+   - Small Business Owner 🔒
+   - Student 🔒
+   - Homeschool Parent 🔒
 
 3. **Name entry**
 
@@ -1317,4 +1324,349 @@ work at that point, given the spec above.
 
 ---
 
-*End of design document v1.2.*
+## 26. Career Packs: Beyond SWE (v2.0)
+
+Software Engineering is the v1 pack — the one we've built, the one we've
+tuned, the one whose era moods and decision pool define what a "career" feels
+like in this engine. It's also the pack whose shape the rest of the engine
+quietly inherited. §7's stat model has `technicalSkill` in it. §21's score
+formula references that field by name. That's fine — every game ships its
+first content domain coupled to the engine; pretending otherwise is bigger
+project than this one wants to be. This section names what's coupled, names
+what's portable, and lays out the path from one pack to many.
+
+### Spirit: lazy-but-honest
+
+We are not refactoring the engine for hypothetical careers. We are shipping
+**Student** as the second pack under deliberately constrained terms, learning
+what actually generalizes vs. what just *seemed* like it would, and only then
+doing the refactor that v2.0 anticipates but doesn't perform. The cost of
+flexibility you haven't validated needing is higher than the cost of a small
+later refactor.
+
+This matches §25's spirit (the scoreboard is similarly "we know we'll build
+this; we're not building it yet, but we won't have to re-litigate from zero
+when we do").
+
+### What's portable today
+
+The room engine, the decision/event schemas, the modal presentation, the
+mini-games framework, the era-mood system, the room generator, save/load,
+the rewind mechanic, the endgame screen's *shape* (not its copy), the
+analytics — all of it. Any new career pack can use them by writing JSON,
+not code. This was always the architectural intent (§3 *The North Star*).
+v2.0 is the version where we *actually use* that capability for a non-SWE
+pack.
+
+### What's coupled to SWE (the honest list)
+
+These are baked into the engine or the universal content pool today. None is
+fatal; each has a documented workaround:
+
+- **`stats.technicalSkill`** is a SWE concept. Other packs can relabel it
+  via `statLabels` (Student calls it "Grades"; Nursing would call it
+  "Clinical Skill"; Accounting "Technical Skill" is fine as-is) and treat
+  the underlying 0–100 as a generic competence axis.
+- **`stats.savings` as dollars** assumes professional-salary scales. A
+  Student-pack decision granting `savings: +50` (a babysitting gig) vs. an
+  SWE-pack decision granting `savings: +5000` (a bonus) both work in the
+  same scalar; the *meaning* changes with context. The HUD displays the
+  number; the pack chooses scale by convention. Acceptable for now.
+- **The score formula in §21** references `technicalSkill` directly by
+  field name in `computeScore.ts`. Score weights are SWE-tuned. For v2.0,
+  packs inherit this formula — relabeled `technicalSkill` still contributes
+  to the score under whatever name the HUD shows it. A future refactor
+  (see *Deferred*) makes the score formula pack-aware.
+- **The "universal" decision pool** is mostly SWE-flavored ("launch party
+  vs. spouse birthday"). Decisions in `decisions/universal/` are reusable
+  across packs *in principle*, but in practice many will need `requires`
+  gates to filter out for ill-fitting packs (a student doesn't have a
+  spouse). Universal decisions remain useful; calling them "universal"
+  was always slightly aspirational.
+- **The endgame framing copy** ("Ten years done. {Name}'s Career") is
+  SWE-coded. A Student run ending at age 22 wants "Coming up." or
+  similar, not "Career." Deferred for now — see *Deferred*.
+
+### The `statLabels` mechanism (v2.0)
+
+Optional field on the career-pack manifest:
+
+```json
+{
+  "statLabels": {
+    "burnout": "Stress",
+    "savings": "Money",
+    "network": "Friends",
+    "technicalSkill": "Grades",
+    "reputation": "School Rep"
+  }
+}
+```
+
+Rules:
+
+- Keys are the **canonical engine stat names** from §7. Decision/event JSON
+  and the `computeScore` formula keep referencing those canonical names.
+- Values are the **display strings the HUD shows**. The HUD reads
+  `pack.statLabels?.[key] ?? defaultLabelFor(key)`. One lookup, one
+  fallback, no logic forks.
+- Omitted keys default to the engine label. A pack only relabels what
+  needs relabeling.
+- The relabel applies everywhere the stat name is shown to the player:
+  HUD bars, decision-effect chips (the `EffectChips` `aria-label` map in
+  v1.3.3 reads from the same source), endgame stat panel, career timeline.
+  One source of truth.
+
+The SWE pack should ship a `statLabels` entry that's identity-mapped
+(`"burnout": "Burnout"`, etc.) as part of the v2.0 plumbing work. This
+proves the lookup path on existing content without behavior change before
+any new pack consumes it. Pure refactor PR, easy review.
+
+### The expanded roster
+
+Living in `src/game/content/careers.ts`:
+
+| `id` | Name | Status |
+|---|---|---|
+| `software-engineering` | Software Engineering | ✅ Playable |
+| `accounting` | Accounting | 🔒 Scaffolded |
+| `medical-device-sales` | Medical Device Sales | 🔒 Scaffolded |
+| `nursing` | Nursing | 🔒 Scaffolded |
+| `law-enforcement` | Law Enforcement | 🔒 Scaffolded |
+| `teaching` | Teaching | 🔒 Scaffolded |
+| `small-business-owner` | Small Business Owner | 🔒 Scaffolded |
+| `student` | Student | 🔒 Scaffolded (next playable) |
+| `homeschool-parent` | Homeschool Parent | 🔒 Scaffolded |
+
+Each appears in the Career picker (§16) but only `software-engineering`
+selects today. The picker's `playable` flag drives this; flipping `student`
+to `playable: true` is the only code change required once the Student pack
+ships its content.
+
+The roster is deliberately wider than the original v1 list. The original
+five were all "respectable middle-class trades the player works *for*
+someone else." The expanded set adds **off-grid paths** (Small Business
+Owner — your name is on the lease) and **life stages that aren't careers
+yet** (Student, Homeschool Parent — life *is* the career). Tonal range is
+part of the v2.0 thesis: the engine isn't just for jobs.
+
+### The Student pack (the v2.0 forcing function)
+
+Student is the second pack we'll actually build. Its constraints are what
+make the v2.0 design honest — every "what about packs that don't have X"
+question lands somewhere in this section because Student is what raised it.
+
+#### Arc
+
+10 years, January 2020 → December 2029, ages 13 → 22. Same 120-month
+shape as SWE — no engine month-count change needed.
+
+| Year span | Age | Phase |
+|---|---|---|
+| 2020 (Jan–Aug) | 13 | 7th grade ending — pandemic hits mid-year |
+| 2020–21 | 13–14 | 8th grade — the remote/hybrid year |
+| 2021–22 | 14–15 | 9th grade — high school starts |
+| 2022–23 | 15–16 | 10th grade — driver's permit, first job possible |
+| 2023–24 | 16–17 | 11th grade — SATs, college conversation begins |
+| 2024–25 | 17–18 | 12th grade — applications, the big fork |
+| 2025 (summer) | 18 | Launch — post-HS path decision |
+| 2025–29 | 18–22 | Post-HS path plays out |
+| 2029 (Dec) | 22 | Endgame |
+
+The pandemic anchor (January 2020 as the engine's universal starting beat)
+lands on **a 13-year-old in 7th grade going remote**. This is the most
+narratively underexplored demographic from that period and the one the
+pack should lean into hardest. The era-mood system from §15 / v1.3.3 maps
+cleanly: pandemic mood owns 2020–2021; rebound 2022–2023; uncertain-future
+2024–2025 (which doubles as senior-year-application-anxiety, a happy
+accident); ai-shift 2026–2029 (which lands during the college/post-HS years,
+where it matters most for this cohort).
+
+#### Stat relabels (final)
+
+```json
+"statLabels": {
+  "burnout": "Stress",
+  "savings": "Money",
+  "network": "Friends",
+  "health": "Health",
+  "relationship": "Dating",
+  "technicalSkill": "Grades",
+  "reputation": "School Rep"
+}
+```
+
+Notes on the choices:
+
+- **`burnout` → "Stress"** — teens don't have burnout; that's an adult-work
+  concept. Same mechanic, native vocabulary.
+- **`savings` → "Money"** — not "Allowance." "Allowance" is age-coded for
+  the 13–15 window and stops fitting once the player has a job at 16+.
+  "Money" works at every age.
+- **`technicalSkill` → "Grades"** — not "GPA." Real GPA is 0–4.0, and
+  players seeing "GPA: 73" would parse it as a percentage anyway. "Grades"
+  is the native word and accepts a 0–100 scalar without explanation.
+- **`reputation` → "School Rep"** — kept the "Rep" shorthand because it's
+  what teens actually say.
+- **`network` → "Friends"** — flat and direct. Industry-network meaning
+  doesn't apply yet; the mechanic survives (more "network" still unlocks
+  more options) under the renamed surface.
+- **`health` → "Health"** and **`relationship` → "Dating"** — Health is
+  Health at every age. Dating is the teen frame; the underlying
+  null/0–100 mechanic from §7 is unchanged (null = not currently dating,
+  going to 0 ends the thing).
+
+#### New flags (additive, no STATE_VERSION bump)
+
+Three new keys on `state.flags`:
+
+- **`parentTrust: 0–100`** — how much rope the player's parents are
+  giving them. Gates "can I borrow the car," "can I go to the party,"
+  "do they pay for college." Modified by decisions (cleaned room? lied
+  about where you were? brought home a B vs. a D?). High value unlocks
+  options; low value narrows the decision pool. The teen equivalent of
+  SWE's `reputation` in some ways — your standing with the people whose
+  judgment most constrains you.
+- **`hasJob: boolean`** — flips true when the player takes their first
+  part-time job (typically a decision around 16). Opens a part-time-work
+  decision pool, regular small `savings` increments, work-vs-school
+  trade-off decisions.
+- **`postHSPath: PostHSPath | null`** — null for the first ~66 months,
+  then one of the values defined below.
+
+Graceful default for old SWE saves: all three default to `null` / `false`
+/ `0` and are simply never read by SWE-pack decisions. Same pattern as
+`meta.tutorialDismissed` in v1.3.3 — no STATE_VERSION bump needed because
+nothing the SWE pack does cares about these fields.
+
+#### The post-HS fork (structural centerpiece)
+
+This is what makes Student replay differently from SWE. SWE-pack runs vary
+by *stat outcome* — same career, different shapes of life inside it.
+Student-pack runs vary by **which life the player launched into**.
+
+At approximately month 66 (mid-2025, post-graduation), a special
+DecisionRoom presents the **post-HS fork**. Available options are gated by
+the player's stat and flag state at that moment via the existing `requires`
+mechanism — no new gating engine required. The decision sets the
+`postHSPath` flag, which then governs which decision pool feeds months
+66–120.
+
+The seven possible values for `postHSPath`:
+
+| Value | Requires (illustrative) | Months 66–120 decision pool |
+|---|---|---|
+| `college-4yr` | Grades ≥ 70, Money ≥ 5000 OR parentTrust ≥ 60 | College life — dorms, majors, internships, the campus-y stuff |
+| `community-college` | Grades ≥ 40, Money ≥ 1000 | Two years CC + transfer-or-not fork at month 90 |
+| `trade-school` | parentTrust ≥ 30 | Trades — electrician, plumber, HVAC, welding |
+| `military` | Health ≥ 60 | Enlistment — basic, MOS, deployment cycles |
+| `gap-year` | Money ≥ 2000 OR parentTrust ≥ 70 | Travel / work / figure-it-out — re-forks at month 78 (year ~19.5) |
+| `work` | (none — always available) | Retail / service / entry-level — the "no plan" path |
+| `drift` | (fallback if no other option qualified) | Living at home, no clear path, lower-stakes decisions |
+
+The thresholds above are **illustrative, not final** — the actual requires
+gates land during content authoring, calibrated against real Student
+playthroughs. The list of seven paths *is* the design commitment;
+calibration is implementation.
+
+`drift` is the safety-net path — the pool always offers it so the fork
+never returns an empty option set. It's also a real outcome a real
+18-year-old might land in, so it's not a failure state, just a different
+texture.
+
+#### Endgame framing for Student
+
+A Student run ending at age 22 should not be framed as "your career."
+Tagline options need to reflect "the path you took into adulthood"
+instead. Concrete deferral: see *Deferred* below. For v1 of the Student
+pack, the endgame screen can either (a) use the existing copy and accept
+the slight mismatch, or (b) hardcode a pack-conditional swap in
+`EndgameScreen.tsx` (a single `if (pack.id === 'student')` is fine —
+honest pragmatism, not architecture). We'll see how it reads when we get
+there.
+
+#### Universal-decision filtering
+
+Most v1 universal decisions assume a working adult. Student-eligible
+universals will be a strict subset — basically the ones about health,
+friendship, and general life stuff. The "Vegas weekend with bonus" type
+filters out via `requires: { savings: ">=1000" }` and the spouse-birthday
+type via `requires: { flags.inRelationship: true }` (which Student rarely
+sets). The mechanism exists; the work is curatorial.
+
+Authoring estimate: ~25–35 Student-specific decisions for the first half
+(months 1–66) plus per-post-HS-path pools of ~15–20 decisions each. The
+exact volume depends on selection-window tuning (§8) — fewer decisions
+means more repetition unless windows tighten.
+
+### Deferred (v2.0 spec, not v2.0 build)
+
+These are flagged as known-future work so v3.0 (or whenever) doesn't have
+to relitigate them. Spirit matches §25 — capture the design decision now;
+build later.
+
+- **Pack-defined stat schemas (Option C).** Make `state.stats` a
+  `Record<string, number>` instead of the typed seven-field shape from §7.
+  Each pack declares its own stats in `manifest.stats`. Universal stats
+  (`burnout`, `health`, `relationship`) remain canonical so the universal
+  decision pool still works. Pack-specific stats live in the pack manifest
+  (SWE adds `technicalSkill`, `network`, `reputation`, `savings`; Student
+  adds `gpa`, `socialStanding`, `allowance`, `parentTrust`-as-stat
+  potentially; Nursing adds `compassionFatigue`, `clinicalSkill`). The
+  trigger to do this work: **after the third playable pack ships.** Two
+  packs isn't enough signal — it's just "SWE and a thing that isn't SWE."
+  Three packs starts to show which stats really are universal. State
+  migration will need a real STATE_VERSION bump and a migration step (old
+  SWE saves get their stats moved into the new shape).
+
+- **Pack-aware score formula.** `computeScore` (§21) currently references
+  `technicalSkill` by name. After Option C lands, the formula becomes
+  pack-defined too — each pack declares its score formula in the manifest
+  (or as a JS function the pack exports). For v2.0 we live with the
+  shared formula; the relabeled `technicalSkill` still scores correctly
+  under whatever name the HUD shows it, and the relative weights are
+  acceptable for non-SWE packs in v1 of those packs.
+
+- **Per-pack endgame framing.** The "Ten years done." / "{Name}'s Career"
+  copy in `EndgameScreen.tsx` becomes pack-overridable via manifest fields
+  (`endgameFraming.title`, `endgameFraming.subtitle`). Trivial change
+  when we get there — held now because we haven't actually played a
+  non-SWE endgame and don't yet know what the framing should *be* for
+  Student vs. Homeschool Parent vs. Small Business Owner. Build it after
+  we've felt the mismatch firsthand.
+
+- **Per-pack starting year / arc length.** The 2020–2030 / 120-month
+  assumption lives in the engine in a few places (`completeMonth(120)`
+  triggers gameOver, month-index math elsewhere). For v2.0, every pack
+  uses the same 120-month / 2020–2030 window — Student lands here
+  naturally (ages 13–22 fits the decade), and no other pack we've
+  scaffolded needs a different window. If a pack later wants a different
+  arc (a "Retirement" pack starting at age 65? a "Childhood" pack at
+  ages 5–13?), add `manifest.startMonth` + `manifest.totalMonths` then.
+  Not now.
+
+### When to build (Student specifically)
+
+No assigned build day. Two prerequisite tasks land first:
+
+1. **`statLabels` plumbing in the SWE pack** — the no-op identity-relabel
+   refactor described above. Proves the HUD-lookup path. Maybe half a day.
+2. **Student pack scaffold** — manifest, empty content directories,
+   placeholder palette, `playable: false`. Maybe an hour. Doesn't ship
+   anything but unblocks parallel content authoring.
+
+Then the real work is content: 120 months of Student decisions, the
+post-HS fork at month 66, the seven post-HS sub-pools, era-flavored events
+filtered for teens, sprite art for school/dorm/etc. interactables, the
+endgame copy decision. Multi-day build; estimate after the scaffold
+exists and the first 12 months are written (the SWE pack's own estimate
+got tighter once Day 10 was real).
+
+Flag for future-us: the Student pack is the one where we learn whether
+the engine actually generalizes. If we're rewriting engine code while
+building Student, we got something wrong in v2.0 — write down what and
+fix it before pack #3.
+
+---
+
+*End of design document v2.0.*
