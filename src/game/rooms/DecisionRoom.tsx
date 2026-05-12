@@ -117,6 +117,85 @@ const MODAL_POP_DELAY_MS = 500;
 // of four sequential events.
 const POST_EFFECT_PAUSE_MS = 900;
 
+// Finale month — December 2029, the player's last room. Special case: two
+// doors stacked on the right side instead of the usual one, the top one
+// "locked" (decorative, never opens — just shows a wry status-bar line when
+// the player walks into it), the bottom one routing to a hardcoded
+// FINALE_DECISION instead of a pack-selected one. After Continue, normal
+// onExit flow fires → completeMonth(120) → gameOver=true → EndgameScreen.
+//
+// Both doors live at the right edge, vertically separated. Door dims match
+// the standard 40×100.
+const FINALE_MONTH_ID = 120;
+const FINALE_LOCKED_DOOR: Rect = {
+  x: ROOM_VIEWBOX.width - 40 - 10,
+  y: 110,
+  width: 40,
+  height: 100,
+};
+const FINALE_FORWARD_DOOR: Rect = {
+  x: ROOM_VIEWBOX.width - 40 - 10,
+  y: ROOM_VIEWBOX.height - 100 - 110,
+  width: 40,
+  height: 100,
+};
+const FINALE_LOCKED_MESSAGE =
+  "This one is locked! You don't seem to have the key... oh well.";
+
+// Synthetic interactable for the finale locked door. Reuses the NPCModal
+// flow (icon-left sprite + speaker header + typewriter body) so the
+// "locked door" reads as something you *examine* — like an NPC or object —
+// instead of a status-bar string that fires on contact. Player walks
+// nearby → [E] hint appears → press E → modal pops, shows the message,
+// any key closes. `kind: 'object'` so the existing baseline +1 network
+// effect in NPCModal.handleClose doesn't fire (objects don't grant it).
+const LOCKED_DOOR_INTERACTABLE: InteractableDef = {
+  id: 'finale-locked-door',
+  kind: 'object',
+  art: 'locked-door',
+  label: 'Locked door',
+  tags: ['finale'],
+  weight: 0, // never pool-selected; opened directly via E-key in DecisionRoom
+  dialogues: [
+    {
+      tier: 1,
+      prompt: FINALE_LOCKED_MESSAGE,
+    },
+  ],
+};
+
+// Hardcoded final decision — replaces pack-selected decision for month 120.
+// Empty effects across all options: stat changes here would have no audible
+// downstream impact (score is computed from the state BEFORE this final
+// pick lands and the player never sees the room again). The deadpan options
+// are the point: a wry button-press to close the loop, not a meaningful
+// choice. Kept inline rather than added to the pack so it can't be
+// accidentally selected for non-finale months by the pool filter.
+const FINALE_DECISION: DecisionDef = {
+  id: 'finale-month-120',
+  pool: 'universal',
+  tags: ['finale'],
+  weight: 0,
+  prompt: 'Ten years. Did any of that stick?',
+  options: [
+    {
+      label: "Bits did. Most didn't.",
+      effects: {},
+      flavor: 'Sounds about right.',
+    },
+    {
+      label: "Not really. I'll leave it here.",
+      effects: {},
+      flavor: "Fair. The door's right there.",
+    },
+    {
+      label: 'Hard to say. It mostly felt like a Tuesday.',
+      effects: {},
+      flavor: 'Tuesdays do most of the work.',
+    },
+  ],
+};
+
 interface Props {
   config: DecisionRoomConfig;
   onExit: () => void;
@@ -216,6 +295,17 @@ export function DecisionRoom({ config, onExit }: Props) {
   // Active dialogue state — set when the player engages with an interactable.
   const [activeInteractable, setActiveInteractable] = useState<InteractableDef | null>(null);
   const [activeDialogue, setActiveDialogue] = useState<InteractableDialogue | null>(null);
+
+  // Finale month (December 2029, the player's last room). Replays of month
+  // 120 use the normal layout — the finale is a one-time live beat, not a
+  // walkable replay state. Two doors render, the top one decorative-locked
+  // and the bottom one routing to the hardcoded FINALE_DECISION.
+  const isFinale = config.monthId === FINALE_MONTH_ID && !isReplay;
+  // True while the player is within INTERACT_PROXIMITY of the locked-door
+  // center. Drives the [E] hint render near the door + gates the E-key
+  // branch that opens LOCKED_DOOR_INTERACTABLE in the NPCModal. Updated
+  // from handleTick each player tick.
+  const [lockedDoorAdjacent, setLockedDoorAdjacent] = useState(false);
 
   // First-run tutorial (Day 13c). Reads meta.tutorialDismissed with a `??
   // false` default so older saves (pre-this-feature) without the field
@@ -326,6 +416,18 @@ export function DecisionRoom({ config, onExit }: Props) {
     }
     setAdjacentIndex((cur) => (cur === nearest ? cur : nearest));
 
+    // Finale month locked-door proximity. Independent of `triggered` so
+    // adjacency tracks the player in and out of range continuously.
+    // Distance is to the door's centre, capped at INTERACT_PROXIMITY —
+    // same threshold as room interactables for a consistent feel.
+    if (isFinale) {
+      const lockedCx = FINALE_LOCKED_DOOR.x + FINALE_LOCKED_DOOR.width / 2;
+      const lockedCy = FINALE_LOCKED_DOOR.y + FINALE_LOCKED_DOOR.height / 2;
+      const lockedDist = distance(state.position.x, state.position.y, lockedCx, lockedCy);
+      const nearLocked = lockedDist < INTERACT_PROXIMITY;
+      setLockedDoorAdjacent((cur) => (cur === nearLocked ? cur : nearLocked));
+    }
+
     if (triggered.current) return;
 
     // Rewind door (#33). Walking in enters replay of the previous
@@ -342,7 +444,11 @@ export function DecisionRoom({ config, onExit }: Props) {
       return;
     }
 
-    if (!playerInsideDoor(layout.door, state.position.x, state.position.y)) return;
+    // Finale forward-door substitutes for layout.door on month 120. The
+    // locked door (top) is never a commit target — it just shows a
+    // status-bar message via lockedDoorActive above.
+    const forwardDoor = isFinale ? FINALE_FORWARD_DOOR : layout.door;
+    if (!playerInsideDoor(forwardDoor, state.position.x, state.position.y)) return;
     triggered.current = true;
     setCommitted(true);
 
@@ -356,12 +462,17 @@ export function DecisionRoom({ config, onExit }: Props) {
       return;
     }
 
-    const picked = selectDecision({
-      decisions: pack.decisions,
-      ctx,
-      monthId: config.monthId,
-      history: store.getState().history.decisions,
-    });
+    // Finale month overrides pack-selected decision with the hardcoded
+    // FINALE_DECISION (snarky 3-option wrap-up). Otherwise normal pool
+    // selection per §8 / PR #35.
+    const picked = isFinale
+      ? FINALE_DECISION
+      : selectDecision({
+          decisions: pack.decisions,
+          ctx,
+          monthId: config.monthId,
+          history: store.getState().history.decisions,
+        });
     window.setTimeout(() => {
       if (picked) {
         setActiveDecision(picked);
@@ -369,7 +480,7 @@ export function DecisionRoom({ config, onExit }: Props) {
         onExit();
       }
     }, MODAL_POP_DELAY_MS);
-  }, [layout.door, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, dispatch]);
+  }, [layout.door, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch]);
 
   const playerState = usePlayerMovement({
     initialPosition: layout.spawn,
@@ -386,14 +497,28 @@ export function DecisionRoom({ config, onExit }: Props) {
   });
 
   // E-key opens the nearest interactable's modal when the player is adjacent
-  // and no other modal is active. Picks a random eligible dialogue.
+  // and no other modal is active. Picks a random eligible dialogue. The
+  // finale locked door piggybacks on the same key + modal — `nearLocked`
+  // wins over a regular adjacent interactable (the locked door is at the
+  // right edge, where no regular placement would land anyway).
   useEffect(() => {
-    if (placements.length === 0) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key !== 'e' && e.key !== 'E') return;
       if (committed) return;
       if (tutorialActive) return;
       if (activeDecision || activeEvent || activeInteractable) return;
+
+      // Finale locked-door branch — open the synthetic interactable in
+      // NPCModal so the message reads like a "the door speaks" beat
+      // rather than a status-bar swap.
+      if (isFinale && lockedDoorAdjacent) {
+        e.preventDefault();
+        setActiveInteractable(LOCKED_DOOR_INTERACTABLE);
+        setActiveDialogue(LOCKED_DOOR_INTERACTABLE.dialogues[0]);
+        return;
+      }
+
+      if (placements.length === 0) return;
       if (adjacentIndex === null) return;
       e.preventDefault();
       const target = placements[adjacentIndex];
@@ -419,6 +544,8 @@ export function DecisionRoom({ config, onExit }: Props) {
     activeDecision,
     activeEvent,
     activeInteractable,
+    isFinale,
+    lockedDoorAdjacent,
     stats,
     flags,
     config.monthId,
@@ -649,6 +776,12 @@ export function DecisionRoom({ config, onExit }: Props) {
           alignItems: 'stretch',
           width: 'var(--canvas-display-width)',
           gap: 16,
+          // Establishes a positioning context for child overlays
+          // (TutorialOverlay below renders position:absolute inside this
+          // container so its bubble anchors to the canvas frame, not the
+          // viewport — the viewport-anchored version pushed the bubble
+          // off the right edge of the canvas on widescreens).
+          position: 'relative',
         }}
       >
         {/* Status / current-task bar. */}
@@ -708,36 +841,122 @@ export function DecisionRoom({ config, onExit }: Props) {
             fill={palette.background}
           />
 
-          <rect
-            data-region="forward-door"
-            x={layout.door.x}
-            y={layout.door.y}
-            width={layout.door.width}
-            height={layout.door.height}
-            fill={palette.accent}
-            stroke={palette.ink}
-            strokeWidth={2}
-            rx={2}
-          />
-          <circle
-            cx={layout.door.x + layout.door.width - 8}
-            cy={layout.door.y + layout.door.height / 2}
-            r={2.5}
-            fill={palette.ink}
-          />
-          {isReplay && (
-            <text
-              data-region="forward-door-label"
-              x={ROOM_VIEWBOX.width - 10}
-              y={layout.door.y - 8}
-              textAnchor="end"
-              fontSize={12}
-              fontWeight={600}
-              letterSpacing="0.04em"
-              fill={palette.ink}
-            >
-              {`↩ return to ${monthLabel(liveMonth.id)}`}
-            </text>
+          {/* Forward door — uses FINALE_FORWARD_DOOR coords on month 120
+              (right edge, bottom-half) so a fixed locked door can sit
+              symmetrically above it. Other months use the generator's
+              layout.door position. */}
+          {(() => {
+            const door = isFinale ? FINALE_FORWARD_DOOR : layout.door;
+            return (
+              <>
+                <rect
+                  data-region="forward-door"
+                  x={door.x}
+                  y={door.y}
+                  width={door.width}
+                  height={door.height}
+                  fill={palette.accent}
+                  stroke={palette.ink}
+                  strokeWidth={2}
+                  rx={2}
+                />
+                <circle
+                  cx={door.x + door.width - 8}
+                  cy={door.y + door.height / 2}
+                  r={2.5}
+                  fill={palette.ink}
+                />
+                {isReplay && (
+                  <text
+                    data-region="forward-door-label"
+                    x={ROOM_VIEWBOX.width - 10}
+                    y={door.y - 8}
+                    textAnchor="end"
+                    fontSize={12}
+                    fontWeight={600}
+                    letterSpacing="0.04em"
+                    fill={palette.ink}
+                  >
+                    {`↩ return to ${monthLabel(liveMonth.id)}`}
+                  </text>
+                )}
+              </>
+            );
+          })()}
+
+          {/* Finale locked door (decorative). Appears only on month 120,
+              top-right of canvas. Walking into the rect swaps the status
+              bar to FINALE_LOCKED_MESSAGE via lockedDoorActive — no
+              commit, no transition. Visually distinct: surface fill +
+              muted ink stroke + reduced opacity, "Locked" label below. */}
+          {isFinale && (
+            <g data-region="finale-locked-door-group">
+              <rect
+                data-region="finale-locked-door"
+                x={FINALE_LOCKED_DOOR.x}
+                y={FINALE_LOCKED_DOOR.y}
+                width={FINALE_LOCKED_DOOR.width}
+                height={FINALE_LOCKED_DOOR.height}
+                fill={palette.surface}
+                stroke={palette.inkMuted}
+                strokeWidth={2}
+                strokeDasharray="6 4"
+                rx={2}
+                opacity={0.85}
+              />
+              {/* Lock glyph — a tiny shackle + body in the centre of the
+                  door. SVG path, palette.inkMuted. */}
+              <g
+                data-region="finale-lock-icon"
+                transform={`translate(${FINALE_LOCKED_DOOR.x + FINALE_LOCKED_DOOR.width / 2 - 7}, ${FINALE_LOCKED_DOOR.y + FINALE_LOCKED_DOOR.height / 2 - 7})`}
+              >
+                <path
+                  d="M 4 6 V 4 a 3 3 0 0 1 6 0 V 6"
+                  fill="none"
+                  stroke={palette.inkMuted}
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                />
+                <rect
+                  x={2}
+                  y={6}
+                  width={10}
+                  height={8}
+                  rx={1.5}
+                  fill={palette.background}
+                  stroke={palette.inkMuted}
+                  strokeWidth={1.5}
+                />
+              </g>
+              <text
+                data-region="finale-locked-door-label"
+                x={ROOM_VIEWBOX.width - 10}
+                y={FINALE_LOCKED_DOOR.y - 8}
+                textAnchor="end"
+                fontSize={11}
+                fontWeight={600}
+                letterSpacing="0.04em"
+                fill={palette.inkMuted}
+              >
+                Locked
+              </text>
+              {/* [E] proximity hint — appears when the player is close
+                  enough to "try the handle." Mirrors the interactable
+                  hint pattern in `placements.map(...)` below. */}
+              {lockedDoorAdjacent && !activeInteractable && (
+                <text
+                  data-region="finale-locked-door-hint"
+                  x={FINALE_LOCKED_DOOR.x + FINALE_LOCKED_DOOR.width / 2}
+                  y={FINALE_LOCKED_DOOR.y + FINALE_LOCKED_DOOR.height + 18}
+                  textAnchor="middle"
+                  fontSize={12}
+                  fontWeight={600}
+                  fill={palette.ink}
+                >
+                  [E] try
+                </text>
+              )}
+            </g>
           )}
 
           {/* Rewind door (#33). Renders when an eligible past month exists. */}
@@ -856,6 +1075,8 @@ export function DecisionRoom({ config, onExit }: Props) {
           <Player state={playerState} />
         </svg>
         </div>
+
+        {tutorialActive && <TutorialOverlay onDismiss={handleTutorialDismiss} />}
       </div>
 
       {activeDecision && (
@@ -863,6 +1084,7 @@ export function DecisionRoom({ config, onExit }: Props) {
           decision={activeDecision}
           onChoose={handleChoose}
           onContinue={handleDecisionContinue}
+          finale={activeDecision.id === FINALE_DECISION.id}
         />
       )}
 
@@ -880,8 +1102,6 @@ export function DecisionRoom({ config, onExit }: Props) {
           onClose={handleInteractableClose}
         />
       )}
-
-      {tutorialActive && <TutorialOverlay onDismiss={handleTutorialDismiss} />}
     </>
   );
 }

@@ -1,7 +1,7 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 1.3.3
+**Document version:** 1.3.4
 **Status:** Living spec · Days 1–13b.3 merged · Day 13c + Day 14 (title screen) pending
 **Last updated:** 2026-05-12
 
@@ -17,6 +17,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 | v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
 | v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. **§23 NPCModal** gains a *Speaker header + icon (v1.2)* subsection per #28: kind-aware header above the prompt (`"Intern says…"` / `"Plant."`) plus a full-opacity sprite icon on the left as a fixed-width column. Shared `labelFor` / `speakerHeaderFor` helpers extracted to `src/game/content/interactableLabel.ts`. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
+| v1.3.4  | 2026-05-12 | Corby Hoback · Claude Code | **Finale month (December 2029) + polish bundle.** (1) **Finale layout.** Month 120 gets a special two-door layout on the right edge — a top "locked" door (examinable interactable, [E] try → opens `NPCModal` with the synthetic `LOCKED_DOOR_INTERACTABLE` containing *"This one is locked! You don't seem to have the key... oh well."*) and a bottom forward door that routes to a hardcoded `FINALE_DECISION`. The "Something about a key" foreshadowing from the rewind status pool (§11.1) pays off here. (2) **Finale decision.** Prompt: *"Ten years. Did any of that stick?"* Three deadpan options + flavors, each in a distinct rhetorical register: *"Bits did. Most didn't."* → *"Sounds about right."*; *"Not really. I'll leave it here."* → *"Fair. The door's right there."*; *"Hard to say. It mostly felt like a Tuesday."* → *"Tuesdays do most of the work."* (the Tuesday echo lifts the *"Same coffee stain"* banality motif from §11.1). Empty effects across all options — the run's score is computed before this pick lands. (3) **Finale flavor phase.** `DecisionModal` gains a `finale?: boolean` prop. When true, the flavor phase swaps the generic *"YOU CHOSE"* + icon-left layout for a centered *"Well, then."* / chosen-line / italic-flavor / **"End"** button beat. (4) **New sprite token** `locked-door` in `InteractableSprite.tsx` — padlock with shackle + body + keyhole. (5) **DevPanel** *"endgame: trigger"* button becomes a **`trigger ▼`** dropdown with three options: `endgame` (dispatch `setGameOver(true)`), `tutorial` (new `resetTutorial` action flips `meta.tutorialDismissed` back to false so the next DecisionRoom re-shows the coachmark), `finale month` (`setCurrentMonth(120)`). (6) **Tutorial overlay repositioned.** Was viewport-anchored (pushed off the canvas on widescreens, hovered above the status bar instead of next to it). Now `position: absolute` inside the DecisionRoom container (which is `width: var(--canvas-display-width); position: relative`), so the bubble anchors to the canvas frame. Per-step paddings hand-tuned: top-center for the status-bar tip, dead-center for the objects/people tip, middle-right for the door tip. No state-shape change, no STATE_VERSION bump. |
 | v1.3.3  | 2026-05-12 | Corby Hoback · Claude Code | **Day 13c polish bundle + first-run tutorial.** (1) **a11y pass:** `NPCModal` gets a focus trap, focus restore, `aria-modal="true"`, and a real `aria-label` derived from `labelFor(interactable)`; `EffectChips` chips get per-chip `aria-label` like "Burnout +5" (composed via local `STAT_NAMES_FOR_AT` map) with visual children explicitly hidden from AT; `CareerPicker` / `ClassPicker` options containers get `role="group"` + `aria-label`; `NameEntry` counter gets `aria-live="polite" aria-atomic`. New `@media (prefers-reduced-motion: reduce)` block in `global.css` collapses every keyframe + transition to 1ms (not `none` — `animationend` handlers in ScenePlayer would otherwise stall). (2) **Era mood tuning** in `public/careers/software-engineering/manifest.json`: pandemic pushed harder (saturation 0.7 → 0.55, hueShift -8 → -14 — drained-of-warmth feel without blowing out highlights); ai-shift pushed harder (saturation 1.05 → 1.18, lightness 1.0 → 1.02, hueShift +4 → +10 — sharper "rendered" vibe). Rebound and uncertain-future unchanged. (3) **Cross-viewport review:** code audit at 1024 / 1440 / narrow-laptop widths; the `--canvas-display-width` `min()` formula scales cleanly, modals use `min(WxPx, NN%)`, flex containers have `minWidth: 0` where needed. No code changes — flagged as reviewed. Known borderline: `palette.positive` contrast vs background measures 3.15-3.35:1 across eras (passes WCAG AA for large text/UI 3.0, below 4.5 for normal text). Held for future palette tuning decision rather than landed in this bundle. (4) **First-run tutorial.** New `meta.tutorialDismissed` flag (graceful default for older saves — no STATE_VERSION bump) + `dismissTutorial` reducer. `TutorialOverlay` renders a 3-step coachmark bubble (status bar / interactables / door) on the player's first DecisionRoom; Space/Enter/→ advance, ← back, Esc skip. Gameplay is paused via `tutorialActive` (player movement + E-key + door entry all gated). Dismissal dispatches `dismissTutorial` and immediately persists so the flag survives a reload. Resets on Begin Again via `resetMeta`. Replay mode never shows the tutorial. (5) **Begin-again confirmation** in `CreditsScreen` retuned: font-size 16 → 15px, line-height 1.5 → 1 for tighter visual weight on the destructive-action line. |
 | v1.3.2  | 2026-05-12 | Corby Hoback · Claude Code | Issue #26 — **endgame timeline readability**. EndgameScreen keeps its 1000×600 canvas frame (consistency with the rest of the app — no out-of-game scroll). Stats + score panels sit inline below the header; the **Career timeline** moves to a dedicated full-canvas view (`CareerTimelineScreen` — ↑↓/PgUp/PgDn/Home/End scroll, Close button, Enter/Space/Esc close) reached via a third recap action button. Three-action recap keyboard nav with wrap-around: **Career Timeline** · **Credits** · **Begin again**. Date column in the timeline widened to 124px with `whiteSpace: nowrap` — `February 2021` no longer wraps inside an 80px column (root cause of the visual collision with option text). §21 rewritten. |
 | v1.3.1  | 2026-05-12 | Corby Hoback · Claude Code | Issue #30 — **room-transition vibe**. New §4.1 *Room transition* documents both transition beats (door-entry and end-of-room) and their choreography. **End-of-room:** new state `progress.monthAdvanceCueNonce` + `cueMonthAdvance` reducer; `useRoomTransition.exitRoom` dispatches the cue *before* flipping the fade flag; HUD listens to the cue nonce, emits the `+1 mo` floater at fade-start (was after-fade), and dedups the would-be duplicate emit from the subsequent `completeMonth` advance via a suppression ref; `POST_EFFECT_PAUSE_MS` trimmed from 1400 → 900ms in `DecisionRoom`. **Door-entry:** `MODAL_POP_DELAY_MS` bumped 300 → 500ms in `DecisionRoom` (was racing `DOOR_FADE_MS = 300` and reading as fade-interrupted); new `decision-modal-pop` + `decision-modal-dialog-pop` keyframes in `global.css` so DecisionModal and EventModal ease in deliberately, matched-family with `npc-modal-pop`. No STATE_VERSION bump (additive field, ephemeral by use, safe across reloads — ref-init pattern in the HUD swallows mount-time effects). |
@@ -506,6 +507,63 @@ intermediate ones.
 multiple months at once (only one-step navigation); replaying mid-decision
 (when a modal is open the rewind door is inert via the existing
 `triggered.current` guard).
+
+### 11.2 Finale month (v1.3.4+)
+
+Month **120** (December 2029) is the player's last live room — a special
+DecisionRoom layout that wraps the run on a small smile rather than the
+generic forward-door commit.
+
+**Two doors stacked on the right edge:**
+- **Top door — locked (examinable).** Renders with `palette.surface`
+  fill, dashed `palette.inkMuted` stroke, plus a small lock glyph in the
+  centre and a "Locked" label above. Behaves like an interactable rather
+  than a passive prop: a proximity check on `handleTick` flips
+  `lockedDoorAdjacent` when the player is within `INTERACT_PROXIMITY` of
+  the door's centre, an `[E] try` hint renders below the door, and
+  pressing E opens the standard `NPCModal` with a synthetic
+  `LOCKED_DOOR_INTERACTABLE` (`kind: 'object'`, `art: 'locked-door'` — a
+  padlock sprite added to `InteractableSprite`, `label: 'Locked door'`).
+  Tier-1 dialogue body reads *"This one is locked! You don't seem to have
+  the key... oh well."* Any key closes; no effects fire (object close
+  doesn't grant the +1 network that NPC interactions do). A wink at the
+  "Something about a key" line from the rewind status-message pool
+  (§11.1) — there is no key, never was, that's the joke.
+- **Bottom door — forward (real exit).** Standard accent fill / ink
+  stroke. Walking in routes to a hardcoded **`FINALE_DECISION`** instead
+  of a pack-selected one. Prompt: *"Ten years. Did any of that stick?"*
+  Three deadpan options, each with a short flavor reply from the game:
+  *"Bits did. Most didn't."* → *"Sounds about right."*; *"Not really.
+  I'll leave it here."* → *"Fair. The door's right there."*; *"Hard to
+  say. It mostly felt like a Tuesday."* → *"Tuesdays do most of the
+  work."* (the Tuesday echo picks up the *"Same coffee stain"* banality
+  motif from §11.1's replay status pool). All options have empty
+  `effects` — the run's score is computed from state BEFORE this final
+  pick lands, so there's no stat hook to attach here.
+
+**Finale flavor phase.** `DecisionModal` accepts a `finale?: boolean`
+prop. When true (DecisionRoom passes it for `FINALE_DECISION`), the
+flavor phase replaces the generic *"YOU CHOSE"* header + decision-icon
+column with a centered three-beat layout: small italic *"Well, then."*,
+larger centered chosen-label, italic muted flavor line. The Continue
+button becomes **"End"**, hint reads *"Press Enter to roll credits"*.
+After Continue, normal `onExit` flow fires → `completeMonth(120)` →
+`gameOver=true` → `<EndgameScreen />`.
+
+**Replay of month 120 uses the standard layout** — the finale is a
+one-time live beat, not a walkable replay state (`isFinale = monthId ===
+120 && !isReplay`). The rewind door still renders so the player can walk
+back through prior months before sealing the run.
+
+**Implementation.** All constants (`FINALE_MONTH_ID`,
+`FINALE_LOCKED_DOOR`, `FINALE_FORWARD_DOOR`, `FINALE_LOCKED_MESSAGE`,
+`FINALE_DECISION`, `LOCKED_DOOR_INTERACTABLE`) live in `DecisionRoom.tsx`.
+`FINALE_DECISION` and `LOCKED_DOOR_INTERACTABLE` are kept inline rather
+than added to `pack.decisions` / `pack.interactables` so the pool filter
+can't accidentally select them for non-finale months. New sprite token
+`locked-door` in `src/game/rooms/sprites/InteractableSprite.tsx` —
+padlock with shackle + body + keyhole. No new state slice, no
+STATE_VERSION change.
 
 ---
 
