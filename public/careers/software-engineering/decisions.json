@@ -834,6 +834,41 @@
           "flavor": "You wrote a kind email. They thanked you for the honesty. Someone else took it. The library kept working, mostly."
         }
       ]
+    },
+    {
+      "id": "swe-2am-idea",
+      "pool": "swe",
+      "tags": ["stress", "work-life-balance", "humor"],
+      "requires": { "month": ">=6" },
+      "weight": 0.9,
+      "prompt": "You wake at 2:14. The idea has been chewing on you in your sleep. It's almost there. The room is very dark.",
+      "options": [
+        {
+          "label": "Write it down. Go back to sleep.",
+          "scene": [
+            "A reach for the phone.",
+            "Three lines, typed in the dark.",
+            "The screen, off again."
+          ],
+          "effects": { "burnout": "-1", "technicalSkill": "+1" },
+          "flavor": "You typed three lines into the notes app. The third line was the right one. You slept until the alarm. By Tuesday you had it working."
+        },
+        {
+          "label": "Try to sleep through it.",
+          "effects": { "burnout": "+3", "health": "-2" },
+          "flavor": "You watched the ceiling. The idea got worse, then better, then dissolved. You finally slept around 4. The alarm felt personal."
+        },
+        {
+          "label": "Get up. Might as well be productive.",
+          "scene": [
+            "Bare feet on a cold floor.",
+            "A kitchen light, too bright.",
+            "A blinking cursor."
+          ],
+          "effects": { "burnout": "+5", "health": "-3", "technicalSkill": "+2", "reputation": "+1" },
+          "flavor": "You sat at the kitchen table at 2:14. By five you had it working. By nine you regretted being awake. By Friday it shipped. Whether that was worth it is the kind of question you don't ask out loud."
+        }
+      ]
     }
   ]
 }

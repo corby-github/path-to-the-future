@@ -1,9 +1,9 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 1.1
-**Status:** Living spec · Days 1–12 merged · Day 13 in progress (13a-c phasing)
-**Last updated:** 2026-05-11
+**Document version:** 1.2
+**Status:** Living spec · Days 1–13b.3 merged · Day 13c + Day 14 (title screen) pending
+**Last updated:** 2026-05-12
 
 ---
 
@@ -16,6 +16,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 |---------|------------|---------------------------|---------|
 | v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
+| v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
 
 ---
 
@@ -393,26 +394,42 @@ loaded from Google Fonts. This is intentionally scoped to that one modal —
 the typewriter reveal IS the SNES homage; the rest of the UI keeps Inter so
 the bittersweet/contemplative register stays clean. Don't expand it.
 
+### v1.2 — Title-screen wordmark exception
+
+The **title-screen wordmark** (§16.0) is the one place outside the NPC modal
+where a retro pixel face is a candidate. Final font choice is TBD at build
+time, but if we land on Pixelify Sans (or any pixel face), this is the
+sanctioned second use. The legibility constraint that scoped it out of body
+UI doesn't apply at display size (≥100px) — the letters are bigger than
+your thumb. Keep the rest of §15 honest regardless: no pixel font in HUD,
+picker labels, or body copy.
+
 ---
 
 ## 16. Init Flow
 
-1. **Career picker** (only SWE selectable in v1)
+1. **Title screen** (v1.2 — see §16.0)
+
+2. **Career picker** (only SWE selectable in v1)
    - Software Engineering ✅
    - CPA / Personal Finance 🔒
    - Medical Supplier 🔒
    - Nurse 🔒
    - Security / Police Officer 🔒
 
-2. **Name entry**
+3. **Name entry**
 
-3. **Class picker** (Novice and Skilled selectable; others 🔒 Coming Soon)
+4. **Class picker** (Novice and Skilled selectable; others 🔒 Coming Soon)
 
-4. **Narrative intro** — the 2020 setup screen (NarrativeRoom)
+5. **Narrative intro** — the 2020 setup screen (NarrativeRoom)
 
-5. **Game begins** at January 2020.
+6. **Game begins** at January 2020.
 
-If a saved profile is detected on load, skip directly to resume; offer "sign out / new profile" from the HUD.
+The title screen always appears on app mount, regardless of save state. From
+the title, "Press any key" routes by what's in localStorage: resume directly
+into the game if a save exists and the run isn't over, jump to the endgame
+screen if `progress.gameOver` is true, otherwise start the init flow at step 2.
+The HUD's "sign out / new profile" affordance is unchanged.
 
 **v1.1 keyboard parity:** All pickers honor full keyboard navigation — ↑↓←→
 cycles through playable entries (skipping locked ones), Enter/Space confirms,
@@ -420,6 +437,61 @@ mouse hover gives focus parity. First playable entry is auto-selected on mount
 so keyboard users can press Enter immediately. The Class picker shows the
 italic line *"Where you start. Not where you'll end up (hopefully). Play your
 cards right."* below its subtitle.
+
+### 16.0 Title screen (v1.2)
+
+The first thing the player sees on app mount. Frames the game before any UI
+loads, and gives an autoplay preview of the world so the player knows what
+they're walking into.
+
+**Purpose.** Every good game has one. Ours has a job: set the tone (bittersweet,
+contemplative, slightly playful), show what NPC sprites and the palette look
+like in motion, and make pressing the first key feel like a small commitment
+rather than a UI accident.
+
+**Layout (1000×600 virtual canvas, same coordinate system as rooms):**
+
+- **Wordmark.** `PATH TO THE FUTURE` in oversized block letters, centered in
+  the upper third. **Font: TBD at build time.** Candidates: Pixelify Sans
+  (already loaded for NPC modals — see §15) for an SNES-marquee read;
+  JetBrains Mono at heavy weight with aggressive letter-spacing for a
+  cleaner block-letter read; a hand-rolled SVG wordmark for full control.
+  Decide by sandboxing all three at ~100px+ during the Day 14 build. The
+  wordmark is the visual signature of the project — it should feel like
+  a marquee.
+- **Tagline.** *"A career of choices."* In Inter, italic, palette.muted,
+  centered below the wordmark. One line. No period flourish.
+- **Ambient autoplay.** A horizontal palette.surface band across the lower
+  third acts as a stylized floor. 3–5 NPC sprites (`InteractableSprite`
+  variants reused from §23) spawn at separated x-coordinates and random-walk
+  inside their own ±80px wander zones using the same motion hook as
+  `DecisionRoom`'s NPCs. No player, no collision, no interaction targets.
+  Their only job is to make the screen feel inhabited. Sprite mix is
+  deterministic per app-mount-day so the title doesn't visibly re-roll on
+  every reload.
+- **Prompt.** *"Press any key to start"* at bottom-center, Inter, palette.muted,
+  blinking at 1Hz (reuse `typewriter-caret-blink` or sibling keyframe).
+
+**Behavior.**
+- Mounts before `<InitFlow>` and `<Game>`. Component-local `acknowledged`
+  boolean (no Redux); flips true on the first **keydown** or **pointerdown**
+  anywhere in the viewport.
+- On acknowledge:
+  - `progress.gameOver === true` → route to `<EndgameScreen />`
+  - `profile.initComplete === true` → route to `<Game />` (resume)
+  - otherwise → route to `<InitFlow />` step 2 (career picker)
+- The screen does not persist its own dismissal — reloading the page shows it
+  again. That's intentional: it's a beat, not a gate.
+
+**What's deliberately not here.** No menu (Continue / New Game / Options). No
+version chip. No credits link. v1 keeps it to a single beat. Multi-button
+menus are a later-day call if needed.
+
+**Why ambient NPCs over a static logo.** Reuses two systems we already
+shipped (`InteractableSprite` + the NPC random-walk loop) for almost no
+new code, and gives the player a 5-second tell of what the game looks like
+before they commit. Same pattern as Stardew's chickens, Zelda's demo loop,
+classic SNES title screens.
 
 ---
 
@@ -440,8 +512,10 @@ cards right."* below its subtitle.
 | 11  | Mini-games (3) | ✅ |
 | 12  | Endgame / score / career recap + credits | ✅ |
 | 13a | NPCs & objects — interactables system (§23) | ✅ |
-| 13b | Content fill: more NPCs/objects + room-generator placement + sprite art | ⏳ |
+| 13b | Content fill: more NPCs/objects + room-generator placement + sprite art + playability | ✅ (13b.1–13b.3) |
 | 13c | Polish: art tokens, sound (?), accessibility, era mood, viewport | ⏳ |
+| 14  | Title screen (§16.0) — wordmark + tagline + ambient NPC autoplay | ⏳ |
+| 15  | Analytics (§24) — GoatCounter wrapper + slug instrumentation + GitHub Pages deploy | ⏳ |
 
 **Notes:**
 - Save/load moved to Day 6 (was Day 8) — without it, iteration on Day 7+ becomes painful.
@@ -455,13 +529,20 @@ engine + 2 starter entries (this PR), **13b** fills out the content + integrates
 with the room generator + adds sprite art, **13c** is the original polish list
 plus an a11y audit of the new modal flow.
 
+**v1.2 Day 14:** Title screen (§16.0). Added as a new build day rather than
+folded into 13c because (a) it precedes the entire init flow and is its own
+discrete component, and (b) the user explicitly framed it as a v1 ship
+requirement, not polish. Reuses `InteractableSprite` and the NPC random-walk
+hook, so engine work is minimal — most of the day is layout, the wordmark,
+and the autoplay arrangement.
+
 ---
 
 ## 18. Out of Scope (v1.0)
 
 - Other careers (CPA, Nurse, etc.) — pack architecture supports them; we just don't ship the JSON
 - Class entry points beyond Novice and Skilled
-- Backend / accounts / cloud save
+- Backend for game state — no accounts, no cloud save (the **future public scoreboard** is captured separately in §25 as a small CF Workers + D1 service, deliberately scoped tight)
 - Mobile-specific UI tuning (architected for, not tested)
 - Sound design (optional Day 13)
 - Achievements
@@ -556,7 +637,8 @@ path-to-the-future/
     │   │   ├── EndgameScreen.tsx      ← v1.1 (§21)
     │   │   ├── CreditsScreen.tsx      ← v1.1 (§22)
     │   │   ├── NPCModal.tsx           ← v1.1 (§23)
-    │   │   └── TypewriterText.tsx     ← v1.1 (§8b implementation)
+    │   │   ├── TypewriterText.tsx     ← v1.1 (§8b implementation)
+    │   │   └── TitleScreen.tsx        ← v1.2 — title/autoplay (§16.0, Day 14)
     │   ├── minigames/                 ← v1.1 — Day 11 deliverables
     │   │   ├── Blackjack.tsx
     │   │   ├── CodeReview.tsx
@@ -566,6 +648,8 @@ path-to-the-future/
     │   │   ├── DevControlsContext.ts
     │   │   ├── DevControlsProvider.tsx
     │   │   └── useDevControls.ts
+    │   ├── analytics/                 ← v1.2 — GoatCounter wrapper (§24, Day 15)
+    │   │   └── track.ts               ← trackPageview + trackEvent
     │   ├── coordinates.ts             ← virtual 1000×600 coords
     │   ├── calendar.ts                ← monthId → "Aug 2020"
     │   └── types/
@@ -752,4 +836,168 @@ visible-but-empty room outline instead of black.
 
 ---
 
-*End of design document v1.1.*
+## 24. Analytics & Tracking (v1.2)
+
+Added Day 15. The build is going to GitHub Pages. We want to know two things,
+and only two things: how many unique people open it, and how far they get.
+
+**Provider: GoatCounter** (cloud, free for non-commercial). No cookies, no
+consent banner needed, ~3KB script, won't get blocked by mainstream ad-blockers.
+Self-hosted variant exists if we ever want it.
+
+### Privacy posture
+
+- **No PII.** No player name, no spouse name, no decision IDs, no save
+  contents — none of it leaves the device.
+- **No cookies.** Analytics layer writes nothing to localStorage either.
+- **Standard server-side hashing.** GoatCounter does its own daily-rotated
+  IP/UA hash for unique-visitor counts; we do nothing extra.
+- **Honors `navigator.doNotTrack`.** The wrapper short-circuits if DNT=1.
+
+### Implementation pattern: virtual pageviews, URL stays at `/`
+
+The SPA stays a SPA. The browser URL never changes during play — no router,
+no `history.pushState`. We send `pageview` events with custom `path` strings
+to GoatCounter on screen transitions. The dashboard sees a funnel; the player
+sees one URL. The back button can't walk a player out of a bad decision.
+
+Real routing was considered and rejected: it would let the URL drift from
+the Redux save state, give players an inadvertent rewind via Back, and add
+React Router weight for no analytics gain.
+
+### Wrapper
+
+`src/game/analytics/track.ts` exposes exactly two functions:
+
+```ts
+trackPageview(path: string): void;
+trackEvent(name: string, params?: Record<string, string | number>): void;
+```
+
+Both no-op when:
+- `import.meta.env.PROD` is false (dev/local builds never report)
+- `window.goatcounter` is undefined (script blocked or failed to load)
+- `navigator.doNotTrack === '1'`
+
+Both swallow errors silently. **Analytics must never break the game.**
+
+### Tracked slugs
+
+| Slug | Fired when |
+|------|------------|
+| `/title` | Title screen mounts |
+| `/init/career` | Career picker mounts |
+| `/init/name` | Name entry mounts |
+| `/init/class` | Class picker mounts |
+| `/init/intro` | Narrative intro mounts |
+| `/month/{001..120}` | Each room mount (zero-padded month id) |
+| `/minigame/{blackjack\|code-review\|stacker}` | Minigame room mounts |
+| `/endgame` | Endgame screen mounts |
+| `/credits` | Credits screen mounts |
+| `/restart` | "Begin again" confirm dispatched |
+
+### Custom events
+
+| Event | Params | Fired when |
+|-------|--------|------------|
+| `game_started` | `career`, `class` | First month entered after init complete (not on resume) |
+| `game_completed` | none | Month 120 commit (also fires the `/endgame` pageview) |
+| `restart_confirmed` | none | After "Yes, begin again" — pairs with `/restart` pageview |
+| `minigame_completed` | `id`, `result` ('win' \| 'partial' \| 'fail') | Each minigame finish |
+
+Career and class are gameplay metadata, not identifiers — they tell us
+"~20% of players pick Skilled" without identifying anyone.
+
+### What we explicitly don't track
+
+- **Per-decision events.** 120 decisions × N players would dwarf the rest
+  of the funnel; pageview depth by month slug is enough signal for v1.
+- **Stat values.** Final stats might be interesting later, but shipping
+  them off-device feels off-vibe for a game this contemplative.
+- **Timing.** No session duration, no time-in-room. GoatCounter gives us
+  pageview timestamps; that's enough to derive what we'd want.
+
+### Configurability
+
+GoatCounter endpoint and the enable-flag live in `.env.production`
+(committed, no secrets — the endpoint is a public URL). Dev builds never
+report. A future self-hosted swap is a one-line endpoint change.
+
+### Failure mode
+
+Ad-blocker blocks the script → `window.goatcounter` undefined → wrapper
+returns silently. Network drops mid-session → individual `count()` calls
+fail silently and the next one tries again. The game does not know or care.
+
+---
+
+## 25. Future: Public Scoreboard (deferred, v1.2 spec)
+
+Not in v1. Captured here because the design call has already been made —
+a future "add the scoreboard" PR will be cheaper if we don't re-litigate
+the trust model from zero.
+
+### Spirit: graffiti board
+
+If someone cheats, fine. Anyone with devtools can `fetch('/scores', {...})`
+with whatever number they want, and pretending strong client-side controls
+fix that is not what this project is about. The board is a record of what
+people *claim*. Cheaters are part of the texture. The median submission
+is probably honest. This matches the project's broader spirit (see project
+memory: "not taking ourselves too seriously") — we are not building
+replay-verification infrastructure to defend against an adversary who
+isn't really the audience.
+
+### Shape
+
+One table. One row per finished run. No accounts, no auth, no session.
+
+| Column        | Notes                                                          |
+|---------------|----------------------------------------------------------------|
+| `name`        | Player-chosen, sanitized + profanity-filtered server-side      |
+| `score`       | Final score from `computeScore` (§21)                          |
+| `class`       | Entry class (Novice / Skilled / …)                             |
+| `final_month` | 120 if completed; lower if soft-permadeath ends the run early  |
+| `run_id`      | Client-generated UUID at endgame; server uses as dedupe key    |
+| `timestamp`   | Server-set on insert                                           |
+
+### Infra
+
+**Cloudflare Workers + D1.** One Worker, two routes:
+
+- `POST /scores` — anon write, basic rate limit (e.g. 1/min per IP),
+  server-side name validation + profanity filter, reject malformed
+  payloads silently.
+- `GET /scores?limit=N` — paginated read, top-N by score, JSON response,
+  cacheable at the edge.
+
+Both routes CORS-permissive (the game is a static site on a different
+origin). No auth, no replay verification, no signed payloads.
+
+### Submission flow
+
+The Endgame screen (§21) gets a "Post your run to the board" button —
+**opt-in, not automatic.** First press validates locally + fires the
+POST. Success → confirmation + a "View board" link. Failure → swallow
+silently with a soft "Couldn't reach the board" line; never block the
+recap. The board itself opens as a new screen reachable from credits
+and from the endgame action row.
+
+### The line being crossed
+
+Adding this turns the project from a static site on GitHub Pages into
+**a service with user-generated content.** Once people are submitting,
+there is a soft obligation to keep the board moderated — even minimally.
+Manual moderation is fine at this scale (one person, low traffic). The
+profanity filter on submit is a first line. Worth knowing this line
+exists, even if we're happy to cross it when the time comes.
+
+### When to build
+
+No assigned build day. Revisit just before implementing — almost
+certainly after v1 ships and the build plan completes. Half a day of
+work at that point, given the spec above.
+
+---
+
+*End of design document v1.2.*
