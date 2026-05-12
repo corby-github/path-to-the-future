@@ -11,7 +11,7 @@ import { selectDecision } from '../content/selectDecision';
 import { parseEffect } from '../content/applyEffects';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { recordDecision, recordEvent } from '../state/slices/historySlice';
-import { skipMonths } from '../state/slices/progressSlice';
+import { skipMonths, addXp, XP_PER_DECISION } from '../state/slices/progressSlice';
 import { rollEvents, findEventById } from '../content/rollEvents';
 import { applyEvent } from '../content/applyEvent';
 import { passesRequires } from '../content/evaluateRequires';
@@ -454,6 +454,9 @@ export function DecisionRoom({ config, onExit }: Props) {
           magnitude: parsed.magnitude,
         }));
       }
+      // Every committed decision grants flat XP — addXp recomputes classTier
+      // so promotions land automatically.
+      dispatch(addXp(XP_PER_DECISION));
     }
     setPendingOptionIndex(null);
 

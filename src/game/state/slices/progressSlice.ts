@@ -1,4 +1,10 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { classTierForXp } from '../../content/classes';
+
+// Flat per-decision XP grant. 120 decisions × 50 = 6000 XP → a clean Novice
+// run lands mid-Skilled by month 120 (Junior threshold at ~month 20, Skilled
+// at ~month 100). Tune here if the arc feels too fast or too slow.
+export const XP_PER_DECISION = 50;
 
 export interface ProgressState {
   currentMonth: number;
@@ -37,6 +43,10 @@ const progressSlice = createSlice({
     },
     addXp(state, action: PayloadAction<number>) {
       state.xp = Math.max(0, state.xp + action.payload);
+      // Tier follows xp automatically (§14 "Class tier updates automatically as
+      // XP crosses thresholds"). Single source of truth — every caller of addXp
+      // gets the promotion for free.
+      state.classTier = classTierForXp(state.xp).id;
     },
     setClassTier(state, action: PayloadAction<string>) {
       state.classTier = action.payload;
