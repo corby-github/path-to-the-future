@@ -166,13 +166,24 @@ function NPCPeer({ x, y, palette }: SpriteProps) {
   return (
     <g>
       <NPCBase x={x} y={y} palette={palette} />
-      {/* Watch — small filled square on lower-left of body */}
+      {/* Pocket protector — lighter rect on upper-left of torso, with a
+          pen tip peeking out the top. Classic engineer signature. */}
       <rect
-        x={x - 21}
-        y={y + 20}
-        width={5}
-        height={4}
-        fill={palette.ink}
+        x={x - 12}
+        y={y - 4}
+        width={8}
+        height={10}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+      <line
+        x1={x - 9}
+        y1={y - 7}
+        x2={x - 9}
+        y2={y - 3}
+        stroke={palette.ink}
+        strokeWidth={1.5}
       />
     </g>
   );
