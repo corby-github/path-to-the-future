@@ -16,7 +16,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 |---------|------------|---------------------------|---------|
 | v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
-| v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
+| v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
 
 ---
 
@@ -820,6 +820,7 @@ room placement, proximity trigger).
 interface InteractableDef {
   id: string;
   kind: 'npc' | 'object';
+  label?: string;                     // v1.2 — short display name under [E] hint
   art: string;                        // sprite token (real art in 13b)
   tags: string[];                     // 'office', 'coworker', etc.
   weight: number;                     // generator weighting (used in 13b)
@@ -862,6 +863,18 @@ above the interactable. Pressing **E** (when adjacent, no other modal active,
 not committed to the door) picks a random eligible dialogue and opens the
 modal. Movement is paused while the modal is open, matching the decision /
 event / minigame pattern.
+
+**Sprite-anchored label (v1.2).** When the player is adjacent, two text
+elements bracket the sprite: the `[E] talk` / `[E] look` hint sits
+**above** the sprite (per the original v1.1 design), and the interactable's
+`label` field — *"Plant", "Intern", "Boss's boss"* — sits **below** the
+sprite as a caption. Splitting them top/bottom keeps the `[E]` call-to-action
+prominent while giving the player a clear name for what they're looking at.
+Optional schema field; the `labelFor` helper in `DecisionRoom` falls back
+to a derived title-cased form of `id` (strips the `obj-` / `npc-` prefix,
+hyphens → spaces) when a pack hasn't authored labels yet. SVG
+`data-region="interact-hint"` and `data-region="interact-label"` attributes
+identify the two text elements.
 
 **TypewriterText** (`src/game/ui/TypewriterText.tsx`). Implements §8b's
 character-reveal: 30ms/char default, punctuation pauses (+60ms `,`, +180ms

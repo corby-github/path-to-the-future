@@ -120,6 +120,11 @@ export interface InteractableDialogue {
 export interface InteractableDef {
   id: string;
   kind: 'npc' | 'object';
+  // Short display label shown under the [E] hint when the player is
+  // adjacent (e.g. "Plant", "Intern", "Boss's boss"). Optional for
+  // backward-compat with packs that haven't authored labels yet; the
+  // renderer falls back to a kind-cased derivation of `id`.
+  label?: string;
   // Sprite token — later resolved to SVG art. For Day 13a we render
   // kind-based shapes; real art tokens come in 13b.
   art: string;

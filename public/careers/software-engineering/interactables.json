@@ -3,6 +3,7 @@
     {
       "id": "obj-coffee-machine",
       "kind": "object",
+      "label": "Coffee machine",
       "art": "coffee-machine",
       "tags": ["office", "flavor", "hardware"],
       "weight": 1.0,
@@ -20,6 +21,7 @@
     {
       "id": "obj-whiteboard",
       "kind": "object",
+      "label": "Whiteboard",
       "art": "whiteboard",
       "tags": ["office", "flavor", "tech"],
       "weight": 1.0,
@@ -37,6 +39,7 @@
     {
       "id": "obj-monitor",
       "kind": "object",
+      "label": "Monitor",
       "art": "monitor",
       "tags": ["office", "flavor", "hardware"],
       "weight": 1.0,
@@ -54,6 +57,7 @@
     {
       "id": "obj-printer",
       "kind": "object",
+      "label": "Printer",
       "art": "printer",
       "tags": ["office", "flavor", "hardware", "humor"],
       "weight": 0.7,
@@ -71,6 +75,7 @@
     {
       "id": "obj-plant",
       "kind": "object",
+      "label": "Plant",
       "art": "plant",
       "tags": ["office", "flavor"],
       "weight": 1.0,
@@ -88,6 +93,7 @@
     {
       "id": "obj-calendar",
       "kind": "object",
+      "label": "Calendar",
       "art": "calendar",
       "tags": ["office", "flavor"],
       "weight": 1.0,
@@ -105,6 +111,7 @@
     {
       "id": "obj-stress-ball",
       "kind": "object",
+      "label": "Stress ball",
       "art": "stress-ball",
       "tags": ["office", "flavor", "humor"],
       "weight": 0.8,
@@ -130,6 +137,7 @@
     {
       "id": "obj-water-cooler",
       "kind": "object",
+      "label": "Water cooler",
       "art": "water-cooler",
       "tags": ["office", "flavor", "humor"],
       "weight": 0.7,
@@ -147,6 +155,7 @@
     {
       "id": "npc-intern",
       "kind": "npc",
+      "label": "Intern",
       "art": "person-intern",
       "tags": ["coworker", "newhire"],
       "weight": 1.0,
@@ -180,6 +189,7 @@
     {
       "id": "npc-senior-eng",
       "kind": "npc",
+      "label": "Senior engineer",
       "art": "person-senior",
       "tags": ["coworker", "senior", "mentor"],
       "weight": 1.0,
@@ -209,6 +219,7 @@
     {
       "id": "npc-pm",
       "kind": "npc",
+      "label": "PM",
       "art": "person-pm",
       "tags": ["coworker", "pm", "meetings"],
       "weight": 1.0,
@@ -238,6 +249,7 @@
     {
       "id": "npc-designer",
       "kind": "npc",
+      "label": "Designer",
       "art": "person-designer",
       "tags": ["coworker", "design"],
       "weight": 1.0,
@@ -255,6 +267,7 @@
     {
       "id": "npc-peer-eng",
       "kind": "npc",
+      "label": "Coworker",
       "art": "person-peer",
       "tags": ["coworker", "peer"],
       "weight": 1.0,
@@ -284,6 +297,7 @@
     {
       "id": "npc-newhire",
       "kind": "npc",
+      "label": "New hire",
       "art": "person-newhire",
       "tags": ["coworker", "newhire"],
       "requires": { "month": ">=6" },
@@ -314,6 +328,7 @@
     {
       "id": "npc-skip-level",
       "kind": "npc",
+      "label": "Boss's boss",
       "art": "person-skip-level",
       "tags": ["coworker", "skip-level"],
       "requires": { "month": ">=12" },
