@@ -23,4 +23,4 @@ Append-only. Timestamps in UTC ISO 8601 (`YYYY-MM-DDTHH:MM:SSZ`). Sessions are m
 | 3   | mid-morning   | start | 2026-05-12T13:24:00Z | back from break; first session using the punch skill |
 | 3   | mid-morning   | end   | 2026-05-12T15:10:12Z | first real /punch — skill discoverable post-restart  |
 | 3   | after-lunch   | start | 2026-05-12T17:41:26Z | session 3 of day 3 |
-| 3   | after-lunch   | end   | 2026-05-12T20:34:00Z | limit reched |
+| 3   | after-lunch   | end   | 2026-05-12T20:34:00Z | limit reched - stopped while processing feat/init-flow-canvas-frame|
