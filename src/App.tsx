@@ -46,26 +46,33 @@ export default function App() {
 
   if (!acknowledged) {
     return (
-      <TitleWrapper>
+      <PageFrame>
         <TitleScreen onAcknowledge={handleAcknowledge} />
-      </TitleWrapper>
+      </PageFrame>
     );
   }
 
-  // Init flow renders its own full-screen cream surface; the dark game wrapper
-  // is only mounted after the player completes career → name → class → intro.
+  // Init flow renders inside the same PageFrame as the title screen —
+  // each phase's outer container is sized to the canvas frame so the
+  // career picker / name entry / class picker / intro scene all sit in
+  // the same visual envelope as the rest of the game.
   if (!initComplete) {
-    return <InitFlow onComplete={() => undefined} />;
+    return (
+      <PageFrame>
+        <InitFlow onComplete={() => undefined} />
+      </PageFrame>
+    );
   }
 
   return <Game />;
 }
 
-// Page-frame wrapper for the title screen. Mirrors the Game-wrapper
-// chrome (dark app background + centered fixed-width canvas frame) so
-// the title sits in the same visual envelope as the rest of the app
-// instead of floating on a stark white page.
-function TitleWrapper({ children }: { children: React.ReactNode }) {
+// Page-frame wrapper for non-Game top-level views (title screen + init
+// flow). Mirrors the Game-wrapper chrome (dark app background +
+// centered fixed-width content) so every non-Game screen sits in the
+// same visual envelope as the rest of the app instead of floating on
+// a stark cream page.
+function PageFrame({ children }: { children: React.ReactNode }) {
   return (
     <div
       style={{
