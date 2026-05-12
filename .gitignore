@@ -22,4 +22,8 @@ dist-ssr
 *.sw?
 
 # Local Claude Code settings — per-machine tool-permission allowlist
-.claude/
+.claude/*
+# Exception: project-level skills are part of the repo (they ride with the
+# code, like docs/). Per-machine settings (settings.local.json, worktrees,
+# launch.json) stay ignored.
+!.claude/skills/
