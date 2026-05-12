@@ -3,7 +3,9 @@ import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch } from '../state/hooks';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { parseEffect, type StatKey } from '../content/applyEffects';
+import { speakerHeaderFor } from '../content/interactableLabel';
 import { TypewriterText } from './TypewriterText';
+import { InteractableSprite } from '../rooms/sprites/InteractableSprite';
 import type { InteractableDef, InteractableDialogue } from '../types/careerPack';
 
 // §8b modal for NPC/object interactions. Distinct from §8 door decision
@@ -153,14 +155,49 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
     boxShadow: `inset 0 0 0 2px ${palette.background}, inset 0 0 0 3px ${palette.ink}`,
     padding: '20px 24px',
     boxSizing: 'border-box',
+    // Icon-left layout (#28): sprite as left column, content as right
+    // column. See §23 NPCModal in the design doc.
     display: 'flex',
-    flexDirection: 'column',
-    gap: 12,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: 20,
     fontFamily: NPC_DIALOG_FONT,
     fontSize: 16,
     lineHeight: 1.55,
     // Subtle fade-in scale per §8b.
     animation: 'npc-modal-pop 200ms ease-out',
+  };
+
+  // Speaker header — "{Label} says…" for NPCs, "{Label}." for objects.
+  // Sits above the prompt during `prompt` and `options` phases; skipped in
+  // `flavor` because that phase is post-choice outcome, not the speaker.
+  const speakerHeaderStyle: CSSProperties = {
+    margin: 0,
+    fontSize: 12,
+    fontWeight: 600,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: palette.inkMuted,
+    fontFamily: NPC_DIALOG_FONT,
+  };
+
+  // Icon-left sprite — fixed-width column on the left of the dialog. Full
+  // opacity (it's the speaker portrait, not background decoration).
+  const speakerIconSvgStyle: CSSProperties = {
+    width: 100,
+    height: 'auto',
+    flexShrink: 0,
+    alignSelf: 'center',
+  };
+
+  // Right-column wrapper that holds header + prompt + options/flavor.
+  // Replaces the top-level column flow that the watermark variant used.
+  const contentColumnStyle: CSSProperties = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
+    minWidth: 0,
   };
 
   const hintStyle: CSSProperties = {
@@ -189,8 +226,29 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
         role="dialog"
         aria-label={`${interactable.kind} interaction`}
       >
+        {/* Icon-left sprite — same art as the interactable the player
+            just walked up to, full opacity, fixed-width left column. */}
+        <svg
+          data-region="speaker-visual"
+          viewBox="0 0 80 110"
+          style={speakerIconSvgStyle}
+          aria-hidden="true"
+        >
+          <InteractableSprite
+            art={interactable.art}
+            kind={interactable.kind}
+            x={40}
+            y={55}
+            palette={palette}
+          />
+        </svg>
+
+        <div data-region="content" style={contentColumnStyle}>
         {phase === 'prompt' && (
           <>
+            <p data-region="speaker-header" style={speakerHeaderStyle}>
+              {speakerHeaderFor(interactable)}
+            </p>
             <TypewriterText
               key={`prompt-${interactable.id}`}
               text={dialogue.prompt}
@@ -212,6 +270,9 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
 
         {phase === 'options' && (
           <>
+            <p data-region="speaker-header" style={speakerHeaderStyle}>
+              {speakerHeaderFor(interactable)}
+            </p>
             <p style={{ margin: 0 }}>{dialogue.prompt}</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
               {options.map((opt, i) => {
@@ -268,6 +329,7 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
             <p style={hintStyle}>Press to close</p>
           </>
         )}
+        </div>
       </div>
     </div>
   );
