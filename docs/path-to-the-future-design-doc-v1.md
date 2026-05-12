@@ -16,7 +16,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 |---------|------------|---------------------------|---------|
 | v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
-| v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Kentucky Route Zero, Oregon Trail, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
+| v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda, Kentucky Route Zero, Oregon Trail, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
 
 ---
 
@@ -36,6 +36,7 @@ A narrative life-simulation game in which the player navigates 10 years (2020–
 
 **Inspirations:**
 
+- **The Legend of Zelda** (NES original / A Link to the Past) — the core gameplay grammar. Top-down room-by-room exploration, walk into a doorway to transition, approach an NPC or object and press a key to interact, dialog boxes that fill the bottom of the screen. The §8b modal presentation makes this lineage explicit; the room generator (§4) extends it.
 - **Kentucky Route Zero** — visual register: flat color, generous negative space, stillness as style. The mood we're chasing.
 - **Oregon Trail** — the event-roll pattern. Mostly minor, occasionally significant, rarely catastrophic. "You have dysentery" energy, applied to a career.
 - **Another World / Out of This World** — flat-color cinematic minimalism done with intent. Whole worlds built from a tiny palette.
@@ -207,6 +208,26 @@ UI: modal open/closed, hovered interactable, etc.
 - `requires` gates eligibility (e.g. spouse-birthday decision only fires if in a relationship).
 - `tags` prevent same-flavor decisions appearing back-to-back.
 
+### Selection: history-aware de-dup (v1.2)
+
+`selectDecision` filters the eligible pool through two tiers before the
+weighted random pick:
+
+1. **Recent window (hard).** Exclude any decision whose `id` appears in
+   `history.decisions` for monthIds within `currentMonth - 5`. Same
+   scenario can't appear in two consecutive months and won't appear
+   anywhere inside a 5-month rolling window.
+2. **Prefer unseen (soft).** Among what survives the recent window,
+   prefer decisions never seen in this run. If none are unseen, fall
+   back to the not-recent set.
+
+Fallback chain: `neverSeen → notRecent → eligible`. The selector never
+returns null due to filtering; only if no decisions pass `requires` at
+all. With current SWE content (34 decisions vs 120 months) the fallback
+degrades gracefully — adding content automatically reduces repetition
+without code changes. Configured by `RECENT_WINDOW_MONTHS` in
+`src/game/content/selectDecision.ts`.
+
 ### Universal vs. career-specific decisions
 
 The decision pool is `[universal] + [career-specific]`, loaded at career-pack init.
@@ -277,6 +298,22 @@ Events can:
 - End the game (soft permadeath: dysentery, financial ruin, breakdown)
 
 **Tone:** Oregon Trail meets Monopoly. Mostly minor, occasionally significant, rarely catastrophic. "Bank error in your favor" energy. We're not taking ourselves too seriously — life happens, but mostly, good decisions yield good things.
+
+### Selection: history-aware de-dup (v1.2)
+
+Same two-tier filter as §8, applied to events with a tighter window:
+`RECENT_WINDOW_MONTHS = 3` (events fire more often than decisions, so a
+5-month window would starve the pool fast at current content volume).
+
+1. **Recent window (hard).** Exclude any event whose `id` appears in
+   `history.events` for monthIds within `currentMonth - 3`.
+2. **Prefer unseen (soft).** Among what survives, prefer never-seen
+   events. Fallback chain: `neverSeen → notRecent → eligible`.
+
+Dev-mode `findEventById` (used by the DevPanel's force-event dropdown)
+deliberately **bypasses the filter** — forcing a specific event should
+work regardless of history. Configured by `RECENT_WINDOW_MONTHS` in
+`src/game/content/rollEvents.ts`.
 
 ### Era event guidelines
 
