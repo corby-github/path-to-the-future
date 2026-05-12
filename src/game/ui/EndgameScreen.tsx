@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useStore } from 'react-redux';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { monthLabel } from '../calendar';
@@ -14,23 +14,43 @@ import { resetHistory } from '../state/slices/historySlice';
 import { resetMeta } from '../state/slices/metaSlice';
 import { clearPersistedState } from '../state/persistence';
 import { CreditsScreen } from './CreditsScreen';
+import { StatIcon, type StatIconName } from './icons/StatIcon';
 import type { Palette } from '../types/careerPack';
 import type { StatsState } from '../state/slices/statsSlice';
 import type { DecisionRecord } from '../state/slices/historySlice';
 import type { RootState } from '../state/store';
+
+// Recap actions cycled by ← → on the keyboard. Order matches the visual
+// order (left → right) so arrow nav reads naturally. Three buttons (#26):
+// Career Timeline opens a dedicated full-canvas view; Credits / Begin again
+// route through CreditsScreen as before.
+const ACTIONS = ['timeline', 'credits', 'replay'] as const;
+type ActionId = (typeof ACTIONS)[number];
 
 interface StatRowProps {
   label: string;
   value: number | null;
   unit?: string;
   palette: Palette;
+  icon: StatIconName;
 }
 
-function StatRow({ label, value, unit, palette }: StatRowProps) {
+function StatRow({ label, value, unit, palette, icon }: StatRowProps) {
   const display = value === null ? '—' : unit === '$' ? `$${value.toLocaleString()}` : `${value}`;
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-      <span style={{ fontSize: 12, letterSpacing: '0.08em', color: palette.inkMuted, textTransform: 'uppercase' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 8,
+          fontSize: 12,
+          letterSpacing: '0.08em',
+          color: palette.inkMuted,
+          textTransform: 'uppercase',
+        }}
+      >
+        <StatIcon name={icon} size={18} />
         {label}
       </span>
       <span style={{ fontSize: 15, fontWeight: 500 }}>{display}</span>
@@ -96,13 +116,13 @@ function StatsPanel({ stats, palette }: { stats: StatsState; palette: Palette })
       >
         Final stats
       </p>
-      <StatRow label="Burnout" value={stats.burnout} palette={palette} />
-      <StatRow label="Health" value={stats.health} palette={palette} />
-      <StatRow label="Network" value={stats.network} palette={palette} />
-      <StatRow label="Reputation" value={stats.reputation} palette={palette} />
-      <StatRow label="Technical Skill" value={stats.technicalSkill} palette={palette} />
-      <StatRow label="Relationship" value={stats.relationship} palette={palette} />
-      <StatRow label="Savings" value={stats.savings} unit="$" palette={palette} />
+      <StatRow icon="burnout" label="Burnout" value={stats.burnout} palette={palette} />
+      <StatRow icon="health" label="Health" value={stats.health} palette={palette} />
+      <StatRow icon="network" label="Network" value={stats.network} palette={palette} />
+      <StatRow icon="reputation" label="Reputation" value={stats.reputation} palette={palette} />
+      <StatRow icon="technicalSkill" label="Technical Skill" value={stats.technicalSkill} palette={palette} />
+      <StatRow icon="relationship" label="Relationship" value={stats.relationship} palette={palette} />
+      <StatRow icon="savings" label="Savings" value={stats.savings} unit="$" palette={palette} />
     </div>
   );
 }
@@ -174,20 +194,22 @@ function ScorePanel({
 
 interface DecisionByYear {
   year: number;
-  rows: { monthId: number; optionTaken: string }[];
+  rows: { monthId: number; prompt: string | undefined; optionTaken: string }[];
 }
 
-function DecisionTimeline({
-  byYear,
-  palette,
-}: {
-  byYear: DecisionByYear[];
-  palette: Palette;
-}) {
+const DecisionTimeline = forwardRef<
+  HTMLDivElement,
+  { byYear: DecisionByYear[]; palette: Palette }
+>(function DecisionTimeline({ byYear, palette }, ref) {
   return (
     <div
+      ref={ref}
       data-region="career-timeline"
       style={{
+        // Lives inside CareerTimelineScreen as the flex:1 region. Internal
+        // scroll handles the full 120-decision list. (The dedicated screen
+        // provides the title + decision count above, so this panel renders
+        // just the year-grouped rows.)
         flex: 1,
         minHeight: 0,
         background: palette.background,
@@ -200,24 +222,6 @@ function DecisionTimeline({
         gap: 4,
       }}
     >
-      <p
-        style={{
-          margin: 0,
-          marginBottom: 4,
-          fontSize: 11,
-          letterSpacing: '0.12em',
-          color: palette.inkMuted,
-          textTransform: 'uppercase',
-          position: 'sticky',
-          top: -14,
-          background: palette.background,
-          paddingTop: 14,
-          marginTop: -14,
-          paddingBottom: 4,
-        }}
-      >
-        Career timeline · {byYear.reduce((s, y) => s + y.rows.length, 0)} decisions
-      </p>
       {byYear.map((y) => (
         <div key={y.year} style={{ marginTop: 8 }}>
           <p
@@ -237,29 +241,208 @@ function DecisionTimeline({
               key={i}
               style={{
                 display: 'flex',
-                alignItems: 'baseline',
+                alignItems: 'flex-start',
                 gap: 12,
-                padding: '3px 0',
+                padding: '6px 0',
                 fontSize: 12,
-                lineHeight: 1.4,
+                lineHeight: 1.45,
               }}
             >
               <span
                 style={{
                   color: palette.inkMuted,
-                  width: 80,
+                  // Width covers "September 2025" at 11px without wrap.
+                  width: 124,
                   flexShrink: 0,
                   fontSize: 11,
                   letterSpacing: '0.04em',
+                  whiteSpace: 'nowrap',
+                  paddingTop: 1,
                 }}
               >
                 {monthLabel(r.monthId)}
               </span>
-              <span style={{ color: palette.ink, opacity: 0.9 }}>{r.optionTaken}</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                {r.prompt && (
+                  <p
+                    style={{
+                      margin: 0,
+                      marginBottom: 2,
+                      color: palette.inkMuted,
+                      fontSize: 12,
+                      fontStyle: 'italic',
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    {r.prompt}
+                  </p>
+                )}
+                <p
+                  style={{
+                    margin: 0,
+                    color: palette.ink,
+                    fontSize: 13,
+                    fontWeight: 500,
+                    lineHeight: 1.45,
+                  }}
+                >
+                  → {r.optionTaken}
+                </p>
+              </div>
             </div>
           ))}
         </div>
       ))}
+    </div>
+  );
+});
+
+// Dedicated full-canvas view for the career timeline. Reached from the
+// "Career Timeline" button on the recap (#26). Mirrors the CreditsScreen
+// pattern — same canvas frame, owns its own Escape listener, returns the
+// player to the recap on close.
+function CareerTimelineScreen({
+  byYear,
+  palette,
+  onClose,
+}: {
+  byYear: DecisionByYear[];
+  palette: Palette;
+  onClose: () => void;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Esc / Backspace / Enter / Space all close — the screen has one
+      // action (Close) so any "confirm" key resolves it.
+      if (
+        e.key === 'Escape' ||
+        e.key === 'Backspace' ||
+        e.key === 'Enter' ||
+        e.key === ' '
+      ) {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+      // Arrow / Page / Home / End scroll the timeline list. Mouse-wheel
+      // also works (browser default) — the keyboard handlers exist so the
+      // recap stays "keyboard-first" consistent with the rest of the game.
+      const el = scrollRef.current;
+      if (!el) return;
+      const ROW_STEP = 60; // ~3 timeline rows per arrow press
+      const PAGE_STEP = el.clientHeight - 40;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        el.scrollBy({ top: ROW_STEP, behavior: 'smooth' });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        el.scrollBy({ top: -ROW_STEP, behavior: 'smooth' });
+      } else if (e.key === 'PageDown') {
+        e.preventDefault();
+        el.scrollBy({ top: PAGE_STEP, behavior: 'smooth' });
+      } else if (e.key === 'PageUp') {
+        e.preventDefault();
+        el.scrollBy({ top: -PAGE_STEP, behavior: 'smooth' });
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        el.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onClose]);
+
+  const total = byYear.reduce((s, y) => s + y.rows.length, 0);
+
+  const buttonStyle: CSSProperties = {
+    padding: '10px 24px',
+    background: 'transparent',
+    color: palette.ink,
+    border: `1px solid ${palette.ink}`,
+    fontSize: 13,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    transition: 'background 120ms',
+  };
+
+  return (
+    <div
+      data-component="CareerTimelineScreen"
+      style={{
+        width: 'var(--canvas-display-width)',
+        aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
+        background: palette.background,
+        color: palette.ink,
+        border: `1px solid ${palette.surface}`,
+        borderRadius: 6,
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '20px 32px',
+        fontFamily: 'inherit',
+        gap: 12,
+        minHeight: 0,
+      }}
+    >
+      <div data-region="header" style={{ textAlign: 'center' }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 11,
+            letterSpacing: '0.2em',
+            color: palette.inkMuted,
+            textTransform: 'uppercase',
+          }}
+        >
+          Career Timeline
+        </p>
+        <p
+          style={{
+            margin: '4px 0 0 0',
+            fontSize: 13,
+            color: palette.inkMuted,
+            opacity: 0.9,
+          }}
+        >
+          {total} decisions across ten years
+        </p>
+      </div>
+
+      <DecisionTimeline ref={scrollRef} byYear={byYear} palette={palette} />
+
+      <div
+        data-region="actions"
+        style={{ display: 'flex', justifyContent: 'center', gap: 12 }}
+      >
+        <button
+          data-action="close"
+          onClick={onClose}
+          style={{ ...buttonStyle, background: palette.surface }}
+        >
+          Close
+        </button>
+      </div>
+      <p
+        data-region="hint"
+        style={{
+          margin: '4px 0 0 0',
+          fontSize: 11,
+          letterSpacing: '0.08em',
+          color: palette.inkMuted,
+          textAlign: 'center',
+          textTransform: 'uppercase',
+          opacity: 0.6,
+        }}
+      >
+        ↑ ↓ to scroll · Enter / Space / Esc to close
+      </p>
     </div>
   );
 }
@@ -278,8 +461,14 @@ export function EndgameScreen() {
   // line stays stable for the duration of this endgame view so it doesn't
   // re-roll on every re-render. Editable in public/endgame-taglines.json.
   const [tagline, setTagline] = useState<string>('');
-  // Which action button is currently focused for keyboard nav.
-  const [focusedAction, setFocusedAction] = useState<'credits' | 'replay'>('credits');
+  // Which action button is currently focused for keyboard nav. Three
+  // buttons now (#26): Career Timeline (leftmost, default), Credits,
+  // Begin again. ← → cycles with wrap-around.
+  const [focusedAction, setFocusedAction] = useState<ActionId>('timeline');
+  // Career timeline view toggle (#26). When true, the recap is replaced
+  // with the dedicated CareerTimelineScreen (full-canvas, list claims the
+  // whole height, Esc returns). Mirrors the existing creditsMode pattern.
+  const [viewingTimeline, setViewingTimeline] = useState(false);
 
   useEffect(() => {
     fetch('/endgame-taglines.json')
@@ -293,21 +482,27 @@ export function EndgameScreen() {
   }, []);
 
   useEffect(() => {
-    // Skip keybindings while the credits screen is open — CreditsScreen owns
-    // its own listener and routes Escape correctly.
-    if (creditsMode !== null) return;
+    // Skip keybindings while a sub-view (credits / timeline) is open —
+    // those own their own Escape listeners.
+    if (creditsMode !== null || viewingTimeline) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
         e.preventDefault();
-        setFocusedAction((cur) => (cur === 'credits' ? 'replay' : 'credits'));
+        setFocusedAction((cur) => {
+          const idx = ACTIONS.indexOf(cur);
+          const delta = e.key === 'ArrowRight' ? 1 : -1;
+          return ACTIONS[(idx + delta + ACTIONS.length) % ACTIONS.length];
+        });
       } else if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        setCreditsMode(focusedAction === 'credits' ? 'browse' : 'replay');
+        if (focusedAction === 'timeline') setViewingTimeline(true);
+        else if (focusedAction === 'credits') setCreditsMode('browse');
+        else setCreditsMode('replay');
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [creditsMode, focusedAction]);
+  }, [creditsMode, viewingTimeline, focusedAction]);
 
   const score = useMemo(() => computeScore(stats, progress, history), [stats, progress, history]);
   const tier = useMemo(() => classTierForXp(progress.xp), [progress.xp]);
@@ -315,6 +510,12 @@ export function EndgameScreen() {
   const byYear = useMemo<DecisionByYear[]>(() => {
     const map = new Map<number, DecisionRecord[]>();
     const monthsById = new Map(pack.months.map((m) => [m.id, m]));
+    // Lookup table for prompts. The history record stores `decisionId` but
+    // not the prompt text, so we resolve it here against the live pack. If
+    // a decision was renamed / removed from the pack after a save was
+    // taken, the prompt becomes undefined and the row falls back to
+    // option-only (old behavior).
+    const decisionById = new Map(pack.decisions.map((d) => [d.id, d]));
     for (const d of history.decisions) {
       const month = monthsById.get(d.monthId);
       if (!month) continue;
@@ -328,9 +529,13 @@ export function EndgameScreen() {
         year,
         rows: ds
           .sort((a, b) => a.monthId - b.monthId)
-          .map((d) => ({ monthId: d.monthId, optionTaken: d.optionTaken })),
+          .map((d) => ({
+            monthId: d.monthId,
+            prompt: decisionById.get(d.decisionId)?.prompt,
+            optionTaken: d.optionTaken,
+          })),
       }));
-  }, [history.decisions, pack.months]);
+  }, [history.decisions, pack.months, pack.decisions]);
 
   const handleReplay = useCallback(() => {
     // Reset all slices then clear localStorage. After this, App.tsx sees
@@ -363,6 +568,16 @@ export function EndgameScreen() {
     );
   }
 
+  if (viewingTimeline) {
+    return (
+      <CareerTimelineScreen
+        byYear={byYear}
+        palette={palette}
+        onClose={() => setViewingTimeline(false)}
+      />
+    );
+  }
+
   const buttonStyle: CSSProperties = {
     padding: '10px 24px',
     background: 'transparent',
@@ -380,6 +595,11 @@ export function EndgameScreen() {
     <div
       data-component="EndgameScreen"
       style={{
+        // Recap matches the canvas frame (1000×600 aspect ratio at
+        // current canvas-display-width). Stats + score panels sit inline,
+        // sized to content. The career timeline is reached via the
+        // leftmost action button — opens CareerTimelineScreen, a dedicated
+        // full-canvas view that gives the timeline room to breathe.
         width: 'var(--canvas-display-width)',
         aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
         background: palette.background,
@@ -425,14 +645,32 @@ export function EndgameScreen() {
         )}
       </div>
 
-      <div data-region="panels" style={{ display: 'flex', gap: 12, alignItems: 'stretch' }}>
+      <div
+        data-region="panels"
+        style={{ display: 'flex', gap: 12, alignItems: 'stretch', flex: 1, minHeight: 0 }}
+      >
         <StatsPanel stats={stats} palette={palette} />
-        <ScorePanel breakdown={score} classLabel={tier.label} xp={progress.xp} palette={palette} />
+        <ScorePanel
+          breakdown={score}
+          classLabel={tier.label}
+          xp={progress.xp}
+          palette={palette}
+        />
       </div>
 
-      <DecisionTimeline byYear={byYear} palette={palette} />
-
       <div data-region="actions" style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
+        <button
+          data-action="career-timeline"
+          data-active={focusedAction === 'timeline' || undefined}
+          onClick={() => setViewingTimeline(true)}
+          onMouseEnter={() => setFocusedAction('timeline')}
+          style={{
+            ...buttonStyle,
+            background: focusedAction === 'timeline' ? palette.surface : 'transparent',
+          }}
+        >
+          Career Timeline
+        </button>
         <button
           data-action="credits"
           data-active={focusedAction === 'credits' || undefined}

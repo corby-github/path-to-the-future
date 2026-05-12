@@ -1,7 +1,7 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 1.3.1
+**Document version:** 1.3.2
 **Status:** Living spec · Days 1–13b.3 merged · Day 13c + Day 14 (title screen) pending
 **Last updated:** 2026-05-12
 
@@ -17,6 +17,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 | v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
 | v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. **§23 NPCModal** gains a *Speaker header + icon (v1.2)* subsection per #28: kind-aware header above the prompt (`"Intern says…"` / `"Plant."`) plus a full-opacity sprite icon on the left as a fixed-width column. Shared `labelFor` / `speakerHeaderFor` helpers extracted to `src/game/content/interactableLabel.ts`. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
+| v1.3.2  | 2026-05-12 | Corby Hoback · Claude Code | Issue #26 — **endgame timeline readability**. EndgameScreen keeps its 1000×600 canvas frame (consistency with the rest of the app — no out-of-game scroll). Stats + score panels sit inline below the header; the **Career timeline** moves to a dedicated full-canvas view (`CareerTimelineScreen` — ↑↓/PgUp/PgDn/Home/End scroll, Close button, Enter/Space/Esc close) reached via a third recap action button. Three-action recap keyboard nav with wrap-around: **Career Timeline** · **Credits** · **Begin again**. Date column in the timeline widened to 124px with `whiteSpace: nowrap` — `February 2021` no longer wraps inside an 80px column (root cause of the visual collision with option text). §21 rewritten. |
 | v1.3.1  | 2026-05-12 | Corby Hoback · Claude Code | Issue #30 — **room-transition vibe**. New §4.1 *Room transition* documents both transition beats (door-entry and end-of-room) and their choreography. **End-of-room:** new state `progress.monthAdvanceCueNonce` + `cueMonthAdvance` reducer; `useRoomTransition.exitRoom` dispatches the cue *before* flipping the fade flag; HUD listens to the cue nonce, emits the `+1 mo` floater at fade-start (was after-fade), and dedups the would-be duplicate emit from the subsequent `completeMonth` advance via a suppression ref; `POST_EFFECT_PAUSE_MS` trimmed from 1400 → 900ms in `DecisionRoom`. **Door-entry:** `MODAL_POP_DELAY_MS` bumped 300 → 500ms in `DecisionRoom` (was racing `DOOR_FADE_MS = 300` and reading as fade-interrupted); new `decision-modal-pop` + `decision-modal-dialog-pop` keyframes in `global.css` so DecisionModal and EventModal ease in deliberately, matched-family with `npc-modal-pop`. No STATE_VERSION bump (additive field, ephemeral by use, safe across reloads — ref-init pattern in the HUD swallows mount-time effects). |
 | v1.3    | 2026-05-12 | Corby Hoback · Claude Code | Issue #33 — **backward replay**. New §11.1 *Backward replay* describes the rewind-door mechanic: walk-back-one-month read-only exploration, multi-step chaining, era-mood follows the viewed month, decisions/events locked, NPC/object dialogues play with effects suppressed, minigame months show a frozen result from `history.minigames`, consequence rooms skipped via `previousReplayableMonth()`. New state: `progress.viewingMonth: number \| null` + `enterReplay` / `exitReplay` reducers; `history.minigames: MinigameRecord[]` + `recordMinigame` reducer dispatched at the end of each minigame's `handleContinue`. **STATE_VERSION 1.2.0 → 1.3.0** (§12). HUD telegraphs replay mode (opacity drops to 0.7, month label prefixes with `←`). New file: `src/game/rooms/MinigameReplayCard.tsx`. **§8 / §9** also gain a *Modal icons (v1.3+)* subsection (PR #39): registry pattern (`src/game/ui/icons/modalIcons.tsx`) maps decision/event `id` → palette-aware SVG component with a `PlaceholderIcon` fallback. DecisionModal renders the icon inline next to the prompt (options phase) and chosen-option label (flavor phase); EventModal renders it top-centered above the title. Initial entries: `univ-stay-late-vs-log-off`, `univ-standup-too-long`, `evt-era-pandemic-furlough-friend` — all placeholders for now. |
 
@@ -899,10 +900,31 @@ Weights are tunable — interpretability over precision.
 - **Final stats** panel (all 7 stats with their final values, `palette.background`
   fill with `palette.surface` border for readability)
 - **Class + XP + Score breakdown** panel (line-item with total)
-- **Decision timeline** — scrollable list grouped by year, every decision the
-  player made shown as `Month — option taken`
-- Two actions: **Credits** and **Begin again**, with keyboard nav (←→ cycles
-  focus, Enter/Space confirms)
+- **Header order** (#26): `Ten years done.` (small uppercase) → `{Name}'s
+  Career` (h1) → tagline (italic muted, one of the lines from
+  `endgame-taglines.json`, rolled per view). The tagline sits below the
+  name because it's randomly selected and shouldn't occlude the
+  consistently-named title above it.
+- **Stats + score panels** sit inline below the header, side-by-side,
+  filling the residual canvas height.
+- **Career timeline lives in a dedicated full-canvas view** (#26)
+  (`CareerTimelineScreen`, defined alongside `EndgameScreen`). Opened via
+  the leftmost recap action (see below). Internal scroll handles the full
+  120-decision list; year grouping preserved. Each row renders the
+  **decision prompt** above the **option taken** (resolved from
+  `pack.decisions` by `decisionId` — falls back to option-only if a stored
+  decision was removed/renamed from the pack). Without the prompt, option
+  text like "Go" or "Build it" reads as a punchline with no setup; the
+  prompt restores the narrative weight of the choice. Date column widened
+  to 124px with `whiteSpace: nowrap` so `September 2025`-class labels
+  render on one line (was 80px, which wrapped `February 2021` and visually
+  collided with the option text). Keyboard: ↑/↓ scroll one step (~3 rows),
+  PgUp/PgDn scroll a page, Home/End jump to top/bottom — mouse wheel also
+  works. Single **Close** action; Enter/Space/Esc all close.
+- Three actions on the recap, left to right: **Career Timeline** · **Credits** · **Begin again**.
+  Keyboard nav: ← → cycles focus with wrap-around (three actions, not two),
+  Enter/Space confirms. The hint reads
+  `← → to choose · Enter / Space to confirm`.
 
 **Replay.** "Begin again" routes through the credits screen first (see §22) so
 the player gets a moment to register what they made before nuking the save.
