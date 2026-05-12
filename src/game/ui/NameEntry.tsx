@@ -97,7 +97,7 @@ export function NameEntry({ onSubmit }: Props) {
   };
 
   return (
-    <div style={screenStyle}>
+    <div data-component="NameEntry" style={screenStyle}>
       <form style={cardStyle} onSubmit={handleSubmit}>
         <h1 style={titleStyle}>Your name</h1>
         <p style={subtitleStyle}>
@@ -106,6 +106,7 @@ export function NameEntry({ onSubmit }: Props) {
 
         <input
           type="text"
+          data-field="player-name"
           value={raw}
           onChange={(e) => setRaw(e.target.value)}
           maxLength={MAX_NAME_LENGTH * 2 /* allow paste; we sanitize after */}
@@ -118,7 +119,12 @@ export function NameEntry({ onSubmit }: Props) {
           {sanitized.length}/{MAX_NAME_LENGTH}
         </span>
 
-        <button type="submit" style={buttonStyle} disabled={!canSubmit}>
+        <button
+          type="submit"
+          data-action="continue"
+          style={buttonStyle}
+          disabled={!canSubmit}
+        >
           Continue
         </button>
       </form>

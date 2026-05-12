@@ -111,17 +111,18 @@ export function CareerPicker({ onSelect }: Props) {
   };
 
   return (
-    <div style={screenStyle}>
+    <div data-component="CareerPicker" style={screenStyle}>
       <div style={cardStyle}>
         <h1 style={titleStyle}>Choose your career</h1>
         <p style={subtitleStyle}>
           Five paths in v1 — one playable. More on the way.
         </p>
 
-        <div style={optionsStyle}>
+        <div data-region="options" style={optionsStyle}>
           {CAREERS.map((c) => (
             <CareerOption
               key={c.id}
+              id={c.id}
               name={c.name}
               tagline={c.tagline}
               playable={c.playable}
@@ -145,6 +146,7 @@ export function CareerPicker({ onSelect }: Props) {
 // ---- option row ----
 
 interface OptionProps {
+  id: string;
   name: string;
   tagline: string;
   playable: boolean;
@@ -154,6 +156,7 @@ interface OptionProps {
 }
 
 function CareerOption({
+  id,
   name,
   tagline,
   playable,
@@ -204,6 +207,8 @@ function CareerOption({
   return (
     <button
       type="button"
+      data-career-id={id}
+      data-selected={selected || undefined}
       style={style}
       onClick={onClick}
       disabled={!playable}
@@ -241,7 +246,13 @@ function ContinueButton({ enabled, onClick, palette }: ContinueButtonProps) {
     transition: 'background 120ms ease',
   };
   return (
-    <button type="button" style={style} disabled={!enabled} onClick={onClick}>
+    <button
+      type="button"
+      data-action="continue"
+      style={style}
+      disabled={!enabled}
+      onClick={onClick}
+    >
       Continue
     </button>
   );

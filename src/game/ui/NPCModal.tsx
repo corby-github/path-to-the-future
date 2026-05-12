@@ -175,8 +175,20 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
   };
 
   return (
-    <div style={backdropStyle}>
-      <div style={dialogBoxStyle} role="dialog" aria-label={`${interactable.kind} interaction`}>
+    <div
+      data-component="NPCModal"
+      data-interactable-id={interactable.id}
+      data-interactable-kind={interactable.kind}
+      data-tier={tier}
+      data-phase={phase}
+      style={backdropStyle}
+    >
+      <div
+        data-region="dialog"
+        style={dialogBoxStyle}
+        role="dialog"
+        aria-label={`${interactable.kind} interaction`}
+      >
         {phase === 'prompt' && (
           <>
             <TypewriterText
@@ -207,6 +219,8 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
                 return (
                   <button
                     key={i}
+                    data-option-index={i}
+                    data-active={active || undefined}
                     onClick={() => handlePick(i)}
                     onMouseEnter={() => setHighlighted(i)}
                     style={{

@@ -101,6 +101,9 @@ export function CodeReview({ monthId, onComplete }: Props) {
 
   return (
     <div
+      data-component="CodeReview"
+      data-phase={phase}
+      data-result={phase === 'result' ? (won ? 'win' : 'fail') : undefined}
       style={{
         width: 'var(--canvas-display-width)',
         aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,

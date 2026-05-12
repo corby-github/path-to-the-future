@@ -26,6 +26,8 @@ export function ConsequenceRoom({ config, onContinue }: Props) {
 
   return (
     <div
+      data-component="ConsequenceRoom"
+      data-month-id={config.monthId}
       style={{
         width: 'var(--canvas-display-width)',
         aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
@@ -52,6 +54,7 @@ export function ConsequenceRoom({ config, onContinue }: Props) {
         {config.body}
       </p>
       <button
+        data-action="continue"
         onClick={onContinue}
         style={{
           padding: '12px 32px',

@@ -64,7 +64,7 @@ export function InitFlow({ onComplete }: Props) {
   }, [dispatch, onComplete]);
 
   return (
-    <>
+    <div data-component="InitFlow" data-phase={phase}>
       {phase === 'career' && <CareerPicker onSelect={handleCareerPicked} />}
       {phase === 'name' && <NameEntry onSubmit={handleNameSubmitted} />}
       {phase === 'class' && <ClassPicker onSelect={handleClassPicked} />}
@@ -86,7 +86,7 @@ export function InitFlow({ onComplete }: Props) {
           }}
         />
       )}
-    </>
+    </div>
   );
 }
 
@@ -147,7 +147,12 @@ function DevSkipButton({ onSkip }: DevSkipButtonProps) {
     zIndex: 1000,
   };
   return (
-    <button type="button" style={style} onClick={onSkip}>
+    <button
+      type="button"
+      data-action="dev-skip-to-game"
+      style={style}
+      onClick={onSkip}
+    >
       DEV · skip to game
     </button>
   );

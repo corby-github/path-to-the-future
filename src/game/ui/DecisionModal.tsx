@@ -90,6 +90,9 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
 
   return (
     <div
+      data-component="DecisionModal"
+      data-decision-id={decision.id}
+      data-phase={phase}
       style={{
         position: 'fixed',
         inset: 0,
@@ -102,6 +105,7 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
       }}
     >
       <div
+        data-region="dialog"
         style={{
           width: 'min(720px, 90vw)',
           minHeight: 360,
@@ -128,6 +132,8 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
                   return (
                     <button
                       key={i}
+                      data-option-index={i}
+                      data-active={isActive || undefined}
                       onClick={() => pick(i)}
                       onMouseEnter={() => setHighlighted(i)}
                       style={{
@@ -195,6 +201,7 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
               </p>
               <EffectChips effects={chosen.effects} />
               <button
+                data-action="continue"
                 onClick={onContinue}
                 style={{
                   padding: '12px 32px',

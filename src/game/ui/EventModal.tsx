@@ -48,6 +48,9 @@ export function EventModal({ event, onContinue }: Props) {
 
   return (
     <div
+      data-component="EventModal"
+      data-event-id={event.id}
+      data-phase={phase}
       style={{
         position: 'fixed',
         inset: 0,
@@ -60,6 +63,7 @@ export function EventModal({ event, onContinue }: Props) {
       }}
     >
       <div
+        data-region="dialog"
         style={{
           width: 'min(720px, 90vw)',
           minHeight: 360,
@@ -112,6 +116,7 @@ export function EventModal({ event, onContinue }: Props) {
               </p>
               <EffectChips effects={event.effects} />
               <button
+                data-action="ok"
                 onClick={onContinue}
                 style={{
                   padding: '12px 32px',

@@ -116,6 +116,8 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
 
   return (
     <div
+      data-component="CreditsScreen"
+      data-mode={mode}
       style={{
         width: 'var(--canvas-display-width)',
         aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
@@ -327,6 +329,7 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
         {mode === 'browse' ? (
           <>
             <button
+              data-action="close"
               onClick={onClose}
               style={{ ...buttonStyle, background: palette.surface }}
             >
@@ -359,8 +362,10 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
             >
               If we do this, there's no going back. I know how fickle you can be.
             </p>
-            <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+            <div data-region="actions" style={{ display: 'flex', gap: 12, marginTop: 4 }}>
               <button
+                data-action="cancel-replay"
+                data-active={focusedReplay === 'cancel' || undefined}
                 onClick={onClose}
                 onMouseEnter={() => setFocusedReplay('cancel')}
                 style={{
@@ -371,6 +376,8 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
                 No, take me back
               </button>
               <button
+                data-action="confirm-replay"
+                data-active={focusedReplay === 'confirm' || undefined}
                 onClick={onConfirmReplay}
                 onMouseEnter={() => setFocusedReplay('confirm')}
                 style={{

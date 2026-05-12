@@ -164,13 +164,18 @@ export function Hud() {
   };
 
   return (
-    <div style={containerStyle} role="status" aria-label="Player status">
-      <div style={identityStyle}>
+    <div
+      data-component="Hud"
+      style={containerStyle}
+      role="status"
+      aria-label="Player status"
+    >
+      <div data-region="identity" style={identityStyle}>
         <span style={nameStyle}>{profile.name || '…'}</span>
         <span style={metaStyle}>{classLabel}</span>
       </div>
 
-      <div style={statsWrapStyle}>
+      <div data-region="stats" style={statsWrapStyle}>
         <StatChip
           name="xp"
           numericValue={progress.xp}
@@ -223,7 +228,7 @@ export function Hud() {
         />
       </div>
 
-      <div style={{ ...locationStyle, position: 'relative' }}>
+      <div data-region="location" style={{ ...locationStyle, position: 'relative' }}>
         {/* Re-keyed on monthId so the pulse animation restarts cleanly per
             change. The transformOrigin sticks to the right edge so the
             scale-up doesn't push the chip into the stats column. */}

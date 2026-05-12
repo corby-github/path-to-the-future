@@ -71,7 +71,7 @@ export function StatChip({ name, numericValue, displayValue, palette }: Props) {
   };
 
   return (
-    <span style={chipStyle}>
+    <span data-stat={name} style={chipStyle}>
       <StatIcon name={name} size={20} />
       {displayValue}
       {deltas.map((d) => (

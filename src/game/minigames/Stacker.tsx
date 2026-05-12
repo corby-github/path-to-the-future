@@ -188,6 +188,9 @@ export function Stacker({ monthId, onComplete }: Props) {
 
   return (
     <div
+      data-component="Stacker"
+      data-phase={phase}
+      data-result={phase === 'result' ? outcome : undefined}
       style={{
         width: 'var(--canvas-display-width)',
         aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,

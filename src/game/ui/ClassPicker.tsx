@@ -129,7 +129,7 @@ export function ClassPicker({ onSelect }: Props) {
   };
 
   return (
-    <div style={screenStyle}>
+    <div data-component="ClassPicker" style={screenStyle}>
       <div style={cardStyle}>
         <h1 style={titleStyle}>Choose your starting class</h1>
         <p style={subtitleStyle}>
@@ -146,12 +146,13 @@ export function ClassPicker({ onSelect }: Props) {
           This is where you'll start, not where you'll end up (hopefully). Play your cards right.
         </p>
 
-        <div style={optionsStyle}>
+        <div data-region="options" style={optionsStyle}>
           {CLASSES.map((c) => {
             const playable = Boolean(pack.manifest.entryClasses[c.id]);
             return (
               <ClassOption
                 key={c.id}
+                id={c.id}
                 label={c.label}
                 role={c.role}
                 xpRange={formatXpRange(c.xpMin, c.xpMax)}
@@ -166,6 +167,7 @@ export function ClassPicker({ onSelect }: Props) {
 
         <button
           type="button"
+          data-action="continue"
           style={buttonStyle}
           disabled={!pickedId}
           onClick={() => pickedId && onSelect(pickedId)}
@@ -180,6 +182,7 @@ export function ClassPicker({ onSelect }: Props) {
 // ---- option card ----
 
 interface OptionProps {
+  id: string;
   label: string;
   role: string;
   xpRange: string;
@@ -190,6 +193,7 @@ interface OptionProps {
 }
 
 function ClassOption({
+  id,
   label,
   role,
   xpRange,
@@ -251,6 +255,8 @@ function ClassOption({
   return (
     <button
       type="button"
+      data-class-id={id}
+      data-selected={selected || undefined}
       style={style}
       onClick={onClick}
       disabled={!playable}
