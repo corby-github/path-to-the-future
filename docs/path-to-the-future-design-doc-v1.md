@@ -1,7 +1,7 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 1.2
+**Document version:** 1.3
 **Status:** Living spec · Days 1–13b.3 merged · Day 13c + Day 14 (title screen) pending
 **Last updated:** 2026-05-12
 
@@ -17,6 +17,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 | v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
 | v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. **§23 NPCModal** gains a *Speaker header + icon (v1.2)* subsection per #28: kind-aware header above the prompt (`"Intern says…"` / `"Plant."`) plus a full-opacity sprite icon on the left as a fixed-width column. Shared `labelFor` / `speakerHeaderFor` helpers extracted to `src/game/content/interactableLabel.ts`. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
+| v1.3    | 2026-05-12 | Corby Hoback · Claude Code | **§8 / §9** gain a *Modal icons (v1.3+)* subsection: a tiny registry pattern (`src/game/ui/icons/modalIcons.tsx`) maps decision/event `id` → palette-aware SVG component, with a `PlaceholderIcon` fallback for unregistered ids. DecisionModal renders the icon top-right of the dialog (visible during options + flavor, hidden during the scene phase to avoid crowding ScenePlayer). EventModal renders it top-centered above the title (visible across scene + body). Initial registry entries: `univ-stay-late-vs-log-off`, `univ-standup-too-long`, `evt-era-pandemic-furlough-friend` — all currently rendering the placeholder; future PRs swap individual entries for real art one at a time without touching the modals. Pure UI; no state-shape change (no STATE_VERSION bump). |
 
 ---
 
@@ -247,6 +248,34 @@ The decision pool is `[universal] + [career-specific]`, loaded at career-pack in
 
 Every universal decision counts 5× when we add the next career pack.
 
+### Modal icons (v1.3+)
+
+Each decision can ship a small palette-aware SVG icon, rendered top-right of
+the DecisionModal during the options and flavor phases (hidden during the
+scene phase so it doesn't fight `ScenePlayer` for attention). The icon gives
+each scenario a recognizable visual hook — a rocket for the late-night launch
+decision, a meeting glyph for the long-standup decision, etc.
+
+Implementation: `src/game/ui/icons/modalIcons.tsx` exposes a tiny registry:
+
+```
+DECISION_ICONS: Record<decisionId, ModalIconComponent>
+getDecisionIcon(id) → registered component | PlaceholderIcon
+```
+
+Each `ModalIconComponent` takes `{ palette, size? }` and returns SVG markup
+keyed to the active career-pack palette (so the icon re-tints under era-mood
+HSL shifts alongside the rest of the modal). Unregistered ids fall back to a
+bounded `PlaceholderIcon` square — `palette.surface` fill, `palette.ink`
+border, ~80×80 with a muted `?` glyph. **No content change is needed to add
+an icon** — registering an id in the map is the entire integration.
+
+Real SVG art is authored incrementally; the registry is the seam. The v1.3
+ship registers a placeholder for `univ-stay-late-vs-log-off` (future: rocket /
+launch night) and `univ-standup-too-long` (future: meeting). Identifiability:
+the SVG wrapper carries `data-region="modal-icon"`; the slot in the dialog
+carries `data-region="modal-icon-slot"` and `data-icon-id={decisionId}`.
+
 ---
 
 ## 8b. Modal Presentation for NPCs & Objects
@@ -321,6 +350,25 @@ work regardless of history. Configured by `RECENT_WINDOW_MONTHS` in
 - **Real macro-trends, no proper nouns.** "A pandemic shutters offices" ✅. "OpenAI launches ChatGPT" ❌.
 - **2026–2030 predictions stay vague and trend-based.** Generative AI displacement, economic correction, etc.
 - **Era flavoring is content; the engine is era-agnostic.** Era is just a tag on event JSON files.
+
+### Modal icons (v1.3+)
+
+Same registry pattern as §8 (Decision modal icons), keyed by event `id` and
+rendered **top-centered above the title** in the EventModal — the icon stays
+visible across the scene → body phase transition so the event has a single
+consistent visual anchor while the text reveals.
+
+`src/game/ui/icons/modalIcons.tsx` exports:
+
+```
+EVENT_ICONS: Record<eventId, ModalIconComponent>
+getEventIcon(id) → registered component | PlaceholderIcon
+```
+
+Unregistered event ids fall back to the shared bounded `PlaceholderIcon` (no
+crash on missing). The v1.3 ship registers a placeholder for
+`evt-era-pandemic-furlough-friend` (future: phone — a friend calls). Real
+SVGs swap in one event at a time; the modal layout is fixed.
 
 ---
 

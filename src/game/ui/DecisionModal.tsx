@@ -4,6 +4,7 @@ import { useAppSelector } from '../state/hooks';
 import { interpolate } from '../content/interpolate';
 import { ScenePlayer } from './ScenePlayer';
 import { EffectChips } from './EffectChips';
+import { DecisionIcon } from './icons/modalIcons';
 import type { DecisionDef } from '../types/careerPack';
 
 type Phase = 'options' | 'scene' | 'flavor';
@@ -118,14 +119,34 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
+          position: 'relative',
         }}
       >
         {phase === 'options' && (
           <>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <p style={{ fontSize: 16, lineHeight: 1.7, margin: 0, marginBottom: 32 }}>
-                {interpolate(decision.prompt, vars)}
-              </p>
+              <div
+                data-region="modal-icon-slot"
+                data-icon-id={decision.id}
+                style={{
+                  display: 'flex',
+                  gap: 18,
+                  alignItems: 'flex-start',
+                  marginBottom: 32,
+                }}
+              >
+                <DecisionIcon decisionId={decision.id} palette={palette} />
+                <p
+                  style={{
+                    fontSize: 16,
+                    lineHeight: 1.7,
+                    margin: 0,
+                    flex: 1,
+                  }}
+                >
+                  {interpolate(decision.prompt, vars)}
+                </p>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {decision.options.map((opt, i) => {
                   const isActive = highlighted === i;
@@ -185,9 +206,28 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
               >
                 You chose
               </p>
-              <p style={{ fontSize: 18, fontWeight: 500, margin: 0, marginBottom: 24 }}>
-                {interpolate(chosen.label, vars)}
-              </p>
+              <div
+                data-region="modal-icon-slot"
+                data-icon-id={decision.id}
+                style={{
+                  display: 'flex',
+                  gap: 18,
+                  alignItems: 'center',
+                  marginBottom: 24,
+                }}
+              >
+                <DecisionIcon decisionId={decision.id} palette={palette} />
+                <p
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 500,
+                    margin: 0,
+                    flex: 1,
+                  }}
+                >
+                  {interpolate(chosen.label, vars)}
+                </p>
+              </div>
               <p
                 style={{
                   fontSize: 15,
