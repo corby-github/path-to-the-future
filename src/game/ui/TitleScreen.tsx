@@ -307,9 +307,11 @@ export function TitleScreen({ onAcknowledge }: Props) {
   // Sits below the welcome lines as a "here's where you left things"
   // glance. Reuses StatChip directly so palette + icon parity comes
   // for free.
+  // HUD preview slot now lives directly under the welcome line — the
+  // subline was redundant once the stat row could speak for itself.
   const hudPreviewStyle: CSSProperties = {
     position: 'absolute',
-    top: '60%',
+    top: '54%',
     left: 0,
     right: 0,
     display: 'flex',
@@ -322,9 +324,8 @@ export function TitleScreen({ onAcknowledge }: Props) {
     userSelect: 'none',
   };
 
-  // Welcome-back block (resumable runs only). Sits in the white space
-  // between the tagline and the floor band — vertically roughly the
-  // middle of the canvas. Two lines, centered, small breath between.
+  // Welcome-back single line (resumable runs only). Sits in the white
+  // space between the tagline and the floor band.
   const welcomeStyle: CSSProperties = {
     position: 'absolute',
     top: '48%',
@@ -338,16 +339,6 @@ export function TitleScreen({ onAcknowledge }: Props) {
     letterSpacing: '0.04em',
     lineHeight: 1.5,
     userSelect: 'none',
-  };
-
-  const welcomeSubStyle: CSSProperties = {
-    margin: '4px 0 0 0',
-    fontSize: 'clamp(12px, 1.3vw, 15px)',
-    fontWeight: 400,
-    fontStyle: 'italic',
-    color: palette.ink,
-    opacity: 0.7,
-    letterSpacing: '0.04em',
   };
 
   const taglineStyle: CSSProperties = {
@@ -436,7 +427,6 @@ export function TitleScreen({ onAcknowledge }: Props) {
       {resumable && (
         <div data-region="welcome" style={welcomeStyle}>
           <p style={{ margin: 0 }}>Welcome back, {profileName}!</p>
-          <p style={welcomeSubStyle}>Everything is right where you left it.</p>
         </div>
       )}
       {resumable && (
