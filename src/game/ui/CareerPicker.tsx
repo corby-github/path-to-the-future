@@ -118,7 +118,12 @@ export function CareerPicker({ onSelect }: Props) {
           Five paths in v1 — one playable. More on the way.
         </p>
 
-        <div data-region="options" style={optionsStyle}>
+        <div
+          data-region="options"
+          role="group"
+          aria-label="Career options"
+          style={optionsStyle}
+        >
           {CAREERS.map((c) => (
             <CareerOption
               key={c.id}

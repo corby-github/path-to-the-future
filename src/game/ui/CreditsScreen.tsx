@@ -373,7 +373,7 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
             <p
               style={{
                 margin: '4px 0',
-                fontSize: 16,
+                fontSize: 15,
                 fontStyle: 'italic',
                 fontWeight: 600,
                 textAlign: 'center',
@@ -385,7 +385,7 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
                 color: '#b54a3a',
                 opacity: 1,
                 letterSpacing: '0.01em',
-                lineHeight: 1.5,
+                lineHeight: 1,
               }}
             >
               {confirmMessage}

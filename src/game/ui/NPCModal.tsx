@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch } from '../state/hooks';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { parseEffect, type StatKey } from '../content/applyEffects';
-import { speakerHeaderFor } from '../content/interactableLabel';
+import { labelFor, speakerHeaderFor } from '../content/interactableLabel';
 import { TypewriterText } from './TypewriterText';
 import { InteractableSprite } from '../rooms/sprites/InteractableSprite';
 import type { InteractableDef, InteractableDialogue } from '../types/careerPack';
@@ -31,6 +31,8 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
 
   const tier = dialogue.tier;
   const options = dialogue.options ?? [];
+
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const [chosenIdx, setChosenIdx] = useState<number | null>(null);
   const [promptComplete, setPromptComplete] = useState(false);
@@ -140,6 +142,55 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
     return () => window.removeEventListener('keydown', handler);
   }, [handleClose]);
 
+  // a11y: focus trap + restore for keyboard users (Day 13c). On mount, save
+  // the previously focused element and move focus into the dialog. On
+  // unmount, restore. Tab key cycles focus within the dialog's focusable
+  // children (option buttons in tier-2 options phase) instead of escaping
+  // to background UI.
+  useEffect(() => {
+    const prevFocus = document.activeElement as HTMLElement | null;
+    const dialog = dialogRef.current;
+    if (dialog) dialog.focus();
+
+    const trap = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab' || !dialog) return;
+      const focusables = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      if (focusables.length === 0) {
+        // No interactive children (prompt/flavor phases) — keep focus parked
+        // on the dialog itself so Tab doesn't escape to background.
+        e.preventDefault();
+        dialog.focus();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener('keydown', trap);
+    return () => {
+      window.removeEventListener('keydown', trap);
+      // Restore previously-focused element if it's still in the document
+      // and focusable. Defensive — if the trigger was unmounted (rare here
+      // since the interactable persists across the modal lifecycle), we
+      // just no-op rather than throw.
+      if (prevFocus && document.contains(prevFocus) && typeof prevFocus.focus === 'function') {
+        prevFocus.focus();
+      }
+    };
+    // Mount/unmount only — never re-trap mid-lifecycle.
+  }, []);
+
   const backdropStyle: CSSProperties = {
     position: 'fixed',
     inset: 0,
@@ -227,10 +278,13 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
       style={backdropStyle}
     >
       <div
+        ref={dialogRef}
         data-region="dialog"
         style={dialogBoxStyle}
         role="dialog"
-        aria-label={`${interactable.kind} interaction`}
+        aria-modal="true"
+        aria-label={labelFor(interactable)}
+        tabIndex={-1}
       >
         {/* Icon-left sprite — same art as the interactable the player
             just walked up to, full opacity, fixed-width left column. */}
