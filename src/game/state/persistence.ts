@@ -5,7 +5,11 @@ export const SAVE_KEY = 'pttf:save:default';
 // 1.1.0: Day 9 — profile gains `initComplete`; careerPack/entryClass no longer
 //        default to hardcoded SWE values (they're driven by the init flow).
 // 1.2.0: Day 12 — progress gains `gameOver`; drives EndgameScreen routing.
-export const STATE_VERSION = '1.2.0';
+// 1.3.0: Issue #33 — progress gains `viewingMonth` (backward-door replay
+//        target; null when viewing live current month); history gains
+//        `minigames` (one record per minigame completion, used to render
+//        frozen result screens in replay).
+export const STATE_VERSION = '1.3.0';
 
 export function loadPersistedState(): unknown {
   try {

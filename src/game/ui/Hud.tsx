@@ -16,7 +16,10 @@ import { useCurrentRoom } from './currentRoomContextValue';
 //   6+    → large (24px, 2700ms), wording flips to "months pass"
 const MONTH_DELTA_TIER_SMALL_MS = 1200;
 const MONTH_DELTA_TIER_MEDIUM_MS = 1900;
-const MONTH_DELTA_TIER_LARGE_MS = 2700;
+// 6+ months tier — size matches the 2-5 tier; the wording difference
+// ("+N months pass" vs "+N mo") carries the semantic weight on its own.
+// Duration slightly longer so the longer string has time to read.
+const MONTH_DELTA_TIER_LARGE_MS = 2300;
 
 interface MonthDelta {
   id: number;
@@ -27,7 +30,7 @@ interface MonthDelta {
 }
 
 function tierForMagnitude(abs: number): { fontSize: number; durationMs: number; topOffset: number } {
-  if (abs >= 6) return { fontSize: 24, durationMs: MONTH_DELTA_TIER_LARGE_MS, topOffset: -10 };
+  if (abs >= 6) return { fontSize: 18, durationMs: MONTH_DELTA_TIER_LARGE_MS, topOffset: -8 };
   if (abs >= 2) return { fontSize: 18, durationMs: MONTH_DELTA_TIER_MEDIUM_MS, topOffset: -8 };
   return { fontSize: 13, durationMs: MONTH_DELTA_TIER_SMALL_MS, topOffset: -6 };
 }
@@ -48,7 +51,7 @@ function formatMonthDelta(diff: number): string {
 // template the player is currently in. Per §7, the relationship chip is
 // hidden when the value is null (player is single).
 export function Hud() {
-  const { pack, palette, currentMonth } = useCareerPack();
+  const { pack, palette, currentMonth, isReplay } = useCareerPack();
   const profile = useAppSelector((s) => s.profile);
   const progress = useAppSelector((s) => s.progress);
   const stats = useAppSelector((s) => s.stats);
@@ -103,6 +106,11 @@ export function Hud() {
     borderRadius: 6,
     fontFamily: "inherit",
     flexWrap: 'wrap',
+    // In replay (#33), dim everything to telegraph "you're looking back."
+    // Cheap visual cue; the prepended `←` on the month label is the
+    // textual signal.
+    opacity: isReplay ? 0.7 : 1,
+    transition: 'opacity 200ms ease',
   };
 
   const identityStyle: CSSProperties = {
@@ -166,6 +174,7 @@ export function Hud() {
   return (
     <div
       data-component="Hud"
+      data-replay={isReplay || undefined}
       style={containerStyle}
       role="status"
       aria-label="Player status"
@@ -241,7 +250,7 @@ export function Hud() {
             animation: 'month-pulse 600ms ease-out',
           }}
         >
-          {monthLabel}
+          {isReplay ? `← ${monthLabel}` : monthLabel}
         </span>
         {template && <span style={locationMetaStyle}>{template}</span>}
         {monthDeltas.map((d) => {
@@ -253,7 +262,10 @@ export function Hud() {
                 position: 'absolute',
                 right: 0,
                 top: tier.topOffset,
-                transform: 'translate(-50%, 4px)',
+                // Pre-animation frame — match the keyframe's resting transform
+                // (no horizontal translate, so the element's right edge stays
+                // anchored at `right: 0`).
+                transform: 'translate(0, 4px)',
                 fontSize: tier.fontSize,
                 fontWeight: 700,
                 color: d.positive ? palette.positive : palette.accent,

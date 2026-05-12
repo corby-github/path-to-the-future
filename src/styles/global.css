@@ -117,7 +117,12 @@ body {
    higher and rises further so it reads as bigger / more meaningful than a
    regular stat tick. ~1200ms total. */
 @keyframes month-delta-float {
-  0%   { opacity: 0; transform: translate(-50%, 4px); }
-  15%  { opacity: 1; transform: translate(-50%, 0); }
-  100% { opacity: 0; transform: translate(-50%, -34px); }
+  /* No horizontal translate — element's right edge stays anchored to its
+     `right: 0` parent corner so emits of different widths line up at the
+     right and grow leftward, instead of all centering on the right edge
+     (which made longer strings like "+6 months pass" appear larger and
+     drift further into the stats column). */
+  0%   { opacity: 0; transform: translate(0, 4px); }
+  15%  { opacity: 1; transform: translate(0, 0); }
+  100% { opacity: 0; transform: translate(0, -34px); }
 }

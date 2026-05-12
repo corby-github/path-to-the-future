@@ -1,5 +1,5 @@
 import type { Rect, Vector2 } from '../../types/geometry';
-import { ROOM_VIEWBOX, ROOM_PADDING } from '../../coordinates';
+import { ROOM_VIEWBOX } from '../../coordinates';
 
 export interface LayoutTemplate {
   id: string;
@@ -10,7 +10,10 @@ export interface LayoutTemplate {
 }
 
 const DEFAULT_DOOR: Rect = {
-  x: ROOM_VIEWBOX.width - ROOM_PADDING - 40,
+  // 10px from canvas right edge — matches the `↩ return to {month}` label
+  // anchor position and creates left/right symmetry with the rewind door
+  // (which is also 10px from the canvas left edge).
+  x: ROOM_VIEWBOX.width - 10 - 40,
   y: ROOM_VIEWBOX.height / 2 - 50,
   width: 40,
   height: 100,

@@ -21,6 +21,12 @@ export interface ProgressState {
   // Drives App.tsx routing to <EndgameScreen /> instead of <RoomRenderer />.
   // Once true, the only escape is "Begin again" which dispatches resetProgress.
   gameOver: boolean;
+  // Backward-door replay target (issue #33). `null` = viewing the live
+  // current month. When non-null, room rendering uses this id instead of
+  // `currentMonth`, and behaviors are suppressed (no decisions fire, no
+  // events roll, NPC dialogue effects are dropped, the forward door
+  // becomes a "return" door). See §11.x Backward replay.
+  viewingMonth: number | null;
 }
 
 const initialState: ProgressState = {
@@ -29,6 +35,7 @@ const initialState: ProgressState = {
   xp: 0,
   classTier: 'novice',
   gameOver: false,
+  viewingMonth: null,
 };
 
 const progressSlice = createSlice({
@@ -76,6 +83,20 @@ const progressSlice = createSlice({
     setGameOver(state, action: PayloadAction<boolean>) {
       state.gameOver = action.payload;
     },
+    // Issue #33 — enter backward-replay view. Payload is the past month to
+    // view. Caller is responsible for skipping consequence rooms (they're
+    // "punchlines" per user design call; replay isn't for them). Month 1
+    // (2020 NarrativeRoom intro) is also off-limits — one-time framing beat.
+    enterReplay(state, action: PayloadAction<number>) {
+      const target = action.payload;
+      if (target < 2) return;
+      if (target >= state.currentMonth) return; // can't view future or current
+      state.viewingMonth = target;
+    },
+    // Issue #33 — exit replay, return to the live current month.
+    exitReplay(state) {
+      state.viewingMonth = null;
+    },
     resetProgress() {
       return initialState;
     },
@@ -89,6 +110,8 @@ export const {
   setClassTier,
   skipMonths,
   setGameOver,
+  enterReplay,
+  exitReplay,
   resetProgress,
 } = progressSlice.actions;
 export default progressSlice.reducer;

@@ -17,7 +17,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 | v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
 | v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. **§23 NPCModal** gains a *Speaker header + icon (v1.2)* subsection per #28: kind-aware header above the prompt (`"Intern says…"` / `"Plant."`) plus a full-opacity sprite icon on the left as a fixed-width column. Shared `labelFor` / `speakerHeaderFor` helpers extracted to `src/game/content/interactableLabel.ts`. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
-| v1.3    | 2026-05-12 | Corby Hoback · Claude Code | **§8 / §9** gain a *Modal icons (v1.3+)* subsection: a tiny registry pattern (`src/game/ui/icons/modalIcons.tsx`) maps decision/event `id` → palette-aware SVG component, with a `PlaceholderIcon` fallback for unregistered ids. DecisionModal renders the icon top-right of the dialog (visible during options + flavor, hidden during the scene phase to avoid crowding ScenePlayer). EventModal renders it top-centered above the title (visible across scene + body). Initial registry entries: `univ-stay-late-vs-log-off`, `univ-standup-too-long`, `evt-era-pandemic-furlough-friend` — all currently rendering the placeholder; future PRs swap individual entries for real art one at a time without touching the modals. Pure UI; no state-shape change (no STATE_VERSION bump). |
+| v1.3    | 2026-05-12 | Corby Hoback · Claude Code | Issue #33 — **backward replay**. New §11.1 *Backward replay* describes the rewind-door mechanic: walk-back-one-month read-only exploration, multi-step chaining, era-mood follows the viewed month, decisions/events locked, NPC/object dialogues play with effects suppressed, minigame months show a frozen result from `history.minigames`, consequence rooms skipped via `previousReplayableMonth()`. New state: `progress.viewingMonth: number \| null` + `enterReplay` / `exitReplay` reducers; `history.minigames: MinigameRecord[]` + `recordMinigame` reducer dispatched at the end of each minigame's `handleContinue`. **STATE_VERSION 1.2.0 → 1.3.0** (§12). HUD telegraphs replay mode (opacity drops to 0.7, month label prefixes with `←`). New file: `src/game/rooms/MinigameReplayCard.tsx`. **§8 / §9** also gain a *Modal icons (v1.3+)* subsection (PR #39): registry pattern (`src/game/ui/icons/modalIcons.tsx`) maps decision/event `id` → palette-aware SVG component with a `PlaceholderIcon` fallback. DecisionModal renders the icon inline next to the prompt (options phase) and chosen-option label (flavor phase); EventModal renders it top-centered above the title. Initial entries: `univ-stay-late-vs-log-off`, `univ-standup-too-long`, `evt-era-pandemic-furlough-friend` — all placeholders for now. |
 
 ---
 
@@ -410,6 +410,72 @@ This pattern is the single biggest scope-saving decision in the doc.
 - All modals support keyboard navigation: ↑↓←→ to choose, Enter/Space to
   confirm, Esc where applicable, 1-N direct hotkeys for option lists.
 
+### 11.1 Backward replay (v1.2, issue #33)
+
+A second door lets the player walk *back* through past months in read-only
+mode. Decisions and events you already committed stay locked; NPC and
+object dialogues replay but **no effects fire**, no XP is awarded, no
+stats change. Pure exploration of the past room.
+
+**State.**
+- `progress.viewingMonth: number | null`. Null = viewing the live current
+  month. When non-null, `CareerPackProvider` renders that month's room
+  instead of `progress.currentMonth`.
+- New reducers: `enterReplay(monthId)` (gates: target must be `>= 1` and
+  `< currentMonth`) and `exitReplay()`.
+- New history field `history.minigames` records each minigame outcome
+  (`monthId`, `variant`, `result`, optional `detail`) so the frozen-result
+  card in replay can reproduce what happened.
+- STATE_VERSION bumped to 1.3.0.
+
+**Doors.** In every `DecisionRoom`:
+- **Forward door** (right wall, `palette.accent`) — live: commits the
+  decision, advances the month. Replay: dispatches `exitReplay`, returns
+  to the live current month. Label `↩ return to {liveMonth}` only appears
+  when `isReplay`.
+- **Rewind door** (bottom-left, `palette.surface` tint at 0.85 opacity,
+  subdued vs. the forward door) — visible whenever a non-consequence
+  past month exists. Walking in: dispatches `enterReplay(prevId)`. The
+  helper `previousReplayableMonth()` skips consequence rooms (per user
+  call: "punchlines, replay feels wrong"). Both doors fade the SVG
+  (`DOOR_FADE_MS`) before the state dispatch so the transition is
+  visually clean.
+
+**Room-type behavior in replay:**
+- **DecisionRoom** — no decision fires, no event rolls. Status-bar prompt
+  changes to *"Looking back. ← back · ↩ return →"*. NPC/object dialogues
+  still play but effects are suppressed (`NPCModal.handleClose` checks
+  `isReplay` and short-circuits before dispatching).
+- **NarrativeRoom** — re-readable. Continue button label becomes
+  `↩ Return to {liveMonth}` and dispatches `exitReplay` instead of
+  advancing.
+- **MinigameRoom** — routes to `MinigameReplayCard` which reads
+  `history.minigames` and renders a frozen summary (result + optional
+  detail). No re-playing the game, no XP. If no record exists (replay
+  predates the recording, or month was never played), shows a graceful
+  *"You played a round here, but the details are blurry now."*
+- **ConsequenceRoom** — explicitly **not** replayable. The rewind helper
+  skips consequence months; a consequence room is never reached via the
+  backward door.
+
+**Era mood follows the viewed month.** Palette resolves against the
+SHOWN month (so walking back to 2020 brings back the pandemic palette
+even if the live month is 2027) — see `CareerPackProvider`.
+
+**HUD telegraphs replay.** In replay mode, the HUD's opacity drops to
+0.7 and the month label prefixes with `←` (e.g. `← Aug 2022`). `data-replay`
+is set on the HUD root for devtools / future styling hooks.
+
+**Forward (multi-step back).** Player can chain — walk into the rewind
+door from a replay room to go further back. All the way to month 1 if
+desired. The return door always exits to the live month, not the
+intermediate ones.
+
+**Out of scope** (called out in the issue): inventory; jumping back
+multiple months at once (only one-step navigation); replaying mid-decision
+(when a modal is open the rewind door is inert via the existing
+`triggered.current` guard).
+
 ---
 
 ## 12. Save / Load
@@ -433,6 +499,7 @@ the persisted shape**; old saves are auto-discarded on load.
 | 1.0.0   | 6    | Initial persistence (single-key `pttf:save:default`). |
 | 1.1.0   | 9    | `profile` gains `initComplete`; `careerPack` / `entryClass` no longer default to hardcoded SWE. |
 | 1.2.0   | 12   | `progress` gains `gameOver`. |
+| 1.3.0   | —    | Issue #33 backward replay: `progress` gains `viewingMonth: number \| null`; `history` gains `minigames: MinigameRecord[]`. |
 
 `metaSlice.initialState.version` imports `STATE_VERSION` so fresh saves stay synced.
 

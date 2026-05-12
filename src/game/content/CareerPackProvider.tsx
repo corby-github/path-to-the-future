@@ -40,6 +40,12 @@ export function CareerPackProvider({ children }: Props) {
   const profilePackId = useAppSelector((s) => s.profile.careerPack);
   const packId = profilePackId || DEFAULT_PACK_ID;
   const currentMonthId = useAppSelector((s) => s.progress.currentMonth);
+  const viewingMonthId = useAppSelector((s) => s.progress.viewingMonth);
+  // Effective month = what's being rendered. Falls back to currentMonth
+  // when viewingMonth is null (normal play). When viewingMonth is set
+  // (replay), it overrides — but the live currentMonth still lives in
+  // Redux for things that need to know the player's actual progress.
+  const effectiveMonthId = viewingMonthId ?? currentMonthId;
 
   const [pack, setPack] = useState<CareerPack | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -69,8 +75,13 @@ export function CareerPackProvider({ children }: Props) {
     if (!pack || isStale) return null;
 
     const currentMonth =
+      pack.months.find((m) => m.id === effectiveMonthId) ?? pack.months[0];
+    const liveMonth =
       pack.months.find((m) => m.id === currentMonthId) ?? pack.months[0];
 
+    // Era mood resolves against the SHOWN month (so replay rooms show the
+    // 2020 pandemic mood when you walk back to 2020, even if the live
+    // month is 2027).
     const mood =
       pack.manifest.eras[currentMonth.era] ??
       pack.manifest.eras.default ??
@@ -88,8 +99,10 @@ export function CareerPackProvider({ children }: Props) {
       playerInk: applyEraMood(base.playerInk, mood),
     };
 
-    return { pack, currentMonth, palette };
-  }, [pack, isStale, currentMonthId]);
+    const isReplay = viewingMonthId !== null;
+
+    return { pack, currentMonth, palette, isReplay, liveMonth };
+  }, [pack, isStale, effectiveMonthId, currentMonthId, viewingMonthId]);
 
   if (!value) {
     if (error && !pack) return fallbackScreen(`Failed to load career pack: ${error}`, true);

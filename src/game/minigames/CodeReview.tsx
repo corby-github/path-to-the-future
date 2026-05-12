@@ -5,6 +5,7 @@ import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch } from '../state/hooks';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { addXp, XP_MINIGAME_WIN, XP_MINIGAME_FAIL } from '../state/slices/progressSlice';
+import { recordMinigame } from '../state/slices/historySlice';
 
 interface Props {
   monthId: number;
@@ -65,8 +66,16 @@ export function CodeReview({ monthId, onComplete }: Props) {
       dispatch(applyStatEffect({ stat: 'reputation', op: '-', magnitude: 2 }));
       dispatch(addXp(XP_MINIGAME_FAIL));
     }
+    // Record for backward-replay (#33).
+    dispatch(recordMinigame({
+      monthId,
+      variant: 'code-review',
+      result: won ? 'win' : 'fail',
+      detail: won ? 'Spotted the bug' : 'Picked the wrong line',
+      timestamp: Date.now(),
+    }));
     onComplete();
-  }, [selected, dispatch, onComplete]);
+  }, [selected, monthId, dispatch, onComplete]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
