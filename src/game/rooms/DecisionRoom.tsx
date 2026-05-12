@@ -20,6 +20,9 @@ import { labelFor } from '../content/interactableLabel';
 import { DecisionModal } from '../ui/DecisionModal';
 import { EventModal } from '../ui/EventModal';
 import { NPCModal } from '../ui/NPCModal';
+import { TutorialOverlay } from '../ui/TutorialOverlay';
+import { dismissTutorial } from '../state/slices/metaSlice';
+import { persistState } from '../state/persistence';
 import { computeRoomSeed } from './generator/seedRng';
 import { generateRoom } from './generator/populate';
 import { placeInteractables, type PlacedInteractable } from './generator/placeInteractables';
@@ -214,6 +217,23 @@ export function DecisionRoom({ config, onExit }: Props) {
   const [activeInteractable, setActiveInteractable] = useState<InteractableDef | null>(null);
   const [activeDialogue, setActiveDialogue] = useState<InteractableDialogue | null>(null);
 
+  // First-run tutorial (Day 13c). Reads meta.tutorialDismissed with a `??
+  // false` default so older saves (pre-this-feature) without the field
+  // gracefully fall through to "show on next play." Shown only outside
+  // replay — walking back through the past doesn't need a tutorial. The
+  // overlay is mounted in this room's render below; movement / E-key /
+  // door entry are gated via `tutorialActive` so the player can't trigger
+  // gameplay until they advance past the last step.
+  const tutorialDismissed = useAppSelector((s) => s.meta.tutorialDismissed ?? false);
+  const tutorialActive = !tutorialDismissed && !isReplay;
+  const handleTutorialDismiss = useCallback(() => {
+    dispatch(dismissTutorial());
+    // Persist immediately so the flag survives a reload even if the player
+    // closes the tab before finishing the first month. Normal persistence
+    // fires on room exit (`useRoomTransition`), which would be too late here.
+    persistState(store.getState());
+  }, [dispatch, store]);
+
   // Index into placements of the nearest interactable within proximity, or
   // null when none. Drives the halo / [E] hint and gates the E-key.
   const [adjacentIndex, setAdjacentIndex] = useState<number | null>(null);
@@ -359,7 +379,8 @@ export function DecisionRoom({ config, onExit }: Props) {
       !committed &&
       activeDecision === null &&
       activeEvent === null &&
-      activeInteractable === null,
+      activeInteractable === null &&
+      !tutorialActive,
     speed: BASE_SPEED * speedMultiplier,
     onTick: handleTick,
   });
@@ -371,6 +392,7 @@ export function DecisionRoom({ config, onExit }: Props) {
     const handler = (e: KeyboardEvent) => {
       if (e.key !== 'e' && e.key !== 'E') return;
       if (committed) return;
+      if (tutorialActive) return;
       if (activeDecision || activeEvent || activeInteractable) return;
       if (adjacentIndex === null) return;
       e.preventDefault();
@@ -393,6 +415,7 @@ export function DecisionRoom({ config, onExit }: Props) {
     placements,
     adjacentIndex,
     committed,
+    tutorialActive,
     activeDecision,
     activeEvent,
     activeInteractable,
@@ -857,6 +880,8 @@ export function DecisionRoom({ config, onExit }: Props) {
           onClose={handleInteractableClose}
         />
       )}
+
+      {tutorialActive && <TutorialOverlay onDismiss={handleTutorialDismiss} />}
     </>
   );
 }

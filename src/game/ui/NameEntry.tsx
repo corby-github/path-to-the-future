@@ -115,7 +115,7 @@ export function NameEntry({ onSubmit }: Props) {
           placeholder="Maya"
           aria-label="Your name"
         />
-        <span style={counterStyle}>
+        <span style={counterStyle} aria-live="polite" aria-atomic="true">
           {sanitized.length}/{MAX_NAME_LENGTH}
         </span>
 

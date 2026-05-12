@@ -46,7 +46,7 @@ export function EffectChips({ effects }: Props) {
   };
 
   return (
-    <div style={rowStyle} aria-label="Outcome">
+    <div style={rowStyle} role="list" aria-label="Outcome">
       {entries.map(([stat, expr]) => (
         <EffectChip key={stat} stat={stat as StatKey} expr={expr} />
       ))}
@@ -85,10 +85,22 @@ function EffectChip({ stat, expr }: ChipProps) {
     whiteSpace: 'nowrap',
   };
 
+  // Screen-reader friendly label: "Burnout +5" / "Savings −10" / "Health
+  // set to 50" — one phrase per chip so AT users hear stat-and-change as
+  // a unit, not "burnout" then "plus 5" split across reads.
+  const a11yLabel = formatForScreenReader(stat, parsed.op, parsed.magnitude);
+
   return (
-    <span style={style}>
-      <StatIcon name={statToIconName(stat)} size={20} />
-      {formatExpr(parsed.op, parsed.magnitude)}
+    <span role="listitem" aria-label={a11yLabel} style={style}>
+      {/* Visual content hidden from AT — the parent listitem's aria-label
+          is the single source of truth for screen readers. */}
+      <span
+        aria-hidden="true"
+        style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+      >
+        <StatIcon name={statToIconName(stat)} size={20} />
+        {formatExpr(parsed.op, parsed.magnitude)}
+      </span>
     </span>
   );
 }
@@ -121,4 +133,27 @@ function formatExpr(op: '+' | '-' | '=', magnitude: number): string {
   if (op === '+') return `+${formatted}`;
   if (op === '-') return `−${formatted}`; // U+2212 minus, not hyphen
   return `→ ${formatted}`;
+}
+
+// Human-readable stat names for the screen-reader chip label. Mirrors the
+// HUD's display vocabulary so AT users hear the same phrasing as sighted
+// players see (e.g., "technicalSkill" → "Technical skill"). Kept local to
+// this file because no other consumer needs the screen-reader phrasing —
+// StatIcon's own ARIA_LABELS serve a slightly different purpose (icon-
+// only context).
+const STAT_NAMES_FOR_AT: Record<StatKey, string> = {
+  burnout: 'Burnout',
+  savings: 'Savings',
+  network: 'Network',
+  health: 'Health',
+  relationship: 'Relationship',
+  technicalSkill: 'Technical skill',
+  reputation: 'Reputation',
+};
+
+function formatForScreenReader(stat: StatKey, op: '+' | '-' | '=', magnitude: number): string {
+  const name = STAT_NAMES_FOR_AT[stat];
+  if (op === '+') return `${name} +${magnitude}`;
+  if (op === '-') return `${name} −${magnitude}`;
+  return `${name} set to ${magnitude}`;
 }

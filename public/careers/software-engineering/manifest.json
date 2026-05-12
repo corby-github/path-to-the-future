@@ -16,11 +16,11 @@
   },
 
   "eras": {
-    "default":          { "saturation": 1.0,  "lightness": 1.0,  "hueShift":  0 },
-    "pandemic":         { "saturation": 0.7,  "lightness": 1.05, "hueShift": -8 },
-    "rebound":          { "saturation": 0.95, "lightness": 1.0,  "hueShift":  0 },
-    "ai-shift":         { "saturation": 1.05, "lightness": 1.0,  "hueShift":  4 },
-    "uncertain-future": { "saturation": 0.85, "lightness": 0.95, "hueShift": -3 }
+    "default":          { "saturation": 1.0,  "lightness": 1.0,  "hueShift":   0 },
+    "pandemic":         { "saturation": 0.55, "lightness": 1.05, "hueShift": -14 },
+    "rebound":          { "saturation": 0.95, "lightness": 1.0,  "hueShift":   0 },
+    "ai-shift":         { "saturation": 1.18, "lightness": 1.02, "hueShift":  10 },
+    "uncertain-future": { "saturation": 0.85, "lightness": 0.95, "hueShift":  -3 }
   },
 
   "entryClasses": {

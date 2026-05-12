@@ -141,3 +141,23 @@ body {
   15%  { opacity: 1; transform: translate(0, 0); }
   100% { opacity: 0; transform: translate(0, -34px); }
 }
+
+/* Respect prefers-reduced-motion (Day 13c a11y). Players who set this
+   OS-level preference get a near-instant version of every keyframe — the
+   visual beat still happens (so layout and state semantics are preserved)
+   but the motion that triggers vestibular discomfort is gone.
+
+   We collapse animations + transitions to ~1ms rather than `none`: with
+   `none`, JS that watches `animationend` (e.g., the scene-line-fade in
+   ScenePlayer) would stall waiting for an event that never fires. 1ms
+   resolves the event synchronously without visible motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

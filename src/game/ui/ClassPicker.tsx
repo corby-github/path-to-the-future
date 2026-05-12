@@ -146,7 +146,12 @@ export function ClassPicker({ onSelect }: Props) {
           This is where you'll start, not where you'll end up (hopefully). Play your cards right.
         </p>
 
-        <div data-region="options" style={optionsStyle}>
+        <div
+          data-region="options"
+          role="group"
+          aria-label="Class options"
+          style={optionsStyle}
+        >
           {CLASSES.map((c) => {
             const playable = Boolean(pack.manifest.entryClasses[c.id]);
             return (
