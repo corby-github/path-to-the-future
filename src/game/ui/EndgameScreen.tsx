@@ -121,7 +121,15 @@ function StatsPanel({ stats, palette }: { stats: StatsState; palette: Palette })
       <StatRow icon="network" label="Network" value={stats.network} palette={palette} />
       <StatRow icon="reputation" label="Reputation" value={stats.reputation} palette={palette} />
       <StatRow icon="technicalSkill" label="Technical Skill" value={stats.technicalSkill} palette={palette} />
-      <StatRow icon="relationship" label="Relationship" value={stats.relationship} palette={palette} />
+      {/* Relationship row hidden until any decision / event actually
+          modifies the stat. v1 ships with the slot wired (state, score
+          breakdown, icon, requires-clause on `univ-date-app-match`) but
+          no effect ever sets it, so showing "—" was noise. Same
+          conditional pattern as the HUD's StatChip — relationship UI
+          appears only once the stat has been set. Per §20. */}
+      {stats.relationship !== null && (
+        <StatRow icon="relationship" label="Relationship" value={stats.relationship} palette={palette} />
+      )}
       <StatRow icon="savings" label="Savings" value={stats.savings} unit="$" palette={palette} />
     </div>
   );
@@ -185,7 +193,14 @@ function ScorePanel({
       <ScoreRow label="Savings" value={breakdown.savings} palette={palette} />
       <ScoreRow label="Wellbeing" value={breakdown.wellbeing} palette={palette} />
       <ScoreRow label="Burnout penalty" value={breakdown.burnoutPenalty} palette={palette} />
-      <ScoreRow label="Relationship" value={breakdown.relationshipBonus} palette={palette} />
+      {/* Relationship score line hidden when the bonus is 0 — matches
+          the StatsPanel rule (the stat starts null and no decision /
+          event modifies it yet, so a 0-row is just noise). Re-shows
+          automatically once any pack content actually moves the
+          relationship stat. */}
+      {breakdown.relationshipBonus !== 0 && (
+        <ScoreRow label="Relationship" value={breakdown.relationshipBonus} palette={palette} />
+      )}
       <ScoreRow label="Decisions" value={breakdown.decisions} palette={palette} />
       <ScoreRow label="Total" value={breakdown.total} palette={palette} emphasis />
     </div>
