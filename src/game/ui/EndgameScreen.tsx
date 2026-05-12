@@ -553,10 +553,15 @@ export function EndgameScreen() {
   }, [history.decisions, pack.months, pack.decisions]);
 
   const handleReplay = useCallback(() => {
-    // Reset all slices then clear localStorage. After this, App.tsx sees
-    // initComplete=false and renders InitFlow. The HUD and DevPanel are
-    // still mounted in the wrapper but will re-render with reset state.
-    // store.getState() not needed — Redux handles the reset reducers.
+    // Reset all slices then clear localStorage and reload. The reload
+    // bounces back to the TitleScreen (the title-gate `acknowledged`
+    // flag is per-mount React state in App.tsx, so a full reload is
+    // the cleanest way to land there). Without the reload, the post-
+    // reset rerender drops the player straight into InitFlow — they'd
+    // never see the title again on Begin Again, and the welcome-back
+    // block would never have a chance to NOT appear in the right
+    // moment. The in-memory dispatches still fire defensively so the
+    // window between dispatch and reload doesn't flash stale state.
     dispatch(resetProfile());
     dispatch(resetProgress());
     dispatch(resetStats());
@@ -564,10 +569,8 @@ export function EndgameScreen() {
     dispatch(resetHistory());
     dispatch(resetMeta());
     clearPersistedState();
-    // Persist the freshly reset state so a refresh doesn't bring back
-    // the old run. (clearPersistedState removes the save; we leave it
-    // removed — App will write a fresh save once the new init completes.)
     void store; // ref kept for potential debug; not used.
+    window.location.reload();
   }, [dispatch, store]);
 
   if (creditsMode) {

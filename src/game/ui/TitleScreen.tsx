@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
+import { useAppSelector } from '../state/hooks';
 import { InteractableSprite } from '../rooms/sprites/InteractableSprite';
 
 // Title screen per §16.0 — the first thing the player sees on app mount.
@@ -130,6 +131,15 @@ interface NpcConfig {
 
 export function TitleScreen({ onAcknowledge }: Props) {
   const { palette } = useCareerPack();
+  // Resumable-save read: when the player has a finished init AND the
+  // run isn't over, the title acts as a "welcome back" beat — name +
+  // reassurance + a different prompt verb ("continue" vs "start"). On
+  // Begin Again the EndgameScreen reloads the page, so this view never
+  // shows a stale name after a reset.
+  const profileName = useAppSelector((s) => s.profile.name);
+  const initComplete = useAppSelector((s) => s.profile.initComplete);
+  const gameOver = useAppSelector((s) => s.progress.gameOver);
+  const resumable = initComplete && !gameOver && profileName.length > 0;
 
   // Immutable per-mount config — sprite mix + spawn coordinates. Locked
   // for the lifetime of THIS title-screen visit (reloading the page
@@ -288,6 +298,34 @@ export function TitleScreen({ onAcknowledge }: Props) {
     textShadow: `4px 4px 0 ${palette.accent}`,
   };
 
+  // Welcome-back block (resumable runs only). Sits in the white space
+  // between the tagline and the floor band — vertically roughly the
+  // middle of the canvas. Two lines, centered, small breath between.
+  const welcomeStyle: CSSProperties = {
+    position: 'absolute',
+    top: '48%',
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    margin: 0,
+    color: palette.ink,
+    fontSize: 'clamp(14px, 1.5vw, 18px)',
+    fontWeight: 600,
+    letterSpacing: '0.04em',
+    lineHeight: 1.5,
+    userSelect: 'none',
+  };
+
+  const welcomeSubStyle: CSSProperties = {
+    margin: '4px 0 0 0',
+    fontSize: 'clamp(12px, 1.3vw, 15px)',
+    fontWeight: 400,
+    fontStyle: 'italic',
+    color: palette.ink,
+    opacity: 0.7,
+    letterSpacing: '0.04em',
+  };
+
   const taglineStyle: CSSProperties = {
     position: 'absolute',
     // Bumped down well below the wordmark and given a real color so the
@@ -371,8 +409,14 @@ export function TitleScreen({ onAcknowledge }: Props) {
       <p data-region="tagline" style={taglineStyle}>
         A life, one month at a time.
       </p>
+      {resumable && (
+        <div data-region="welcome" style={welcomeStyle}>
+          <p style={{ margin: 0 }}>Welcome back, {profileName}!</p>
+          <p style={welcomeSubStyle}>Everything is right where you left it.</p>
+        </div>
+      )}
       <p data-region="prompt" style={promptStyle}>
-        Press any key to start
+        {resumable ? 'Press any key to continue' : 'Press any key to start'}
       </p>
     </div>
   );
