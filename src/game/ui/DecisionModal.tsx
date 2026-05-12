@@ -122,35 +122,31 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
           position: 'relative',
         }}
       >
-        {phase !== 'scene' && (
-          <div
-            data-region="modal-icon-slot"
-            data-icon-id={decision.id}
-            style={{
-              position: 'absolute',
-              top: 40,
-              right: 48,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <DecisionIcon decisionId={decision.id} palette={palette} />
-          </div>
-        )}
         {phase === 'options' && (
           <>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <p
+              <div
+                data-region="modal-icon-slot"
+                data-icon-id={decision.id}
                 style={{
-                  fontSize: 16,
-                  lineHeight: 1.7,
-                  margin: 0,
+                  display: 'flex',
+                  gap: 18,
+                  alignItems: 'flex-start',
                   marginBottom: 32,
-                  paddingRight: 100,
                 }}
               >
-                {interpolate(decision.prompt, vars)}
-              </p>
+                <DecisionIcon decisionId={decision.id} palette={palette} />
+                <p
+                  style={{
+                    fontSize: 16,
+                    lineHeight: 1.7,
+                    margin: 0,
+                    flex: 1,
+                  }}
+                >
+                  {interpolate(decision.prompt, vars)}
+                </p>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {decision.options.map((opt, i) => {
                   const isActive = highlighted === i;
@@ -210,17 +206,28 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
               >
                 You chose
               </p>
-              <p
+              <div
+                data-region="modal-icon-slot"
+                data-icon-id={decision.id}
                 style={{
-                  fontSize: 18,
-                  fontWeight: 500,
-                  margin: 0,
+                  display: 'flex',
+                  gap: 18,
+                  alignItems: 'center',
                   marginBottom: 24,
-                  paddingRight: 100,
                 }}
               >
-                {interpolate(chosen.label, vars)}
-              </p>
+                <DecisionIcon decisionId={decision.id} palette={palette} />
+                <p
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 500,
+                    margin: 0,
+                    flex: 1,
+                  }}
+                >
+                  {interpolate(chosen.label, vars)}
+                </p>
+              </div>
               <p
                 style={{
                   fontSize: 15,
