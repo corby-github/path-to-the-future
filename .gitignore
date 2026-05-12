@@ -21,9 +21,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Local Claude Code settings — per-machine tool-permission allowlist
-.claude/*
-# Exception: project-level skills are part of the repo (they ride with the
-# code, like docs/). Per-machine settings (settings.local.json, worktrees,
-# launch.json) stay ignored.
-!.claude/skills/
+# Local Claude Code settings — per-machine tool-permission allowlist,
+# worktrees, launch config. The /punch skill that previously lived here
+# moved to user-global (~/.claude/skills/punch/) so it's discoverable
+# across all projects.
+.claude/
