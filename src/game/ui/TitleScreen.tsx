@@ -3,6 +3,7 @@ import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppSelector } from '../state/hooks';
 import { InteractableSprite } from '../rooms/sprites/InteractableSprite';
+import { StatChip } from './StatChip';
 
 // Title screen per §16.0 — the first thing the player sees on app mount.
 // Wordmark (Pixelify Sans, SNES-marquee size), italic tagline, ambient
@@ -133,12 +134,14 @@ export function TitleScreen({ onAcknowledge }: Props) {
   const { palette } = useCareerPack();
   // Resumable-save read: when the player has a finished init AND the
   // run isn't over, the title acts as a "welcome back" beat — name +
-  // reassurance + a different prompt verb ("continue" vs "start"). On
-  // Begin Again the EndgameScreen reloads the page, so this view never
-  // shows a stale name after a reset.
+  // reassurance + HUD preview + a different prompt verb ("continue" vs
+  // "start"). On Begin Again the EndgameScreen reloads the page, so
+  // this view never shows a stale name after a reset.
   const profileName = useAppSelector((s) => s.profile.name);
   const initComplete = useAppSelector((s) => s.profile.initComplete);
   const gameOver = useAppSelector((s) => s.progress.gameOver);
+  const progress = useAppSelector((s) => s.progress);
+  const stats = useAppSelector((s) => s.stats);
   const resumable = initComplete && !gameOver && profileName.length > 0;
 
   // Immutable per-mount config — sprite mix + spawn coordinates. Locked
@@ -298,6 +301,27 @@ export function TitleScreen({ onAcknowledge }: Props) {
     textShadow: `4px 4px 0 ${palette.accent}`,
   };
 
+  // HUD preview row (resumable runs only). A condensed echo of the
+  // real HUD's stat chips — icons + values, no identity / location
+  // columns, no border, no replay opacity, no delta animation noise.
+  // Sits below the welcome lines as a "here's where you left things"
+  // glance. Reuses StatChip directly so palette + icon parity comes
+  // for free.
+  const hudPreviewStyle: CSSProperties = {
+    position: 'absolute',
+    top: '60%',
+    left: 0,
+    right: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 18,
+    flexWrap: 'wrap',
+    padding: '0 32px',
+    color: palette.ink,
+    userSelect: 'none',
+  };
+
   // Welcome-back block (resumable runs only). Sits in the white space
   // between the tagline and the floor band — vertically roughly the
   // middle of the canvas. Two lines, centered, small breath between.
@@ -415,9 +439,86 @@ export function TitleScreen({ onAcknowledge }: Props) {
           <p style={welcomeSubStyle}>Everything is right where you left it.</p>
         </div>
       )}
+      {resumable && (
+        <div data-region="hud-preview" style={hudPreviewStyle}>
+          <StatChip
+            name="xp"
+            numericValue={progress.xp}
+            displayValue={formatXp(progress.xp)}
+            palette={palette}
+          />
+          <StatChip
+            name="burnout"
+            numericValue={stats.burnout}
+            displayValue={stats.burnout}
+            palette={palette}
+          />
+          <StatChip
+            name="savings"
+            numericValue={stats.savings}
+            displayValue={formatMoney(stats.savings)}
+            palette={palette}
+          />
+          <StatChip
+            name="health"
+            numericValue={stats.health}
+            displayValue={stats.health}
+            palette={palette}
+          />
+          <StatChip
+            name="network"
+            numericValue={stats.network}
+            displayValue={stats.network}
+            palette={palette}
+          />
+          {stats.relationship !== null && (
+            <StatChip
+              name="relationship"
+              numericValue={stats.relationship}
+              displayValue={stats.relationship}
+              palette={palette}
+            />
+          )}
+          <StatChip
+            name="technicalSkill"
+            numericValue={stats.technicalSkill}
+            displayValue={stats.technicalSkill}
+            palette={palette}
+          />
+          <StatChip
+            name="reputation"
+            numericValue={stats.reputation}
+            displayValue={formatReputation(stats.reputation)}
+            palette={palette}
+          />
+        </div>
+      )}
       <p data-region="prompt" style={promptStyle}>
         {resumable ? 'Press any key to continue' : 'Press any key to start'}
       </p>
     </div>
   );
+}
+
+// HUD-parity formatters. Mirror the same scale-down logic the Hud uses
+// for its own chips so the title preview reads identically (e.g. 12,345
+// XP shows as "12K" in both places). Kept in sync by convention; the
+// Hud doesn't export these so we duplicate them — small enough that a
+// future shared `formatters.ts` extraction can land if a third caller
+// shows up.
+function formatXp(xp: number): string {
+  if (xp < 10_000) return xp.toLocaleString('en-US');
+  if (xp < 1_000_000) return `${Math.floor(xp / 1000)}K`;
+  return `${(xp / 1_000_000).toFixed(1)}M`;
+}
+
+function formatMoney(amount: number): string {
+  if (amount < 10_000) return amount.toLocaleString('en-US');
+  if (amount < 1_000_000) return `${Math.floor(amount / 1000)}K`;
+  return `${(amount / 1_000_000).toFixed(1)}M`;
+}
+
+function formatReputation(rep: number): string {
+  if (rep > 0) return `+${rep}`;
+  return `${rep}`;
 }
