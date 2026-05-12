@@ -238,6 +238,7 @@ export function DecisionRoom({ config, onExit }: Props) {
       decisions: pack.decisions,
       ctx,
       monthId: config.monthId,
+      history: store.getState().history.decisions,
     });
     window.setTimeout(() => {
       if (picked) {
@@ -246,7 +247,7 @@ export function DecisionRoom({ config, onExit }: Props) {
         onExit();
       }
     }, MODAL_POP_DELAY_MS);
-  }, [layout.door, pack.decisions, ctx, config.monthId, onExit, placements]);
+  }, [layout.door, pack.decisions, ctx, config.monthId, onExit, placements, store]);
 
   const playerState = usePlayerMovement({
     initialPosition: layout.spawn,
@@ -439,6 +440,7 @@ export function DecisionRoom({ config, onExit }: Props) {
         currentMonth: config.monthId,
       },
       monthId: config.monthId,
+      history: live.history.events,
     });
   }, [eventMode, pack.events, pack.manifest.eventChance, monthEntry.era, store, config.monthId]);
 
