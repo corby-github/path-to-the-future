@@ -10,6 +10,7 @@ import {
   XP_MINIGAME_PARTIAL,
   XP_MINIGAME_FAIL,
 } from '../state/slices/progressSlice';
+import { recordMinigame } from '../state/slices/historySlice';
 
 interface Props {
   monthId: number;
@@ -149,20 +150,32 @@ export function Stacker({ monthId, onComplete }: Props) {
   const stacks = blocks.filter((b) => b.status === 'hit').length;
 
   const handleContinue = useCallback(() => {
+    let result: 'win' | 'partial' | 'fail';
     if (stacks >= WIN_THRESHOLD) {
+      result = 'win';
       dispatch(applyStatEffect({ stat: 'technicalSkill', op: '+', magnitude: 5 }));
       dispatch(applyStatEffect({ stat: 'reputation', op: '+', magnitude: 5 }));
       dispatch(applyStatEffect({ stat: 'burnout', op: '-', magnitude: 2 }));
       dispatch(addXp(XP_MINIGAME_WIN));
     } else if (stacks >= PARTIAL_THRESHOLD) {
+      result = 'partial';
       dispatch(addXp(XP_MINIGAME_PARTIAL));
     } else {
+      result = 'fail';
       dispatch(applyStatEffect({ stat: 'reputation', op: '-', magnitude: 3 }));
       dispatch(applyStatEffect({ stat: 'burnout', op: '+', magnitude: 5 }));
       dispatch(addXp(XP_MINIGAME_FAIL));
     }
+    // Record for backward-replay (#33).
+    dispatch(recordMinigame({
+      monthId,
+      variant: 'reaction-sprint',
+      result,
+      detail: `${stacks} of ${TOTAL_BLOCKS}`,
+      timestamp: Date.now(),
+    }));
     onComplete();
-  }, [stacks, dispatch, onComplete]);
+  }, [stacks, monthId, dispatch, onComplete]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {

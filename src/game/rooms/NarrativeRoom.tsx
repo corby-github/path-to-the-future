@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { monthLabel } from '../calendar';
 import { useCareerPack } from '../content/useCareerPack';
+import { useAppDispatch } from '../state/hooks';
+import { exitReplay } from '../state/slices/progressSlice';
 import type { NarrativeRoomConfig } from '../types/room';
 
 interface Props {
@@ -10,7 +12,19 @@ interface Props {
 }
 
 export function NarrativeRoom({ config, onContinue }: Props) {
-  const { palette } = useCareerPack();
+  const { palette, isReplay, liveMonth } = useCareerPack();
+  const dispatch = useAppDispatch();
+
+  // In replay (#33), the continue button becomes a return-to-live exit.
+  // No state advances — just dispatch exitReplay and the new (live) room
+  // mounts via CareerPackProvider re-resolution.
+  const handlePrimary = useCallback(() => {
+    if (isReplay) {
+      dispatch(exitReplay());
+    } else {
+      onContinue();
+    }
+  }, [isReplay, dispatch, onContinue]);
 
   // Enter / Space dismisses, matching DecisionModal flavor + EventModal body.
   // Without this, year-change narrative screens were mouse-only.
@@ -18,12 +32,12 @@ export function NarrativeRoom({ config, onContinue }: Props) {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        onContinue();
+        handlePrimary();
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [onContinue]);
+  }, [handlePrimary]);
 
   return (
     <div
@@ -57,8 +71,8 @@ export function NarrativeRoom({ config, onContinue }: Props) {
         {config.body}
       </p>
       <button
-        data-action="continue"
-        onClick={onContinue}
+        data-action={isReplay ? 'return' : 'continue'}
+        onClick={handlePrimary}
         style={{
           padding: '12px 32px',
           background: 'transparent',
@@ -71,7 +85,9 @@ export function NarrativeRoom({ config, onContinue }: Props) {
           fontFamily: 'inherit',
         }}
       >
-        {config.continueLabel ?? 'Continue'}
+        {isReplay
+          ? `↩ Return to ${monthLabel(liveMonth.id)}`
+          : (config.continueLabel ?? 'Continue')}
       </button>
     </div>
   );

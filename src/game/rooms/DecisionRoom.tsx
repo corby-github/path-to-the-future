@@ -3,6 +3,7 @@ import { useStore } from 'react-redux';
 import { Player } from '../entities/Player';
 import { usePlayerMovement } from '../engine/usePlayerMovement';
 import { ROOM_VIEWBOX, ROOM_BOUNDS } from '../coordinates';
+import { monthLabel } from '../calendar';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { useDevControls } from '../dev/useDevControls';
@@ -11,7 +12,7 @@ import { selectDecision } from '../content/selectDecision';
 import { parseEffect } from '../content/applyEffects';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { recordDecision, recordEvent } from '../state/slices/historySlice';
-import { skipMonths, addXp, XP_PER_DECISION } from '../state/slices/progressSlice';
+import { skipMonths, addXp, XP_PER_DECISION, enterReplay, exitReplay } from '../state/slices/progressSlice';
 import { rollEvents, findEventById } from '../content/rollEvents';
 import { applyEvent } from '../content/applyEvent';
 import { passesRequires } from '../content/evaluateRequires';
@@ -34,6 +35,44 @@ const BASE_SPEED = 180;
 const DEFAULT_EVENT_CHANCE = 0.4;
 const INTERACTABLE_HALF_W = 28;
 const INTERACTABLE_HALF_H = 36;
+
+// Rewind door for backward replay (#33). Bottom-left of the canvas, away
+// from the standard middle-left spawn so the player doesn't accidentally
+// walk into it on entry. Same palette as the forward door (accent fill,
+// ink stroke) — initial pass used palette.surface for a "subdued" read,
+// but it blended into the desk obstacles. Position alone differentiates
+// it from the forward door now. 10px from canvas left edge — matches
+// the `← {prev}` label anchor and creates symmetry with the forward
+// door (10px from canvas right edge).
+const REWIND_DOOR: Rect = {
+  x: 10,
+  y: ROOM_VIEWBOX.height - 100 - 20,
+  width: 40,
+  height: 100,
+};
+
+// Status-bar flavor lines for replay (#33). Picked randomly per room mount
+// to keep the journey-through-the-past feeling moody and a little playful.
+// The "key" lines are user-favorites that may evolve into a real mechanic
+// later — for now they're just hints of déjà vu.
+const REPLAY_STATUS_MESSAGES: ReadonlyArray<string> = [
+  'Looking back... it looks the same.',
+  'Hindsight is 20/20.',
+  "Haven't I been here before?",
+  'The past is in the past. Why am I here again?',
+  'Something about a key.',
+  "I don't remember seeing a key.",
+  'Walking back through nothing important.',
+  'Different month. Same coffee stain.',
+  "The room remembers you. You don't remember it.",
+  'If only you could un-decide.',
+  'Nothing changed. Why would it have?',
+  'Déjà vu, but the cheap kind.',
+  'Still no key.',
+  'The room is exactly as you left it. Mostly.',
+  'Walking through your own footprints.',
+  'The conversation already happened.',
+];
 // Player center within this many virtual units of an interactable center
 // counts as "adjacent" — E-key opens the modal for the nearest one.
 const INTERACT_PROXIMITY = 75;
@@ -76,6 +115,24 @@ function playerInsideDoor(door: Rect, px: number, py: number): boolean {
       && py >= door.y && py <= door.y + door.height;
 }
 
+// Find the closest past month walkable for replay (#33). Skips consequence
+// rooms (per user design call: they're punchlines, replay feels wrong).
+// Also skips month 1 — the 2020 opening NarrativeRoom is a one-time framing
+// beat; walking back to it breaks the spell. Returns null if no eligible
+// past month exists.
+function previousReplayableMonth(
+  months: { id: number; roomType?: string }[],
+  fromMonthId: number,
+): number | null {
+  for (let id = fromMonthId - 1; id >= 2; id--) {
+    const m = months.find((e) => e.id === id);
+    if (!m) continue;
+    if (m.roomType === 'consequence') continue;
+    return id;
+  }
+  return null;
+}
+
 function distance(ax: number, ay: number, bx: number, by: number): number {
   const dx = ax - bx;
   const dy = ay - by;
@@ -83,7 +140,7 @@ function distance(ax: number, ay: number, bx: number, by: number): number {
 }
 
 export function DecisionRoom({ config, onExit }: Props) {
-  const { palette, pack, currentMonth: monthEntry } = useCareerPack();
+  const { palette, pack, currentMonth: monthEntry, isReplay, liveMonth } = useCareerPack();
   const dispatch = useAppDispatch();
   // useStore for direct getState() reads inside callbacks. Needed when we
   // dispatch effects and then immediately roll events in the same handler —
@@ -134,6 +191,15 @@ export function DecisionRoom({ config, onExit }: Props) {
   // Continue beat. Random pick from `manifest.monthTransitions`. Set when
   // the pause starts, cleared when it ends. Null = no overlay rendered.
   const [transitionMessage, setTransitionMessage] = useState<string | null>(null);
+
+  // Replay status-bar flavor (#33). One random pick per room mount —
+  // changes as the player walks deeper into the past. Null when not in
+  // replay. Lazy initializer + no setter, so it stays stable across
+  // re-renders of THIS mount.
+  const [replayStatusMessage] = useState<string | null>(() => {
+    if (!isReplay) return null;
+    return REPLAY_STATUS_MESSAGES[Math.floor(Math.random() * REPLAY_STATUS_MESSAGES.length)];
+  });
 
   // Active dialogue state — set when the player engages with an interactable.
   const [activeInteractable, setActiveInteractable] = useState<InteractableDef | null>(null);
@@ -232,9 +298,35 @@ export function DecisionRoom({ config, onExit }: Props) {
     setAdjacentIndex((cur) => (cur === nearest ? cur : nearest));
 
     if (triggered.current) return;
+
+    // Rewind door (#33). Walking in enters replay of the previous
+    // (non-consequence) past month, or — if already in replay — goes
+    // further back. Hidden / inert if no eligible past month exists.
+    if (playerInsideDoor(REWIND_DOOR, state.position.x, state.position.y)) {
+      const prevMonthId = previousReplayableMonth(pack.months, config.monthId);
+      if (prevMonthId === null) return;
+      triggered.current = true;
+      setCommitted(true);
+      window.setTimeout(() => {
+        dispatch(enterReplay(prevMonthId));
+      }, DOOR_FADE_MS);
+      return;
+    }
+
     if (!playerInsideDoor(layout.door, state.position.x, state.position.y)) return;
     triggered.current = true;
     setCommitted(true);
+
+    // Replay (#33): forward door is the "↩ Return" exit. No decision
+    // fires, no event rolls, no state change — just dispatch exitReplay
+    // and let the new (live) room mount.
+    if (isReplay) {
+      window.setTimeout(() => {
+        dispatch(exitReplay());
+      }, DOOR_FADE_MS);
+      return;
+    }
+
     const picked = selectDecision({
       decisions: pack.decisions,
       ctx,
@@ -248,7 +340,7 @@ export function DecisionRoom({ config, onExit }: Props) {
         onExit();
       }
     }, MODAL_POP_DELAY_MS);
-  }, [layout.door, pack.decisions, ctx, config.monthId, onExit, placements, store]);
+  }, [layout.door, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, dispatch]);
 
   const playerState = usePlayerMovement({
     initialPosition: layout.spawn,
@@ -543,13 +635,15 @@ export function DecisionRoom({ config, onExit }: Props) {
           }}
         >
           <span
-            key={transitionMessage ?? 'instructional'}
+            key={transitionMessage ?? replayStatusMessage ?? 'instructional'}
             style={{
               animation: 'status-swap-fade 280ms ease forwards',
-              fontStyle: transitionMessage ? 'italic' : 'normal',
+              fontStyle: (transitionMessage || replayStatusMessage) ? 'italic' : 'normal',
             }}
           >
-            {transitionMessage ?? 'Walk into the door →'}
+            {transitionMessage
+              ?? replayStatusMessage
+              ?? 'Walk into the door →'}
           </span>
         </div>
 
@@ -583,6 +677,7 @@ export function DecisionRoom({ config, onExit }: Props) {
           />
 
           <rect
+            data-region="forward-door"
             x={layout.door.x}
             y={layout.door.y}
             width={layout.door.width}
@@ -598,6 +693,54 @@ export function DecisionRoom({ config, onExit }: Props) {
             r={2.5}
             fill={palette.ink}
           />
+          {isReplay && (
+            <text
+              data-region="forward-door-label"
+              x={ROOM_VIEWBOX.width - 10}
+              y={layout.door.y - 8}
+              textAnchor="end"
+              fontSize={12}
+              fontWeight={600}
+              letterSpacing="0.04em"
+              fill={palette.ink}
+            >
+              {`↩ return to ${monthLabel(liveMonth.id)}`}
+            </text>
+          )}
+
+          {/* Rewind door (#33). Renders when an eligible past month exists. */}
+          {(() => {
+            const prevId = previousReplayableMonth(pack.months, config.monthId);
+            if (prevId === null) return null;
+            const prevLabel = monthLabel(prevId);
+            return (
+              <g data-region="rewind-door-group">
+                <rect
+                  data-region="rewind-door"
+                  x={REWIND_DOOR.x}
+                  y={REWIND_DOOR.y}
+                  width={REWIND_DOOR.width}
+                  height={REWIND_DOOR.height}
+                  fill={palette.accent}
+                  stroke={palette.ink}
+                  strokeWidth={2}
+                  rx={2}
+                />
+                <text
+                  data-region="rewind-door-label"
+                  x={10}
+                  y={REWIND_DOOR.y - 8}
+                  textAnchor="start"
+                  fontSize={11}
+                  fontWeight={600}
+                  letterSpacing="0.04em"
+                  fill={palette.inkMuted}
+                >
+                  {`← ${prevLabel}`}
+                </text>
+              </g>
+            );
+          })()}
 
           {layout.obstacles.map((o, i) => (
             <rect

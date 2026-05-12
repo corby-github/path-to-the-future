@@ -26,7 +26,7 @@ const NPC_DIALOG_FONT = 'inherit';
 type Phase = 'prompt' | 'options' | 'flavor';
 
 export function NPCModal({ interactable, dialogue, onClose }: Props) {
-  const { palette } = useCareerPack();
+  const { palette, isReplay } = useCareerPack();
   const dispatch = useAppDispatch();
 
   const tier = dialogue.tier;
@@ -58,7 +58,13 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
 
   // Defer effects to close-time (mirrors DecisionRoom pattern — HUD floating
   // delta should land after the modal closes, not silently behind it).
+  // In replay mode (#33) the dialogue still plays but all effects are
+  // suppressed — looking back at the past shouldn't change the present.
   const handleClose = useCallback(() => {
+    if (isReplay) {
+      onClose();
+      return;
+    }
     // Baseline social-interaction reward: talking to an NPC at all earns +1
     // network. Tier 2 picks layer their own effects on top — including
     // possible network costs (e.g. "Maybe later" → -1 network) — and those
@@ -78,7 +84,7 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
       }
     }
     onClose();
-  }, [interactable, chosen, dispatch, onClose]);
+  }, [interactable, chosen, dispatch, onClose, isReplay]);
 
   const handleAdvance = useCallback(() => {
     // Tier 1 prompt: advance closes the modal.

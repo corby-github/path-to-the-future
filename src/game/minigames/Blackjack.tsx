@@ -10,6 +10,7 @@ import {
   XP_MINIGAME_PARTIAL,
   XP_MINIGAME_FAIL,
 } from '../state/slices/progressSlice';
+import { recordMinigame } from '../state/slices/historySlice';
 import type { Palette } from '../types/careerPack';
 
 interface Props {
@@ -187,8 +188,21 @@ export function Blackjack({ monthId, onComplete }: Props) {
       // push — neither side won, neither side lost
       dispatch(addXp(XP_MINIGAME_PARTIAL));
     }
+    // Record for backward-replay (#33). Detail captures final totals so
+    // the frozen result screen can recreate the moment.
+    if (result) {
+      const pt = handTotal(deal.player);
+      const dt = handTotal(deal.dealer);
+      dispatch(recordMinigame({
+        monthId,
+        variant: 'blackjack',
+        result,
+        detail: `Player ${pt} · Dealer ${dt}`,
+        timestamp: Date.now(),
+      }));
+    }
     onComplete();
-  }, [result, dispatch, onComplete]);
+  }, [result, deal.player, deal.dealer, monthId, dispatch, onComplete]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
