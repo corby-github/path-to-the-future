@@ -1,4 +1,5 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
+import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
 
 // Name entry per §13. Strips HTML and caps at 24 chars. The submitted name is
@@ -24,24 +25,30 @@ export function NameEntry({ onSubmit }: Props) {
     if (canSubmit) onSubmit(sanitized);
   };
 
+  // Outer = canvas frame, matching TitleScreen / EndgameScreen / the
+  // other init phases. Dark page wrapper comes from App.tsx's <PageFrame>.
   const screenStyle: CSSProperties = {
+    width: 'var(--canvas-display-width)',
+    aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
+    background: palette.background,
+    color: palette.ink,
+    border: `1px solid ${palette.surface}`,
+    borderRadius: 6,
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '100vh',
-    background: palette.background,
-    color: palette.ink,
-    fontFamily:
-      "inherit",
     padding: 32,
+    overflow: 'hidden',
   };
 
+  // Inner card — width-constrained content column. Outer canvas frame
+  // is the only visible border now.
   const cardStyle: CSSProperties = {
-    background: palette.background,
-    border: `1px solid ${palette.surface}`,
-    borderRadius: 8,
-    padding: '40px 48px',
+    background: 'transparent',
+    padding: 0,
     maxWidth: 480,
     width: '100%',
     display: 'flex',

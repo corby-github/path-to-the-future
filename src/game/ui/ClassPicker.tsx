@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
 import { CLASSES } from '../content/classes';
 
@@ -69,30 +70,35 @@ export function ClassPicker({ onSelect }: Props) {
     return () => window.removeEventListener('keydown', handler);
   }, [pickedId, onSelect, adjacentPlayableIndex]);
 
+  // Outer = canvas frame; inner card is a transparent layout column.
+  // Dark page wrapper comes from App.tsx's <PageFrame>. Same pattern as
+  // CareerPicker / NameEntry / IntroScene.
   const screenStyle: CSSProperties = {
+    width: 'var(--canvas-display-width)',
+    aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
+    background: palette.background,
+    color: palette.ink,
+    border: `1px solid ${palette.surface}`,
+    borderRadius: 6,
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '100vh',
-    background: palette.background,
-    color: palette.ink,
-    fontFamily:
-      "inherit",
     padding: 32,
-    gap: 32,
+    gap: 16,
+    overflow: 'hidden',
   };
 
   const cardStyle: CSSProperties = {
-    background: palette.background,
-    border: `1px solid ${palette.surface}`,
-    borderRadius: 8,
-    padding: '32px 40px',
+    background: 'transparent',
+    padding: 0,
     maxWidth: 640,
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    gap: 20,
+    gap: 16,
   };
 
   const titleStyle: CSSProperties = {

@@ -1,4 +1,5 @@
 import { type CSSProperties } from 'react';
+import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppSelector } from '../state/hooks';
 import { ScenePlayer } from './ScenePlayer';
@@ -21,17 +22,24 @@ export function IntroScene({ onComplete }: Props) {
 
   const lines = pack.manifest.intro ?? [];
 
+  // Outer = canvas frame. The narrative scene plays inside the same
+  // bounded 1000×600 envelope as the rest of the app. Dark page
+  // wrapper comes from App.tsx's <PageFrame>.
   const screenStyle: CSSProperties = {
+    width: 'var(--canvas-display-width)',
+    aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
+    background: palette.background,
+    color: palette.ink,
+    border: `1px solid ${palette.surface}`,
+    borderRadius: 6,
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '100vh',
-    background: palette.background,
-    color: palette.ink,
-    fontFamily:
-      "inherit",
     padding: 32,
+    overflow: 'hidden',
   };
 
   // ScenePlayer guards on `scene[index] === undefined`. If lines is empty,
