@@ -16,7 +16,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 |---------|------------|---------------------------|---------|
 | v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
-| v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
+| v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. **§23 NPCModal** gains a *Speaker header + icon (v1.2)* subsection per #28: kind-aware header above the prompt (`"Intern says…"` / `"Plant."`) plus a full-opacity sprite icon on the left as a fixed-width column. Shared `labelFor` / `speakerHeaderFor` helpers extracted to `src/game/content/interactableLabel.ts`. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
 
 ---
 
@@ -889,6 +889,38 @@ indicator → any-key close. Tier 2: prompt → options panel (↑↓←→ + 1-
 / Space + Esc) → flavor with typewriter → effects dispatched on advance
 (deferred so the HUD floating-delta lands after modal close, matching the
 DecisionRoom pattern).
+
+**Speaker header + icon (v1.2).** Two complementary anchors so the
+player always knows who's talking:
+
+- **Header** (`prompt` and `options` phases): kind-aware text above the
+  typewriter. NPCs say things — `"Intern says…"`, `"Senior engineer says…"`.
+  Objects don't — they get a plain-label header — `"Plant."`, `"Printer."`.
+  Phrasing comes from `speakerHeaderFor()` in
+  `src/game/content/interactableLabel.ts`. Small caps, palette.inkMuted,
+  12px. `data-region="speaker-header"`.
+- **Icon-left sprite** (all phases): the interactable's sprite rendered
+  in a fixed-width column on the **left** of the dialog box. Full opacity,
+  ~100px wide, vertically centered. Pure SVG, reuses `InteractableSprite`
+  so the art matches what the player just walked up to. `aria-hidden` —
+  purely decorative. `data-region="speaker-visual"`. The dialog box flows
+  flex-row: icon column → content column (`data-region="content"`) holding
+  header + prompt + options/flavor.
+
+The header is skipped in `flavor` phase because that phase is the outcome
+of the player's choice, not the speaker's voice — different register. The
+icon persists across all phases so the speaker stays visible.
+
+A watermark variant (low-opacity sprite right-aligned, text flowing over)
+was sandboxed during build — see PR #38 history for the commit. Icon-left
+won on legibility; watermark felt softer but harder to read at the small
+placeholder-sprite scale. If real illustration art lands later and the
+sprites grow more atmospheric, revisit.
+
+The shared `labelFor()` and `speakerHeaderFor()` helpers live in
+`src/game/content/interactableLabel.ts` so `DecisionRoom` (sprite caption
+per §23 *Sprite-anchored label*) and `NPCModal` (this section) read from
+one source.
 
 **Door fade preserves canvas bounds.** The room SVG's border was moved to a
 wrapper div so it persists through the door-commit fade. Modals land on a

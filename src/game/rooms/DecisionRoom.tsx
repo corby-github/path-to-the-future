@@ -15,6 +15,7 @@ import { skipMonths, addXp, XP_PER_DECISION } from '../state/slices/progressSlic
 import { rollEvents, findEventById } from '../content/rollEvents';
 import { applyEvent } from '../content/applyEvent';
 import { passesRequires } from '../content/evaluateRequires';
+import { labelFor } from '../content/interactableLabel';
 import { DecisionModal } from '../ui/DecisionModal';
 import { EventModal } from '../ui/EventModal';
 import { NPCModal } from '../ui/NPCModal';
@@ -73,16 +74,6 @@ interface Props {
 function playerInsideDoor(door: Rect, px: number, py: number): boolean {
   return px >= door.x && px <= door.x + door.width
       && py >= door.y && py <= door.y + door.height;
-}
-
-// Display label for the `[E]` hint subtitle (#27). Prefers the authored
-// `label` from the career pack; falls back to a derivation that strips
-// the `obj-` / `npc-` prefix and Title-cases the first letter (so packs
-// that haven't authored labels yet still render something readable).
-function labelFor(def: InteractableDef): string {
-  if (def.label) return def.label;
-  const stripped = def.id.replace(/^(obj-|npc-)/, '').replace(/-/g, ' ');
-  return stripped.charAt(0).toUpperCase() + stripped.slice(1);
 }
 
 function distance(ax: number, ay: number, bx: number, by: number): number {
