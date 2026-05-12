@@ -38,6 +38,7 @@ export function InteractableSprite({ art, kind, x, y, palette }: Props) {
     case 'calendar': return <ObjCalendar x={x} y={y} palette={palette} />;
     case 'stress-ball': return <ObjStressBall x={x} y={y} palette={palette} />;
     case 'water-cooler': return <ObjWaterCooler x={x} y={y} palette={palette} />;
+    case 'locked-door': return <ObjLockedDoor x={x} y={y} palette={palette} />;
     default: return <ObjDefault x={x} y={y} palette={palette} />;
   }
 }
@@ -487,6 +488,50 @@ function ObjDefault({ x, y, palette }: SpriteProps) {
         fill={palette.surface}
         stroke={palette.ink}
         strokeWidth={2}
+      />
+    </g>
+  );
+}
+
+// Locked door speaker icon for the finale month. Renders inside the
+// NPCModal speaker column when the player tries the top-right door on
+// month 120. Shape: a padlock — shackle above, square body below. Scaled
+// to roughly match the NPC/object 52×80 footprint so it sits naturally
+// in the icon-left layout without throwing off the dialog's vertical
+// rhythm.
+function ObjLockedDoor({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Shackle (the curved metal loop on top). */}
+      <path
+        d={`M ${x - 16} ${y - 6}
+            V ${y - 22}
+            a 16 16 0 0 1 32 0
+            V ${y - 6}`}
+        fill="none"
+        stroke={palette.ink}
+        strokeWidth={5}
+        strokeLinecap="round"
+      />
+      {/* Body. */}
+      <rect
+        x={x - 24}
+        y={y - 6}
+        width={48}
+        height={40}
+        rx={4}
+        fill={palette.surface}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Keyhole. */}
+      <circle cx={x} cy={y + 8} r={4} fill={palette.ink} />
+      <rect
+        x={x - 1.5}
+        y={y + 8}
+        width={3}
+        height={12}
+        fill={palette.ink}
       />
     </g>
   );

@@ -2,7 +2,10 @@ import { useDevControls } from './useDevControls';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch } from '../state/hooks';
 import { setCurrentMonth, setGameOver } from '../state/slices/progressSlice';
+import { resetTutorial } from '../state/slices/metaSlice';
 import { LAYOUT_TEMPLATES } from '../rooms/generator/layouts';
+
+const FINALE_MONTH_ID = 120;
 
 const SPEED_OPTIONS = [1, 2, 3, 4];
 
@@ -122,17 +125,29 @@ export function DevPanel() {
       </label>
 
       <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <span>endgame</span>
-        <button
-          onClick={() => dispatch(setGameOver(true))}
-          style={{
-            ...selectStyle,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
+        <span>trigger</span>
+        <select
+          value=""
+          onChange={(e) => {
+            const v = e.target.value;
+            if (v === 'endgame') {
+              dispatch(setGameOver(true));
+            } else if (v === 'tutorial') {
+              dispatch(resetTutorial());
+            } else if (v === 'finale-month') {
+              dispatch(setCurrentMonth(FINALE_MONTH_ID));
+            }
+            // Reset the select to its placeholder so the same trigger
+            // can fire twice in a row.
+            e.target.value = '';
           }}
+          style={selectStyle}
         >
-          trigger
-        </button>
+          <option value="">trigger…</option>
+          <option value="endgame">endgame</option>
+          <option value="tutorial">tutorial</option>
+          <option value="finale-month">finale month</option>
+        </select>
       </label>
     </div>
   );

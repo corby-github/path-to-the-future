@@ -25,9 +25,14 @@ interface Props {
   decision: DecisionDef;
   onChoose: (index: number) => void;
   onContinue: () => void;
+  // True on month 120 — the flavor phase drops the generic "YOU CHOSE"
+  // header and decision-icon, centers the chosen line, and the button
+  // reads "End" instead of "Continue". DecisionRoom toggles this on for
+  // the hardcoded FINALE_DECISION.
+  finale?: boolean;
 }
 
-export function DecisionModal({ decision, onChoose, onContinue }: Props) {
+export function DecisionModal({ decision, onChoose, onContinue, finale = false }: Props) {
   const { palette } = useCareerPack();
   const playerName = useAppSelector((s) => s.profile.name);
 
@@ -197,7 +202,7 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
           />
         )}
 
-        {phase === 'flavor' && chosen && (
+        {phase === 'flavor' && chosen && !finale && (
           <>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <p
@@ -267,6 +272,84 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
             </div>
             <p style={{ ...hintStyle, marginTop: 16, color: palette.ink }}>
               Press Enter or click Continue
+            </p>
+          </>
+        )}
+
+        {phase === 'flavor' && chosen && finale && (
+          <>
+            <div
+              data-region="finale-result"
+              style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                gap: 18,
+                padding: '12px 8px',
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 12,
+                  color: palette.inkMuted,
+                  margin: 0,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  fontStyle: 'italic',
+                  opacity: 0.8,
+                }}
+              >
+                Well, then.
+              </p>
+              <p
+                style={{
+                  fontSize: 20,
+                  fontWeight: 500,
+                  margin: 0,
+                  lineHeight: 1.4,
+                  maxWidth: 540,
+                }}
+              >
+                {interpolate(chosen.label, vars)}
+              </p>
+              {chosen.flavor && (
+                <p
+                  style={{
+                    fontSize: 14,
+                    lineHeight: 1.6,
+                    margin: 0,
+                    maxWidth: 480,
+                    color: palette.inkMuted,
+                    fontStyle: 'italic',
+                  }}
+                >
+                  {interpolate(chosen.flavor, vars)}
+                </p>
+              )}
+              <button
+                data-action="continue"
+                onClick={onContinue}
+                style={{
+                  marginTop: 8,
+                  padding: '12px 36px',
+                  background: 'transparent',
+                  color: palette.ink,
+                  border: `1px solid ${palette.ink}`,
+                  fontSize: 13,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                End
+              </button>
+            </div>
+            <p style={{ ...hintStyle, marginTop: 8, color: palette.ink, textAlign: 'center' }}>
+              Press Enter to roll credits
             </p>
           </>
         )}

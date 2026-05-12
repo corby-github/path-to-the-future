@@ -31,11 +31,17 @@ const metaSlice = createSlice({
     dismissTutorial(state) {
       state.tutorialDismissed = true;
     },
+    // Dev-only: force the tutorial to show again on the next DecisionRoom
+    // mount without nuking the rest of meta (which `resetMeta` would do
+    // alongside Begin Again). Used by the DevPanel "trigger" dropdown.
+    resetTutorial(state) {
+      state.tutorialDismissed = false;
+    },
     resetMeta() {
       return initialState;
     },
   },
 });
 
-export const { markSaved, dismissTutorial, resetMeta } = metaSlice.actions;
+export const { markSaved, dismissTutorial, resetTutorial, resetMeta } = metaSlice.actions;
 export default metaSlice.reducer;

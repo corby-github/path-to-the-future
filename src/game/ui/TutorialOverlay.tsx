@@ -63,13 +63,40 @@ export function TutorialOverlay({ onDismiss }: Props) {
     return () => window.removeEventListener('keydown', handler);
   }, [isLast, onDismiss]);
 
+  // Per-step bubble anchor. The overlay is positioned `absolute; inset: 0`
+  // inside the DecisionRoom container (which is `width:
+  // var(--canvas-display-width)` and `position: relative`), so the bubble
+  // anchors to the canvas frame instead of the viewport — flex alignment
+  // here positions it relative to the room itself:
+  //   0: status bar    → top-center, just below the status row
+  //   1: objects/people→ middle-center (the room itself)
+  //   2: the door      → middle-right (anchored to canvas right edge)
+  // Bubble remounts on step change (see `key={step}` below) so the pop
+  // keyframe replays as a "fresh arrival" cue between positions.
+  const STEP_LAYOUTS: ReadonlyArray<{
+    alignItems: CSSProperties['alignItems'];
+    justifyContent: CSSProperties['justifyContent'];
+    padding: string;
+  }> = [
+    // Top: paddingTop nudges the bubble down past the status bar row
+    // (status bar minHeight 20 + 16 gap above the canvas wrapper) so
+    // the bubble sits at the top of the canvas, with the ↑ arrow in
+    // the title pointing up at the status bar that's visible just above.
+    { alignItems: 'flex-start', justifyContent: 'center', padding: '22px 18px 0 16px' },
+    { alignItems: 'center', justifyContent: 'center', padding: '0 16px' },
+    // Right: small inset from the canvas border so the bubble sits just
+    // inside the right edge, near the door rather than overlapping it.
+    { alignItems: 'center', justifyContent: 'flex-end', padding: '40px 40px 0px' },
+  ];
+  const layout = STEP_LAYOUTS[step] ?? STEP_LAYOUTS[0];
+
   const overlayStyle: CSSProperties = {
-    position: 'fixed',
+    position: 'absolute',
     inset: 0,
     display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    paddingBottom: 80,
+    alignItems: layout.alignItems,
+    justifyContent: layout.justifyContent,
+    padding: layout.padding,
     // Don't block the canvas click area — gameplay is already paused by
     // the parent. The bubble re-enables its own pointer-events below.
     pointerEvents: 'none',
@@ -124,7 +151,7 @@ export function TutorialOverlay({ onDismiss }: Props) {
       aria-label="Tutorial"
       aria-modal="false"
     >
-      <div data-region="bubble" style={bubbleStyle}>
+      <div key={step} data-region="bubble" style={bubbleStyle}>
         <p style={titleStyle}>{current.title}</p>
         <p style={bodyStyle}>{current.body}</p>
         <p style={hintStyle}>
