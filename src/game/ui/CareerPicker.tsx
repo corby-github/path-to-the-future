@@ -105,7 +105,9 @@ export function CareerPicker({ onSelect }: Props) {
     fontSize: 22,
     fontWeight: 600,
     margin: 0,
-    letterSpacing: '-0.01em',
+    // Matches EndgameScreen / TitleScreen — was -0.01em which read
+    // slightly tighter than the rest of the app's typography.
+    letterSpacing: '0.02em',
   };
 
   const subtitleStyle: CSSProperties = {
@@ -247,18 +249,25 @@ interface ContinueButtonProps {
 }
 
 function ContinueButton({ enabled, onClick, palette }: ContinueButtonProps) {
+  // Outlined modal-button style — matches DecisionModal Continue,
+  // CreditsScreen Close, EndgameScreen actions. Centered (alignSelf
+  // moves it off the trailing edge of the column where the previous
+  // filled-button style sat). Disabled: 0.4 opacity + not-allowed
+  // cursor; border + color stay the same so the button doesn't shift
+  // size when the input becomes valid.
   const style: CSSProperties = {
-    alignSelf: 'flex-end',
+    alignSelf: 'center',
+    padding: '12px 32px',
+    background: 'transparent',
+    color: palette.ink,
+    border: `1px solid ${palette.ink}`,
     fontSize: 13,
-    fontWeight: 600,
-    padding: '10px 22px',
-    border: 'none',
-    borderRadius: 4,
-    background: enabled ? palette.ink : palette.surface,
-    color: enabled ? palette.background : palette.inkMuted,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
     cursor: enabled ? 'pointer' : 'not-allowed',
-    letterSpacing: '0.02em',
-    transition: 'background 120ms ease',
+    fontFamily: 'inherit',
+    opacity: enabled ? 1 : 0.4,
+    transition: 'background 120ms, opacity 120ms',
   };
   return (
     <button

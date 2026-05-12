@@ -60,7 +60,8 @@ export function NameEntry({ onSubmit }: Props) {
     fontSize: 22,
     fontWeight: 600,
     margin: 0,
-    letterSpacing: '-0.01em',
+    // Matches EndgameScreen / TitleScreen / CareerPicker.
+    letterSpacing: '0.02em',
   };
 
   const subtitleStyle: CSSProperties = {
@@ -69,10 +70,13 @@ export function NameEntry({ onSubmit }: Props) {
     margin: 0,
   };
 
+  // Input now uses an ink border (matches the modal-button border weight
+  // + color). Was a 1.5px surface border which read as chrome rather
+  // than "of-the-game."
   const inputStyle: CSSProperties = {
     fontSize: 18,
     padding: '12px 14px',
-    border: `1.5px solid ${palette.surface}`,
+    border: `1px solid ${palette.ink}`,
     borderRadius: 4,
     background: palette.background,
     color: palette.ink,
@@ -89,18 +93,21 @@ export function NameEntry({ onSubmit }: Props) {
     letterSpacing: '0.04em',
   };
 
+  // Outlined modal-button style — matches DecisionModal Continue,
+  // CreditsScreen Close, EndgameScreen actions. Centered.
   const buttonStyle: CSSProperties = {
-    alignSelf: 'flex-end',
+    alignSelf: 'center',
+    padding: '12px 32px',
+    background: 'transparent',
+    color: palette.ink,
+    border: `1px solid ${palette.ink}`,
     fontSize: 13,
-    fontWeight: 600,
-    padding: '10px 22px',
-    border: 'none',
-    borderRadius: 4,
-    background: canSubmit ? palette.ink : palette.surface,
-    color: canSubmit ? palette.background : palette.inkMuted,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
     cursor: canSubmit ? 'pointer' : 'not-allowed',
-    letterSpacing: '0.02em',
-    transition: 'background 120ms ease',
+    fontFamily: 'inherit',
+    opacity: canSubmit ? 1 : 0.4,
+    transition: 'background 120ms, opacity 120ms',
   };
 
   return (
