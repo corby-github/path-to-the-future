@@ -4,6 +4,7 @@ import { useAppSelector } from '../state/hooks';
 import { interpolate } from '../content/interpolate';
 import { ScenePlayer } from './ScenePlayer';
 import { EffectChips } from './EffectChips';
+import { EventIcon } from './icons/modalIcons';
 import type { EventDef } from '../types/careerPack';
 
 // Matches the hintStyle in DecisionModal — shared footer-hint treatment.
@@ -78,6 +79,17 @@ export function EventModal({ event, onContinue }: Props) {
           flexDirection: 'column',
         }}
       >
+        <div
+          data-region="modal-icon-slot"
+          data-icon-id={event.id}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: 16,
+          }}
+        >
+          <EventIcon eventId={event.id} palette={palette} />
+        </div>
         {phase === 'scene' && event.scene && (
           <ScenePlayer
             scene={event.scene}

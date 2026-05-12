@@ -4,6 +4,7 @@ import { useAppSelector } from '../state/hooks';
 import { interpolate } from '../content/interpolate';
 import { ScenePlayer } from './ScenePlayer';
 import { EffectChips } from './EffectChips';
+import { DecisionIcon } from './icons/modalIcons';
 import type { DecisionDef } from '../types/careerPack';
 
 type Phase = 'options' | 'scene' | 'flavor';
@@ -118,12 +119,36 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
+          position: 'relative',
         }}
       >
+        {phase !== 'scene' && (
+          <div
+            data-region="modal-icon-slot"
+            data-icon-id={decision.id}
+            style={{
+              position: 'absolute',
+              top: 40,
+              right: 48,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <DecisionIcon decisionId={decision.id} palette={palette} />
+          </div>
+        )}
         {phase === 'options' && (
           <>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <p style={{ fontSize: 16, lineHeight: 1.7, margin: 0, marginBottom: 32 }}>
+              <p
+                style={{
+                  fontSize: 16,
+                  lineHeight: 1.7,
+                  margin: 0,
+                  marginBottom: 32,
+                  paddingRight: 100,
+                }}
+              >
                 {interpolate(decision.prompt, vars)}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -185,7 +210,15 @@ export function DecisionModal({ decision, onChoose, onContinue }: Props) {
               >
                 You chose
               </p>
-              <p style={{ fontSize: 18, fontWeight: 500, margin: 0, marginBottom: 24 }}>
+              <p
+                style={{
+                  fontSize: 18,
+                  fontWeight: 500,
+                  margin: 0,
+                  marginBottom: 24,
+                  paddingRight: 100,
+                }}
+              >
                 {interpolate(chosen.label, vars)}
               </p>
               <p
