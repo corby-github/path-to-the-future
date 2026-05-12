@@ -136,6 +136,14 @@ export function DevPanel() {
               dispatch(resetTutorial());
             } else if (v === 'finale-month') {
               dispatch(setCurrentMonth(FINALE_MONTH_ID));
+            } else if (v === 'title') {
+              // Title-screen `acknowledged` is per-mount React state in
+              // App.tsx, so a hard reload is the cleanest way to bring
+              // the title back (and it accurately reproduces what a real
+              // player sees on every app launch). Persisted save survives;
+              // only the title-gate flag resets.
+              window.location.reload();
+              return;
             }
             // Reset the select to its placeholder so the same trigger
             // can fire twice in a row.
@@ -144,9 +152,10 @@ export function DevPanel() {
           style={selectStyle}
         >
           <option value="">trigger…</option>
-          <option value="endgame">endgame</option>
+          <option value="title">title</option>
           <option value="tutorial">tutorial</option>
           <option value="finale-month">finale month</option>
+          <option value="endgame">endgame</option>
         </select>
       </label>
     </div>
