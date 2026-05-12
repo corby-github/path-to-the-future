@@ -27,6 +27,12 @@ export interface ProgressState {
   // events roll, NPC dialogue effects are dropped, the forward door
   // becomes a "return" door). See §11.x Backward replay.
   viewingMonth: number | null;
+  // Fade-start cue for the HUD month-emit (issue #30). Incrementing nonce
+  // dispatched by `useRoomTransition.exitRoom` at the instant the canvas
+  // begins to fade — lets the Hud's `+1 mo` floater fire as cause for the
+  // visual "world dims" beat, instead of trailing it. The subsequent
+  // `completeMonth` advance then suppresses its natural duplicate emit.
+  monthAdvanceCueNonce: number;
 }
 
 const initialState: ProgressState = {
@@ -36,6 +42,7 @@ const initialState: ProgressState = {
   classTier: 'novice',
   gameOver: false,
   viewingMonth: null,
+  monthAdvanceCueNonce: 0,
 };
 
 const progressSlice = createSlice({
@@ -97,6 +104,14 @@ const progressSlice = createSlice({
     exitReplay(state) {
       state.viewingMonth = null;
     },
+    // Issue #30 — cue the HUD that a forward month advance is starting RIGHT
+    // NOW (room is beginning to fade). HUD watches the nonce, emits the
+    // `+1 mo` floater on change, and dedups against the subsequent
+    // `completeMonth` advance. Dispatched by `useRoomTransition.exitRoom`
+    // before flipping the fade flag.
+    cueMonthAdvance(state) {
+      state.monthAdvanceCueNonce += 1;
+    },
     resetProgress() {
       return initialState;
     },
@@ -112,6 +127,7 @@ export const {
   setGameOver,
   enterReplay,
   exitReplay,
+  cueMonthAdvance,
   resetProgress,
 } = progressSlice.actions;
 export default progressSlice.reducer;

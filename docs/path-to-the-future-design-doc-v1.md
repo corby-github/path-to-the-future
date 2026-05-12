@@ -1,7 +1,7 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 1.3
+**Document version:** 1.3.1
 **Status:** Living spec · Days 1–13b.3 merged · Day 13c + Day 14 (title screen) pending
 **Last updated:** 2026-05-12
 
@@ -17,6 +17,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 | v1.0    | 2026-05-10 | Corby Hoback              | Initial design — premise, architecture, room types, state model, decision/event schemas, modal presentation (§8b), mini-games, controls, save/load, identity, classes, visual style, init flow, build order, scope, project structure, open questions. |
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
 | v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. **§23 NPCModal** gains a *Speaker header + icon (v1.2)* subsection per #28: kind-aware header above the prompt (`"Intern says…"` / `"Plant."`) plus a full-opacity sprite icon on the left as a fixed-width column. Shared `labelFor` / `speakerHeaderFor` helpers extracted to `src/game/content/interactableLabel.ts`. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
+| v1.3.1  | 2026-05-12 | Corby Hoback · Claude Code | Issue #30 — **room-transition vibe**. New §4.1 *Room transition* documents both transition beats (door-entry and end-of-room) and their choreography. **End-of-room:** new state `progress.monthAdvanceCueNonce` + `cueMonthAdvance` reducer; `useRoomTransition.exitRoom` dispatches the cue *before* flipping the fade flag; HUD listens to the cue nonce, emits the `+1 mo` floater at fade-start (was after-fade), and dedups the would-be duplicate emit from the subsequent `completeMonth` advance via a suppression ref; `POST_EFFECT_PAUSE_MS` trimmed from 1400 → 900ms in `DecisionRoom`. **Door-entry:** `MODAL_POP_DELAY_MS` bumped 300 → 500ms in `DecisionRoom` (was racing `DOOR_FADE_MS = 300` and reading as fade-interrupted); new `decision-modal-pop` + `decision-modal-dialog-pop` keyframes in `global.css` so DecisionModal and EventModal ease in deliberately, matched-family with `npc-modal-pop`. No STATE_VERSION bump (additive field, ephemeral by use, safe across reloads — ref-init pattern in the HUD swallows mount-time effects). |
 | v1.3    | 2026-05-12 | Corby Hoback · Claude Code | Issue #33 — **backward replay**. New §11.1 *Backward replay* describes the rewind-door mechanic: walk-back-one-month read-only exploration, multi-step chaining, era-mood follows the viewed month, decisions/events locked, NPC/object dialogues play with effects suppressed, minigame months show a frozen result from `history.minigames`, consequence rooms skipped via `previousReplayableMonth()`. New state: `progress.viewingMonth: number \| null` + `enterReplay` / `exitReplay` reducers; `history.minigames: MinigameRecord[]` + `recordMinigame` reducer dispatched at the end of each minigame's `handleContinue`. **STATE_VERSION 1.2.0 → 1.3.0** (§12). HUD telegraphs replay mode (opacity drops to 0.7, month label prefixes with `←`). New file: `src/game/rooms/MinigameReplayCard.tsx`. **§8 / §9** also gain a *Modal icons (v1.3+)* subsection (PR #39): registry pattern (`src/game/ui/icons/modalIcons.tsx`) maps decision/event `id` → palette-aware SVG component with a `PlaceholderIcon` fallback. DecisionModal renders the icon inline next to the prompt (options phase) and chosen-option label (flavor phase); EventModal renders it top-centered above the title. Initial entries: `univ-stay-late-vs-log-off`, `univ-standup-too-long`, `evt-era-pandemic-furlough-friend` — all placeholders for now. |
 
 ---
@@ -111,6 +112,34 @@ The generator uses the seed to:
 5. Place exits
 
 Generation runs once per room entry; output is rendered.
+
+### 4.1 Room transition (v1.3+)
+
+Two distinct transition beats — both choreographed to read as one event each, with #30 doing the tuning pass:
+
+**Door entry → DecisionModal (start-of-room).** Player walks into the door rect:
+1. `committed = true` flips → canvas opacity transitions to 0 over `DOOR_FADE_MS = 300ms`.
+2. ~200ms of settled-dark beat (the gap between `DOOR_FADE_MS` and `MODAL_POP_DELAY_MS`).
+3. `MODAL_POP_DELAY_MS = 500ms` after door entry, `setActiveDecision` fires → DecisionModal renders.
+4. Modal backdrop + dialog ease in over ~240ms via `decision-modal-pop` / `decision-modal-dialog-pop` keyframes (matched family with `npc-modal-pop`).
+
+Pre-#30 these were `DOOR_FADE_MS = MODAL_POP_DELAY_MS = 300`, which raced — the modal snap-appeared during the canvas fade's final frames and read as the fade being interrupted. The dark beat + intentional modal entrance fixes that. EventModal uses the same entrance animation for consistency.
+
+**Decision continue → next-room fade (end-of-room).** The post-Continue beat is choreographed across four signals that must read as **one event** ("a month passed"), not four sequential events. The current sequence — also tuned in issue #30:
+
+1. **Player commits** the decision (or finishes an event/narrative/minigame). Effects dispatch; stat chips animate (~900ms HUD pop).
+2. **Status bar swaps** to a "time passes" line from `manifest.monthTransitions` (or `"N months pass."` for multi-month events).
+3. **POST_EFFECT_PAUSE_MS = 900ms** pause so the message + stat-pop have a beat to read. (Was 1400ms pre-#30 — felt ceremonial because the message lingered well past the HUD pop.)
+4. **Room fade starts.** `useRoomTransition.exitRoom` dispatches `cueMonthAdvance` *before* flipping the fade flag. The HUD listens for the cue nonce and emits the `+1 mo` floater **at fade-start**, so the player sees cause-and-effect ("a month passed, so the world dimmed") instead of empty-canvas-then-explanation.
+5. **FADE_MS = 220ms** opacity drop on the RoomRenderer wrapper.
+6. **`completeMonth` dispatch** advances `progress.currentMonth`. The HUD's natural `currentMonth.id` effect would emit a duplicate `+1 mo` here — `suppressNextCompleteEmitRef` guard swallows it.
+7. **New room mounts** (RoomRenderer keyed on `config.monthId`).
+
+**Multi-month jumps** (`event.advanceMonths > 1`) skip the cue path. They emit the floater naturally via the `currentMonth.id` effect when `skipMonths` dispatches mid-pause — the cue still fires at fade-start for the final +1, producing two emits (`+N mo` then `+1 mo`) which together describe the full advance.
+
+**Replay-door paths** (forward / rewind) don't go through `exitRoom`; they dispatch `enterReplay` / `exitReplay` directly and don't emit floaters (the replay HUD-dim is the signal instead).
+
+Premium alternative (deferred): a true crossfade — render outgoing + incoming rooms briefly together — would eliminate the empty moment entirely. Not pursued in v1; the cue + tightened pause was the cheap fix that landed.
 
 ---
 
