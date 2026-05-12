@@ -4,6 +4,7 @@ import { monthLabel } from '../calendar';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch } from '../state/hooks';
 import { applyStatEffect } from '../state/slices/statsSlice';
+import { addXp, XP_MINIGAME_WIN, XP_MINIGAME_FAIL } from '../state/slices/progressSlice';
 
 interface Props {
   monthId: number;
@@ -59,8 +60,10 @@ export function CodeReview({ monthId, onComplete }: Props) {
     if (won) {
       dispatch(applyStatEffect({ stat: 'technicalSkill', op: '+', magnitude: 5 }));
       dispatch(applyStatEffect({ stat: 'reputation', op: '+', magnitude: 3 }));
+      dispatch(addXp(XP_MINIGAME_WIN));
     } else {
       dispatch(applyStatEffect({ stat: 'reputation', op: '-', magnitude: 2 }));
+      dispatch(addXp(XP_MINIGAME_FAIL));
     }
     onComplete();
   }, [selected, dispatch, onComplete]);

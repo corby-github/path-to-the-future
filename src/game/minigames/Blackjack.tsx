@@ -4,6 +4,12 @@ import { monthLabel } from '../calendar';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch } from '../state/hooks';
 import { applyStatEffect } from '../state/slices/statsSlice';
+import {
+  addXp,
+  XP_MINIGAME_WIN,
+  XP_MINIGAME_PARTIAL,
+  XP_MINIGAME_FAIL,
+} from '../state/slices/progressSlice';
 import type { Palette } from '../types/careerPack';
 
 interface Props {
@@ -173,8 +179,13 @@ export function Blackjack({ monthId, onComplete }: Props) {
   const handleContinue = useCallback(() => {
     if (result === 'win') {
       dispatch(applyStatEffect({ stat: 'savings', op: '+', magnitude: STAKE }));
+      dispatch(addXp(XP_MINIGAME_WIN));
     } else if (result === 'lose') {
       dispatch(applyStatEffect({ stat: 'savings', op: '-', magnitude: STAKE }));
+      dispatch(addXp(XP_MINIGAME_FAIL));
+    } else {
+      // push — neither side won, neither side lost
+      dispatch(addXp(XP_MINIGAME_PARTIAL));
     }
     onComplete();
   }, [result, dispatch, onComplete]);

@@ -11,7 +11,7 @@ import { selectDecision } from '../content/selectDecision';
 import { parseEffect } from '../content/applyEffects';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { recordDecision, recordEvent } from '../state/slices/historySlice';
-import { skipMonths } from '../state/slices/progressSlice';
+import { skipMonths, addXp, XP_PER_DECISION } from '../state/slices/progressSlice';
 import { rollEvents, findEventById } from '../content/rollEvents';
 import { applyEvent } from '../content/applyEvent';
 import { passesRequires } from '../content/evaluateRequires';
@@ -448,12 +448,22 @@ export function DecisionRoom({ config, onExit }: Props) {
       for (const [stat, expr] of Object.entries(option.effects)) {
         const parsed = parseEffect(expr);
         if (!parsed) continue;
+        // `xp` is not a StatKey — it routes to addXp, additive on top of the
+        // baseline grant below. Author bonuses like `"xp": "+300"` on options
+        // that represent promotions, new jobs, or big stretches.
+        if (stat === 'xp') {
+          dispatch(addXp(parsed.op === '-' ? -parsed.magnitude : parsed.magnitude));
+          continue;
+        }
         dispatch(applyStatEffect({
           stat: stat as StatKey,
           op: parsed.op,
           magnitude: parsed.magnitude,
         }));
       }
+      // Every committed decision grants baseline XP — addXp recomputes
+      // classTier so promotions land automatically.
+      dispatch(addXp(XP_PER_DECISION));
     }
     setPendingOptionIndex(null);
 

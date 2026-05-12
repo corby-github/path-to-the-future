@@ -1,4 +1,16 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { classTierForXp } from '../../content/classes';
+
+// XP economy. Baseline accumulation (per decision) is small and steady; the
+// jumps come from minigame wins and decision options tagged with an explicit
+// `xp` effect (promotions, new jobs, big stretches). 120-decision arcs land
+// a "play it safe" Novice in low-Skilled (~6000 XP) and a "go for it" run
+// in mid-to-high-Skilled (~9-13000 XP). Vanguard (15000+) stays out of reach
+// for v1.
+export const XP_PER_DECISION = 50;
+export const XP_MINIGAME_WIN = 250;
+export const XP_MINIGAME_PARTIAL = 100;
+export const XP_MINIGAME_FAIL = 25;
 
 export interface ProgressState {
   currentMonth: number;
@@ -37,6 +49,10 @@ const progressSlice = createSlice({
     },
     addXp(state, action: PayloadAction<number>) {
       state.xp = Math.max(0, state.xp + action.payload);
+      // Tier follows xp automatically (§14 "Class tier updates automatically as
+      // XP crosses thresholds"). Single source of truth — every caller of addXp
+      // gets the promotion for free.
+      state.classTier = classTierForXp(state.xp).id;
     },
     setClassTier(state, action: PayloadAction<string>) {
       state.classTier = action.payload;
