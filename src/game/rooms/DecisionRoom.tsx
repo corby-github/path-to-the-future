@@ -75,6 +75,16 @@ function playerInsideDoor(door: Rect, px: number, py: number): boolean {
       && py >= door.y && py <= door.y + door.height;
 }
 
+// Display label for the `[E]` hint subtitle (#27). Prefers the authored
+// `label` from the career pack; falls back to a derivation that strips
+// the `obj-` / `npc-` prefix and Title-cases the first letter (so packs
+// that haven't authored labels yet still render something readable).
+function labelFor(def: InteractableDef): string {
+  if (def.label) return def.label;
+  const stripped = def.id.replace(/^(obj-|npc-)/, '').replace(/-/g, ' ');
+  return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+}
+
 function distance(ax: number, ay: number, bx: number, by: number): number {
   const dx = ax - bx;
   const dy = ay - by;
@@ -649,15 +659,27 @@ export function DecisionRoom({ config, onExit }: Props) {
                       opacity={0.85}
                     />
                     <text
+                      data-region="interact-hint"
                       x={ipos.x}
                       y={ipos.y - INTERACTABLE_HALF_H - 12}
                       textAnchor="middle"
                       fontSize={14}
-                      
                       fontWeight={600}
                       fill={palette.ink}
                     >
                       [E] {p.def.kind === 'npc' ? 'talk' : 'look'}
+                    </text>
+                    <text
+                      data-region="interact-label"
+                      x={ipos.x}
+                      y={ipos.y + INTERACTABLE_HALF_H + 16}
+                      textAnchor="middle"
+                      fontSize={12}
+                      fontWeight={600}
+                      fill={palette.ink}
+                      letterSpacing="0.04em"
+                    >
+                      {labelFor(p.def)}
                     </text>
                   </>
                 )}
