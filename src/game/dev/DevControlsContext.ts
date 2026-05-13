@@ -27,7 +27,6 @@ const DEFAULT: DevControls = {
   setForcedLayout: () => {},
   eventMode: 'auto',
   setEventMode: () => {},
-  forceArcade: false,
   setForceArcade: () => {},
 };
 

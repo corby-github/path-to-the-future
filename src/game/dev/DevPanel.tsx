@@ -33,7 +33,6 @@ export function DevPanel() {
     setForcedLayout,
     eventMode,
     setEventMode,
-    forceArcade,
     setForceArcade,
   } = useDevControls();
   const { pack } = useCareerPack();
@@ -126,16 +125,6 @@ export function DevPanel() {
         </select>
       </label>
 
-      <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-        <input
-          type="checkbox"
-          checked={forceArcade}
-          onChange={(e) => setForceArcade(e.target.checked)}
-          style={{ accentColor: '#e88' }}
-        />
-        <span>spawn arcade</span>
-      </label>
-
       <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         <span>trigger</span>
         <select
@@ -146,6 +135,8 @@ export function DevPanel() {
               dispatch(setGameOver(true));
             } else if (v === 'tutorial') {
               dispatch(resetTutorial());
+            } else if (v === 'arcade') {
+              setForceArcade(true);
             } else if (v === 'finale-month') {
               dispatch(setCurrentMonth(FINALE_MONTH_ID));
             } else if (v === 'title') {
@@ -166,6 +157,7 @@ export function DevPanel() {
           <option value="">trigger…</option>
           <option value="title">title</option>
           <option value="tutorial">tutorial</option>
+          <option value="arcade">arcade (next room)</option>
           <option value="finale-month">finale month</option>
           <option value="endgame">endgame</option>
         </select>
