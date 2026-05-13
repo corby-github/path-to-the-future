@@ -71,29 +71,33 @@ export function PlaceholderIcon({ palette, size = 80 }: ModalIconProps): ReactEl
 interface DecisionIconProps {
   decisionId: string;
   palette: Palette;
+  size?: number;
 }
 
 interface EventIconProps {
   eventId: string;
   palette: Palette;
+  size?: number;
 }
 
 /**
  * Renders the icon registered for a given decision id, or the placeholder
  * if the id is unregistered. The lookup happens here so callers never see
  * the registry — `<DecisionIcon decisionId={...} palette={...} />` is the
- * full integration surface from the modal's perspective.
+ * full integration surface from the modal's perspective. `size` defaults
+ * to the icon's own default (80px) — pass a smaller value (e.g. 32) for
+ * the endgame timeline rows.
  */
-export function DecisionIcon({ decisionId, palette }: DecisionIconProps): ReactElement {
+export function DecisionIcon({ decisionId, palette, size }: DecisionIconProps): ReactElement {
   const render = DECISION_ICONS[decisionId] ?? PlaceholderIcon;
-  return render({ palette });
+  return render({ palette, size });
 }
 
 /**
  * Renders the icon registered for a given event id, or the placeholder
  * if the id is unregistered.
  */
-export function EventIcon({ eventId, palette }: EventIconProps): ReactElement {
+export function EventIcon({ eventId, palette, size }: EventIconProps): ReactElement {
   const render = EVENT_ICONS[eventId] ?? PlaceholderIcon;
-  return render({ palette });
+  return render({ palette, size });
 }
