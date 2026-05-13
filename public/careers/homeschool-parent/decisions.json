@@ -775,6 +775,55 @@
           "flavor": "You took her out for breakfast on the actual last day of her last subject. You gave her a small thing wrapped in newspaper. She unwrapped it carefully. She kept the newspaper. You both did, in the way you keep things you don't have a word for yet."
         }
       ]
+    },
+    {
+      "id": "hp-snack-rebellion",
+      "pool": "homeschool-parent",
+      "tags": ["family", "humor"],
+      "weight": 0.7,
+      "prompt": "A small but determined rebellion formed when snacks were limited. Negotiations were held. Concessions were made. The snacks won.",
+      "options": [
+        {
+          "label": "Hold the line",
+          "effects": { "burnout": "+2", "reputation": "-1" },
+          "flavor": "You denied the snack. There was a brief revolt. By the end of it, the children had organized themselves into a small protest faction with hand-lettered signs. You were impressed. You did not say so."
+        },
+        {
+          "label": "Approve the snack",
+          "effects": { "burnout": "+1", "savings": "-5", "reputation": "+1" },
+          "flavor": "Snacks were issued. Crumbs were issued shortly thereafter. Bram's shirt acquired a small topographical map of goldfish. You vacuumed twice. Nobody thanked the vacuum."
+        },
+        {
+          "label": "Be temporarily unavailable",
+          "effects": { "burnout": "-1", "reputation": "-1" },
+          "flavor": "You closed the office door, audibly. 'Mom is in a meeting,' Hazel announced to no one in particular. Bram believed it for almost ninety seconds. The granola bars stayed in the cabinet, briefly."
+        }
+      ]
+    },
+    {
+      "id": "hp-tablet-speed-complaint",
+      "pool": "homeschool-parent",
+      "tags": ["family", "humor", "money"],
+      "requires": { "month": ">=48" },
+      "weight": 0.6,
+      "prompt": "The kids are complaining that the tablet is too slow.",
+      "options": [
+        {
+          "label": "Compare it to Windows 98",
+          "effects": { "burnout": "-1", "reputation": "-1" },
+          "flavor": "You told them it was faster than Windows 98 loading a webpage over dial-up. They asked what Windows 98 was. The complaining did not stop. It now had a footnote."
+        },
+        {
+          "label": "Hunt for a warehouse deal",
+          "effects": { "savings": "-80", "burnout": "-2", "technicalSkill": "+1" },
+          "flavor": "You scrolled the warehouse deals for twenty minutes. You found a refurb for eighty dollars. The arrival window was three days. By the time it shipped, the complaining had moved on to something else."
+        },
+        {
+          "label": "Confiscate it",
+          "effects": { "burnout": "+1", "reputation": "-2" },
+          "flavor": "You unplugged the tablet, put it on top of the fridge, and went to start dinner. The first request to have it back arrived in twelve minutes. The second came at eight the next morning."
+        }
+      ]
     }
   ]
 }

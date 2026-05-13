@@ -403,6 +403,27 @@
       "title": "An annual checkup.",
       "body": "You went to your own doctor for the first time in a year and a half. The blood work was unremarkable. Unremarkable is the best kind of result. You scheduled the next one before you left. You meant it this time.",
       "effects": { "health": "+3", "burnout": "-2" }
+    },
+    {
+      "id": "evt-hp-mr-nobody-mm",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["family", "humor", "flavor"],
+      "weight": 0.6,
+      "title": "Mr Nobody strikes again.",
+      "body": "There's a bag of chocolate M&Ms in the center console of the school-bus (the family car). You ask: 'Who did this?' Hazel and Bram both look at you and say, 'Not me.' Of course. Mr Nobody strikes again. He has, you note, excellent taste in candy.",
+      "effects": { "burnout": "-1" }
+    },
+    {
+      "id": "evt-hp-tablet-screen-flips",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["family", "humor"],
+      "weight": 0.5,
+      "trigger": { "month": ">=48" },
+      "title": "Research, allegedly.",
+      "body": "There's one tablet between the two kids and it's meant for learning. The older one always needs it for 'research.' You've seen how the screen flips when you walk into the room. It happens fast. Faster than the actual learning, you suspect.",
+      "effects": { "burnout": "+1", "reputation": "-1" }
     }
   ]
 }
