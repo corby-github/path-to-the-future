@@ -1,11 +1,11 @@
-// Career meta-list per §16. Lists all five v1 careers; only `software-engineering`
-// ships with a playable career pack in v1. The other four are shown in the
-// picker as "Coming Soon" and not selectable.
+// Career meta-list per §16. As of the homeschool-parent Phase-1 starter,
+// two packs ship as playable (software-engineering, homeschool-parent —
+// the latter is voice-checkpoint scaffolded per §26). The remaining four
+// entries are shown in the picker as "Coming Soon" and not selectable.
 //
 // Adding a new playable career means: (a) add the manifest/months/decisions/
 // events under `public/careers/{id}/`, (b) flip `playable: true` here, and
-// (c) write the icon override for `technicalSkill` if the metaphor changes
-// (e.g., stethoscope for nurse).
+// (c) optionally relabel stat names via `manifest.statLabels` (§26 v2.0).
 
 export interface CareerListing {
   id: string;
@@ -19,6 +19,12 @@ export const CAREERS: readonly CareerListing[] = [
     id: 'software-engineering',
     name: 'Software Engineering',
     tagline: 'Ship, learn, repeat.',
+    playable: true,
+  },
+  {
+    id: 'homeschool-parent',
+    name: 'Homeschool Parent',
+    tagline: 'Two kids, ten years, one kitchen table.',
     playable: true,
   },
   {

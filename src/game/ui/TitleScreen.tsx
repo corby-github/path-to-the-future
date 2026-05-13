@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
+import { statLabelFor } from '../content/statLabels';
 import { useAppSelector } from '../state/hooks';
 import { InteractableSprite } from '../rooms/sprites/InteractableSprite';
 import { StatChip } from './StatChip';
@@ -141,7 +142,7 @@ interface NpcConfig {
 }
 
 export function TitleScreen({ onAcknowledge }: Props) {
-  const { palette } = useCareerPack();
+  const { palette, pack } = useCareerPack();
   // Resumable-save read: when the player has a finished init AND the
   // run isn't over, the title acts as a "welcome back" beat — name +
   // reassurance + HUD preview + a different prompt verb ("continue" vs
@@ -456,30 +457,35 @@ export function TitleScreen({ onAcknowledge }: Props) {
             numericValue={progress.xp}
             displayValue={formatXp(progress.xp)}
             palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'xp')}
           />
           <StatChip
             name="burnout"
             numericValue={stats.burnout}
             displayValue={stats.burnout}
             palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'burnout')}
           />
           <StatChip
             name="savings"
             numericValue={stats.savings}
             displayValue={formatMoney(stats.savings)}
             palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'savings')}
           />
           <StatChip
             name="health"
             numericValue={stats.health}
             displayValue={stats.health}
             palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'health')}
           />
           <StatChip
             name="network"
             numericValue={stats.network}
             displayValue={stats.network}
             palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'network')}
           />
           {stats.relationship !== null && (
             <StatChip
@@ -487,6 +493,7 @@ export function TitleScreen({ onAcknowledge }: Props) {
               numericValue={stats.relationship}
               displayValue={stats.relationship}
               palette={palette}
+              ariaLabel={statLabelFor(pack.manifest, 'relationship')}
             />
           )}
           <StatChip
@@ -494,12 +501,14 @@ export function TitleScreen({ onAcknowledge }: Props) {
             numericValue={stats.technicalSkill}
             displayValue={stats.technicalSkill}
             palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'technicalSkill')}
           />
           <StatChip
             name="reputation"
             numericValue={stats.reputation}
             displayValue={formatReputation(stats.reputation)}
             palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'reputation')}
           />
         </div>
       )}

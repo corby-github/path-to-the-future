@@ -21,6 +21,11 @@ interface Props {
   numericValue: number;
   displayValue: ReactNode;
   palette: Palette;
+  // Optional aria-label override for the icon. Lets the caller route
+  // through `pack.manifest.statLabels` (§26 v2.0) so AT users hear the
+  // pack-relabeled name (e.g., "Teaching" instead of "Technical skill").
+  // Falls through to StatIcon's default ARIA_LABELS when omitted.
+  ariaLabel?: string;
 }
 
 interface FloatingDelta {
@@ -34,7 +39,7 @@ interface FloatingDelta {
 // DecisionRoom).
 const DELTA_DURATION_MS = 900;
 
-export function StatChip({ name, numericValue, displayValue, palette }: Props) {
+export function StatChip({ name, numericValue, displayValue, palette, ariaLabel }: Props) {
   const prevRef = useRef<number>(numericValue);
   const idCounter = useRef(0);
   const [deltas, setDeltas] = useState<FloatingDelta[]>([]);
@@ -72,7 +77,7 @@ export function StatChip({ name, numericValue, displayValue, palette }: Props) {
 
   return (
     <span data-stat={name} style={chipStyle}>
-      <StatIcon name={name} size={20} />
+      <StatIcon name={name} size={20} label={ariaLabel} />
       {displayValue}
       {deltas.map((d) => (
         <span

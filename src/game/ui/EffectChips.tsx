@@ -1,7 +1,9 @@
 import type { CSSProperties } from 'react';
 import { useCareerPack } from '../content/useCareerPack';
 import { parseEffect, type StatKey } from '../content/applyEffects';
+import { statLabelFor } from '../content/statLabels';
 import { StatIcon, type StatIconName } from './icons/StatIcon';
+import type { Manifest } from '../types/careerPack';
 
 // Renders the stat changes that ARE ABOUT TO APPLY when the player hits
 // Continue on a decision flavor / event body. Reads raw `effects` (the schema
@@ -22,7 +24,7 @@ interface Props {
 }
 
 export function EffectChips({ effects }: Props) {
-  const { palette } = useCareerPack();
+  const { palette, pack } = useCareerPack();
 
   const entries = Object.entries(effects).filter(([stat, expr]) => {
     if (!isStatKey(stat)) return false;
@@ -48,7 +50,12 @@ export function EffectChips({ effects }: Props) {
   return (
     <div style={rowStyle} role="list" aria-label="Outcome">
       {entries.map(([stat, expr]) => (
-        <EffectChip key={stat} stat={stat as StatKey} expr={expr} />
+        <EffectChip
+          key={stat}
+          stat={stat as StatKey}
+          expr={expr}
+          manifest={pack.manifest}
+        />
       ))}
     </div>
   );
@@ -59,9 +66,10 @@ export function EffectChips({ effects }: Props) {
 interface ChipProps {
   stat: StatKey;
   expr: string;
+  manifest: Manifest;
 }
 
-function EffectChip({ stat, expr }: ChipProps) {
+function EffectChip({ stat, expr, manifest }: ChipProps) {
   const { palette } = useCareerPack();
   const parsed = parseEffect(expr);
   if (!parsed) return null;
@@ -85,10 +93,12 @@ function EffectChip({ stat, expr }: ChipProps) {
     whiteSpace: 'nowrap',
   };
 
-  // Screen-reader friendly label: "Burnout +5" / "Savings −10" / "Health
+  // Screen-reader friendly label: "Teaching +5" / "Savings −10" / "Health
   // set to 50" — one phrase per chip so AT users hear stat-and-change as
-  // a unit, not "burnout" then "plus 5" split across reads.
-  const a11yLabel = formatForScreenReader(stat, parsed.op, parsed.magnitude);
+  // a unit, not "stat" then "plus 5" split across reads. Pack-aware via
+  // `manifest.statLabels` (§26) so a relabel applies to the AT surface in
+  // the same lookup as the visual surface.
+  const a11yLabel = formatForScreenReader(stat, parsed.op, parsed.magnitude, manifest);
 
   return (
     <span role="listitem" aria-label={a11yLabel} style={style}>
@@ -135,24 +145,13 @@ function formatExpr(op: '+' | '-' | '=', magnitude: number): string {
   return `→ ${formatted}`;
 }
 
-// Human-readable stat names for the screen-reader chip label. Mirrors the
-// HUD's display vocabulary so AT users hear the same phrasing as sighted
-// players see (e.g., "technicalSkill" → "Technical skill"). Kept local to
-// this file because no other consumer needs the screen-reader phrasing —
-// StatIcon's own ARIA_LABELS serve a slightly different purpose (icon-
-// only context).
-const STAT_NAMES_FOR_AT: Record<StatKey, string> = {
-  burnout: 'Burnout',
-  savings: 'Savings',
-  network: 'Network',
-  health: 'Health',
-  relationship: 'Relationship',
-  technicalSkill: 'Technical skill',
-  reputation: 'Reputation',
-};
-
-function formatForScreenReader(stat: StatKey, op: '+' | '-' | '=', magnitude: number): string {
-  const name = STAT_NAMES_FOR_AT[stat];
+function formatForScreenReader(
+  stat: StatKey,
+  op: '+' | '-' | '=',
+  magnitude: number,
+  manifest: Manifest,
+): string {
+  const name = statLabelFor(manifest, stat);
   if (op === '+') return `${name} +${magnitude}`;
   if (op === '-') return `${name} −${magnitude}`;
   return `${name} set to ${magnitude}`;

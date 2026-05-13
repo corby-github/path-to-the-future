@@ -1,0 +1,75 @@
+{
+  "id": "homeschool-parent",
+  "name": "Homeschool Parent",
+  "tagline": "Two kids, ten years, one kitchen table.",
+  "eventChance": 0.4,
+
+  "statLabels": {
+    "technicalSkill": "Teaching",
+    "network": "Community",
+    "reputation": "Standing"
+  },
+
+  "palette": {
+    "background": "#f5f1e8",
+    "ink": "#2c2c2c",
+    "inkMuted": "#888888",
+    "surface": "#cfc8b6",
+    "accent": "#8b6240",
+    "positive": "#7a8f5c",
+    "player": "#4a90e2",
+    "playerInk": "#1f3a5f"
+  },
+
+  "eras": {
+    "default":          { "saturation": 1.0,  "lightness": 1.0,  "hueShift":   0 },
+    "pandemic":         { "saturation": 0.55, "lightness": 1.05, "hueShift": -14 },
+    "rebound":          { "saturation": 0.95, "lightness": 1.0,  "hueShift":   0 },
+    "ai-shift":         { "saturation": 1.18, "lightness": 1.02, "hueShift":  10 },
+    "uncertain-future": { "saturation": 0.85, "lightness": 0.95, "hueShift":  -3 }
+  },
+
+  "entryClasses": {
+    "novice": {
+      "label": "First-Year Parent",
+      "startingXp": 0,
+      "startingStats": {
+        "burnout": 15,
+        "savings": 2000,
+        "network": 10,
+        "health": 85,
+        "technicalSkill": 20,
+        "reputation": 0
+      }
+    },
+    "skilled": {
+      "label": "Veteran Parent",
+      "startingXp": 5000,
+      "startingStats": {
+        "burnout": 25,
+        "savings": 18000,
+        "network": 45,
+        "health": 80,
+        "technicalSkill": 55,
+        "reputation": 10
+      }
+    }
+  },
+
+  "intro": [
+    "January 2020.",
+    "The kitchen table is yours, {playerName}.",
+    "Hazel is six. Bram is three.",
+    "The world is about to send the kids home for a while."
+  ],
+
+  "monthTransitions": [
+    "... and the lunches still need packing",
+    "... another week, another spelling list",
+    "... you press on",
+    "... the laundry rotates",
+    "... onward",
+    "... the calendar turns",
+    "... time moves forward"
+  ]
+}
