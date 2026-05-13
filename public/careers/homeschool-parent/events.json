@@ -43,7 +43,7 @@
       "tags": ["era"],
       "weight": 0.6,
       "title": "Bram asks the chatbot.",
-      "body": "You stood in the doorway. Bram had typed the social-studies question into the chatbot before you got there. The answer was on the screen, formatted, with bullet points. He read it out loud to no one in particular. He didn't need you for this one. You didn't know what to do with the small drop you felt.",
+      "body": "You stood in the doorway. Bram had typed the social-studies question into the chatbot before you got there. The answer was on the screen, formatted, with bullet points. He read it out loud to no one in particular. He didn't need you for this one. You didn't know what to do with the small drop you felt. Bram, sensing nothing, asked if there were more questions.",
       "effects": { "technicalSkill": "-1", "burnout": "+1" }
     },
     {
@@ -54,7 +54,7 @@
       "weight": 0.7,
       "trigger": { "burnout": ">65" },
       "title": "Your handwriting on the dry-erase.",
-      "body": "You wrote the date and you noticed the letters wobble. Not a lot. Enough that you stood there a second and looked at it before erasing it and writing it again.",
+      "body": "You wrote the date and you noticed the letters wobble. Not a lot. Enough that you stood there a second and looked at it before erasing it and writing it again. The kids didn't notice. They never do, until they do.",
       "effects": { "burnout": "+2", "health": "-2" }
     },
 
@@ -65,7 +65,7 @@
       "tags": ["era"],
       "weight": 0.6,
       "title": "The Zoom co-op meets.",
-      "body": "Six families on a grid. Hazel waving at a screen. A glitch every fourteen minutes. You took notes on a paper napkin so you wouldn't be tempted to open another tab.",
+      "body": "Six families on a grid, most of them new at this. Hazel waving at a screen. A glitch every fourteen minutes. You took notes on a paper napkin so you wouldn't be tempted to open another tab. The Zoom was the new part. The lessons weren't.",
       "effects": { "network": "+1", "burnout": "+1" }
     },
     {
@@ -75,7 +75,7 @@
       "tags": ["family", "era"],
       "weight": 0.5,
       "title": "A check-in from your sister.",
-      "body": "She texted to ask how 'this thing' was going. You typed three honest sentences and then deleted them. You sent back two words and an emoji. She wrote back 'sending love' and you both let it sit there.",
+      "body": "She texted to ask how 'the homeschool thing' was going. She'd been asking that for years, lightly. This time it had a new weight on it. You typed three honest sentences and then deleted them. You sent back two words and an emoji. She wrote back 'sending love' and you both let it sit there.",
       "effects": { "burnout": "+1" }
     },
     {
@@ -85,7 +85,7 @@
       "tags": ["lucky", "era", "community"],
       "weight": 0.5,
       "title": "Driveway friends.",
-      "body": "The neighbor's kid wandered over with a soccer ball. Bram followed. The neighbor mom set out two camp chairs at a distance and waved. You waved back. By the end of the week you were waving on purpose.",
+      "body": "The neighbor's kid — whose mom was suddenly homeschooling for the first time — wandered over with a soccer ball. Bram followed. The neighbor mom set out two camp chairs at a distance and waved. You waved back. By the end of the week you were waving on purpose.",
       "effects": { "network": "+3", "burnout": "-2" }
     },
     {
@@ -157,7 +157,7 @@
       "weight": 0.5,
       "trigger": { "month": ">=14" },
       "title": "A passive-aggressive thread.",
-      "body": "Someone in the co-op chat wrote 'just a thought' before a paragraph that was clearly not just a thought. Four parents thumbs-up'd. Three did not. You did not. You closed the app.",
+      "body": "Someone in the co-op chat wrote 'just a thought' before a paragraph that was clearly not just a thought. Everyone knows what 'just a thought' means. The thumbs-up'ers know. The non-thumbs-up'ers know. The cat knows. Four parents thumbs-up'd. Three did not. You did not. You closed the app.",
       "effects": { "network": "-2", "burnout": "+2" }
     },
     {
@@ -200,7 +200,7 @@
       "tags": ["family", "relationship"],
       "weight": 0.6,
       "title": "Spouse, home late again.",
-      "body": "The text said 'one more hour' at six. The next text said 'sorry' at nine. You held dinner. Then you didn't. The kids asked twice. You answered twice. By the third you said 'soon.'",
+      "body": "The text said 'one more hour' at six. The next text said 'sorry' at nine. You held dinner. Then you didn't. The kids asked twice. You answered twice. By the third 'soon,' you'd run out of ways to say 'soon.'",
       "effects": { "burnout": "+2" }
     },
     {
@@ -232,7 +232,7 @@
       "tags": ["community", "era"],
       "weight": 0.6,
       "title": "Three less cars on the street.",
-      "body": "By the time you walked the kids out Tuesday, three of the families in your circle had sent theirs back to brick-and-mortar. You'd known this was coming. The morning still felt different. You stood on the porch for a full extra minute.",
+      "body": "By the time you walked the kids out Tuesday, three of the families who'd joined you in 2020 had sent theirs back to brick-and-mortar. They were going back. You were doing what you'd been doing. You'd known this was coming. The morning still felt different — the porch was quieter — and you stood there a full extra minute.",
       "effects": { "network": "-2", "burnout": "+1" }
     },
     {
@@ -283,7 +283,7 @@
       "tags": ["era", "community", "humor"],
       "weight": 0.5,
       "title": "The co-op's new convert.",
-      "body": "A co-op parent has, this week, recommended the new tutor in three separate channels. You've tried it. It's fine. You don't have the heart to tell her she's the fifth person to mention it.",
+      "body": "A co-op parent has, this week, recommended the new tutor in three separate channels. You've tried it. It's fine. You don't have the heart to tell her she's the fifth this year. You've been here long enough to know there'll be a sixth.",
       "effects": { "burnout": "+1" }
     },
     {
@@ -294,7 +294,7 @@
       "weight": 0.6,
       "trigger": { "month": ">=96" },
       "title": "The college number.",
-      "body": "A news article quoted the average sticker price. You stared at the number for a minute. Then you closed the tab. Then you opened a different tab and did the actual math. The math was, somehow, slightly better than the article had implied. Not much.",
+      "body": "A news article quoted the average sticker price. You stared at the number for a minute. Then you closed the tab. Then you opened a different tab and did the actual math. The math was, somehow, slightly better than the article had implied. Not much. You took the not-much. The not-much was the day's win.",
       "effects": { "burnout": "+2", "savings": "-100" }
     },
     {

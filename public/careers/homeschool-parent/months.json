@@ -1,6 +1,6 @@
 {
   "months": [
-    { "id":   1, "year": 2020, "monthNum":  1, "era": "pandemic", "theme": "uncertainty", "roomType": "narrative", "title": "The world is about to change.", "body": "Hazel is six, Bram is three. A pandemic has created uncertainty for you. For everyone. The next ten years are yours to shape — one month at a time.", "continueLabel": "Begin" },
+    { "id":   1, "year": 2020, "monthNum":  1, "era": "pandemic", "theme": "uncertainty", "roomType": "narrative", "title": "The world is about to change.", "body": "Hazel is six. Bram is three. The kitchen table already has the math worksheet on it, same as every morning. The world outside is about to get strange. The next ten years are yours to shape — one month at a time.", "continueLabel": "Begin" },
     { "id":   2, "year": 2020, "monthNum":  2, "era": "pandemic", "theme": "uncertainty" },
     { "id":   3, "year": 2020, "monthNum":  3, "era": "pandemic", "theme": "rupture" },
     { "id":   4, "year": 2020, "monthNum":  4, "era": "pandemic", "theme": "rupture" },

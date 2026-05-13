@@ -1,0 +1,1681 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Homeschool Parent — text preview</title>
+<style>
+  :root {
+    --bg: #f5f1e8;
+    --ink: #2c2c2c;
+    --ink-muted: #888;
+    --surface: #cfc8b6;
+    --accent: #8b6240;
+    --positive: #7a8f5c;
+    --decision: #4a90e2;
+    --event: #b07a3a;
+    --narrative: #6b6b6b;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; margin: 0; padding: 0; }
+  main { max-width: 860px; margin: 0 auto; padding: 0 24px 64px; }
+  .page-header { max-width: 860px; margin: 0 auto; padding: 32px 24px 16px; }
+  .page-header h1 { margin: 0 0 4px; font-size: 28px; letter-spacing: -0.01em; }
+  .page-header .subtitle { color: var(--ink-muted); font-weight: 400; }
+  .page-header .meta { color: var(--ink-muted); font-size: 13px; margin: 4px 0; }
+  .page-header code { background: var(--surface); padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+  .era-nav { font-size: 13px; color: var(--ink-muted); margin-top: 8px; }
+  .era-nav a { color: var(--accent); text-decoration: none; }
+  .era-nav a:hover { text-decoration: underline; }
+  .era-band { margin: 32px 0; }
+  .era-header { border-top: 2px solid var(--accent); padding: 12px 0; display: flex; align-items: baseline; justify-content: space-between; }
+  .era-header h2 { margin: 0; font-size: 20px; }
+  .band-count { color: var(--ink-muted); font-size: 12px; }
+  .card { background: rgba(255,255,255,0.5); border: 1px solid var(--surface); border-radius: 6px; padding: 16px; margin: 12px 0; }
+  .card-header { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; font-size: 12px; }
+  .kind-badge { padding: 2px 6px; border-radius: 3px; font-weight: 700; font-size: 10px; letter-spacing: 0.05em; color: white; }
+  .decision-badge { background: var(--decision); }
+  .event-badge { background: var(--event); }
+  .narrative-badge { background: var(--narrative); }
+  .month-badge { padding: 2px 6px; border-radius: 3px; background: var(--surface); font-family: ui-monospace, monospace; font-size: 11px; }
+  .pool-badge { padding: 2px 6px; border-radius: 3px; background: var(--bg); border: 1px solid var(--surface); font-family: ui-monospace, monospace; font-size: 11px; }
+  .tag { padding: 1px 6px; border-radius: 3px; background: var(--bg); color: var(--ink-muted); font-size: 11px; }
+  .era-chip { padding: 1px 6px; border-radius: 3px; background: var(--surface); font-size: 11px; }
+  .id { color: var(--ink-muted); font-family: ui-monospace, monospace; font-size: 11px; }
+  .requires { color: var(--ink-muted); font-size: 12px; margin: 4px 0; }
+  .requires code { background: var(--bg); padding: 1px 4px; font-size: 11px; }
+  .prompt { margin: 8px 0 12px; font-size: 16px; line-height: 1.45; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option { padding: 10px 12px; background: rgba(255,255,255,0.6); border-left: 3px solid var(--decision); border-radius: 0 4px 4px 0; }
+  .option-label { font-weight: 600; margin-bottom: 4px; }
+  .scene { margin: 4px 0; padding-left: 18px; }
+  .scene li { font-style: italic; color: var(--ink); opacity: 0.75; font-size: 14px; }
+  .flavor { font-style: italic; color: var(--ink); opacity: 0.85; margin: 6px 0 0; font-size: 14px; }
+  .effects { display: flex; gap: 4px; flex-wrap: wrap; margin: 6px 0; }
+  .effect-chip { padding: 1px 6px; border-radius: 3px; background: var(--surface); font-family: ui-monospace, monospace; font-size: 11px; }
+  .event .card-header { /* same as decision but different accent */ }
+  .event-title { margin: 4px 0 6px; font-size: 17px; }
+  .body { margin: 4px 0 8px; font-size: 15px; line-height: 1.45; }
+  .narrative { background: rgba(255,255,255,0.4); border-left: 3px solid var(--narrative); }
+  .narrative-title { font-size: 17px; margin: 4px 0 4px; }
+  .narrative-body { font-style: italic; }
+  .finale { border-left: 4px solid var(--accent); }
+  .frontmatter { margin: 32px 0; padding: 16px; background: rgba(255,255,255,0.4); border-radius: 6px; }
+  .frontmatter h2 { margin: 0 0 8px; font-size: 18px; }
+  .frontmatter .muted { color: var(--ink-muted); font-size: 13px; margin: 0 0 8px; }
+  .intro-lines, .tagline-list, .transition-list { margin: 0; padding-left: 20px; }
+  .intro-lines li, .tagline-list li, .transition-list li { font-style: italic; line-height: 1.5; margin: 2px 0; }
+  .name-list { font-family: ui-monospace, monospace; font-size: 13px; color: var(--ink); }
+  .continue-label, .minigame-note { font-size: 13px; color: var(--ink-muted); margin: 4px 0 0; }
+  .page-footer { max-width: 860px; margin: 32px auto; padding: 16px 24px; color: var(--ink-muted); font-size: 13px; border-top: 1px solid var(--surface); }
+</style>
+</head>
+<body>
+<header class="page-header">
+  <h1>Homeschool Parent <span class="subtitle">— text preview</span></h1>
+  <p class="meta">pack id: <code>homeschool-parent</code> · generated 2026-05-13 23:07 UTC</p>
+  <p class="meta">30 decisions · 37 events · 10 month narratives · sorted by earliest playable month, banded by era.</p>
+  <nav class="era-nav">
+    <a href="#era-pandemic">Pandemic (2020 – 2022)</a> · <a href="#era-rebound">Rebound (2023 – 2024)</a> · <a href="#era-ai-shift">AI-Shift (2025 – 2026)</a> · <a href="#era-uncertain-future">Uncertain Future (2027 – 2029)</a>
+  </nav>
+</header>
+<main>
+  <section class="frontmatter">
+         <h2>Intro</h2>
+         <ul class="intro-lines">
+           <li>It&#39;s January 2020.</li><li>{playerName}, there are rumors of a virus.</li><li>A pandemic?</li><li>Every choice from here writes the next ten years.</li>
+         </ul>
+       </section>
+  
+        <section class="era-band" id="era-pandemic" data-era="pandemic">
+          <header class="era-header">
+            <h2>Pandemic (2020 – 2022)</h2>
+            <span class="band-count">41 cards · 3 narrative beats</span>
+          </header>
+          
+    <article class="card narrative" id="month-1">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 1</span>
+        <span class="pool-badge">2020-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">uncertainty</span>
+      </header>
+      <h3 class="narrative-title">The world is about to change.</h3>
+<p class="narrative-body">Hazel is six. Bram is three. The kitchen table already has the math worksheet on it, same as every morning. The world outside is about to get strange. The next ten years are yours to shape — one month at a time.</p>
+<p class="continue-label"><em>Begin</em></p>
+    </article>
+
+    <article class="card narrative" id="month-13">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 13</span>
+        <span class="pool-badge">2021-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">endurance</span>
+      </header>
+      <h3 class="narrative-title">One year in.</h3>
+<p class="narrative-body">Hazel reads chapter books now. Bram has opinions about lunch. The kitchen table has not been the kitchen table in a long time.</p>
+    </article>
+
+    <article class="card narrative" id="month-25">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 25</span>
+        <span class="pool-badge">2022-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">rebuilding</span>
+      </header>
+      <h3 class="narrative-title">Other parents are sending theirs back.</h3>
+<p class="narrative-body">The neighborhood school reopens. Some of your park-bench friends are gone for the day now. You are not.</p>
+    </article>
+          
+    <article class="card event" id="evt-hp-co-op-fundraiser-win">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-co-op-fundraiser-win</code>
+        <span class="era-chip">any</span>
+        <span class="tag">community</span> <span class="tag">lucky</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>Community &gt;35</code></div>
+      <h3 class="event-title">The bake sale cleared.</h3>
+      <p class="body">The co-op fundraiser hit its number an hour early. Someone you barely knew said you were the one who&#39;d pulled it off. You hadn&#39;t been, really. You&#39;d been the one who showed up. The two things were closer than you&#39;d expected.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+3">network +3</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-field-trip-mishap">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-field-trip-mishap</code>
+        <span class="era-chip">any</span>
+        <span class="tag">community</span> <span class="tag">humor</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>Community &gt;25</code></div>
+      <h3 class="event-title">The wrong museum.</h3>
+      <p class="body">Six families in a parking lot. The exhibit ended last Sunday. A small mutiny among the eight-year-olds. The co-op mom who organized it apologized fourteen times. Someone produced snacks. The next two hours were better than the museum would have been.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+2">network +2</span> <span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-fridge-art">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-fridge-art</code>
+        <span class="era-chip">any</span>
+        <span class="tag">flavor</span>
+      </header>
+      
+      <h3 class="event-title">A drawing on the fridge.</h3>
+      <p class="body">Hazel drew the family. She drew you taller than your spouse. You are not taller than your spouse. You looked at it for a second too long. You did not move it from the front.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-grandparent-phone">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-grandparent-phone</code>
+        <span class="era-chip">any</span>
+        <span class="tag">family</span> <span class="tag">flavor</span>
+      </header>
+      
+      <h3 class="event-title">Grandma on FaceTime.</h3>
+      <p class="body">She told Bram a story about a goat in 1958. He listened the whole way through. He asked one good question at the end. She cried, just a little. She blamed the picture quality.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+1">network +1</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-handwriting-wobble">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-handwriting-wobble</code>
+        <span class="era-chip">any</span>
+        <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>burnout &gt;65</code></div>
+      <h3 class="event-title">Your handwriting on the dry-erase.</h3>
+      <p class="body">You wrote the date and you noticed the letters wobble. Not a lot. Enough that you stood there a second and looked at it before erasing it and writing it again. The kids didn&#39;t notice. They never do, until they do.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="health" data-delta="-2">health -2</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-library-haul">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-library-haul</code>
+        <span class="era-chip">any</span>
+        <span class="tag">flavor</span> <span class="tag">lucky</span>
+      </header>
+      
+      <h3 class="event-title">Twenty-three books.</h3>
+      <p class="body">You came home with a stack to the chin. Bram picked one before you&#39;d shelved them. He sat on the kitchen floor and started reading. You did not say anything to interrupt the reading.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-lost-shoe">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-lost-shoe</code>
+        <span class="era-chip">any</span>
+        <span class="tag">humor</span> <span class="tag">flavor</span>
+      </header>
+      
+      <h3 class="event-title">Where is the other shoe.</h3>
+      <p class="body">Bram&#39;s left shoe was in the dryer, somehow. You did not investigate. There are not enough hours to investigate every mystery in this house. You re-tied the right one and called it Tuesday.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-pandemic-grocery-line">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-pandemic-grocery-line</code>
+        <span class="era-chip">pandemic</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">The 7am line at the store.</h3>
+      <p class="body">You queued in the dark with both kids in the cart. The shelves were lit and half-empty. You used to do this alone, at lunch, in fifteen minutes. You did not used to do it like this.</p>
+      <ul class="scene"><li>A pre-dawn parking lot.</li><li>A masked cashier.</li><li>A receipt longer than you expected.</li></ul>
+      <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-140">savings -140</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-pandemic-mask-tantrum">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-pandemic-mask-tantrum</code>
+        <span class="era-chip">pandemic</span>
+        <span class="tag">era</span> <span class="tag">stress</span>
+      </header>
+      
+      <h3 class="event-title">The mask, in the parking lot.</h3>
+      <p class="body">Bram refused the mask in the car. You stood by the open door for four minutes. A woman two spaces over watched. He put it on. She didn&#39;t say anything kind or unkind. She just nodded once, like a person who&#39;d been there.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-pandemic-relatives-text">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-pandemic-relatives-text</code>
+        <span class="era-chip">pandemic</span>
+        <span class="tag">family</span> <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">A check-in from your sister.</h3>
+      <p class="body">She texted to ask how &#39;the homeschool thing&#39; was going. She&#39;d been asking that for years, lightly. This time it had a new weight on it. You typed three honest sentences and then deleted them. You sent back two words and an emoji. She wrote back &#39;sending love&#39; and you both let it sit there.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-pandemic-yard-friendship">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-pandemic-yard-friendship</code>
+        <span class="era-chip">pandemic</span>
+        <span class="tag">lucky</span> <span class="tag">era</span> <span class="tag">community</span>
+      </header>
+      
+      <h3 class="event-title">Driveway friends.</h3>
+      <p class="body">The neighbor&#39;s kid — whose mom was suddenly homeschooling for the first time — wandered over with a soccer ball. Bram followed. The neighbor mom set out two camp chairs at a distance and waved. You waved back. By the end of the week you were waving on purpose.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+3">network +3</span> <span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-pandemic-zoom-cohort">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-pandemic-zoom-cohort</code>
+        <span class="era-chip">pandemic</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">The Zoom co-op meets.</h3>
+      <p class="body">Six families on a grid, most of them new at this. Hazel waving at a screen. A glitch every fourteen minutes. You took notes on a paper napkin so you wouldn&#39;t be tempted to open another tab. The Zoom was the new part. The lessons weren&#39;t.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+1">network +1</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-spouse-late">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-spouse-late</code>
+        <span class="era-chip">any</span>
+        <span class="tag">family</span> <span class="tag">relationship</span>
+      </header>
+      
+      <h3 class="event-title">Spouse, home late again.</h3>
+      <p class="body">The text said &#39;one more hour&#39; at six. The next text said &#39;sorry&#39; at nine. You held dinner. Then you didn&#39;t. The kids asked twice. You answered twice. By the third &#39;soon,&#39; you&#39;d run out of ways to say &#39;soon.&#39;</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-stat-high-burnout-doctor">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-stat-high-burnout-doctor</code>
+        <span class="era-chip">any</span>
+        <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>burnout &gt;80</code></div>
+      <h3 class="event-title">A doctor&#39;s visit.</h3>
+      <p class="body">You went in for one thing. The doctor asked about sleep, then about how it had been at home. You answered honestly for the first time in months. She wrote a referral. You took it.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-5">burnout -5</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span> <span class="effect-chip" data-key="savings" data-delta="-200">savings -200</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-stat-high-network-intro">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-stat-high-network-intro</code>
+        <span class="era-chip">any</span>
+        <span class="tag">lucky</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>Community &gt;50</code></div>
+      <h3 class="event-title">An introduction.</h3>
+      <p class="body">A co-op friend connected you to a mom across town who&#39;d been homeschooling for fifteen years. You met for coffee. You took two pages of notes. You drove home thinking you&#39;d been waiting a long time to talk to someone who&#39;d been doing this longer than you.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+4">network +4</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-stat-low-health-cold">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-stat-low-health-cold</code>
+        <span class="era-chip">any</span>
+        <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>health &lt;40</code></div>
+      <h3 class="event-title">A cold the kids gave you.</h3>
+      <p class="body">It started Sunday. By Tuesday you were teaching from the couch under a blanket. Hazel made cereal for Bram both mornings. She also made some for you. The bowl had more milk than cereal. You ate it.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="health" data-delta="+3">health +3</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-stat-low-savings-card">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-stat-low-savings-card</code>
+        <span class="era-chip">any</span>
+        <span class="tag">money</span> <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>savings &lt;800</code></div>
+      <h3 class="event-title">Card, declined.</h3>
+      <p class="body">At the grocery checkout, with Bram in the cart. The cashier said nothing. You used a different card. You stood in the parking lot for a minute before you started the engine. Bram asked why you were sad. You said you weren&#39;t sad. He let it go. You felt that.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-toddler-crayon">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-toddler-crayon</code>
+        <span class="era-chip">any</span>
+        <span class="tag">humor</span> <span class="tag">flavor</span>
+      </header>
+      
+      <h3 class="event-title">Bram ate part of a crayon.</h3>
+      <p class="body">It was a small piece. He looked guilty in advance. You looked it up — it&#39;s fine, apparently. Crayons are mostly wax. You wrote it in the journal anyway, because someone, twenty years from now, might want the date.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-toddler-marker-on-wall">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-toddler-marker-on-wall</code>
+        <span class="era-chip">any</span>
+        <span class="tag">humor</span> <span class="tag">flavor</span>
+      </header>
+      
+      <h3 class="event-title">Marker. Permanent. The wall.</h3>
+      <p class="body">You discovered it Friday. The wall does not look better. The marker is in fact permanent. Bram looked guilty in advance, again. You said &#39;we&#39;ll repaint it together this weekend.&#39; You did. The patch is slightly different. You did not mention it.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-40">savings -40</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+    </article>
+
+    <article class="card decision" id="hp-curriculum-boxed-vs-own">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m2+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-curriculum-boxed-vs-own</code>
+        <span class="tag">teaching</span> <span class="tag">identity</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=2</code></div>
+      <p class="prompt">The first-week binder is empty. Your sister-in-law swears by the boxed curriculum — open it, follow the script. Or you could write the plan yourself.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Open the box. Follow the plan.</div>
+          <ul class="scene"><li>A laminated week-one sheet.</li><li>A read-aloud you didn&#39;t pick.</li><li>Hazel finishes early.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-180">savings -180</span> <span class="effect-chip" data-key="burnout" data-delta="-3">burnout -3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+          <p class="flavor">The plan got you through the week. Some of the read-alouds you wouldn&#39;t have chosen. Hazel didn&#39;t mind. You sometimes did.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Write your own plan</div>
+          <ul class="scene"><li>A notebook. A library list.</li><li>Two long evenings.</li><li>A schedule that fits your kids.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+3">technicalSkill +3</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">Eleven hours of planning. The week ran. Three lessons hit, two didn&#39;t, and you knew exactly which were which by Friday.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-pandemic-screens-rule">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m3+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-pandemic-screens-rule</code>
+        <span class="tag">teaching</span> <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=3</code></div>
+      <p class="prompt">Hour seven of indoor weather. The screen rule you set on Monday has not survived to Thursday. You can let it go for the week, or you can hold the line.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Let it go this week</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-3">burnout -3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="-1">technicalSkill -1</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+          <p class="flavor">You let them watch the show twice through. You sat next to Bram for the second one. You both knew the dialogue. He recited it to you in the car the next day.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Hold the line</div>
+          <ul class="scene"><li>A timer.</li><li>A small mutiny.</li><li>A board game, eventually.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">The first hour was the hard one. By the third, they were drawing on the kitchen floor with sidewalk chalk you didn&#39;t remember buying. You let that part go.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-coop-invitation">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m4+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-coop-invitation</code>
+        <span class="tag">community</span> <span class="tag">work-life-balance</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=4</code></div>
+      <p class="prompt">A neighborhood co-op meets Tuesday mornings. Five families, shared lessons, a craft and a snack. You&#39;d be giving up every Tuesday.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Sign on</div>
+          <ul class="scene"><li>A driveway full of cars.</li><li>Six kids in a basement.</li><li>A schedule on the fridge.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="network" data-delta="+8">network +8</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">Bram found a friend. Hazel found two. You found a parent you actually like. Tuesday mornings, gone — and you don&#39;t quite miss them.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Stay solo for now</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="network" data-delta="-1">network -1</span></div>
+          <p class="flavor">You said maybe next year. The co-op kept going without you. You saw the photos in the group chat. The kids in them looked busy.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-sick-day-on-test-day">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m6+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-sick-day-on-test-day</code>
+        <span class="tag">family</span> <span class="tag">teaching</span> <span class="tag">humor</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=6</code></div>
+      <p class="prompt">Hazel has a fever Tuesday morning. The math test you scheduled is the math test you scheduled. The fever is real.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Push the test. Make soup.</div>
+          <ul class="scene"><li>A thermometer.</li><li>A blanket on the couch.</li><li>A pot on the stove.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">She slept until noon. You sat next to her and read a book that wasn&#39;t on the lesson plan. The test moved to Friday. Friday came. She aced it.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Quiz orally from the couch</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+          <p class="flavor">You read the word problems out loud. She answered between sips of broth. You got through it. The whole thing felt slightly mean and also like a small victory. You weren&#39;t sure how to file it.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-in-law-visit">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m8+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-in-law-visit</code>
+        <span class="tag">family</span> <span class="tag">identity</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=8</code></div>
+      <p class="prompt">Your mother-in-law is visiting Friday. She has views about the kids&#39; schooling. She has already said &#39;just asking, of course&#39; on the phone.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Set the table and the terms</div>
+          <ul class="scene"><li>A clean kitchen.</li><li>A pointed remark.</li><li>A polite redirect.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">You named the curriculum. You showed her the math workbook. She nodded. She brought it up again at dessert. You redirected again. By Sunday she was telling neighbors how thorough you were.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Smile and let it pass</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span></div>
+          <p class="flavor">You said &#39;mm-hm&#39; four times. She left a clipping on the counter — a magazine piece about a school in the next town over. You threw it away after she was gone. You felt small about that for two days.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-coop-snack-politics">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m10+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-coop-snack-politics</code>
+        <span class="tag">community</span> <span class="tag">humor</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=10</code></div>
+      <p class="prompt">A co-op parent emails the group: she&#39;d &#39;love it if we could move toward all-organic snack week.&#39; Three families are nodding. Two are not.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Reply with a measured counter</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span></div>
+          <p class="flavor">You wrote four drafts. The one you sent said &#39;I love the spirit — could we make it suggested rather than required?&#39; Three people thanked you off-list. The original sender did not.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Stay out of it</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span> <span class="effect-chip" data-key="network" data-delta="-2">network -2</span></div>
+          <p class="flavor">You let the thread go. The new policy passed. Your Friday snack was, that week, a bag of fish-shaped crackers in a Ziploc. The kids did not, you noticed, care.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-pandemic-spouse-furlough">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m10+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-pandemic-spouse-furlough</code>
+        <span class="tag">family</span> <span class="tag">money</span> <span class="tag">relationship</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=10</code></div>
+      <p class="prompt">Your spouse&#39;s hours are cut by a third. The check on the fridge is the household plan. They want to know if you want to talk about it tonight, or wait until the weekend.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Tonight. After the kids are down.</div>
+          <ul class="scene"><li>A glass of something.</li><li>The kitchen table, cleared.</li><li>A long math conversation.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-200">savings -200</span> <span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+          <p class="flavor">You both pulled out the budget. You both knew it before you started. You wrote down four cuts and one possible side gig. You went to bed less afraid than you&#39;d been an hour before.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Wait until the weekend</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span></div>
+          <p class="flavor">You said &#39;let&#39;s wait.&#39; The week was longer for it. By Friday the conversation had grown teeth it didn&#39;t need. You had it anyway. You both wished you&#39;d had it Tuesday.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-unschooling-week">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-unschooling-week</code>
+        <span class="tag">teaching</span> <span class="tag">identity</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=12</code></div>
+      <p class="prompt">You read a blog post about unschooling and now it&#39;s eleven PM and you&#39;re rethinking the whole curriculum. You could try one project-based week as a test.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">One week. Lichen and bridges.</div>
+          <ul class="scene"><li>A walk in the woods.</li><li>Tape, glue, popsicle sticks.</li><li>A presentation at the kitchen table.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+3">technicalSkill +3</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">They went deeper than you expected. Hazel asked questions that weren&#39;t on any worksheet. Bram learned the word &#39;symbiosis.&#39; You went back to the textbook on Monday anyway. You weren&#39;t ready to give it up.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Stick with the plan you have</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">You closed the laptop. You&#39;d had a long enough week. The plan you had was working. The blog would be there next month, and it was.</p>
+        </div></div>
+    </article>
+
+    <article class="card event" id="evt-hp-good-physical">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-good-physical</code>
+        <span class="era-chip">any</span>
+        <span class="tag">lucky</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=12</code></div>
+      <h3 class="event-title">An annual checkup.</h3>
+      <p class="body">You went to your own doctor for the first time in a year and a half. The blood work was unremarkable. Unremarkable is the best kind of result. You scheduled the next one before you left. You meant it this time.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="health" data-delta="+3">health +3</span> <span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-hazel-first-chapter-book">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-hazel-first-chapter-book</code>
+        <span class="era-chip">any</span>
+        <span class="tag">lucky</span> <span class="tag">flavor</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=12</code></div>
+      <h3 class="event-title">She read the whole thing.</h3>
+      <p class="body">Hazel finished the chapter book without saying she was reading the chapter book. You found it on the couch face-down, finished. She didn&#39;t bring it up. You decided not to either. You both knew.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span></div>
+    </article>
+
+    <article class="card decision" id="hp-bram-reading-struggle">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m14+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-bram-reading-struggle</code>
+        <span class="tag">family</span> <span class="tag">teaching</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=14</code></div>
+      <p class="prompt">Bram is six and the letters are still rearranging themselves on the page for him. The boxed curriculum says he should be reading by now. The boxed curriculum doesn&#39;t know him.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Get him evaluated</div>
+          <ul class="scene"><li>An office.</li><li>A puzzle and a stopwatch.</li><li>A report with bullet points.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-450">savings -450</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">The evaluator was warm. The word was &#39;dyslexia,&#39; said gently. There were resources. You cried in the car for a minute before you started it. Then you started it.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Give him time and read together</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">You read every night. You let the worksheet wait. Eight months later he picked up a chapter book on his own and you didn&#39;t say anything because you didn&#39;t want him to notice you&#39;d noticed.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-park-defense">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m14+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-park-defense</code>
+        <span class="tag">community</span> <span class="tag">identity</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=14</code></div>
+      <p class="prompt">A dad at the park asks, with the careful politeness of someone winding up to disagree, what you do &#39;about socialization.&#39; Hazel is right there, building something out of pinecones.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Answer the real question</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+          <p class="flavor">You said the co-op meets Tuesdays. You said the library Wednesdays. You said she has more friends than you did at her age. He nodded like he was filing it. You couldn&#39;t tell if you were defensive or accurate. Both, probably.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Just smile and watch the kids</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span></div>
+          <p class="flavor">You said &#39;oh, you know, plenty.&#39; He nodded. You both watched the pinecone tower. It fell over. Hazel started a new one. You felt the dad&#39;s question still sitting in the air ten minutes after he left.</p>
+        </div></div>
+    </article>
+
+    <article class="card event" id="evt-hp-coop-friction">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m14+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-coop-friction</code>
+        <span class="era-chip">any</span>
+        <span class="tag">community</span> <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=14</code></div>
+      <h3 class="event-title">A passive-aggressive thread.</h3>
+      <p class="body">Someone in the co-op chat wrote &#39;just a thought&#39; before a paragraph that was clearly not just a thought. Everyone knows what &#39;just a thought&#39; means. The thumbs-up&#39;ers know. The non-thumbs-up&#39;ers know. The cat knows. Four parents thumbs-up&#39;d. Three did not. You did not. You closed the app.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="-2">network -2</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-park-grade-question">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m18+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-park-grade-question</code>
+        <span class="era-chip">any</span>
+        <span class="tag">community</span> <span class="tag">identity</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=18</code></div>
+      <h3 class="event-title">What grade is she in?</h3>
+      <p class="body">Another mom at the park asked, friendly. You said the honest thing — that you don&#39;t really track it that way. There was a small pause. The other mom said &#39;cool&#39; the way people say &#39;cool&#39; when they mean &#39;huh.&#39;</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-spouse-promo">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m18+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-spouse-promo</code>
+        <span class="era-chip">any</span>
+        <span class="tag">family</span> <span class="tag">lucky</span> <span class="tag">money</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=18</code></div>
+      <h3 class="event-title">A promotion at the other house.</h3>
+      <p class="body">Your spouse got the bump. You celebrated with a bottle of something nice. The next morning the math was different in a small way. The math was different in a small way for a long time.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+3000">savings +3000</span> <span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+    </article>
+
+    <article class="card decision" id="hp-recital-conflict">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m20+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-recital-conflict</code>
+        <span class="tag">family</span> <span class="tag">humor</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=20</code></div>
+      <p class="prompt">Bram&#39;s piano recital is Saturday afternoon. So is your one friend&#39;s surprise fortieth. Both will notice if you skip.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">The recital</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="network" data-delta="-1">network -1</span></div>
+          <p class="flavor">He played his piece. He missed two notes. He didn&#39;t notice he&#39;d missed them. You did, and didn&#39;t mind. The friend forgave you. They wanted the long version of the story over coffee the next week.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">The party</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span> <span class="effect-chip" data-key="network" data-delta="+3">network +3</span></div>
+          <p class="flavor">Your spouse went to the recital. They filmed it. You saw the video later that night and felt the specific small ache of not having been the one in the audience. You also had a very good evening. Both were true.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Half of each</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+          <p class="flavor">You did the recital, then the party. You missed the cake. You caught the toast. Bram, asked later if you&#39;d been there, said yes. He wasn&#39;t wrong, exactly. You&#39;d been there for the part he could see.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-end-of-year-evaluation">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m24+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-end-of-year-evaluation</code>
+        <span class="tag">teaching</span> <span class="tag">money</span> <span class="tag">accountability</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=24</code></div>
+      <p class="prompt">The state wants an end-of-year evaluation. You can put Hazel through a standardized test, or pay an evaluator to write a portfolio review instead.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Sit the test</div>
+          <ul class="scene"><li>Hazel in a quiet room.</li><li>A No. 2 pencil.</li><li>Three hours and a score sheet.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+3">technicalSkill +3</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">She scored above grade in two subjects, below in one. The number was somehow both a relief and a verdict. You knew exactly what to work on by Monday.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Hire the evaluator</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-250">savings -250</span> <span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span></div>
+          <p class="flavor">The evaluator was kind. The portfolio narrative used the word &#39;curious&#39; three times. You weren&#39;t sure if that was teaching or marketing.</p>
+        </div></div>
+    </article>
+
+    <article class="card event" id="evt-hp-co-op-parent-drift">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m24+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-co-op-parent-drift</code>
+        <span class="era-chip">any</span>
+        <span class="tag">community</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=24</code></div>
+      <h3 class="event-title">A friend left the co-op.</h3>
+      <p class="body">She sent the email Sunday night. The reasons were vague and the warmth was real. You wrote back something kind. You meant it. You also knew you would see her less, and that part felt heavier than the reasons.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="-2">network -2</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card decision" id="hp-rebound-back-to-school-wave">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m25+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-rebound-back-to-school-wave</code>
+        <span class="tag">community</span> <span class="tag">identity</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=25</code></div>
+      <p class="prompt">Three of your park-bench parents sent their kids back to school this fall. The group chat is quieter on weekdays. Hazel asks if she can go too.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Talk it through</div>
+          <ul class="scene"><li>A long walk.</li><li>A list of pros and cons.</li><li>A decision, for now.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+          <p class="flavor">She wanted, mostly, to be where her friends were. You said you understood. You said let&#39;s try one more semester. She said okay in a way that wasn&#39;t fully okay. You both knew.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Reaffirm the choice. Out loud.</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span> <span class="effect-chip" data-key="reputation" data-delta="-1">reputation -1</span></div>
+          <p class="flavor">You told her why you&#39;d started. You told her what you saw in her this year. She nodded. She still missed her friends. You missed your park-bench parents. You both kept going.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-creative-project">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m30+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-creative-project</code>
+        <span class="tag">identity</span> <span class="tag">career-movement</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=30</code></div>
+      <p class="prompt">There&#39;s a small thing you used to make — pottery, a podcast, line drawings, whatever it is. It has been a long time. You could put one evening a week into it again.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">One evening a week. Non-negotiable.</div>
+          <ul class="scene"><li>A door, closed.</li><li>A timer.</li><li>Something coming back.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-4">burnout -4</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">Eight weeks in, you finished a thing. It wasn&#39;t very good. You finished a second thing. It was better. You hadn&#39;t realized how much you&#39;d missed having a thing that was just yours.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Maybe when the kids are older</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="-1">reputation -1</span></div>
+          <p class="flavor">You closed the tab. You went to bed at the kids&#39; bedtime, again. The version of you that made things felt one room farther away.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-contract-work-offer">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m36+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-contract-work-offer</code>
+        <span class="tag">career-movement</span> <span class="tag">identity</span> <span class="tag">money</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=36</code></div>
+      <p class="prompt">An old coworker has a remote contract that fits — twenty-five hours a week, decent rate. Bram is finally old enough to read in the other room. The work would not get done at the kitchen table.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Take the contract</div>
+          <ul class="scene"><li>An offer email.</li><li>A locked door, an hour at a time.</li><li>A paycheck with your name on it.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+4000">savings +4000</span> <span class="effect-chip" data-key="reputation" data-delta="+4">reputation +4</span> <span class="effect-chip" data-key="burnout" data-delta="+5">burnout +5</span> <span class="effect-chip" data-key="technicalSkill" data-delta="-1">technicalSkill -1</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">The work was good. You were good at it. Hazel knocked on the door once and you said &#39;in a minute&#39; and then forgot for forty. You didn&#39;t forget that you&#39;d forgotten.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Pass for now</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="reputation" data-delta="-1">reputation -1</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">You wrote a careful no. The coworker said they understood — and they did, mostly. The version of you they remembered would have said yes. You weren&#39;t sure where that version had gone.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-relocation-pitch">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m36+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-relocation-pitch</code>
+        <span class="tag">family</span> <span class="tag">career-movement</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=36</code></div>
+      <p class="prompt">Your spouse&#39;s company is opening an office two states away. The package is generous. Your co-op, your friends, your house — those are here.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Pack up. Try the new place.</div>
+          <ul class="scene"><li>A moving truck.</li><li>Empty rooms.</li><li>A new park with no familiar dogs.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+8000">savings +8000</span> <span class="effect-chip" data-key="network" data-delta="-15">network -15</span> <span class="effect-chip" data-key="burnout" data-delta="+6">burnout +6</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">The new house was bigger. The first month, Bram kept asking when you were going home. By the third, he stopped asking. You weren&#39;t sure if that was good. You decided to decide later.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Stay. Spouse declines.</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">Your spouse turned it down. They didn&#39;t bring up the salary number for months. When it came up at Thanksgiving, you both pretended it was an old wound. It wasn&#39;t quite.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Negotiate spouse-only commute</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+3000">savings +3000</span> <span class="effect-chip" data-key="burnout" data-delta="+5">burnout +5</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span> <span class="effect-chip" data-key="health" data-delta="-2">health -2</span></div>
+          <p class="flavor">They flew out Sunday nights, back Thursdays. The kitchen table got quieter Mondays. You held the four-day stretches together. By the eighth month you both knew the math didn&#39;t quite work.</p>
+        </div></div>
+    </article>
+        </section>
+
+        <section class="era-band" id="era-rebound" data-era="rebound">
+          <header class="era-header">
+            <h2>Rebound (2023 – 2024)</h2>
+            <span class="band-count">7 cards · 2 narrative beats</span>
+          </header>
+          
+    <article class="card narrative" id="month-37">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 37</span>
+        <span class="pool-badge">2023-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">momentum</span>
+      </header>
+      <h3 class="narrative-title">Hazel is nine. Bram is six.</h3>
+<p class="narrative-body">Hazel reads anything you&#39;ll let her. Bram is doing actual arithmetic at the actual table. You are, somehow, still the teacher.</p>
+    </article>
+
+    <article class="card narrative" id="month-49">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 49</span>
+        <span class="pool-badge">2024-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">momentum</span>
+      </header>
+      <h3 class="narrative-title">Mid-decade.</h3>
+<p class="narrative-body">Four years done. Six to go. The kids are older than you keep expecting them to be.</p>
+    </article>
+          
+    <article class="card event" id="evt-hp-rebound-comp-jump">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m37+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-rebound-comp-jump</code>
+        <span class="era-chip">rebound</span>
+        <span class="tag">money</span> <span class="tag">era</span> <span class="tag">lucky</span>
+      </header>
+      
+      <h3 class="event-title">Comp adjustment.</h3>
+      <p class="body">Your spouse&#39;s company emailed a &#39;market adjustment&#39; note. The base went up. The line about &#39;reflecting market realities&#39; read, this year, like good news. You let it.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+2400">savings +2400</span> <span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-rebound-school-friends-return">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m37+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-rebound-school-friends-return</code>
+        <span class="era-chip">rebound</span>
+        <span class="tag">community</span> <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">Three less cars on the street.</h3>
+      <p class="body">By the time you walked the kids out Tuesday, three of the families who&#39;d joined you in 2020 had sent theirs back to brick-and-mortar. They were going back. You were doing what you&#39;d been doing. You&#39;d known this was coming. The morning still felt different — the porch was quieter — and you stood there a full extra minute.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="-2">network -2</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-spouse-layoff">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m37+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-spouse-layoff</code>
+        <span class="era-chip">rebound</span>
+        <span class="tag">family</span> <span class="tag">money</span> <span class="tag">era</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=36</code></div>
+      <h3 class="event-title">A package on the table.</h3>
+      <p class="body">Your spouse came home with a folder. Not a bad folder. A folder. They sat at the kitchen table and didn&#39;t open it for forty minutes. You did not say anything for the forty minutes. You sat with them.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-2000">savings -2000</span> <span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+    </article>
+
+    <article class="card decision" id="hp-screen-time-teen-precursor">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m42+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-screen-time-teen-precursor</code>
+        <span class="tag">family</span> <span class="tag">teaching</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=42</code></div>
+      <p class="prompt">Hazel asks for a phone. The number she names is a year older than the number you were planning. Most of her co-op friends have them.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Get one with rails</div>
+          <ul class="scene"><li>An activation Sunday.</li><li>A parental-control app.</li><li>Twelve months of small renegotiations.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-400">savings -400</span> <span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">She had it by Tuesday. The first week she showed you everything she texted. The second week she didn&#39;t. You expected that and were still a little stung when it happened.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Hold the line another year</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span></div>
+          <p class="flavor">You explained your reasoning. She listened. She did not agree. The group chat she wasn&#39;t in continued without her, which she also did not agree with, but did not say.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-spouse-burnout">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m48+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-spouse-burnout</code>
+        <span class="tag">family</span> <span class="tag">relationship</span> <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=48</code></div>
+      <p class="prompt">Your spouse hasn&#39;t laughed at the dinner table in two weeks. They say they&#39;re fine. The pattern is not fine.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Take the weekend for them</div>
+          <ul class="scene"><li>A friend to watch the kids.</li><li>A cabin two hours away.</li><li>A long, slow Saturday.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-500">savings -500</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span></div>
+          <p class="flavor">They cried on Friday night. They laughed at breakfast Sunday. Neither thing was small. You drove home Sunday afternoon listening to a podcast neither of you remembered. It was the best two days of the season.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Lighter the home load. Quietly.</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span></div>
+          <p class="flavor">You took the morning routines for a month. You did the dishes you usually leave. They noticed in the third week and said so. You said &#39;I know.&#39; It was, somehow, enough.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Wait it out</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="reputation" data-delta="-3">reputation -3</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+          <p class="flavor">You told yourself it would pass. It mostly did. The next dip came in the spring and was harder. You&#39;d remember this one as the warning you&#39;d let go.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-ai-tutor-decision">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m60+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-ai-tutor-decision</code>
+        <span class="tag">teaching</span> <span class="tag">identity</span> <span class="tag">era</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=60</code></div>
+      <p class="prompt">The AI tutor product everyone is talking about offers a family plan. The trial works — it really does. The math hour you used to teach could be its math hour.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Hand math to the tutor</div>
+          <ul class="scene"><li>A login screen.</li><li>Quiet hours at the kitchen table.</li><li>A teacher with a kinder voice than yours.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-240">savings -240</span> <span class="effect-chip" data-key="burnout" data-delta="-5">burnout -5</span> <span class="effect-chip" data-key="technicalSkill" data-delta="-3">technicalSkill -3</span> <span class="effect-chip" data-key="reputation" data-delta="-1">reputation -1</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">Bram likes it. He learns. You sit in the other room and listen to him laugh at something the bot said. It is, you suspect, slightly funnier than you. You&#39;re not sure how to feel about that one.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Keep teaching it yourself</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+3">technicalSkill +3</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">You doubled down. You re-read the chapter the night before. You worked the problems first. You were a worse explainer than the bot in some moments and a better one in others. The better moments were the ones you wanted to remember.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Let them use it sometimes</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">You set it up as one tool among several. Hazel went to it when she was stuck. Bram preferred you. You weren&#39;t sure if that was about you or about the bot. You took the win.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-mid-career-reentry">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m60+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-mid-career-reentry</code>
+        <span class="tag">career-movement</span> <span class="tag">identity</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=60</code></div>
+      <p class="prompt">A friend has an opening that would actually use what you used to do. Mostly remote. Four days a week. You&#39;d have to find afternoon coverage for the kids and rewrite your whole week.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Take it. Build the scaffolding.</div>
+          <ul class="scene"><li>A signed offer.</li><li>A new calendar.</li><li>Three afternoons of co-op coverage.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+9000">savings +9000</span> <span class="effect-chip" data-key="reputation" data-delta="+5">reputation +5</span> <span class="effect-chip" data-key="burnout" data-delta="+6">burnout +6</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span> <span class="effect-chip" data-key="network" data-delta="+3">network +3</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">Month one was a scramble. Month three was a routine. Month six you caught yourself describing what you did at work to someone at a party and felt how long it had been since you&#39;d had that sentence to say.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Hold for now</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span> <span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span></div>
+          <p class="flavor">You wrote a careful no. The friend understood. The role got filled by someone who had been waiting for something like it. You wondered if you should have been that someone. You also didn&#39;t, mostly.</p>
+        </div></div>
+    </article>
+        </section>
+
+        <section class="era-band" id="era-ai-shift" data-era="ai-shift">
+          <header class="era-header">
+            <h2>AI-Shift (2025 – 2026)</h2>
+            <span class="band-count">9 cards · 2 narrative beats</span>
+          </header>
+          
+    <article class="card narrative" id="month-61">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 61</span>
+        <span class="pool-badge">2025-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">inflection</span>
+      </header>
+      <h3 class="narrative-title">Five years.</h3>
+<p class="narrative-body">Halfway. The version of you that pulled the kids out for two weeks isn&#39;t quite who&#39;s sitting at this table anymore.</p>
+    </article>
+
+    <article class="card narrative" id="month-73">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 73</span>
+        <span class="pool-badge">2026-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">inflection</span>
+      </header>
+      <h3 class="narrative-title">The slow arc.</h3>
+<p class="narrative-body">Hazel is twelve. Bram is nine. The questions are different now. You are different now.</p>
+    </article>
+          
+    <article class="card event" id="evt-hp-ai-doorway">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m61+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-ai-doorway</code>
+        <span class="era-chip">ai-shift</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">Bram asks the chatbot.</h3>
+      <p class="body">You stood in the doorway. Bram had typed the social-studies question into the chatbot before you got there. The answer was on the screen, formatted, with bullet points. He read it out loud to no one in particular. He didn&#39;t need you for this one. You didn&#39;t know what to do with the small drop you felt. Bram, sensing nothing, asked if there were more questions.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="technicalSkill" data-delta="-1">technicalSkill -1</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-ai-shift-evangelist-parent">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m61+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-ai-shift-evangelist-parent</code>
+        <span class="era-chip">ai-shift</span>
+        <span class="tag">era</span> <span class="tag">community</span> <span class="tag">humor</span>
+      </header>
+      
+      <h3 class="event-title">The co-op&#39;s new convert.</h3>
+      <p class="body">A co-op parent has, this week, recommended the new tutor in three separate channels. You&#39;ve tried it. It&#39;s fine. You don&#39;t have the heart to tell her she&#39;s the fifth this year. You&#39;ve been here long enough to know there&#39;ll be a sixth.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-ai-shift-grocery-screen">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m61+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-ai-shift-grocery-screen</code>
+        <span class="era-chip">ai-shift</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">The cashier-less line.</h3>
+      <p class="body">The store rebuilt itself over a weekend. Hazel scanned all the things while you bagged. Bram pointed at the screen and said &#39;this is faster.&#39; He was, you noted, correct.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-ai-shift-spouse-tool">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m61+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-ai-shift-spouse-tool</code>
+        <span class="era-chip">ai-shift</span>
+        <span class="tag">era</span> <span class="tag">family</span>
+      </header>
+      
+      <h3 class="event-title">Your spouse&#39;s workflow, halved.</h3>
+      <p class="body">Your spouse came home and said &#39;the thing that took me a day takes me an hour now.&#39; They were not sure if this was good for them. You weren&#39;t sure either. You did the dishes together that night and didn&#39;t say anything more about it.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span></div>
+    </article>
+
+    <article class="card decision" id="hp-elderly-parent-help">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m66+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-elderly-parent-help</code>
+        <span class="tag">family</span> <span class="tag">identity</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=66</code></div>
+      <p class="prompt">Your father had a fall. It was minor. It is also, you understand, the first one. He could use someone present for a few weeks.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Go. Bring the school with you.</div>
+          <ul class="scene"><li>A drive with two kids.</li><li>A spare room with a kitchen-table desk.</li><li>Three weeks of multi-generation breakfast.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-700">savings -700</span> <span class="effect-chip" data-key="burnout" data-delta="+5">burnout +5</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">The kids ran your father&#39;s house in a way he hadn&#39;t seen up close. He watched Hazel teach Bram a science thing one morning and said, later, &#39;huh.&#39; That huh was worth the trip.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Send help. Visit on weekends.</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-400">savings -400</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">You hired a caregiver three afternoons. You drove out Friday nights. By the third weekend he wasn&#39;t pretending he didn&#39;t need it. You wished you&#39;d gone for the long stay. You also knew why you hadn&#39;t.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Call more. Visit at Thanksgiving.</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+          <p class="flavor">You called every other day. He was fine, he said. Mostly he was. The fall you didn&#39;t witness sat in the back of your mind for the season. You&#39;d remember the season by that fact.</p>
+        </div></div>
+    </article>
+
+    <article class="card event" id="evt-hp-ai-shift-essay-question">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m66+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-ai-shift-essay-question</code>
+        <span class="era-chip">ai-shift</span>
+        <span class="tag">era</span> <span class="tag">teaching</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=66</code></div>
+      <h3 class="event-title">The essay sounded different.</h3>
+      <p class="body">Hazel&#39;s essay used a phrase she didn&#39;t say out loud. You didn&#39;t accuse. You asked her to read it back. She did, slowly, and stopped at the phrase. She said &#39;okay, I rewrote it with help.&#39; You said thank you. You both agreed on a rule. Then you agreed on a different rule the next week.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+    </article>
+
+    <article class="card decision" id="hp-eldest-wants-school">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m72+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-eldest-wants-school</code>
+        <span class="tag">family</span> <span class="tag">identity</span> <span class="tag">transition</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=72</code></div>
+      <p class="prompt">Hazel is twelve. She asks, calmly, if she can go to school in the fall. She has thought about it. She is not asking permission so much as telling you where she&#39;s heading.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Sign her up</div>
+          <ul class="scene"><li>A registration packet.</li><li>A first-day photo.</li><li>A kitchen with one student in it.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+5">reputation +5</span> <span class="effect-chip" data-key="burnout" data-delta="-3">burnout -3</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="-2">technicalSkill -2</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">She walked in like she&#39;d been planning it for a year. Maybe she had been. The kitchen at 9am was quiet in a way you weren&#39;t ready for.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Make the case for one more year</div>
+          <ul class="scene"><li>A long conversation.</li><li>A compromise neither of you loves.</li><li>The fall begins as before.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="reputation" data-delta="-3">reputation -3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">She stayed. The year was fine. Something in how she looked at you on Tuesdays didn&#39;t quite return to where it was. You noticed. You weren&#39;t sure she did.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-mental-health-flag">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m72+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-mental-health-flag</code>
+        <span class="tag">family</span> <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=72</code></div>
+      <p class="prompt">Bram has been quieter for three weeks. Not bad quiet — flat quiet. You can ask, you can wait, or you can call the pediatrician.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Ask. Then listen.</div>
+          <ul class="scene"><li>A drive, the long way.</li><li>A question.</li><li>A quiet answer.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span></div>
+          <p class="flavor">He told you about something at the co-op you hadn&#39;t known about. You didn&#39;t fix it on the drive. You listened. You both got fries on the way back. He was lighter at dinner. Not all-the-way lighter. Lighter.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Call the pediatrician</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-180">savings -180</span> <span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">She listened for forty minutes. She gave you the name of someone. The someone had a six-week wait. You took the appointment. You told Bram. He said &#39;okay.&#39; He looked, very briefly, relieved.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Give him another week</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="health" data-delta="-2">health -2</span> <span class="effect-chip" data-key="reputation" data-delta="-1">reputation -1</span></div>
+          <p class="flavor">You watched. The week didn&#39;t help. You called the pediatrician on a Tuesday and wished you&#39;d called the Tuesday before. The waitlist was the same length either week. The watching was the part that cost you.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-teen-rebellion-late-night">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m84+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-teen-rebellion-late-night</code>
+        <span class="tag">family</span> <span class="tag">teen</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=84</code></div>
+      <p class="prompt">Hazel comes in at 11:47. She said 11:00. She is not drunk and she is not crying and she is also not making eye contact. You can lead with the time or with the look.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Lead with the look</div>
+          <ul class="scene"><li>A kettle on.</li><li>Two chairs at the table.</li><li>A long silence broken first by her.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">She talked for forty-five minutes about something you hadn&#39;t known was bothering her. You almost didn&#39;t get to the time at all. When you did, she said &#39;I know, I&#39;m sorry&#39; in a way that meant she&#39;d been waiting for you to say it. You both went to bed at 1.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Lead with the time</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="reputation" data-delta="-3">reputation -3</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+          <p class="flavor">You started with 11:00. She defended. You escalated. By 12:15 you were both saying things you&#39;d want to walk back by morning. You walked them back by morning. The thing she&#39;d been about to tell you didn&#39;t come up again for a month.</p>
+        </div></div>
+    </article>
+        </section>
+
+        <section class="era-band" id="era-uncertain-future" data-era="uncertain-future">
+          <header class="era-header">
+            <h2>Uncertain Future (2027 – 2029)</h2>
+            <span class="band-count">11 cards · 3 narrative beats</span>
+          </header>
+          
+    <article class="card narrative" id="month-85">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 85</span>
+        <span class="pool-badge">2027-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">inflection</span>
+      </header>
+      <h3 class="narrative-title">Choices have weight.</h3>
+<p class="narrative-body">Three years left in this stretch. Hazel will be in high school by the end of it. That used to be far away.</p>
+    </article>
+
+    <article class="card narrative" id="month-97">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 97</span>
+        <span class="pool-badge">2028-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">consolidation</span>
+      </header>
+      <h3 class="narrative-title">Eight years in.</h3>
+<p class="narrative-body">You know yourself differently than you did at the start. Some of that you chose. Some of it chose you.</p>
+    </article>
+
+    <article class="card narrative" id="month-109">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 109</span>
+        <span class="pool-badge">2029-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">reflection</span>
+      </header>
+      <h3 class="narrative-title">The last full year.</h3>
+<p class="narrative-body">Hazel is fifteen. Bram is twelve. The decade closes ahead. What&#39;s left to teach?</p>
+    </article>
+          
+    <article class="card event" id="evt-hp-decade-photo">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m85+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-decade-photo</code>
+        <span class="era-chip">uncertain-future</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">A photo from 2020.</h3>
+      <p class="body">You found it scrolling for something else. Hazel was six. Bram was three. You were standing in a kitchen you no longer have, holding a binder you no longer use. The version of you in the photo could not have predicted the version of you holding the phone.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span></div>
+    </article>
+
+    <article class="card event" id="evt-hp-uncertain-becoming-mentor">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m85+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-uncertain-becoming-mentor</code>
+        <span class="era-chip">uncertain-future</span>
+        <span class="tag">era</span> <span class="tag">community</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>Community &gt;35</code></div>
+      <h3 class="event-title">A new parent, asking.</h3>
+      <p class="body">A first-year homeschool mom in the co-op asked if you&#39;d grab coffee. She wanted to know how you did it. You told her the truth. Some weeks great, some weeks survival. She laughed, the relieved kind. You drove home thinking about who&#39;d told you that, eight years ago.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span></div>
+    </article>
+
+    <article class="card decision" id="hp-teen-dating">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m90+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-teen-dating</code>
+        <span class="tag">family</span> <span class="tag">teen</span> <span class="tag">identity</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=90</code></div>
+      <p class="prompt">Hazel mentions, casually, that someone from the co-op is &#39;kind of&#39; her boyfriend now. She has practiced this sentence. She is watching your face.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Ask one good question</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+          <p class="flavor">You asked what she liked about him. She thought about it. She gave you a real answer. You wrote the answer down later, in the journal, because you knew you&#39;d want to remember this version of her.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Set the rules first</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span></div>
+          <p class="flavor">You listed three things. She listened politely. You realized halfway through the third that you&#39;d been talking for a while. She nodded and said &#39;okay, can I go now.&#39; You said yes. The conversation, in the version where you&#39;d asked a question first, did not happen.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Tease her gently</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">You smiled and said &#39;kind of, huh.&#39; She rolled her eyes and laughed. The actual conversation came four days later, over dishes, exactly the way she wanted it to.</p>
+        </div></div>
+    </article>
+
+    <article class="card event" id="evt-hp-uncertain-spouse-search">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m90+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-uncertain-spouse-search</code>
+        <span class="era-chip">uncertain-future</span>
+        <span class="tag">era</span> <span class="tag">family</span> <span class="tag">money</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=90</code></div>
+      <h3 class="event-title">Your spouse, on the job market.</h3>
+      <p class="body">They updated the resume Sunday. They told you the number of recruiter messages on Monday. The number was lower than two years ago. They said &#39;it&#39;s fine.&#39; They are, you can tell, also looking inward at the same time. You let them.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="savings" data-delta="-100">savings -100</span></div>
+    </article>
+
+    <article class="card decision" id="hp-college-prep-route">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m96+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-college-prep-route</code>
+        <span class="tag">family</span> <span class="tag">teen</span> <span class="tag">transition</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=96</code></div>
+      <p class="prompt">Hazel is fourteen. The high-school decision is real now. Dual enrollment at the community college, a private school, or finishing at home — pick a frame for the next four years.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Dual enrollment</div>
+          <ul class="scene"><li>A campus tour at fourteen.</li><li>An advisor meeting.</li><li>A class schedule that doesn&#39;t fit any kitchen table.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-1800">savings -1800</span> <span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="reputation" data-delta="+4">reputation +4</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+3">technicalSkill +3</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">She walked into Comp 101 the first morning carrying a notebook you&#39;d watched her label the night before. She came home full of someone else&#39;s syllabus. You weren&#39;t her main teacher anymore. You were her ride.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Private school</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-12000">savings -12000</span> <span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="network" data-delta="+3">network +3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="-1">technicalSkill -1</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">The tuition was the conversation for a month. You signed in May. She started in August. The first week she came home with two friends&#39; names and a story about a teacher you would have liked. The kitchen at 9am was very quiet.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Finish at home</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+4">technicalSkill +4</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span></div>
+          <p class="flavor">You did the planning differently this year. You leaned on online classes for the things you couldn&#39;t teach. You wrote her recommendation letter eight months early because you wanted to get it right. You did get it right.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-trade-school-suggestion">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m96+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-trade-school-suggestion</code>
+        <span class="tag">family</span> <span class="tag">teen</span> <span class="tag">identity</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=96</code></div>
+      <p class="prompt">Bram, eleven, says, casually, that he doesn&#39;t think he wants to go to college. He&#39;s been watching videos about welding. He wants you to know.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Take it seriously, at eleven</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">You asked him what about welding. He showed you a forty-minute video. You watched the whole thing. You did not say anything about it being early to decide. You did say it sounded interesting. He kept watching the videos. He also kept doing his math.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Gently keep the door open</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">You said &#39;okay, we&#39;ll see what eighteen-year-old you wants.&#39; He shrugged. You both knew you&#39;d said the careful adult thing. He kept watching the videos anyway. So did you, sometimes.</p>
+        </div></div>
+    </article>
+
+    <article class="card event" id="evt-hp-uncertain-college-anxiety">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m96+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">evt-hp-uncertain-college-anxiety</code>
+        <span class="era-chip">uncertain-future</span>
+        <span class="tag">era</span> <span class="tag">family</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=96</code></div>
+      <h3 class="event-title">The college number.</h3>
+      <p class="body">A news article quoted the average sticker price. You stared at the number for a minute. Then you closed the tab. Then you opened a different tab and did the actual math. The math was, somehow, slightly better than the article had implied. Not much. You took the not-much. The not-much was the day&#39;s win.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="savings" data-delta="-100">savings -100</span></div>
+    </article>
+
+    <article class="card decision" id="hp-college-test-or-portfolio">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m102+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-college-test-or-portfolio</code>
+        <span class="tag">family</span> <span class="tag">teen</span> <span class="tag">accountability</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=102</code></div>
+      <p class="prompt">Hazel&#39;s applications need a record. You can register her for the standardized test, or build a portfolio narrative with an evaluator. Most schools take both. A few prefer one.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">The test route</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-600">savings -600</span> <span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">She studied harder than you&#39;d seen her study in a year. She came home from the testing center quieter than she&#39;d left. Her score, when it came, was good. Not the top number. A number that opened doors and closed two.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">The portfolio route</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-800">savings -800</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">You spent six weekends pulling artifacts together. The evaluator read four years of her work and wrote about her in a way that was true and a little kinder than strict accuracy required. You were glad to have hired her.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Both. It&#39;s hedging.</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-1300">savings -1300</span> <span class="effect-chip" data-key="burnout" data-delta="+6">burnout +6</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+3">technicalSkill +3</span> <span class="effect-chip" data-key="reputation" data-delta="+4">reputation +4</span> <span class="effect-chip" data-key="health" data-delta="-2">health -2</span></div>
+          <p class="flavor">She did both. She was tired by November. The applications had everything. You filed them on a Sunday and made pancakes Monday. The next move was not yours anymore.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-late-decade-empty-room">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m108+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-late-decade-empty-room</code>
+        <span class="tag">identity</span> <span class="tag">transition</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=108</code></div>
+      <p class="prompt">Hazel will be away three nights a week next semester for the early-college program. Her bedroom on Tuesdays will look the way it&#39;ll look in a few years all the time. You can plan for that or you can not.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Plan something for those Tuesdays</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-3">burnout -3</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span></div>
+          <p class="flavor">You signed up for a class at the community center. You went the first week and felt slightly embarrassed about how good it felt. You went the second week and didn&#39;t. By the eighth week you knew people by name.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Sit with the quiet for a while</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span></div>
+          <p class="flavor">You didn&#39;t fill the time. The Tuesday quiet was uncomfortable for two weeks and then it wasn&#39;t. You read three books you&#39;d been meaning to read. You realized you&#39;d needed the quiet more than you&#39;d thought.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="hp-final-year-graduation-frame">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m110+</span>
+        <span class="pool-badge">homeschool-parent</span>
+        <code class="id">hp-final-year-graduation-frame</code>
+        <span class="tag">family</span> <span class="tag">transition</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=110</code></div>
+      <p class="prompt">The local homeschool collective puts on a graduation ceremony every June. Caps, gowns, the works. Hazel could walk in it. She is not sure she wants to.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Throw something at home</div>
+          <ul class="scene"><li>A backyard.</li><li>Family who flew in.</li><li>A speech you wrote on Wednesday.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-600">savings -600</span> <span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">Your sister came. Your father came. Hazel cried a little during your speech. She told you afterward she&#39;d been afraid the speech would be embarrassing. She said yours wasn&#39;t. The &#39;yours wasn&#39;t&#39; was the line you&#39;d remember.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Walk in the ceremony</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-150">savings -150</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="reputation" data-delta="+4">reputation +4</span> <span class="effect-chip" data-key="network" data-delta="+3">network +3</span></div>
+          <p class="flavor">You watched her walk across a small stage with twenty other homeschooled kids. The principal-equivalent said her name. You held it together for the name. You did not for the picture afterward. The picture is, somehow, the one on the fridge now.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Mark it small, between you</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">You took her out for breakfast on the actual last day of her last subject. You gave her a small thing wrapped in newspaper. She unwrapped it carefully. She kept the newspaper. You both did, in the way you keep things you don&#39;t have a word for yet.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision finale" id="finale-month-120">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">FINALE</span>
+        <span class="month-badge">m120</span>
+        <code class="id">finale-month-120</code>
+        <span class="tag">hardcoded in DecisionRoom.tsx</span>
+      </header>
+      <p class="prompt">Ten years. Did any of that stick?</p>
+      <div class="options">
+      <div class="option">
+        <div class="option-label">Bits did. Most didn&#39;t.</div>
+        <p class="flavor">Sounds about right.</p>
+      </div>
+      <div class="option">
+        <div class="option-label">Not really. I&#39;ll leave it here.</div>
+        <p class="flavor">Fair. The door&#39;s right there.</p>
+      </div>
+      <div class="option">
+        <div class="option-label">Hard to say. It mostly felt like a Tuesday.</div>
+        <p class="flavor">Tuesdays do most of the work.</p>
+      </div></div>
+    </article>
+        </section>
+  <section class="frontmatter">
+         <h2>Month transitions</h2>
+         <p class="muted">One is picked at random between months that have no narrative beat.</p>
+         <ul class="transition-list">
+           <li>... and the lunches still need packing</li><li>... another week, another spelling list</li><li>... you press on</li><li>... the laundry rotates</li><li>... onward</li><li>... the calendar turns</li><li>... time moves forward</li><li>... the kettle goes on</li><li>... someone needs help with long division</li><li>... the kitchen table sees another lesson</li><li>... a permission slip, somewhere</li><li>... another read-aloud, another chapter</li><li>... the dishes can wait until tomorrow</li><li>... someone lost a shoe, again</li><li>... the library books are due Friday</li><li>... the day starts at the table</li>
+         </ul>
+       </section>
+  
+  <section class="frontmatter">
+         <h2>Endgame taglines</h2>
+         <ul class="tagline-list">
+           <li>Ten years. One kitchen table. Here&#39;s the shape it made.</li><li>Hazel is sixteen. Bram is thirteen. Look what they made of you.</li><li>Well — did any of it stick?</li><li>You taught the math, mostly. They taught you the rest.</li><li>Some of the lessons hit. The kids remember the other ones.</li><li>Ten years of small choices. They added up.</li><li>You were the teacher, the cook, the schedule. Mostly the schedule.</li><li>Most of it was Tuesdays. Tuesdays do most of the work.</li><li>The kitchen table held everything you put on it.</li><li>You showed up. Every day. That was most of it.</li><li>Look at them now. Look at you.</li><li>It was not what you imagined. It was the thing instead.</li>
+         </ul>
+       </section>
+</main>
+<footer class="page-footer">
+  <p>Voice review surface. Every line here is something the player will read in-game. If a flavor / scene / prompt sounds off, flag the card id back to the author.</p>
+</footer>
+</body>
+</html>
