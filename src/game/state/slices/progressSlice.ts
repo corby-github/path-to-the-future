@@ -50,6 +50,7 @@ const initialLastArcadeXpAt: Record<MinigameVariant, number> = {
   'code-review': 0,
   'reaction-sprint': 0,
   pong: 0,
+  'forty-two': 0,
 };
 
 const initialState: ProgressState = {

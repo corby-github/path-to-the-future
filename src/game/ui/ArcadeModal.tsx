@@ -31,6 +31,7 @@ const ARCADE_VARIANTS: ReadonlyArray<{ id: MinigameVariant; label: string; blurb
   { id: 'code-review',     label: 'Code Review',     blurb: 'Spot the bug. Beat the panel.' },
   { id: 'reaction-sprint', label: 'Reaction Sprint', blurb: 'Lock the stack. Hit the column.' },
   { id: 'pong',            label: 'Pong',            blurb: 'Two paddles. One ball. First to five.' },
+  { id: 'forty-two',       label: '42',              blurb: 'The ultimate question. Four options.' },
 ];
 
 interface Props {
