@@ -33,6 +33,7 @@ export function DevPanel() {
     setForcedLayout,
     eventMode,
     setEventMode,
+    setForceArcade,
   } = useDevControls();
   const { pack } = useCareerPack();
   const dispatch = useAppDispatch();
@@ -134,6 +135,8 @@ export function DevPanel() {
               dispatch(setGameOver(true));
             } else if (v === 'tutorial') {
               dispatch(resetTutorial());
+            } else if (v === 'arcade') {
+              setForceArcade(true);
             } else if (v === 'finale-month') {
               dispatch(setCurrentMonth(FINALE_MONTH_ID));
             } else if (v === 'title') {
@@ -154,6 +157,7 @@ export function DevPanel() {
           <option value="">trigger…</option>
           <option value="title">title</option>
           <option value="tutorial">tutorial</option>
+          <option value="arcade">arcade (next room)</option>
           <option value="finale-month">finale month</option>
           <option value="endgame">endgame</option>
         </select>

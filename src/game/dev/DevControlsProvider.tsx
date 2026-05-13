@@ -13,6 +13,7 @@ export function DevControlsProvider({ children }: Props) {
   const [speedMultiplier, setSpeedMultiplier] = useState(DEFAULT_SPEED);
   const [forcedLayout, setForcedLayout] = useState<string | null>(null);
   const [eventMode, setEventMode] = useState<EventMode>('auto');
+  const [forceArcade, setForceArcade] = useState(false);
 
   const value = useMemo<DevControls>(
     () => ({
@@ -22,8 +23,10 @@ export function DevControlsProvider({ children }: Props) {
       setForcedLayout,
       eventMode,
       setEventMode,
+      forceArcade,
+      setForceArcade,
     }),
-    [speedMultiplier, forcedLayout, eventMode],
+    [speedMultiplier, forcedLayout, eventMode, forceArcade],
   );
 
   return <DevControlsContext.Provider value={value}>{children}</DevControlsContext.Provider>;

@@ -9,7 +9,10 @@ export const SAVE_KEY = 'pttf:save:default';
 //        target; null when viewing live current month); history gains
 //        `minigames` (one record per minigame completion, used to render
 //        frozen result screens in replay).
-export const STATE_VERSION = '1.3.0';
+// 1.4.0: Issue #31 — progress gains `lastArcadeXpAt` (per-variant epoch ms
+//        of the last arcade play that awarded XP; throttles arcade-mode
+//        rewards to once per real-time hour per minigame).
+export const STATE_VERSION = '1.4.0';
 
 export function loadPersistedState(): unknown {
   try {

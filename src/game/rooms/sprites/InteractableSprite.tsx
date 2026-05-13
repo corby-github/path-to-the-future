@@ -39,6 +39,7 @@ export function InteractableSprite({ art, kind, x, y, palette }: Props) {
     case 'stress-ball': return <ObjStressBall x={x} y={y} palette={palette} />;
     case 'water-cooler': return <ObjWaterCooler x={x} y={y} palette={palette} />;
     case 'locked-door': return <ObjLockedDoor x={x} y={y} palette={palette} />;
+    case 'arcade-game': return <ObjArcadeGame x={x} y={y} palette={palette} />;
     default: return <ObjDefault x={x} y={y} palette={palette} />;
   }
 }
@@ -472,6 +473,95 @@ function ObjWaterCooler({ x, y, palette }: SpriteProps) {
       />
       {/* Water-line hint inside the jug */}
       <line x1={x - 7} y1={y - 14} x2={x + 7} y2={y - 14} stroke={palette.ink} strokeWidth={1} opacity={0.4} />
+    </g>
+  );
+}
+
+// Arcade cabinet — upright body with a screen near the top, a joystick
+// (ball-on-stick), and two round buttons below. Universal interactable
+// per issue #31; the [E] press opens a menu of every minigame the
+// current career pack supports. Footprint stays inside the ~52×80 spec
+// the other sprites use, but the cabinet is a touch taller (body 60
+// tall) since real arcade cabinets read as vertical.
+function ObjArcadeGame({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Marquee / top band */}
+      <rect
+        x={x - 18}
+        y={y - 32}
+        width={36}
+        height={8}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Cabinet body */}
+      <rect
+        x={x - 20}
+        y={y - 24}
+        width={40}
+        height={52}
+        rx={3}
+        fill={palette.surface}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Screen — bezel + dark inner */}
+      <rect
+        x={x - 14}
+        y={y - 20}
+        width={28}
+        height={18}
+        rx={1.5}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      {/* A hint of pixel content on the screen — three short ink lines */}
+      <line x1={x - 10} y1={y - 14} x2={x + 2} y2={y - 14} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 10} y1={y - 10} x2={x + 6} y2={y - 10} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 10} y1={y - 6} x2={x - 2} y2={y - 6} stroke={palette.ink} strokeWidth={1} />
+      {/* Control deck — small recessed strip for the joystick + buttons */}
+      <rect
+        x={x - 16}
+        y={y + 4}
+        width={32}
+        height={12}
+        rx={1}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+      {/* Joystick — shaft + ball on top */}
+      <line
+        x1={x - 8}
+        y1={y + 14}
+        x2={x - 8}
+        y2={y + 6}
+        stroke={palette.ink}
+        strokeWidth={2}
+        strokeLinecap="round"
+      />
+      <circle
+        cx={x - 8}
+        cy={y + 4}
+        r={3}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      {/* Two action buttons */}
+      <circle cx={x + 2} cy={y + 10} r={2} fill={palette.ink} />
+      <circle cx={x + 9} cy={y + 10} r={2} fill={palette.accent} stroke={palette.ink} strokeWidth={1} />
+      {/* Coin slot */}
+      <rect
+        x={x - 4}
+        y={y + 19}
+        width={8}
+        height={2}
+        fill={palette.ink}
+      />
     </g>
   );
 }

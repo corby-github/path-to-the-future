@@ -20,6 +20,7 @@ import { labelFor } from '../content/interactableLabel';
 import { DecisionModal } from '../ui/DecisionModal';
 import { EventModal } from '../ui/EventModal';
 import { NPCModal } from '../ui/NPCModal';
+import { ArcadeModal } from '../ui/ArcadeModal';
 import { TutorialOverlay } from '../ui/TutorialOverlay';
 import { dismissTutorial } from '../state/slices/metaSlice';
 import { persistState } from '../state/persistence';
@@ -242,7 +243,7 @@ export function DecisionRoom({ config, onExit }: Props) {
   const progress = useAppSelector((s) => s.progress);
   const stats = useAppSelector((s) => s.stats);
   const flags = useAppSelector((s) => s.flags);
-  const { speedMultiplier, forcedLayout, eventMode } = useDevControls();
+  const { speedMultiplier, forcedLayout, eventMode, forceArcade } = useDevControls();
   const { setTemplate } = useCurrentRoom();
 
   const [layout] = useState(() => {
@@ -257,6 +258,9 @@ export function DecisionRoom({ config, onExit }: Props) {
 
   // Interactables placed in this room (1-3, seeded, non-overlapping with
   // spawn / door / obstacles / each other). Stable for the room's lifetime.
+  // DevPanel `forceArcade` toggle (issue #31) adds `obj-arcade-game` to
+  // the guaranteed-id list so the cabinet appears in every subsequent
+  // room mount — useful for testing the arcade flow without wandering.
   const [placements] = useState<PlacedInteractable[]>(() => {
     const seedCtx = { stats, flags, currentMonth: config.monthId };
     return placeInteractables({
@@ -266,6 +270,7 @@ export function DecisionRoom({ config, onExit }: Props) {
       spawn: layout.spawn,
       door: layout.door,
       obstacles: layout.obstacles,
+      forceIds: forceArcade ? ['obj-arcade-game'] : undefined,
     });
     // Placement is deterministic for the room's lifetime — useState's lazy
     // initializer runs once on mount and never re-evaluates.
@@ -523,6 +528,15 @@ export function DecisionRoom({ config, onExit }: Props) {
       e.preventDefault();
       const target = placements[adjacentIndex];
       if (!target) return;
+      // Feature-flagged interactables (issue #31 arcade) bypass the
+      // dialogue pool and open their feature modal directly. The sprite
+      // and label still come from the InteractableDef; only the modal
+      // routing branches.
+      if (target.def.feature === 'arcade') {
+        setActiveInteractable(target.def);
+        setActiveDialogue(null);
+        return;
+      }
       const reqCtx = { stats, flags, currentMonth: config.monthId };
       const eligible = target.def.dialogues.filter((d) =>
         passesRequires(d.requires, reqCtx),
@@ -1052,7 +1066,7 @@ export function DecisionRoom({ config, onExit }: Props) {
                       fontWeight={600}
                       fill={palette.ink}
                     >
-                      [E] {p.def.kind === 'npc' ? 'talk' : 'look'}
+                      [E] {p.def.feature === 'arcade' ? 'play' : p.def.kind === 'npc' ? 'talk' : 'look'}
                     </text>
                     <text
                       data-region="interact-label"
@@ -1095,7 +1109,14 @@ export function DecisionRoom({ config, onExit }: Props) {
         />
       )}
 
-      {activeInteractable && activeDialogue && (
+      {activeInteractable && activeInteractable.feature === 'arcade' && (
+        <ArcadeModal
+          interactable={activeInteractable}
+          onClose={handleInteractableClose}
+        />
+      )}
+
+      {activeInteractable && !activeInteractable.feature && activeDialogue && (
         <NPCModal
           interactable={activeInteractable}
           dialogue={activeDialogue}

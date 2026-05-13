@@ -1,6 +1,4 @@
-import { Blackjack } from '../minigames/Blackjack';
-import { CodeReview } from '../minigames/CodeReview';
-import { Stacker } from '../minigames/Stacker';
+import { MinigameByVariant } from '../minigames/MinigameByVariant';
 import { MinigameReplayCard } from './MinigameReplayCard';
 import { useCareerPack } from '../content/useCareerPack';
 import type { MinigameRoomConfig } from '../types/room';
@@ -20,12 +18,12 @@ export function MinigameRoom({ config, onComplete }: Props) {
     return <MinigameReplayCard monthId={config.monthId} variant={config.variant} />;
   }
 
-  switch (config.variant) {
-    case 'blackjack':
-      return <Blackjack monthId={config.monthId} onComplete={onComplete} />;
-    case 'code-review':
-      return <CodeReview monthId={config.monthId} onComplete={onComplete} />;
-    case 'reaction-sprint':
-      return <Stacker monthId={config.monthId} onComplete={onComplete} />;
-  }
+  return (
+    <MinigameByVariant
+      variant={config.variant}
+      monthId={config.monthId}
+      mode="scheduled"
+      onComplete={onComplete}
+    />
+  );
 }

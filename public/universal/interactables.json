@@ -1,0 +1,19 @@
+{
+  "interactables": [
+    {
+      "id": "obj-arcade-game",
+      "kind": "object",
+      "label": "Arcade cabinet",
+      "art": "arcade-game",
+      "feature": "arcade",
+      "tags": ["universal", "flavor", "arcade"],
+      "weight": 0.4,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The cabinet hums. There is no slot for the coin."
+        }
+      ]
+    }
+  ]
+}
