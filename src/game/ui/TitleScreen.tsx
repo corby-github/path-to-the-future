@@ -52,6 +52,16 @@ const NPC_SPAWNS_X = [180, 340, 500, 660, 820];
 // their visual extent goes ~40px each way.
 const NPC_BAND_Y = ROOM_VIEWBOX.height - 110;
 const NPC_BAND_HEIGHT = 200;
+
+// Arcade cabinet decoration. Fixed position at the right edge of the
+// floor band — always visible regardless of the per-day RNG roll above.
+// Lives alongside the random-pool sprites but is rendered separately so
+// it never gets crowded out and so its placement is intentional rather
+// than statistical. Far enough right of NPC_SPAWNS_X[4] (820) + the 70-
+// unit wander radius (so the rightmost wanderer reaches ~890 at worst)
+// to avoid sprite overlap.
+const TITLE_ARCADE_X = 950;
+const TITLE_ARCADE_Y = NPC_BAND_Y;
 const NPC_WANDER_RADIUS = 70;
 const NPC_SPEED_MIN = 30;
 const NPC_SPEED_MAX = 55;
@@ -416,6 +426,16 @@ export function TitleScreen({ onAcknowledge }: Props) {
             palette={palette}
           />
         ))}
+        {/* Arcade cabinet — fixed decoration at the right edge of the
+            floor band. Rendered after the wandering sprites so it
+            consistently sits on top if anyone drifts close. */}
+        <InteractableSprite
+          art="arcade-game"
+          kind="object"
+          x={TITLE_ARCADE_X}
+          y={TITLE_ARCADE_Y}
+          palette={palette}
+        />
       </svg>
 
       <h1 data-region="wordmark" style={wordmarkStyle}>
