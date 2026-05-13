@@ -17,7 +17,7 @@
       "tags": ["era"],
       "weight": 0.6,
       "title": "The 7am line at the store.",
-      "body": "You queued in the dark with both kids in the cart. The shelves were lit and half-empty. You used to do this alone, at lunch, in fifteen minutes. You did not used to do it like this.",
+      "body": "Seven AM, in the dark, with both kids in the cart. Hazel named the produce stickers. Bram kicked a tomato with absolute deliberateness. The fifteen-minute version of this errand had less commentary.",
       "scene": [
         "A pre-dawn parking lot.",
         "A masked cashier.",
@@ -43,7 +43,7 @@
       "tags": ["era"],
       "weight": 0.6,
       "title": "Bram asks the chatbot.",
-      "body": "You stood in the doorway. Bram had typed the social-studies question into the chatbot before you got there. The answer was on the screen, formatted, with bullet points. He read it out loud to no one in particular. He didn't need you for this one. You didn't know what to do with the small drop you felt. Bram, sensing nothing, asked if there were more questions.",
+      "body": "Bram typed the social-studies question into the chatbot before you got to the doorway. The answer was on the screen, formatted, with bullet points. He read it out loud to no one in particular. You didn't know what to do with the small drop you felt. Bram, sensing nothing, asked if there were more questions.",
       "effects": { "technicalSkill": "-1", "burnout": "+1" }
     },
     {
@@ -75,7 +75,7 @@
       "tags": ["family", "era"],
       "weight": 0.5,
       "title": "A check-in from your sister.",
-      "body": "She texted to ask how 'the homeschool thing' was going. She'd been asking that for years, lightly. This time it had a new weight on it. You typed three honest sentences and then deleted them. You sent back two words and an emoji. She wrote back 'sending love' and you both let it sit there.",
+      "body": "Your sister texted to ask how 'the homeschool thing' was going. You typed three honest sentences and deleted them. You sent back two words and an emoji you'd never used before. Working system.",
       "effects": { "burnout": "+1" }
     },
     {
@@ -95,7 +95,7 @@
       "tags": ["family", "community", "era"],
       "weight": 0.5,
       "title": "Church was open.",
-      "body": "Three churches in your area closed that spring. Yours stayed open — Sundays and Wednesdays both. The pews were half-full and the windows were cracked. Bram fell asleep on your shoulder during the sermon. Hazel got the bulletin and asked what 'communion' meant. You answered honestly. You'd been going for a decade. The pews were the same pews. That, this year, was enough.",
+      "body": "Three churches in your area closed that spring. Yours stayed open — Sundays and Wednesdays both. The pews were half-full and the windows were cracked. Bram fell asleep on your shoulder. Hazel asked what 'communion' meant. You answered honestly. The pews were the same pews. That was the point.",
       "effects": { "burnout": "-2", "network": "+2", "health": "+1" }
     },
     {
@@ -190,7 +190,7 @@
       "weight": 0.4,
       "trigger": { "month": ">=24" },
       "title": "A friend left the co-op.",
-      "body": "She sent the email Sunday night. The reasons were vague and the warmth was real. You wrote back something kind. You meant it. You also knew you would see her less, and that part felt heavier than the reasons.",
+      "body": "A friend left the co-op Sunday night. The reasons were vague and the warmth was real. You added her to the spring-picnic list anyway. Some friendships go quiet, not gone.",
       "effects": { "network": "-2", "burnout": "+1" }
     },
     {
@@ -200,7 +200,7 @@
       "tags": ["family", "relationship"],
       "weight": 0.6,
       "title": "Spouse, home late again.",
-      "body": "The text said 'one more hour' at six. The next text said 'sorry' at nine. You held dinner. Then you didn't. The kids asked twice. You answered twice. By the third 'soon,' you'd run out of ways to say 'soon.'",
+      "body": "Text at six: 'one more hour.' Text at nine: 'sorry.' You held dinner. Then you didn't. By the third 'soon,' you'd run out of ways to say 'soon.'",
       "effects": { "burnout": "+2" }
     },
     {
@@ -211,7 +211,7 @@
       "weight": 0.4,
       "trigger": { "month": ">=18" },
       "title": "A promotion at the other house.",
-      "body": "Your spouse got the bump. You celebrated with a bottle of something nice. The next morning the math was different in a small way. The math was different in a small way for a long time.",
+      "body": "Your spouse got the bump. You celebrated with a bottle of something nice. The math was different the next morning in a small way that stayed small for a long time. Good problem.",
       "effects": { "savings": "+3000", "burnout": "-1" }
     },
     {
@@ -232,7 +232,7 @@
       "tags": ["community", "era"],
       "weight": 0.6,
       "title": "Three less cars on the street.",
-      "body": "By the time you walked the kids out Tuesday, three of the families who'd joined you in 2020 had sent theirs back to brick-and-mortar. They were going back. You were doing what you'd been doing. You'd known this was coming. The morning still felt different — the porch was quieter — and you stood there a full extra minute.",
+      "body": "Three families who'd joined you in 2020 went back to brick-and-mortar Tuesday. You were doing what you'd been doing. The porch was quieter. Then Bram tripped over the step. The porch was not quieter.",
       "effects": { "network": "-2", "burnout": "+1" }
     },
     {
@@ -242,7 +242,7 @@
       "tags": ["money", "era", "lucky"],
       "weight": 0.5,
       "title": "Comp adjustment.",
-      "body": "Your spouse's company emailed a 'market adjustment' note. The base went up. The line about 'reflecting market realities' read, this year, like good news. You let it.",
+      "body": "Your spouse's company emailed a 'market adjustment.' The base went up. You read it three times to be sure. The pizza you'd been talking about for a month finally got ordered.",
       "effects": { "savings": "+2400", "burnout": "-1" }
     },
     {
@@ -263,7 +263,7 @@
       "weight": 0.5,
       "trigger": { "month": ">=66" },
       "title": "The essay sounded different.",
-      "body": "Hazel's essay used a phrase she didn't say out loud. You didn't accuse. You asked her to read it back. She did, slowly, and stopped at the phrase. She said 'okay, I rewrote it with help.' You said thank you. You both agreed on a rule. Then you agreed on a different rule the next week.",
+      "body": "Hazel's essay used a phrase she didn't say out loud. You asked her to read it back. She stopped at the phrase. 'Okay, I rewrote it with help.' You agreed on a rule. The next week, you agreed on a different rule.",
       "effects": { "technicalSkill": "+1", "burnout": "+2" }
     },
     {
@@ -273,7 +273,7 @@
       "tags": ["era", "family"],
       "weight": 0.4,
       "title": "Your spouse's workflow, halved.",
-      "body": "Your spouse came home and said 'the thing that took me a day takes me an hour now.' Hard to tell, in the moment, if that was good news. You weren't sure either. You did the dishes together that night and didn't say anything more about it.",
+      "body": "Your spouse: 'the thing that took me a day takes me an hour now.' Hard to tell, in the moment, if that was good news. You did the dishes together. By the last pan you'd both decided to keep being unsure.",
       "effects": { "burnout": "+1", "health": "+1" }
     },
     {
@@ -315,7 +315,7 @@
       "tags": ["era"],
       "weight": 0.5,
       "title": "A photo from 2020.",
-      "body": "You found it scrolling for something else. Hazel was six. Bram was three. You were standing in a kitchen you no longer have, holding a binder you no longer use. The version of you in the photo could not have predicted the version of you holding the phone.",
+      "body": "You found it scrolling for something else. Hazel was six. Bram was three. You were holding a binder you no longer use, wearing the haircut you no longer admit to. The current version of you is, in fairness, more rested.",
       "effects": { "burnout": "-2" }
     },
     {
@@ -326,7 +326,7 @@
       "weight": 0.5,
       "trigger": { "network": ">35" },
       "title": "A new parent, asking.",
-      "body": "A first-year homeschool mom in the co-op asked if you'd grab coffee. She wanted to know how you did it. You told her the truth. Some weeks great, some weeks survival. She laughed, the relieved kind. You drove home thinking about who'd told you that, eight years ago.",
+      "body": "A first-year homeschool mom asked if you'd grab coffee. She wanted to know how you did it. 'Some weeks great, some weeks survival.' She laughed — the relieved kind. You drove home thinking about who'd told you that, eight years ago. The line is still working.",
       "effects": { "reputation": "+2", "network": "+2" }
     },
     {
@@ -370,7 +370,7 @@
       "weight": 0.5,
       "trigger": { "network": ">50" },
       "title": "An introduction.",
-      "body": "A co-op friend connected you to a mom across town who'd been homeschooling for fifteen years. You met for coffee. You took two pages of notes. You drove home thinking you'd been waiting a long time to talk to someone who'd been doing this longer than you.",
+      "body": "A co-op friend introduced you to a mom across town with fifteen years of homeschooling behind her. You met for coffee. You took two pages of notes. You drove home with the very specific feeling of having found the manual you didn't know existed.",
       "effects": { "network": "+4", "reputation": "+2" }
     },
     {
