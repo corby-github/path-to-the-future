@@ -232,13 +232,24 @@ export function IconLightbulbIdea({ palette, size }: ModalIconProps): ReactEleme
 export function IconRecruiterCall({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-recruiter-call" label="Recruiter call" size={size}>
-      {/* Phone handset — two angled ovals + connector */}
-      <ellipse cx={28} cy={28} rx={8} ry={6} transform="rotate(-35 28 28)" />
-      <ellipse cx={52} cy={52} rx={8} ry={6} transform="rotate(-35 52 52)" />
-      <line x1={32} y1={32} x2={48} y2={48} strokeWidth={3} />
-      {/* Sound waves */}
-      <path d="M 58 20 Q 64 26 58 32" strokeWidth={1.5} />
-      <path d="M 62 14 Q 70 26 62 38" strokeWidth={1.5} />
+      {/* Classic phone-handset silhouette — barbell shape:
+          earpiece bulb (upper-left), thick bridge, mouthpiece bulb
+          (lower-right). Deliberately NOT a smartphone rectangle —
+          three of those already exist (parent-needs-help, date-app-
+          match, plus mlm-pitch's chat bubble).
+
+          Bridge is drawn first; the bulbs use fill={palette.background}
+          to mask the portion of the bridge that crosses their interior,
+          leaving an outlined-only bulb on top of a visible bar between.
+          Background-fill matches both the timeline row bg and the modal
+          card bg, so the bulb interior reads transparent in both
+          contexts — no return of the surface tile dropped in PR #58. */}
+      <line x1={26} y1={26} x2={48} y2={48} strokeWidth={7} />
+      <circle cx={22} cy={22} r={10} fill={palette.background} />
+      <circle cx={52} cy={52} r={10} fill={palette.background} />
+      {/* Sound waves off the upper-right — the call is ringing. */}
+      <path d="M 60 20 Q 68 28 60 36" strokeWidth={2} />
+      <path d="M 66 12 Q 78 28 66 44" strokeWidth={2} />
     </IconFrame>
   );
 }
