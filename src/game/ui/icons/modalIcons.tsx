@@ -269,22 +269,16 @@ export function IconLightbulbIdea({ palette, size }: ModalIconProps): ReactEleme
 export function IconRecruiterCall({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-recruiter-call" label="Recruiter call" size={size}>
-      {/* Handset in PROFILE — crescent body tilted to a diagonal, like an
-          old-timey receiver lifted off a base. Outer curve is the back of
-          the handset; inner curve is the side that meets the face. Two
-          subtle grills mark earpiece (upper end) and mouthpiece (lower
-          end). Sound waves emit from the EARPIECE end (upper-left). */}
-      {/* Outer curve (back of the handset) */}
-      <path d="M 30 12 Q 14 16 14 30 Q 14 50 28 64 Q 38 70 46 64 Q 36 56 32 44 Q 28 30 36 18 Q 38 14 30 12 Z" />
-      {/* Earpiece grill (top) */}
-      <line x1={26} y1={22} x2={32} y2={22} strokeWidth={1.5} />
-      <line x1={24} y1={26} x2={30} y2={26} strokeWidth={1.5} />
-      {/* Mouthpiece grill (bottom) */}
-      <line x1={36} y1={58} x2={42} y2={58} strokeWidth={1.5} />
-      <line x1={34} y1={62} x2={40} y2={62} strokeWidth={1.5} />
-      {/* Sound waves emanating from the earpiece end (upper-left) */}
-      <path d="M 8 16 Q 14 22 8 28" strokeWidth={2} />
-      <path d="M 2 12 Q 12 22 2 32" strokeWidth={2} />
+      {/* Handset profile — single filled silhouette, tilted -30°. A
+          capsule body with flared bulb ends; no grills, no waves, no
+          extra detail. Reads as "phone receiver" at a glance. */}
+      <g transform="rotate(-30 40 40)">
+        <path
+          d="M 12 36 Q 12 28 22 28 Q 30 28 32 36 L 48 36 Q 50 28 58 28 Q 68 28 68 36 V 44 Q 68 52 58 52 Q 50 52 48 44 L 32 44 Q 30 52 22 52 Q 12 52 12 44 Z"
+          fill={palette.ink}
+          stroke="none"
+        />
+      </g>
     </IconFrame>
   );
 }
@@ -362,20 +356,26 @@ export function IconRings({ palette, size }: ModalIconProps): ReactElement {
 export function IconCouch({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-therapy-first-session" label="First therapy session" size={size}>
-      {/* Fainting couch / chaise longue in profile — the universal
-          "psychiatrist's couch" silhouette. Tall rolled headrest on the
-          left, long flat seat, short legs. */}
-      {/* Seat top + raised headrest end */}
-      <path d="M 10 46 Q 10 28 22 28 Q 30 28 30 38 V 46 H 66 V 46" />
-      {/* Seat front face (gives the couch depth) */}
-      <path d="M 10 46 V 56 H 66 V 46" />
-      {/* Cushion button-tuft on headrest */}
-      <circle cx={20} cy={36} r={1.5} fill={palette.ink} stroke="none" />
-      <circle cx={16} cy={40} r={1.5} fill={palette.ink} stroke="none" />
-      {/* Short legs */}
+      {/* Classic 3-seat sofa, front view. Tall rounded backrest, two
+          armrests flanking, seat with three cushion divisions, four
+          short legs. Reads unambiguously as a couch (the prior chaise
+          profile was reading as a piano). */}
+      {/* Backrest */}
+      <rect x={14} y={18} width={52} height={22} rx={4} />
+      {/* Left armrest */}
+      <rect x={10} y={30} width={10} height={24} rx={3} />
+      {/* Right armrest */}
+      <rect x={60} y={30} width={10} height={24} rx={3} />
+      {/* Seat with cushions */}
+      <rect x={18} y={40} width={44} height={16} rx={2} />
+      {/* Cushion division lines */}
+      <line x1={33} y1={40} x2={33} y2={56} strokeWidth={1.5} />
+      <line x1={47} y1={40} x2={47} y2={56} strokeWidth={1.5} />
+      {/* Four short legs */}
       <line x1={16} y1={56} x2={16} y2={62} strokeWidth={2} />
-      <line x1={36} y1={56} x2={36} y2={62} strokeWidth={2} />
-      <line x1={60} y1={56} x2={60} y2={62} strokeWidth={2} />
+      <line x1={30} y1={56} x2={30} y2={62} strokeWidth={2} />
+      <line x1={50} y1={56} x2={50} y2={62} strokeWidth={2} />
+      <line x1={64} y1={56} x2={64} y2={62} strokeWidth={2} />
     </IconFrame>
   );
 }
@@ -423,26 +423,21 @@ export function IconPalmTree({ palette, size }: ModalIconProps): ReactElement {
 export function IconHeartHands({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-charity-donation" label="Charity donation" size={size}>
-      {/* Heart held above a pair of cupped hands. Heart silhouette kept;
-          single curve underneath replaced with two open palms meeting in
-          the middle, with visible fingers + a thumb on each. */}
-      {/* Heart */}
-      <path d="M 40 22 Q 32 14 26 20 Q 20 28 40 42 Q 60 28 54 20 Q 48 14 40 22 Z" />
-      {/* Left palm — cupped, fingers extended upward */}
-      <path d="M 12 60 Q 12 48 20 48 L 38 48 L 38 56 Q 32 60 22 60 Q 14 60 12 60 Z" />
-      {/* Right palm — mirror */}
-      <path d="M 68 60 Q 68 48 60 48 L 42 48 L 42 56 Q 48 60 58 60 Q 66 60 68 60 Z" />
-      {/* Finger separations on left palm */}
-      <line x1={22} y1={48} x2={22} y2={54} strokeWidth={1.5} />
-      <line x1={28} y1={48} x2={28} y2={54} strokeWidth={1.5} />
-      <line x1={34} y1={48} x2={34} y2={54} strokeWidth={1.5} />
-      {/* Finger separations on right palm */}
-      <line x1={46} y1={48} x2={46} y2={54} strokeWidth={1.5} />
-      <line x1={52} y1={48} x2={52} y2={54} strokeWidth={1.5} />
-      <line x1={58} y1={48} x2={58} y2={54} strokeWidth={1.5} />
-      {/* Thumbs — short curves under each palm's inner edge */}
-      <path d="M 38 56 Q 38 62 34 62" strokeWidth={1.5} />
-      <path d="M 42 56 Q 42 62 46 62" strokeWidth={1.5} />
+      {/* Heart with a $ inside — donation glyph, stripped of the hands
+          that were over-engineered and unclear. */}
+      <path d="M 40 18 Q 28 6 16 18 Q 4 36 40 64 Q 76 36 64 18 Q 52 6 40 18 Z" />
+      <text
+        x={40}
+        y={48}
+        textAnchor="middle"
+        fontFamily="inherit"
+        fontSize={28}
+        fontWeight={700}
+        fill={palette.ink}
+        stroke="none"
+      >
+        $
+      </text>
     </IconFrame>
   );
 }
@@ -536,13 +531,24 @@ export function IconCodeBrackets({ palette, size }: ModalIconProps): ReactElemen
 export function IconPager({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="swe-oncall-volunteer" label="Oncall volunteer" size={size}>
-      <rect x={20} y={22} width={32} height={36} rx={3} />
-      <rect x={24} y={26} width={24} height={14} />
-      <circle cx={28} cy={50} r={1.5} fill={palette.ink} stroke="none" />
-      <circle cx={36} cy={50} r={1.5} fill={palette.ink} stroke="none" />
-      <circle cx={44} cy={50} r={1.5} fill={palette.ink} stroke="none" />
-      <line x1={52} y1={22} x2={60} y2={14} strokeWidth={1.5} />
-      <circle cx={62} cy={12} r={3} fill={palette.ink} stroke="none" />
+      {/* Smartphone in portrait orientation with an alert badge in the
+          upper-right corner + buzz waves on the right edge. Pagers were
+          retired with the cell-phone era; on-call now lands on a phone.
+          Function name kept (IconPager) to avoid the import-cascade
+          rework; only the SVG changed. */}
+      {/* Phone body */}
+      <rect x={26} y={12} width={28} height={56} rx={4} />
+      {/* Top speaker slot */}
+      <line x1={34} y1={17} x2={46} y2={17} strokeWidth={1.5} />
+      {/* Screen */}
+      <rect x={28} y={22} width={24} height={36} />
+      {/* Home indicator at bottom */}
+      <line x1={36} y1={63} x2={44} y2={63} strokeWidth={1.5} />
+      {/* Notification badge — filled circle on the upper-right of the phone */}
+      <circle cx={54} cy={18} r={5} fill={palette.ink} stroke="none" />
+      {/* Buzz waves on the right edge — phone vibrating */}
+      <path d="M 60 32 Q 66 36 60 40" strokeWidth={2} />
+      <path d="M 64 26 Q 72 36 64 46" strokeWidth={2} />
     </IconFrame>
   );
 }
@@ -656,19 +662,23 @@ export function IconThresholdDoor({ palette, size }: ModalIconProps): ReactEleme
 export function IconCards({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="blackjack" label="Blackjack" size={size}>
-      {/* Two playing cards fanned, each with a clear suit symbol — heart
-          on the left card, spade on the right. Each card + its suit lives
-          inside a rotated <g> so the suit rotates with the card. */}
-      <g transform="rotate(-10 30 42)">
-        <rect x={17} y={22} width={26} height={38} rx={3} />
-        {/* Heart inside left card (filled) */}
-        <path d="M 30 32 Q 26 28 22 32 Q 20 38 30 46 Q 40 38 38 32 Q 34 28 30 32 Z" fill={palette.ink} stroke="none" />
-      </g>
+      {/* Two playing cards fanned. Spade card is rendered FIRST (back),
+          heart card SECOND with a background-fill rect so it visibly
+          occludes the spade where they overlap — heart card reads as
+          "on top of" the spade card, not "transparent next to" it. */}
+      {/* Back card: spade (right, tilted +10°) */}
       <g transform="rotate(10 50 42)">
         <rect x={37} y={22} width={26} height={38} rx={3} />
-        {/* Spade inside right card (filled — inverted teardrop with stem) */}
+        {/* Spade — inverted teardrop with stem */}
         <path d="M 50 30 Q 58 38 58 44 Q 58 48 54 48 Q 52 48 50 46 Q 48 48 46 48 Q 42 48 42 44 Q 42 38 50 30 Z" fill={palette.ink} stroke="none" />
         <path d="M 48 50 Q 50 46 52 50 Q 52 52 50 52 Q 48 52 48 50 Z" fill={palette.ink} stroke="none" />
+      </g>
+      {/* Front card: heart (left, tilted -10°). Background fill on the
+          rect occludes the spade card behind it where they overlap. */}
+      <g transform="rotate(-10 30 42)">
+        <rect x={17} y={22} width={26} height={38} rx={3} fill={palette.background} />
+        {/* Heart */}
+        <path d="M 30 32 Q 26 28 22 32 Q 20 38 30 46 Q 40 38 38 32 Q 34 28 30 32 Z" fill={palette.ink} stroke="none" />
       </g>
     </IconFrame>
   );
@@ -1089,25 +1099,21 @@ export function IconCashFound({ palette, size }: ModalIconProps): ReactElement {
 export function IconBrowserTabX({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-univ-deleted-tab" label="Deleted tab" size={size}>
-      {/* Browser window with one tab on top; the close-X sits on the TAB
-          itself (where real browsers put it), not on the screen. The
-          window body has a few content lines so the tab clearly belongs
-          to a page. */}
-      {/* Active tab (trapezoid) */}
-      <path d="M 12 32 L 16 22 L 38 22 L 42 32" />
-      {/* Inactive second tab to make the "this is a tab strip" reading obvious */}
-      <path d="M 42 32 L 46 26 L 60 26 L 64 32" strokeWidth={1.5} />
+      {/* Simplified browser: two tabs on top + window body + a few page
+          content lines. No close-X — the "deleted tab" reading comes
+          from context, not iconography. */}
+      {/* Tab 1 */}
+      <path d="M 10 30 L 14 20 L 36 20 L 40 30" />
+      {/* Tab 2 */}
+      <path d="M 40 30 L 44 20 L 66 20 L 70 30" />
       {/* Window body */}
-      <rect x={10} y={32} width={60} height={30} rx={1} />
+      <rect x={10} y={30} width={60} height={32} rx={1} />
       {/* Address-bar separator */}
-      <line x1={10} y1={40} x2={70} y2={40} strokeWidth={1.5} />
+      <line x1={10} y1={38} x2={70} y2={38} strokeWidth={1.5} />
       {/* Page-content lines */}
-      <line x1={16} y1={48} x2={62} y2={48} strokeWidth={1.5} />
-      <line x1={16} y1={54} x2={50} y2={54} strokeWidth={1.5} />
-      <line x1={16} y1={60} x2={56} y2={60} strokeWidth={1.5} />
-      {/* Close-X on the active tab — small, at the right edge of the tab */}
-      <line x1={32} y1={25} x2={37} y2={30} strokeWidth={2} />
-      <line x1={37} y1={25} x2={32} y2={30} strokeWidth={2} />
+      <line x1={16} y1={46} x2={62} y2={46} strokeWidth={1.5} />
+      <line x1={16} y1={52} x2={50} y2={52} strokeWidth={1.5} />
+      <line x1={16} y1={58} x2={56} y2={58} strokeWidth={1.5} />
     </IconFrame>
   );
 }
@@ -1453,13 +1459,14 @@ export function IconEconomyDown({ palette, size }: ModalIconProps): ReactElement
       {/* Axes */}
       <line x1={14} y1={60} x2={66} y2={60} strokeWidth={2} />
       <line x1={14} y1={60} x2={14} y2={16} strokeWidth={2} />
-      {/* Downward line graph */}
-      <polyline points="18,22 28,32 38,28 48,42 58,52" strokeWidth={2.5} />
-      {/* Arrowhead pointing down at the end */}
-      <path d="M 54 50 L 58 54 L 62 50" strokeWidth={2.5} />
-      <line x1={58} y1={52} x2={58} y2={58} strokeWidth={2.5} />
-      {/* Dots */}
+      {/* Downward line graph — polyline ends at (60, 56). */}
+      <polyline points="18,22 28,32 38,28 48,42 60,56" strokeWidth={2.5} />
+      {/* Down-arrow head at the endpoint — clean chevron (V) opening upward,
+          point at (60, 56). Wings go up-left and up-right. */}
+      <path d="M 54 50 L 60 56 L 66 50" strokeWidth={2.5} />
+      {/* Dots on key inflection points */}
       <circle cx={18} cy={22} r={2} fill={palette.ink} stroke="none" />
+      <circle cx={38} cy={28} r={2} fill={palette.ink} stroke="none" />
       <circle cx={48} cy={42} r={2} fill={palette.ink} stroke="none" />
     </IconFrame>
   );

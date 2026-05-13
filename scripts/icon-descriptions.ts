@@ -13,7 +13,7 @@
 export const ICON_DESCRIPTIONS: Record<string, string> = {
   // --- Universal decision pool ---------------------------------------------
   IconStayLate: 'clock with crescent moon — late hours, staying past close',
-  IconRecruiterCall: 'handset in profile with waves at the earpiece — a cold recruiter call',
+  IconRecruiterCall: 'simple handset silhouette — a cold recruiter call',
   IconDie: 'six-pip die — bet-it-all bonus weekend',
   IconScale: 'balance scale — weighing two paths',
   IconStandupTooLong: 'clock with speech-bubble dots — meeting that drags',
@@ -21,10 +21,10 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
   IconDumbbell: 'single dumbbell — gym membership decision',
   IconHouse: 'simple house outline — buy vs. keep renting',
   IconRings: 'two interlocked wedding bands — friend\'s wedding far away',
-  IconCouch: 'fainting couch in profile — first therapy session',
+  IconCouch: 'three-seat sofa, front view — first therapy session',
   IconPawPrint: 'paw print — adopting a dog',
   IconPalmTree: 'curved palm tree rising from an island — cashing out PTO',
-  IconHeartHands: 'cupped hands cradling a heart — charity donation',
+  IconHeartHands: 'heart with a dollar sign inside — charity donation',
   IconPhoneCross: 'phone with a small cross — parent needs help',
   IconSuitcase: 'standing suitcase — moving cities for the job',
   IconCar: 'three-quarter sedan — buying a car',
@@ -34,7 +34,7 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
 
   // --- SWE decision pool ----------------------------------------------------
   IconCodeBrackets: 'angle brackets — framework rewrite vs. patch',
-  IconPager: 'pager with antenna — volunteering for on-call',
+  IconPager: 'phone with an alert badge and buzz waves — volunteering for on-call',
   IconLightbulbIdea: 'lightbulb with rays — a 2am idea worth keeping',
   IconMicrophone: 'microphone on stand — conference CFP',
   IconRocket: 'rocket lifting off — Friday deploy',
@@ -63,7 +63,7 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
   IconGearSparkle: 'gear with a spark — new AI tooling on the team',
   IconEnvelope: 'sealed envelope — invite to give a talk',
   IconCashFound: 'bill on the ground — found twenty dollars',
-  IconBrowserTabX: 'browser window with a close-X on the tab — deleted the wrong tab',
+  IconBrowserTabX: 'browser window with two tabs — deleted the wrong tab',
   IconHouseUpArrow: 'house with an upward arrow — rent hike',
   IconAirplaneClock: 'airplane with a clock — flight delay',
   IconLostWallet: 'bi-fold wallet with motion lines — lost wallet',
