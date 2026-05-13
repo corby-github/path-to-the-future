@@ -726,30 +726,30 @@ export function IconPaddles({ palette, size }: ModalIconProps): ReactElement {
 export function IconFortyTwo({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="forty-two" label="The Ultimate Question" size={size}>
-      {/* Deep Thought (2005 Hitchhiker's Guide film silhouette) — wedge-
-          shaped CRT-monitor "head" tilted forward, mounted on a tripod
-          A-frame stand. Avoids the "42" glyph that would spoil the
-          minigame punchline if the icon shows pre-play. */}
-      {/* Head — trapezoidal monitor, top edge wider than bottom, tilted */}
-      <path
-        d="M 14 10 L 64 8 L 62 40 L 16 42 Z"
-        fill={palette.ink}
-        stroke="none"
-      />
-      {/* Small screen-glint accent (kept palette.background to read as a
-          highlight on the dark face) */}
-      <line x1={22} y1={22} x2={32} y2={24} stroke={palette.background} strokeWidth={1.5} />
-      {/* Neck — narrowing wedge connecting head to stand */}
-      <path
-        d="M 28 42 L 52 42 L 48 50 L 32 50 Z"
-        fill={palette.ink}
-        stroke="none"
-      />
-      {/* Tripod legs — A-frame */}
-      <line x1={32} y1={50} x2={14} y2={68} strokeWidth={4} />
-      <line x1={48} y1={50} x2={66} y2={68} strokeWidth={4} />
-      {/* Cross-brace stabilizer */}
-      <line x1={22} y1={60} x2={58} y2={60} strokeWidth={3} />
+      {/* Deep Thought (2005 Hitchhiker's Guide film) — side-profile
+          silhouette. Big blocky head leaning slightly forward, resting on
+          a bent-elbow arm that rises from the body / pedestal. The
+          "mouth" on the front face is a horizontal slit ending in a small
+          circle, both rendered as cutouts (palette.background) against
+          the dark head. Render order: body → arm → head (covers most of
+          the forearm, leaving the hand visible under the head's back-
+          bottom corner) → mouth cutouts. */}
+      {/* Body / pedestal */}
+      <path d="M 18 52 L 62 52 L 70 70 L 10 70 Z" fill={palette.ink} stroke="none" />
+      {/* Arm: vertical riser → elbow → horizontal forearm under head */}
+      <line x1={54} y1={52} x2={54} y2={40} stroke={palette.ink} strokeWidth={6} strokeLinecap="square" />
+      <circle cx={54} cy={40} r={4} fill={palette.ink} stroke="none" />
+      {/* Elbow-joint highlight */}
+      <circle cx={55} cy={41} r={1} fill={palette.background} stroke="none" />
+      <line x1={54} y1={40} x2={44} y2={40} stroke={palette.ink} strokeWidth={6} strokeLinecap="square" />
+      {/* Head — blocky trapezoid in profile, face on the LEFT, back tilts
+          up (head leaning forward over the hand). Bottom-right corner
+          sits on the hand. */}
+      <path d="M 10 12 L 50 6 L 54 36 L 14 40 Z" fill={palette.ink} stroke="none" />
+      {/* Mouth — horizontal slit + small circle at the right end of the
+          slit, cutouts on the front face. */}
+      <rect x={14} y={28} width={10} height={2} fill={palette.background} stroke="none" />
+      <circle cx={26} cy={29} r={2.5} fill={palette.background} stroke="none" />
     </IconFrame>
   );
 }
