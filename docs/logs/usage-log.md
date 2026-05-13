@@ -7,3 +7,4 @@ Entries are append-only.
 | When             | Ctx %      | Plan usage                        | Tokens (est)   | Notes                                       |
 |------------------|------------|-----------------------------------|----------------|---------------------------------------------|
 | 2026-05-13 06:24 | 43% (user) | 5h 49% · wk 66% (user)            | 426.3k (user)  | post-restart; values from UI screenshot ~06:25 EDT, after PR #61 push |
+| 2026-05-13 06:48 | 14% (user) | 5h 64% · wk 68% (user)            | 143.3k (user)  | post PR #62 push (generator + SWE previews + research artifact + /research skill); UI screenshot — my ~65% est was wildly off (compaction reset the window) |
