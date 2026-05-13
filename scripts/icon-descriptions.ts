@@ -105,7 +105,7 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
   IconCheckmark: 'large checkmark — code-review minigame',
   IconLightning: 'lightning bolt — reaction-sprint minigame',
   IconPaddles: 'two paddles with a ball — pong minigame',
-  IconFortyTwo: 'retro mainframe computer (Deep Thought) — the ultimate-question minigame',
+  IconFortyTwo: 'wedge-headed monitor on a tripod stand (Deep Thought) — the ultimate-question minigame',
 
   // --- Placeholder ---------------------------------------------------------
   PlaceholderIcon: 'question mark in a frame — unregistered id fallback',

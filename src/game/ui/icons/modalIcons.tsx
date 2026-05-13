@@ -726,25 +726,30 @@ export function IconPaddles({ palette, size }: ModalIconProps): ReactElement {
 export function IconFortyTwo({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="forty-two" label="The Ultimate Question" size={size}>
-      {/* Deep Thought — retro mainframe computer silhouette. Avoids
-          showing "42" anywhere because the icon may surface BEFORE play
-          (arcade menu, MinigameReplayCard) and the punchline should
-          land on play, not pre-spoil from the icon. */}
-      {/* Mainframe cabinet */}
-      <rect x={18} y={14} width={44} height={52} rx={2} />
-      {/* Top screen */}
-      <rect x={22} y={18} width={36} height={14} />
-      {/* Row of status lights */}
-      <circle cx={26} cy={40} r={1.5} fill={palette.ink} stroke="none" />
-      <circle cx={32} cy={40} r={1.5} fill={palette.ink} stroke="none" />
-      <circle cx={38} cy={40} r={1.5} fill={palette.ink} stroke="none" />
-      <circle cx={44} cy={40} r={1.5} fill={palette.ink} stroke="none" />
-      <circle cx={50} cy={40} r={1.5} fill={palette.ink} stroke="none" />
-      <circle cx={56} cy={40} r={1.5} fill={palette.ink} stroke="none" />
-      {/* Card-reader / data-tape slots */}
-      <line x1={24} y1={48} x2={56} y2={48} strokeWidth={1.5} />
-      <line x1={24} y1={54} x2={56} y2={54} strokeWidth={1.5} />
-      <line x1={24} y1={60} x2={42} y2={60} strokeWidth={1.5} />
+      {/* Deep Thought (2005 Hitchhiker's Guide film silhouette) — wedge-
+          shaped CRT-monitor "head" tilted forward, mounted on a tripod
+          A-frame stand. Avoids the "42" glyph that would spoil the
+          minigame punchline if the icon shows pre-play. */}
+      {/* Head — trapezoidal monitor, top edge wider than bottom, tilted */}
+      <path
+        d="M 14 10 L 64 8 L 62 40 L 16 42 Z"
+        fill={palette.ink}
+        stroke="none"
+      />
+      {/* Small screen-glint accent (kept palette.background to read as a
+          highlight on the dark face) */}
+      <line x1={22} y1={22} x2={32} y2={24} stroke={palette.background} strokeWidth={1.5} />
+      {/* Neck — narrowing wedge connecting head to stand */}
+      <path
+        d="M 28 42 L 52 42 L 48 50 L 32 50 Z"
+        fill={palette.ink}
+        stroke="none"
+      />
+      {/* Tripod legs — A-frame */}
+      <line x1={32} y1={50} x2={14} y2={68} strokeWidth={4} />
+      <line x1={48} y1={50} x2={66} y2={68} strokeWidth={4} />
+      {/* Cross-brace stabilizer */}
+      <line x1={22} y1={60} x2={58} y2={60} strokeWidth={3} />
     </IconFrame>
   );
 }
