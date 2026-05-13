@@ -190,14 +190,24 @@ export function IconPandemicFurlough({ palette, size }: ModalIconProps): ReactEl
       label="Pandemic furlough friend"
       size={size}
     >
-      {/* Facemask body */}
-      <path d="M 22 32 Q 22 28 28 28 H 52 Q 58 28 58 32 V 46 Q 58 50 52 50 H 28 Q 22 50 22 46 Z" />
-      {/* Ear straps curving behind */}
-      <path d="M 22 30 Q 14 36 16 44 Q 18 50 22 50" />
-      <path d="M 58 30 Q 66 36 64 44 Q 62 50 58 50" />
-      {/* Pleats — light interior texture */}
-      <line x1={26} y1={36} x2={54} y2={36} strokeWidth={1.5} />
-      <line x1={26} y1={42} x2={54} y2={42} strokeWidth={1.5} />
+      {/* Empty office chair — the colleague isn't in it.
+          Backrest (rounded rectangle), seat (ellipse for slight 3/4 read),
+          armrests, center pillar, and a five-leg star base. */}
+      {/* Backrest */}
+      <path d="M 28 16 Q 28 12 32 12 H 48 Q 52 12 52 16 V 40 H 28 Z" />
+      {/* Seat */}
+      <ellipse cx={40} cy={44} rx={18} ry={4} />
+      {/* Armrests */}
+      <path d="M 28 24 H 22 V 38" />
+      <path d="M 52 24 H 58 V 38" />
+      {/* Center pillar */}
+      <line x1={40} y1={48} x2={40} y2={56} strokeWidth={3} />
+      {/* Five-leg star base */}
+      <line x1={40} y1={56} x2={22} y2={66} />
+      <line x1={40} y1={56} x2={31} y2={68} />
+      <line x1={40} y1={56} x2={40} y2={68} />
+      <line x1={40} y1={56} x2={49} y2={68} />
+      <line x1={40} y1={56} x2={58} y2={66} />
     </IconFrame>
   );
 }
@@ -205,18 +215,26 @@ export function IconPandemicFurlough({ palette, size }: ModalIconProps): ReactEl
 export function IconVideoCall({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-era-pandemic-zoom-fatigue" label="Pandemic zoom fatigue" size={size}>
-      {/* Browser/app window frame */}
-      <rect x={12} y={20} width={56} height={40} rx={2} />
-      {/* Title bar separator + chrome dots */}
-      <line x1={12} y1={28} x2={68} y2={28} strokeWidth={1.5} />
-      <circle cx={18} cy={24} r={1.2} fill={palette.ink} stroke="none" />
-      <circle cx={22} cy={24} r={1.2} fill={palette.ink} stroke="none" />
-      <circle cx={26} cy={24} r={1.2} fill={palette.ink} stroke="none" />
-      {/* 2×2 grid of face circles — the universal "video call" cue */}
-      <circle cx={27} cy={38} r={5} />
-      <circle cx={53} cy={38} r={5} />
-      <circle cx={27} cy={50} r={5} />
-      <circle cx={53} cy={50} r={5} />
+      {/* 2×2 grid of distinct video tiles — each tile a bordered cell with
+          a tiny person silhouette (head + shoulders). The visible gaps
+          between cells are what made the previous "floating circles in a
+          chromed window" version read as infinity symbols. */}
+      {/* Top-left tile */}
+      <rect x={14} y={16} width={24} height={24} rx={2} />
+      <circle cx={26} cy={26} r={3} />
+      <path d="M 20 38 Q 20 32 26 32 Q 32 32 32 38" />
+      {/* Top-right tile */}
+      <rect x={42} y={16} width={24} height={24} rx={2} />
+      <circle cx={54} cy={26} r={3} />
+      <path d="M 48 38 Q 48 32 54 32 Q 60 32 60 38" />
+      {/* Bottom-left tile */}
+      <rect x={14} y={44} width={24} height={24} rx={2} />
+      <circle cx={26} cy={54} r={3} />
+      <path d="M 20 66 Q 20 60 26 60 Q 32 60 32 66" />
+      {/* Bottom-right tile */}
+      <rect x={42} y={44} width={24} height={24} rx={2} />
+      <circle cx={54} cy={54} r={3} />
+      <path d="M 48 66 Q 48 60 54 60 Q 60 60 60 66" />
     </IconFrame>
   );
 }
@@ -251,24 +269,24 @@ export function IconLightbulbIdea({ palette, size }: ModalIconProps): ReactEleme
 export function IconRecruiterCall({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-recruiter-call" label="Recruiter call" size={size}>
-      {/* Classic phone-handset silhouette — barbell shape:
-          earpiece bulb (upper-left), thick bridge, mouthpiece bulb
-          (lower-right). Deliberately NOT a smartphone rectangle —
-          three of those already exist (parent-needs-help, date-app-
-          match, plus mlm-pitch's chat bubble).
-
-          Bridge is drawn first; the bulbs use fill={palette.background}
-          to mask the portion of the bridge that crosses their interior,
-          leaving an outlined-only bulb on top of a visible bar between.
-          Background-fill matches both the timeline row bg and the modal
-          card bg, so the bulb interior reads transparent in both
-          contexts — no return of the surface tile dropped in PR #58. */}
-      <line x1={26} y1={26} x2={48} y2={48} strokeWidth={7} />
-      <circle cx={22} cy={22} r={10} fill={palette.background} />
-      <circle cx={52} cy={52} r={10} fill={palette.background} />
-      {/* Sound waves off the upper-right — the call is ringing. */}
-      <path d="M 60 20 Q 68 28 60 36" strokeWidth={2} />
-      <path d="M 66 12 Q 78 28 66 44" strokeWidth={2} />
+      {/* ☎️ — vintage desk phone. Rectangular base with a rotary dial,
+          horizontal handset resting on top via two short cradle posts. */}
+      {/* Base */}
+      <rect x={12} y={46} width={56} height={16} rx={3} />
+      {/* Rotary dial */}
+      <circle cx={40} cy={54} r={6} />
+      <circle cx={40} cy={54} r={1.5} fill={palette.ink} stroke="none" />
+      {/* Dial finger-holes — 5 small dots around the dial edge */}
+      <circle cx={40} cy={50} r={0.9} fill={palette.ink} stroke="none" />
+      <circle cx={44} cy={52} r={0.9} fill={palette.ink} stroke="none" />
+      <circle cx={44} cy={56} r={0.9} fill={palette.ink} stroke="none" />
+      <circle cx={36} cy={56} r={0.9} fill={palette.ink} stroke="none" />
+      <circle cx={36} cy={52} r={0.9} fill={palette.ink} stroke="none" />
+      {/* Cradle posts connecting base to handset */}
+      <line x1={20} y1={46} x2={20} y2={42} strokeWidth={2} />
+      <line x1={60} y1={46} x2={60} y2={42} strokeWidth={2} />
+      {/* Handset resting horizontally on top — capsule with flared ends */}
+      <path d="M 12 32 Q 12 24 20 24 Q 26 24 28 32 L 52 32 Q 54 24 60 24 Q 68 24 68 32 V 38 Q 68 42 60 42 Q 54 42 52 38 L 28 38 Q 26 42 20 42 Q 12 42 12 38 Z" />
     </IconFrame>
   );
 }
@@ -346,10 +364,26 @@ export function IconRings({ palette, size }: ModalIconProps): ReactElement {
 export function IconCouch({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-therapy-first-session" label="First therapy session" size={size}>
-      <rect x={18} y={28} width={44} height={18} rx={3} />
-      <rect x={14} y={42} width={52} height={14} rx={3} />
-      <line x1={18} y1={56} x2={18} y2={62} />
-      <line x1={62} y1={56} x2={62} y2={62} />
+      {/* Classic 3-seat sofa, front view. Tall rounded backrest, two
+          armrests flanking, seat with three cushion divisions, four
+          short legs. Reads unambiguously as a couch (the prior chaise
+          profile was reading as a piano). */}
+      {/* Backrest */}
+      <rect x={14} y={18} width={52} height={22} rx={4} />
+      {/* Left armrest */}
+      <rect x={10} y={30} width={10} height={24} rx={3} />
+      {/* Right armrest */}
+      <rect x={60} y={30} width={10} height={24} rx={3} />
+      {/* Seat with cushions */}
+      <rect x={18} y={40} width={44} height={16} rx={2} />
+      {/* Cushion division lines */}
+      <line x1={33} y1={40} x2={33} y2={56} strokeWidth={1.5} />
+      <line x1={47} y1={40} x2={47} y2={56} strokeWidth={1.5} />
+      {/* Four short legs */}
+      <line x1={16} y1={56} x2={16} y2={62} strokeWidth={2} />
+      <line x1={30} y1={56} x2={30} y2={62} strokeWidth={2} />
+      <line x1={50} y1={56} x2={50} y2={62} strokeWidth={2} />
+      <line x1={64} y1={56} x2={64} y2={62} strokeWidth={2} />
     </IconFrame>
   );
 }
@@ -369,18 +403,27 @@ export function IconPawPrint({ palette, size }: ModalIconProps): ReactElement {
 export function IconPalmTree({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-cash-out-pto" label="Cash out PTO" size={size}>
-      {/* Island base — sand patch under the palm, 🏝️ shape. */}
-      <ellipse cx={40} cy={62} rx={22} ry={4} />
-      {/* Trunk — stops at the top edge of the island. */}
-      <line x1={40} y1={58} x2={40} y2={38} />
-      {/* Fronds */}
-      <path d="M 40 38 Q 30 32 22 36" />
-      <path d="M 40 38 Q 50 32 58 36" />
-      <path d="M 40 38 Q 32 26 28 18" />
-      <path d="M 40 38 Q 48 26 52 18" />
-      <path d="M 40 38 Q 40 24 38 14" />
+      {/* 🏝️ — curved palm trunk rising from the CENTER of the island
+          (not from the top edge), gentle S-curve, drooping fronds at the
+          crown. Reference: the island-palm emoji silhouette. */}
+      {/* Island base */}
+      <ellipse cx={40} cy={62} rx={24} ry={4} />
+      {/* Trunk — single cubic bezier from inside the island, sweeping up
+          and bending to the right. Strokewidth bumped for tree weight. */}
+      <path d="M 40 64 C 40 50 54 42 50 22" strokeWidth={3} />
+      {/* Trunk rings — short cross-hatches for palm-bark texture */}
+      <line x1={42} y1={54} x2={46} y2={54} strokeWidth={1.5} />
+      <line x1={46} y1={42} x2={50} y2={42} strokeWidth={1.5} />
+      <line x1={49} y1={32} x2={53} y2={32} strokeWidth={1.5} />
+      {/* Drooping fronds radiating from the crown at (50, 22) */}
+      <path d="M 50 22 Q 60 12 70 14" />
+      <path d="M 50 22 Q 56 8 64 6" />
+      <path d="M 50 22 Q 46 8 40 8" />
+      <path d="M 50 22 Q 38 14 28 14" />
+      <path d="M 50 22 Q 36 24 24 32" />
+      <path d="M 50 22 Q 60 24 68 30" />
       {/* Coconut */}
-      <circle cx={42} cy={38} r={2} fill={palette.ink} stroke="none" />
+      <circle cx={52} cy={24} r={2} fill={palette.ink} stroke="none" />
     </IconFrame>
   );
 }
@@ -388,8 +431,21 @@ export function IconPalmTree({ palette, size }: ModalIconProps): ReactElement {
 export function IconHeartHands({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-charity-donation" label="Charity donation" size={size}>
-      <path d="M 40 28 Q 32 20 26 26 Q 20 34 40 48 Q 60 34 54 26 Q 48 20 40 28 Z" />
-      <path d="M 20 52 Q 30 62 40 62 Q 50 62 60 52" />
+      {/* Heart with a $ inside — donation glyph, stripped of the hands
+          that were over-engineered and unclear. */}
+      <path d="M 40 18 Q 28 6 16 18 Q 4 36 40 64 Q 76 36 64 18 Q 52 6 40 18 Z" />
+      <text
+        x={40}
+        y={48}
+        textAnchor="middle"
+        fontFamily="inherit"
+        fontSize={28}
+        fontWeight={700}
+        fill={palette.ink}
+        stroke="none"
+      >
+        $
+      </text>
     </IconFrame>
   );
 }
@@ -439,11 +495,20 @@ export function IconLaptopSpark({ palette, size }: ModalIconProps): ReactElement
 export function IconDoorKey({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-roommate-buyout" label="Roommate buyout" size={size}>
-      <rect x={20} y={18} width={26} height={48} rx={1} />
-      <circle cx={40} cy={42} r={2} fill={palette.ink} stroke="none" />
-      <circle cx={56} cy={36} r={5} />
-      <line x1={56} y1={41} x2={56} y2={54} strokeWidth={2} />
-      <line x1={56} y1={48} x2={62} y2={48} />
+      {/* Door on the left + a clearly-drawn key on the right.
+          Key has a large round bow with a visible hole, a thick straight
+          shaft, and two perpendicular teeth at the bit end. */}
+      {/* Door */}
+      <rect x={14} y={14} width={24} height={52} rx={1} />
+      <circle cx={32} cy={40} r={2} fill={palette.ink} stroke="none" />
+      {/* Key bow (round head) with hole */}
+      <circle cx={54} cy={22} r={8} strokeWidth={3} />
+      <circle cx={54} cy={22} r={3} />
+      {/* Key shaft */}
+      <line x1={54} y1={30} x2={54} y2={62} strokeWidth={3} />
+      {/* Key teeth (bit end) */}
+      <line x1={54} y1={52} x2={62} y2={52} strokeWidth={3} />
+      <line x1={54} y1={60} x2={64} y2={60} strokeWidth={3} />
     </IconFrame>
   );
 }
@@ -474,13 +539,22 @@ export function IconCodeBrackets({ palette, size }: ModalIconProps): ReactElemen
 export function IconPager({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="swe-oncall-volunteer" label="Oncall volunteer" size={size}>
-      <rect x={20} y={22} width={32} height={36} rx={3} />
-      <rect x={24} y={26} width={24} height={14} />
-      <circle cx={28} cy={50} r={1.5} fill={palette.ink} stroke="none" />
-      <circle cx={36} cy={50} r={1.5} fill={palette.ink} stroke="none" />
-      <circle cx={44} cy={50} r={1.5} fill={palette.ink} stroke="none" />
-      <line x1={52} y1={22} x2={60} y2={14} strokeWidth={1.5} />
-      <circle cx={62} cy={12} r={3} fill={palette.ink} stroke="none" />
+      {/* Smartphone in portrait orientation with an alert badge in the
+          upper-right corner + buzz waves on the right edge. Pagers were
+          retired with the cell-phone era; on-call now lands on a phone.
+          Function name kept (IconPager) to avoid the import-cascade
+          rework; only the SVG changed. */}
+      {/* Phone body */}
+      <rect x={26} y={12} width={28} height={56} rx={4} />
+      {/* Top speaker slot */}
+      <line x1={34} y1={17} x2={46} y2={17} strokeWidth={1.5} />
+      {/* Screen */}
+      <rect x={28} y={22} width={24} height={36} />
+      {/* Home indicator at bottom */}
+      <line x1={36} y1={63} x2={44} y2={63} strokeWidth={1.5} />
+      {/* Buzz waves on the right edge — phone vibrating */}
+      <path d="M 60 32 Q 66 36 60 40" strokeWidth={2} />
+      <path d="M 64 26 Q 72 36 64 46" strokeWidth={2} />
     </IconFrame>
   );
 }
@@ -569,14 +643,20 @@ export function IconPandemicClose({ palette, size }: ModalIconProps): ReactEleme
 export function IconThresholdDoor({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="finale-month-120" label="The closing door" size={size}>
-      {/* Door frame (outer arch) */}
-      <path d="M 22 64 V 22 Q 22 14 30 14 H 50 Q 58 14 58 22 V 64" />
-      {/* Inner panel — door cracked open, hinged on the left */}
-      <path d="M 30 64 V 26 Q 30 20 36 20 H 44" />
-      {/* Light beams emerging through the opening */}
-      <line x1={48} y1={30} x2={62} y2={26} strokeWidth={1.5} />
-      <line x1={50} y1={40} x2={66} y2={40} strokeWidth={1.5} />
-      <line x1={48} y1={50} x2={62} y2={54} strokeWidth={1.5} />
+      {/* Door frame — plain rectangle (was an arch). Door panel inside
+          swings outward (ajar), hinged on the LEFT, so the right edge of
+          the panel is offset and you can see through the opening. An
+          arrow exits through that opening to the right. */}
+      {/* Door frame */}
+      <rect x={14} y={14} width={36} height={52} />
+      {/* Door panel — ajar, opening outward. Hinge at x=14. Right edge of
+          the panel pulled in toward the hinge so a clear gap shows. */}
+      <path d="M 14 18 L 38 22 L 38 58 L 14 62" />
+      {/* Door knob on the panel */}
+      <circle cx={34} cy={40} r={1.8} fill={palette.ink} stroke="none" />
+      {/* Exit arrow passing through the open gap */}
+      <line x1={50} y1={40} x2={68} y2={40} strokeWidth={3} />
+      <path d="M 64 36 L 68 40 L 64 44" strokeWidth={3} />
     </IconFrame>
   );
 }
@@ -588,8 +668,24 @@ export function IconThresholdDoor({ palette, size }: ModalIconProps): ReactEleme
 export function IconCards({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="blackjack" label="Blackjack" size={size}>
-      <rect x={20} y={22} width={26} height={38} rx={3} transform="rotate(-10 33 41)" />
-      <rect x={34} y={22} width={26} height={38} rx={3} transform="rotate(10 47 41)" />
+      {/* Two playing cards fanned. Spade card is rendered FIRST (back),
+          heart card SECOND with a background-fill rect so it visibly
+          occludes the spade where they overlap — heart card reads as
+          "on top of" the spade card, not "transparent next to" it. */}
+      {/* Back card: spade (right, tilted +10°) */}
+      <g transform="rotate(10 50 42)">
+        <rect x={37} y={22} width={26} height={38} rx={3} />
+        {/* Spade — inverted teardrop with stem */}
+        <path d="M 50 30 Q 58 38 58 44 Q 58 48 54 48 Q 52 48 50 46 Q 48 48 46 48 Q 42 48 42 44 Q 42 38 50 30 Z" fill={palette.ink} stroke="none" />
+        <path d="M 48 50 Q 50 46 52 50 Q 52 52 50 52 Q 48 52 48 50 Z" fill={palette.ink} stroke="none" />
+      </g>
+      {/* Front card: heart (left, tilted -10°). Background fill on the
+          rect occludes the spade card behind it where they overlap. */}
+      <g transform="rotate(-10 30 42)">
+        <rect x={17} y={22} width={26} height={38} rx={3} fill={palette.background} />
+        {/* Heart */}
+        <path d="M 30 32 Q 26 28 22 32 Q 20 38 30 46 Q 40 38 38 32 Q 34 28 30 32 Z" fill={palette.ink} stroke="none" />
+      </g>
     </IconFrame>
   );
 }
@@ -630,10 +726,30 @@ export function IconPaddles({ palette, size }: ModalIconProps): ReactElement {
 export function IconFortyTwo({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="forty-two" label="The Ultimate Question" size={size}>
-      {/* Letterform glyph — the answer, surfaced post-play when the joke
-          is past tense. The menu row hides it; here the timeline reveal
-          is the punchline. */}
-      <text x={40} y={54} textAnchor="middle" fontFamily="inherit" fontSize={36} fontWeight={700} fill={palette.ink} stroke="none">42</text>
+      {/* Deep Thought (2005 Hitchhiker's Guide film silhouette) — wedge-
+          shaped CRT-monitor "head" tilted forward, mounted on a tripod
+          A-frame stand. Avoids the "42" glyph that would spoil the
+          minigame punchline if the icon shows pre-play. */}
+      {/* Head — trapezoidal monitor, top edge wider than bottom, tilted */}
+      <path
+        d="M 14 10 L 64 8 L 62 40 L 16 42 Z"
+        fill={palette.ink}
+        stroke="none"
+      />
+      {/* Small screen-glint accent (kept palette.background to read as a
+          highlight on the dark face) */}
+      <line x1={22} y1={22} x2={32} y2={24} stroke={palette.background} strokeWidth={1.5} />
+      {/* Neck — narrowing wedge connecting head to stand */}
+      <path
+        d="M 28 42 L 52 42 L 48 50 L 32 50 Z"
+        fill={palette.ink}
+        stroke="none"
+      />
+      {/* Tripod legs — A-frame */}
+      <line x1={32} y1={50} x2={14} y2={68} strokeWidth={4} />
+      <line x1={48} y1={50} x2={66} y2={68} strokeWidth={4} />
+      {/* Cross-brace stabilizer */}
+      <line x1={22} y1={60} x2={58} y2={60} strokeWidth={3} />
     </IconFrame>
   );
 }
@@ -643,12 +759,17 @@ export function IconFortyTwo({ palette, size }: ModalIconProps): ReactElement {
 export function IconUpwardArrow({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-era-rebound-promo-wave" label="Rebound promo wave" size={size}>
-      <polyline points="14,54 26,42 38,48 52,30 62,30" strokeWidth={2.5} />
-      <polyline points="56,28 62,30 60,36" strokeWidth={2.5} />
-      <circle cx={14} cy={54} r={2} fill={palette.ink} stroke="none" />
-      <circle cx={26} cy={42} r={2} fill={palette.ink} stroke="none" />
-      <circle cx={38} cy={48} r={2} fill={palette.ink} stroke="none" />
-      <circle cx={52} cy={30} r={2} fill={palette.ink} stroke="none" />
+      {/* Ascending staircase — three stair treads climbing left to right,
+          with a bold up-arrow rising past the top step. Reads as
+          "leveling up / promo ladder," matching the "promo wave" event. */}
+      {/* Staircase outline (stepped polyline) */}
+      <polyline
+        points="12,64 12,52 30,52 30,40 48,40 48,28 66,28 66,64 12,64"
+        strokeWidth={2.5}
+      />
+      {/* Bold up-arrow rising past the top step */}
+      <line x1={58} y1={20} x2={58} y2={6} strokeWidth={4} />
+      <path d="M 52 12 L 58 6 L 64 12" strokeWidth={4} />
     </IconFrame>
   );
 }
@@ -1004,12 +1125,14 @@ export function IconCashFound({ palette, size }: ModalIconProps): ReactElement {
 export function IconBrowserTabX({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-univ-deleted-tab" label="Deleted tab" size={size}>
-      {/* Tab fin + body */}
-      <path d="M 14 30 H 38 L 42 22 L 64 22 V 30" />
-      <rect x={14} y={30} width={52} height={32} rx={1} />
-      {/* Big X in middle */}
-      <line x1={28} y1={40} x2={52} y2={56} strokeWidth={3.5} />
-      <line x1={52} y1={40} x2={28} y2={56} strokeWidth={3.5} />
+      {/* Single document/window with a folder-style tab notch at the top-left
+          and a few content lines inside. Matches the user-supplied
+          reference shape. */}
+      <path d="M 10 22 L 14 14 L 30 14 L 34 22 L 70 22 L 70 66 L 10 66 Z" />
+      <line x1={16} y1={36} x2={62} y2={36} strokeWidth={2} />
+      <line x1={16} y1={46} x2={62} y2={46} strokeWidth={2} />
+      <line x1={16} y1={54} x2={50} y2={54} strokeWidth={2} />
+      <line x1={16} y1={62} x2={62} y2={62} strokeWidth={2} />
     </IconFrame>
   );
 }
@@ -1044,15 +1167,37 @@ export function IconAirplaneClock({ palette, size }: ModalIconProps): ReactEleme
 export function IconLostWallet({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-univ-lost-wallet" label="Lost wallet" size={size}>
-      {/* Wallet open */}
-      <rect x={14} y={22} width={52} height={36} rx={3} />
-      <line x1={14} y1={40} x2={66} y2={40} />
-      {/* Card slots on upper half */}
-      <line x1={22} y1={28} x2={44} y2={28} strokeWidth={1.5} />
-      <line x1={22} y1={34} x2={44} y2={34} strokeWidth={1.5} />
-      {/* Empty X on lower half */}
-      <line x1={48} y1={46} x2={60} y2={54} strokeWidth={2} />
-      <line x1={60} y1={46} x2={48} y2={54} strokeWidth={2} />
+      {/* Bi-fold wallet (right side of frame) with a card + bill peeking
+          out the top, a center fold crease, and motion lines trailing to
+          the left — the wallet was just dropped / fell away. */}
+      {/* Wallet body */}
+      <rect x={28} y={32} width={40} height={26} rx={2} />
+      {/* Center fold crease */}
+      <line x1={48} y1={32} x2={48} y2={58} strokeWidth={1.5} />
+      {/* Stitching along the bottom edge */}
+      <line x1={32} y1={54} x2={36} y2={54} strokeWidth={1} />
+      <line x1={40} y1={54} x2={44} y2={54} strokeWidth={1} />
+      <line x1={52} y1={54} x2={56} y2={54} strokeWidth={1} />
+      <line x1={60} y1={54} x2={64} y2={54} strokeWidth={1} />
+      {/* Card peeking from the top of the right fold */}
+      <rect x={52} y={26} width={14} height={8} rx={1} />
+      {/* $ symbol on the wallet face */}
+      <text
+        x={38}
+        y={50}
+        textAnchor="middle"
+        fontFamily="inherit"
+        fontSize={14}
+        fontWeight={700}
+        fill={palette.ink}
+        stroke="none"
+      >
+        $
+      </text>
+      {/* Motion lines trailing to the LEFT — the wallet is dropping/lost */}
+      <line x1={8} y1={36} x2={22} y2={36} strokeWidth={2} />
+      <line x1={4} y1={44} x2={22} y2={44} strokeWidth={2} />
+      <line x1={8} y1={52} x2={22} y2={52} strokeWidth={2} />
     </IconFrame>
   );
 }
@@ -1113,12 +1258,21 @@ export function IconDocumentTrending({ palette, size }: ModalIconProps): ReactEl
 export function IconInboxBlast({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-swe-recruiter-blast" label="Recruiter blast" size={size}>
+      {/* Inbox tray with a row of downward arrows pouring into it — the
+          "blast" reads as volume of incoming traffic, not a few floating
+          envelopes (which were ambiguous as boxes). */}
       {/* Inbox tray */}
-      <path d="M 12 38 H 24 L 28 46 H 52 L 56 38 H 68 V 62 H 12 Z" />
-      {/* Envelopes flying in */}
-      <rect x={20} y={14} width={16} height={10} rx={1} transform="rotate(-10 28 18)" />
-      <rect x={44} y={14} width={16} height={10} rx={1} transform="rotate(10 52 18)" />
-      <rect x={32} y={24} width={16} height={10} rx={1} />
+      <path d="M 12 44 H 24 L 28 52 H 52 L 56 44 H 68 V 64 H 12 Z" />
+      {/* Three incoming down-arrows above the tray, staggered for "blast" feel */}
+      {/* Left arrow */}
+      <line x1={22} y1={10} x2={22} y2={36} strokeWidth={3} />
+      <path d="M 16 30 L 22 36 L 28 30" strokeWidth={3} />
+      {/* Center arrow (slightly taller) */}
+      <line x1={40} y1={6} x2={40} y2={38} strokeWidth={3} />
+      <path d="M 34 32 L 40 38 L 46 32" strokeWidth={3} />
+      {/* Right arrow */}
+      <line x1={58} y1={10} x2={58} y2={36} strokeWidth={3} />
+      <path d="M 52 30 L 58 36 L 64 30" strokeWidth={3} />
     </IconFrame>
   );
 }
@@ -1171,18 +1325,26 @@ export function IconRoommateFriction({ palette, size }: ModalIconProps): ReactEl
 export function IconWalker({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-era-pandemic-walk-routine" label="Walk routine" size={size}>
+      {/* Walking figure in profile — head connected to torso via a short
+          neck, torso vertical, arms swinging in opposition (front + back),
+          legs in mid-stride. Ground line below; small motion dashes
+          trailing behind to confirm motion direction. */}
       {/* Head */}
-      <circle cx={36} cy={20} r={5} />
-      {/* Body (slightly tilted forward) */}
-      <line x1={32} y1={28} x2={44} y2={42} strokeWidth={3} />
-      {/* Arms */}
-      <line x1={36} y1={32} x2={26} y2={42} strokeWidth={2.5} />
-      <line x1={40} y1={36} x2={48} y2={28} strokeWidth={2.5} />
-      {/* Legs walking */}
-      <line x1={44} y1={42} x2={34} y2={58} strokeWidth={2.5} />
-      <line x1={44} y1={42} x2={54} y2={58} strokeWidth={2.5} />
+      <circle cx={38} cy={16} r={5} />
+      {/* Neck connecting head to torso */}
+      <line x1={38} y1={21} x2={38} y2={26} strokeWidth={2.5} />
+      {/* Torso */}
+      <line x1={38} y1={26} x2={38} y2={44} strokeWidth={3} />
+      {/* Front arm (swinging forward) */}
+      <line x1={38} y1={30} x2={50} y2={38} strokeWidth={2.5} />
+      {/* Back arm (swinging back, slightly up) */}
+      <line x1={38} y1={30} x2={28} y2={26} strokeWidth={2.5} />
+      {/* Front leg (forward stride) */}
+      <line x1={38} y1={44} x2={50} y2={60} strokeWidth={2.5} />
+      {/* Back leg (back stride) */}
+      <line x1={38} y1={44} x2={28} y2={60} strokeWidth={2.5} />
       {/* Ground */}
-      <line x1={14} y1={62} x2={66} y2={62} strokeWidth={1.5} />
+      <line x1={12} y1={62} x2={66} y2={62} strokeWidth={1.5} />
     </IconFrame>
   );
 }
@@ -1263,17 +1425,15 @@ export function IconArchiveBox({ palette, size }: ModalIconProps): ReactElement 
 export function IconMentorPointing({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-era-uncertain-becoming-mentor" label="Becoming a mentor" size={size}>
-      {/* Mentor figure */}
-      <circle cx={28} cy={22} r={6} />
-      <path d="M 20 58 V 36 Q 20 30 28 30 Q 36 30 36 36 V 58" />
-      {/* Arm pointing right */}
-      <line x1={32} y1={38} x2={54} y2={38} strokeWidth={2.5} />
-      <path d="M 50 34 L 54 38 L 50 42" strokeWidth={2.5} />
-      {/* Notepad/board being pointed at */}
-      <rect x={56} y={30} width={12} height={16} />
-      <line x1={58} y1={34} x2={66} y2={34} strokeWidth={1.5} />
-      <line x1={58} y1={38} x2={66} y2={38} strokeWidth={1.5} />
-      <line x1={58} y1={42} x2={64} y2={42} strokeWidth={1.5} />
+      {/* Two figures — mentor (left, larger) and mentee (right, smaller).
+          Size difference + adjacency carries the "mentor / mentee"
+          reading; the pointing arm was over-explaining. */}
+      {/* Mentor (left, larger) */}
+      <circle cx={26} cy={22} r={7} />
+      <path d="M 16 58 V 34 Q 16 28 26 28 Q 36 28 36 34 V 58" />
+      {/* Mentee (right, smaller) */}
+      <circle cx={56} cy={30} r={5} />
+      <path d="M 50 58 V 42 Q 50 38 56 38 Q 62 38 62 42 V 58" />
     </IconFrame>
   );
 }
@@ -1281,12 +1441,23 @@ export function IconMentorPointing({ palette, size }: ModalIconProps): ReactElem
 export function IconCycleArrow({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-era-uncertain-cycle-reborn" label="Cycle reborn" size={size}>
-      {/* Almost-full circular path */}
-      <path d="M 40 14 Q 64 14 64 40 Q 64 64 40 64 Q 16 64 16 40" strokeWidth={3} fill="none" />
-      {/* Arrow head closing the loop at upper-left */}
-      <path d="M 12 36 L 16 40 L 20 36" strokeWidth={3} />
-      {/* Sun/center sparkle */}
-      <path d="M 40 32 L 42 38 L 48 40 L 42 42 L 40 48 L 38 42 L 32 40 L 38 38 Z" fill={palette.ink} stroke="none" />
+      {/* Sun rising over a horizon — the "new dawn / starting over"
+          reading of cycle-reborn. Half-sun above a horizon line, with
+          rays radiating outward + upward. */}
+      {/* Horizon */}
+      <line x1={10} y1={52} x2={70} y2={52} strokeWidth={2} />
+      {/* Half-sun above horizon */}
+      <path d="M 22 52 A 18 18 0 0 1 58 52" strokeWidth={2.5} />
+      {/* Rays — top, upper-left, upper-right, mid-left, mid-right, between */}
+      <line x1={40} y1={18} x2={40} y2={24} strokeWidth={2.5} />
+      <line x1={20} y1={24} x2={24} y2={30} strokeWidth={2.5} />
+      <line x1={60} y1={24} x2={56} y2={30} strokeWidth={2.5} />
+      <line x1={10} y1={38} x2={16} y2={40} strokeWidth={2.5} />
+      <line x1={70} y1={38} x2={64} y2={40} strokeWidth={2.5} />
+      <line x1={28} y1={14} x2={32} y2={22} strokeWidth={2} />
+      <line x1={52} y1={14} x2={48} y2={22} strokeWidth={2} />
+      {/* A small ground-line beneath the horizon (suggests land) */}
+      <line x1={10} y1={58} x2={70} y2={58} strokeWidth={1.5} />
     </IconFrame>
   );
 }
@@ -1297,13 +1468,14 @@ export function IconEconomyDown({ palette, size }: ModalIconProps): ReactElement
       {/* Axes */}
       <line x1={14} y1={60} x2={66} y2={60} strokeWidth={2} />
       <line x1={14} y1={60} x2={14} y2={16} strokeWidth={2} />
-      {/* Downward line graph */}
-      <polyline points="18,22 28,32 38,28 48,42 58,52" strokeWidth={2.5} />
-      {/* Arrowhead pointing down at the end */}
-      <path d="M 54 50 L 58 54 L 62 50" strokeWidth={2.5} />
-      <line x1={58} y1={52} x2={58} y2={58} strokeWidth={2.5} />
-      {/* Dots */}
+      {/* Downward line graph — polyline ends at (60, 56). */}
+      <polyline points="18,22 28,32 38,28 48,42 60,56" strokeWidth={2.5} />
+      {/* Down-arrow head at the endpoint — clean chevron (V) opening upward,
+          point at (60, 56). Wings go up-left and up-right. */}
+      <path d="M 54 50 L 60 56 L 66 50" strokeWidth={2.5} />
+      {/* Dots on key inflection points */}
       <circle cx={18} cy={22} r={2} fill={palette.ink} stroke="none" />
+      <circle cx={38} cy={28} r={2} fill={palette.ink} stroke="none" />
       <circle cx={48} cy={42} r={2} fill={palette.ink} stroke="none" />
     </IconFrame>
   );
