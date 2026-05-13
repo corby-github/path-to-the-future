@@ -15,7 +15,10 @@ export const SAVE_KEY = 'pttf:save:default';
 // 1.5.0: Issue #32 — `MinigameVariant` gains `'pong'` so
 //        `lastArcadeXpAt` widens to include `pong: number`. Old saves
 //        without the key are discarded on load.
-export const STATE_VERSION = '1.5.0';
+// 1.6.0: Issue #41 — `MinigameVariant` gains `'forty-two'` so
+//        `lastArcadeXpAt` widens to include `forty-two: number`. Old
+//        saves without the key are discarded on load.
+export const STATE_VERSION = '1.6.0';
 
 export function loadPersistedState(): unknown {
   try {

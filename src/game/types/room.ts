@@ -1,6 +1,6 @@
 export type RoomType = 'decision' | 'minigame' | 'narrative' | 'consequence';
 
-export type MinigameVariant = 'blackjack' | 'code-review' | 'reaction-sprint' | 'pong';
+export type MinigameVariant = 'blackjack' | 'code-review' | 'reaction-sprint' | 'pong' | 'forty-two';
 
 interface BaseRoomConfig {
   monthId: number;
