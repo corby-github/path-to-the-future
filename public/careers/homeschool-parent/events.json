@@ -1,0 +1,61 @@
+{
+  "events": [
+    {
+      "id": "evt-hp-toddler-crayon",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["humor", "flavor"],
+      "weight": 0.7,
+      "title": "Bram ate part of a crayon.",
+      "body": "It was a small piece. He looked guilty in advance. You looked it up — it's fine, apparently. Crayons are mostly wax. You wrote it in the journal anyway, because someone, twenty years from now, might want the date.",
+      "effects": { "burnout": "+1" }
+    },
+    {
+      "id": "evt-hp-pandemic-grocery-line",
+      "pool": "homeschool-parent",
+      "era": ["pandemic"],
+      "tags": ["era"],
+      "weight": 0.6,
+      "title": "The 7am line at the store.",
+      "body": "You queued in the dark with both kids in the cart. The shelves were lit and half-empty. You used to do this alone, at lunch, in fifteen minutes. You did not used to do it like this.",
+      "scene": [
+        "A pre-dawn parking lot.",
+        "A masked cashier.",
+        "A receipt longer than you expected."
+      ],
+      "effects": { "savings": "-140", "burnout": "+2", "health": "-1" }
+    },
+    {
+      "id": "evt-hp-park-grade-question",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["community", "identity"],
+      "weight": 0.7,
+      "trigger": { "month": ">=18" },
+      "title": "What grade is she in?",
+      "body": "Another mom at the park asked, friendly. You said the honest thing — that you don't really track it that way. There was a small pause. The other mom said 'cool' the way people say 'cool' when they mean 'huh.'",
+      "effects": { "reputation": "-2", "network": "+1" }
+    },
+    {
+      "id": "evt-hp-ai-doorway",
+      "pool": "homeschool-parent",
+      "era": ["ai-shift"],
+      "tags": ["era"],
+      "weight": 0.6,
+      "title": "Bram asks the chatbot.",
+      "body": "You stood in the doorway. Bram had typed the social-studies question into the chatbot before you got there. The answer was on the screen, formatted, with bullet points. He read it out loud to no one in particular. He didn't need you for this one. You didn't know what to do with the small drop you felt.",
+      "effects": { "technicalSkill": "-1", "burnout": "+1" }
+    },
+    {
+      "id": "evt-hp-handwriting-wobble",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["stress"],
+      "weight": 0.7,
+      "trigger": { "burnout": ">65" },
+      "title": "Your handwriting on the dry-erase.",
+      "body": "You wrote the date and you noticed the letters wobble. Not a lot. Enough that you stood there a second and looked at it before erasing it and writing it again.",
+      "effects": { "burnout": "+2", "health": "-2" }
+    }
+  ]
+}

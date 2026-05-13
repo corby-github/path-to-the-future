@@ -127,7 +127,7 @@ export function CareerPicker({ onSelect }: Props) {
       <div style={cardStyle}>
         <h1 style={titleStyle}>Choose your career</h1>
         <p style={subtitleStyle}>
-          Five paths in v1 — one playable. More on the way.
+          Six paths in v1 — two playable. More on the way.
         </p>
 
         <div

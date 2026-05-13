@@ -1,0 +1,139 @@
+{
+  "decisions": [
+    {
+      "id": "hp-curriculum-boxed-vs-own",
+      "pool": "homeschool-parent",
+      "tags": ["teaching", "identity"],
+      "weight": 1.0,
+      "requires": { "month": ">=2" },
+      "prompt": "The first-week binder is empty. Your sister-in-law swears by the boxed curriculum — open it, follow the script. Or you could write the plan yourself.",
+      "options": [
+        {
+          "label": "Open the box. Follow the plan.",
+          "scene": [
+            "A laminated week-one sheet.",
+            "A read-aloud you didn't pick.",
+            "Hazel finishes early."
+          ],
+          "effects": { "savings": "-180", "burnout": "-3", "technicalSkill": "+1", "network": "+1" },
+          "flavor": "The plan got you through the week. Some of the read-alouds you wouldn't have chosen. Hazel didn't mind. You sometimes did."
+        },
+        {
+          "label": "Write your own plan",
+          "scene": [
+            "A notebook. A library list.",
+            "Two long evenings.",
+            "A schedule that fits your kids."
+          ],
+          "effects": { "burnout": "+4", "technicalSkill": "+3", "reputation": "+2", "xp": "+150" },
+          "flavor": "Eleven hours of planning. The week ran. Three lessons hit, two didn't, and you knew exactly which were which by Friday."
+        }
+      ]
+    },
+    {
+      "id": "hp-coop-invitation",
+      "pool": "homeschool-parent",
+      "tags": ["community", "work-life-balance"],
+      "weight": 1.0,
+      "requires": { "month": ">=4" },
+      "prompt": "A neighborhood co-op meets Tuesday mornings. Five families, shared lessons, a craft and a snack. You'd be giving up every Tuesday.",
+      "options": [
+        {
+          "label": "Sign on",
+          "scene": [
+            "A driveway full of cars.",
+            "Six kids in a basement.",
+            "A schedule on the fridge."
+          ],
+          "effects": { "network": "+8", "reputation": "+3", "burnout": "+2", "health": "+1", "xp": "+150" },
+          "flavor": "Bram found a friend. Hazel found two. You found a parent you actually like. Tuesday mornings, gone — and you don't quite miss them."
+        },
+        {
+          "label": "Stay solo for now",
+          "effects": { "burnout": "-2", "network": "-1" },
+          "flavor": "You said maybe next year. The co-op kept going without you. You saw the photos in the group chat. The kids in them looked busy."
+        }
+      ]
+    },
+    {
+      "id": "hp-end-of-year-evaluation",
+      "pool": "homeschool-parent",
+      "tags": ["teaching", "money", "accountability"],
+      "weight": 1.0,
+      "requires": { "month": ">=24" },
+      "prompt": "The state wants an end-of-year evaluation. You can put Hazel through a standardized test, or pay an evaluator to write a portfolio review instead.",
+      "options": [
+        {
+          "label": "Sit the test",
+          "scene": [
+            "Hazel in a quiet room.",
+            "A No. 2 pencil.",
+            "Three hours and a score sheet."
+          ],
+          "effects": { "burnout": "+4", "technicalSkill": "+3", "reputation": "+2", "health": "-1", "xp": "+150" },
+          "flavor": "She scored above grade in two subjects, below in one. The number was somehow both a relief and a verdict. You knew exactly what to work on by Monday."
+        },
+        {
+          "label": "Hire the evaluator",
+          "effects": { "savings": "-250", "burnout": "-2", "network": "+2" },
+          "flavor": "The evaluator was kind. The portfolio narrative used the word 'curious' three times. You weren't sure if that was teaching or marketing."
+        }
+      ]
+    },
+    {
+      "id": "hp-contract-work-offer",
+      "pool": "homeschool-parent",
+      "tags": ["career-movement", "identity", "money"],
+      "weight": 0.9,
+      "requires": { "month": ">=36" },
+      "prompt": "An old coworker has a remote contract that fits — twenty-five hours a week, decent rate. Bram is finally old enough to read in the other room. The work would not get done at the kitchen table.",
+      "options": [
+        {
+          "label": "Take the contract",
+          "scene": [
+            "An offer email.",
+            "A locked door, an hour at a time.",
+            "A paycheck with your name on it."
+          ],
+          "effects": { "savings": "+4000", "reputation": "+4", "burnout": "+5", "technicalSkill": "-1", "health": "-1", "xp": "+300" },
+          "flavor": "The work was good. You were good at it. Hazel knocked on the door once and you said 'in a minute' and then forgot for forty. You didn't forget that you'd forgotten."
+        },
+        {
+          "label": "Pass for now",
+          "effects": { "burnout": "-2", "reputation": "-1", "technicalSkill": "+1" },
+          "flavor": "You wrote a careful no. The coworker said they understood — and they did, mostly. The version of you they remembered would have said yes. You weren't sure where that version had gone."
+        }
+      ]
+    },
+    {
+      "id": "hp-eldest-wants-school",
+      "pool": "homeschool-parent",
+      "tags": ["family", "identity", "transition"],
+      "weight": 1.0,
+      "requires": { "month": ">=72" },
+      "prompt": "Hazel is twelve. She asks, calmly, if she can go to school in the fall. She has thought about it. She is not asking permission so much as telling you where she's heading.",
+      "options": [
+        {
+          "label": "Sign her up",
+          "scene": [
+            "A registration packet.",
+            "A first-day photo.",
+            "A kitchen with one student in it."
+          ],
+          "effects": { "reputation": "+5", "burnout": "-3", "network": "+2", "technicalSkill": "-2", "xp": "+300" },
+          "flavor": "She walked in like she'd been planning it for a year. Maybe she had been. The kitchen at 9am was quiet in a way you weren't ready for."
+        },
+        {
+          "label": "Make the case for one more year",
+          "scene": [
+            "A long conversation.",
+            "A compromise neither of you loves.",
+            "The fall begins as before."
+          ],
+          "effects": { "burnout": "+3", "reputation": "-3", "technicalSkill": "+1" },
+          "flavor": "She stayed. The year was fine. Something in how she looked at you on Tuesdays didn't quite return to where it was. You noticed. You weren't sure she did."
+        }
+      ]
+    }
+  ]
+}
