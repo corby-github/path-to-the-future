@@ -23,6 +23,7 @@ import {
   IconPhoneHeart,
   IconRecruiterCall,
   IconRings,
+  IconRocket,
   IconScale,
   IconSparkle,
   IconStandupTooLong,
@@ -31,6 +32,7 @@ import {
   IconThermometer,
   IconThresholdDoor,
   IconUpwardArrow,
+  IconVideoCall,
   type ModalIconComponent,
 } from './modalIcons';
 
@@ -78,6 +80,7 @@ export const DECISION_ICONS: Record<string, ModalIconComponent> = {
   'swe-oncall-volunteer': IconPager,
   'swe-2am-idea': IconLightbulbIdea,
   'swe-conference-talk-cfp': IconMicrophone,
+  'swe-friday-deploy': IconRocket,
 
   // Finale (DecisionRoom hardcodes this id at month 120).
   'finale-month-120': IconThresholdDoor,
@@ -88,6 +91,7 @@ export const DECISION_ICONS: Record<string, ModalIconComponent> = {
 export const EVENT_ICONS: Record<string, ModalIconComponent> = {
   // Era anchors — one per era.
   'evt-era-pandemic-furlough-friend': IconPandemicFurlough,
+  'evt-era-pandemic-zoom-fatigue': IconVideoCall,
   'evt-era-rebound-promo-wave': IconUpwardArrow,
   'evt-era-ai-shift-junior-anxiety': IconSparkle,
   'evt-era-uncertain-decade-mark': IconHourglass,

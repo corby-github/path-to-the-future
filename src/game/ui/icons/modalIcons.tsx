@@ -202,6 +202,25 @@ export function IconPandemicFurlough({ palette, size }: ModalIconProps): ReactEl
   );
 }
 
+export function IconVideoCall({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-pandemic-zoom-fatigue" label="Pandemic zoom fatigue" size={size}>
+      {/* Browser/app window frame */}
+      <rect x={12} y={20} width={56} height={40} rx={2} />
+      {/* Title bar separator + chrome dots */}
+      <line x1={12} y1={28} x2={68} y2={28} strokeWidth={1.5} />
+      <circle cx={18} cy={24} r={1.2} fill={palette.ink} stroke="none" />
+      <circle cx={22} cy={24} r={1.2} fill={palette.ink} stroke="none" />
+      <circle cx={26} cy={24} r={1.2} fill={palette.ink} stroke="none" />
+      {/* 2×2 grid of face circles — the universal "video call" cue */}
+      <circle cx={27} cy={38} r={5} />
+      <circle cx={53} cy={38} r={5} />
+      <circle cx={27} cy={50} r={5} />
+      <circle cx={53} cy={50} r={5} />
+    </IconFrame>
+  );
+}
+
 export function IconLightbulbIdea({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame
@@ -350,12 +369,17 @@ export function IconPawPrint({ palette, size }: ModalIconProps): ReactElement {
 export function IconPalmTree({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-cash-out-pto" label="Cash out PTO" size={size}>
-      <line x1={40} y1={62} x2={40} y2={38} />
+      {/* Island base — sand patch under the palm, 🏝️ shape. */}
+      <ellipse cx={40} cy={62} rx={22} ry={4} />
+      {/* Trunk — stops at the top edge of the island. */}
+      <line x1={40} y1={58} x2={40} y2={38} />
+      {/* Fronds */}
       <path d="M 40 38 Q 30 32 22 36" />
       <path d="M 40 38 Q 50 32 58 36" />
       <path d="M 40 38 Q 32 26 28 18" />
       <path d="M 40 38 Q 48 26 52 18" />
       <path d="M 40 38 Q 40 24 38 14" />
+      {/* Coconut */}
       <circle cx={42} cy={38} r={2} fill={palette.ink} stroke="none" />
     </IconFrame>
   );
@@ -468,6 +492,22 @@ export function IconMicrophone({ palette, size }: ModalIconProps): ReactElement 
       <path d="M 24 38 Q 24 52 40 52 Q 56 52 56 38" />
       <line x1={40} y1={52} x2={40} y2={62} />
       <line x1={30} y1={62} x2={50} y2={62} strokeWidth={2} />
+    </IconFrame>
+  );
+}
+
+export function IconRocket({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-friday-deploy" label="Friday deploy" size={size}>
+      {/* Rocket body — bullet silhouette, rounded nose. */}
+      <path d="M 40 12 Q 32 24 32 38 V 50 H 48 V 38 Q 48 24 40 12 Z" />
+      {/* Porthole window */}
+      <circle cx={40} cy={30} r={4} />
+      {/* Fins — line-art triangles outside the body */}
+      <path d="M 32 44 L 22 56 L 32 52 Z" />
+      <path d="M 48 44 L 58 56 L 48 52 Z" />
+      {/* Exhaust flame — filled accent below the body */}
+      <path d="M 36 50 Q 36 62 40 66 Q 44 62 44 50" fill={palette.ink} stroke="none" />
     </IconFrame>
   );
 }
