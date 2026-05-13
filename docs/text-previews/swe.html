@@ -1,0 +1,1857 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Software Engineering — text preview</title>
+<style>
+  :root {
+    --bg: #f5f1e8;
+    --ink: #2c2c2c;
+    --ink-muted: #888;
+    --surface: #cfc8b6;
+    --accent: #8b6240;
+    --positive: #7a8f5c;
+    --decision: #4a90e2;
+    --event: #b07a3a;
+    --narrative: #6b6b6b;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; margin: 0; padding: 0; }
+  main { max-width: 860px; margin: 0 auto; padding: 0 24px 64px; }
+  .page-header { max-width: 860px; margin: 0 auto; padding: 32px 24px 16px; }
+  .page-header h1 { margin: 0 0 4px; font-size: 28px; letter-spacing: -0.01em; }
+  .page-header .subtitle { color: var(--ink-muted); font-weight: 400; }
+  .page-header .meta { color: var(--ink-muted); font-size: 13px; margin: 4px 0; }
+  .page-header code { background: var(--surface); padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+  .era-nav { font-size: 13px; color: var(--ink-muted); margin-top: 8px; }
+  .era-nav a { color: var(--accent); text-decoration: none; }
+  .era-nav a:hover { text-decoration: underline; }
+  .era-band { margin: 32px 0; }
+  .era-header { border-top: 2px solid var(--accent); padding: 12px 0; display: flex; align-items: baseline; justify-content: space-between; }
+  .era-header h2 { margin: 0; font-size: 20px; }
+  .band-count { color: var(--ink-muted); font-size: 12px; }
+  .card { background: rgba(255,255,255,0.5); border: 1px solid var(--surface); border-radius: 6px; padding: 16px; margin: 12px 0; }
+  .card-header { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; font-size: 12px; }
+  .kind-badge { padding: 2px 6px; border-radius: 3px; font-weight: 700; font-size: 10px; letter-spacing: 0.05em; color: white; }
+  .decision-badge { background: var(--decision); }
+  .event-badge { background: var(--event); }
+  .narrative-badge { background: var(--narrative); }
+  .month-badge { padding: 2px 6px; border-radius: 3px; background: var(--surface); font-family: ui-monospace, monospace; font-size: 11px; }
+  .pool-badge { padding: 2px 6px; border-radius: 3px; background: var(--bg); border: 1px solid var(--surface); font-family: ui-monospace, monospace; font-size: 11px; }
+  .tag { padding: 1px 6px; border-radius: 3px; background: var(--bg); color: var(--ink-muted); font-size: 11px; }
+  .era-chip { padding: 1px 6px; border-radius: 3px; background: var(--surface); font-size: 11px; }
+  .id { color: var(--ink-muted); font-family: ui-monospace, monospace; font-size: 11px; }
+  .requires { color: var(--ink-muted); font-size: 12px; margin: 4px 0; }
+  .requires code { background: var(--bg); padding: 1px 4px; font-size: 11px; }
+  .prompt { margin: 8px 0 12px; font-size: 16px; line-height: 1.45; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option { padding: 10px 12px; background: rgba(255,255,255,0.6); border-left: 3px solid var(--decision); border-radius: 0 4px 4px 0; }
+  .option-label { font-weight: 600; margin-bottom: 4px; }
+  .scene { margin: 4px 0; padding-left: 18px; }
+  .scene li { font-style: italic; color: var(--ink); opacity: 0.75; font-size: 14px; }
+  .flavor { font-style: italic; color: var(--ink); opacity: 0.85; margin: 6px 0 0; font-size: 14px; }
+  .effects { display: flex; gap: 4px; flex-wrap: wrap; margin: 6px 0; }
+  .effect-chip { padding: 1px 6px; border-radius: 3px; background: var(--surface); font-family: ui-monospace, monospace; font-size: 11px; }
+  .event .card-header { /* same as decision but different accent */ }
+  .event-title { margin: 4px 0 6px; font-size: 17px; }
+  .body { margin: 4px 0 8px; font-size: 15px; line-height: 1.45; }
+  .narrative { background: rgba(255,255,255,0.4); border-left: 3px solid var(--narrative); }
+  .narrative-title { font-size: 17px; margin: 4px 0 4px; }
+  .narrative-body { font-style: italic; }
+  .finale { border-left: 4px solid var(--accent); }
+  .frontmatter { margin: 32px 0; padding: 16px; background: rgba(255,255,255,0.4); border-radius: 6px; }
+  .frontmatter h2 { margin: 0 0 8px; font-size: 18px; }
+  .frontmatter .muted { color: var(--ink-muted); font-size: 13px; margin: 0 0 8px; }
+  .intro-lines, .tagline-list, .transition-list { margin: 0; padding-left: 20px; }
+  .intro-lines li, .tagline-list li, .transition-list li { font-style: italic; line-height: 1.5; margin: 2px 0; }
+  .name-list { font-family: ui-monospace, monospace; font-size: 13px; color: var(--ink); }
+  .continue-label, .minigame-note { font-size: 13px; color: var(--ink-muted); margin: 4px 0 0; }
+  .page-footer { max-width: 860px; margin: 32px auto; padding: 16px 24px; color: var(--ink-muted); font-size: 13px; border-top: 1px solid var(--surface); }
+</style>
+</head>
+<body>
+<header class="page-header">
+  <h1>Software Engineering <span class="subtitle">— text preview</span></h1>
+  <p class="meta">pack id: <code>software-engineering</code> · generated 2026-05-13 10:39 UTC</p>
+  <p class="meta">35 decisions · 39 events · 10 month narratives · sorted by earliest playable month, banded by era.</p>
+  <nav class="era-nav">
+    <a href="#era-pandemic">Pandemic (2020 – 2022)</a> · <a href="#era-rebound">Rebound (2023 – 2024)</a> · <a href="#era-ai-shift">AI-Shift (2025 – 2026)</a> · <a href="#era-uncertain-future">Uncertain Future (2027 – 2029)</a>
+  </nav>
+</header>
+<main>
+  <section class="frontmatter">
+         <h2>Intro</h2>
+         <ul class="intro-lines">
+           <li>March 2020.</li><li>The world has gone quiet, {playerName}.</li><li>Offices empty. Inboxes loud.</li><li>Every choice from here writes the next ten years.</li>
+         </ul>
+       </section>
+  
+        <section class="era-band" id="era-pandemic" data-era="pandemic">
+          <header class="era-header">
+            <h2>Pandemic (2020 – 2022)</h2>
+            <span class="band-count">61 cards · 4 narrative beats</span>
+          </header>
+          
+    <article class="card narrative" id="month-1">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 1</span>
+        <span class="pool-badge">2020-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">uncertainty</span>
+      </header>
+      <h3 class="narrative-title">The world is about to change.</h3>
+<p class="narrative-body">It is January 2020. The pandemic has created uncertainty for you. For everyone. The next ten years are yours to shape — one month at a time.</p>
+<p class="continue-label"><em>Begin</em></p>
+    </article>
+
+    <article class="card narrative" id="month-13">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 13</span>
+        <span class="pool-badge">2021-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">endurance</span>
+      </header>
+      <h3 class="narrative-title">One year in.</h3>
+<p class="narrative-body">The world has changed shape. So have you. The work continues.</p>
+    </article>
+
+    <article class="card narrative" id="month-25">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 25</span>
+        <span class="pool-badge">2022-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">rebuilding</span>
+      </header>
+      <h3 class="narrative-title">The world begins to turn again.</h3>
+<p class="narrative-body">Offices reopen. Routines settle. Decisions compound.</p>
+    </article>
+
+    <article class="card narrative" id="month-32">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 32</span>
+        <span class="pool-badge">2022-08</span>
+        <span class="tag">roomType: minigame</span>
+        <span class="tag">rebuilding</span>
+      </header>
+      <p class="minigame-note"><em>minigame variant: <code>blackjack</code></em></p>
+    </article>
+          
+    <article class="card decision" id="swe-stackoverflow-mentor">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-stackoverflow-mentor</code>
+        <span class="tag">community</span> <span class="tag">skill</span> <span class="tag">humor</span>
+      </header>
+      
+      <p class="prompt">A junior in a public forum posts a question you can answer in your sleep. Three other people have already answered. None of them helpfully.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Write a real answer</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">Twenty minutes of writing. A code sample. A diagram, even. The asker said &#39;thank you so much.&#39; Two of the wrong answers got more upvotes.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Close the tab</div>
+          
+          
+          <p class="flavor">You closed the tab. The internet continued.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-gym-membership">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-gym-membership</code>
+        <span class="tag">health</span> <span class="tag">money</span> <span class="tag">humor</span>
+      </header>
+      
+      <p class="prompt">The gym is running a sign-on special. Forty dollars a month, no commitment. The membership is the easy part.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Sign up. You&#39;ll go.</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-480">savings -480</span> <span class="effect-chip" data-key="health" data-delta="+3">health +3</span> <span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+          <p class="flavor">You went four times in January. Twice in February. The membership renewed in August. You meant to cancel.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Not this year</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+          <p class="flavor">You closed the tab. You&#39;ll start running. You&#39;ll definitely start running.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-standup-too-long">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-standup-too-long</code>
+        <span class="tag">meetings</span> <span class="tag">humor</span>
+      </header>
+      
+      <p class="prompt">The standup is forty-seven minutes long. Three people have stopped speaking. The Slack message that could have replaced it would have been forty words.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Say something</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span> <span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+          <p class="flavor">You said &#39;Maybe we Slack the status next time?&#39; A long pause. Then nods. The next standup was fourteen minutes.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Wait it out</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="-1">reputation -1</span></div>
+          <p class="flavor">Forty-seven minutes. You looked at your unread emails. The standup ended without resolution. As did the emails.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-stay-late-vs-log-off">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-stay-late-vs-log-off</code>
+        <span class="tag">work-life-balance</span>
+      </header>
+      
+      <p class="prompt">It&#39;s 6:30. The launch is shaky but might survive without you. Your evening is yours if you want it.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Stay until it&#39;s stable</div>
+          <ul class="scene"><li>The build crashes.</li><li>Panic.</li><li>The build goes green.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+5">burnout +5</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">You stayed until 10. The build went green at 9:47. You won&#39;t forget that moment.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Log off — they&#39;ll figure it out</div>
+          <ul class="scene"><li>You close the laptop.</li><li>The world keeps spinning.</li><li>Dinner is hot.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="reputation" data-delta="-1">reputation -1</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span></div>
+          <p class="flavor">You closed the laptop. The launch was fine without you. You wonder why you sometimes assume it won&#39;t be.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-therapy-first-session">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-therapy-first-session</code>
+        <span class="tag">mental-health</span> <span class="tag">money</span>
+      </header>
+      
+      <p class="prompt">A friend mentioned a therapist. You opened the booking page three times this week. Forty-five minutes, a hundred and sixty dollars.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Book it</div>
+          <ul class="scene"><li>A waiting room.</li><li>A question you didn&#39;t expect.</li><li>A long answer.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-160">savings -160</span> <span class="effect-chip" data-key="burnout" data-delta="-5">burnout -5</span> <span class="effect-chip" data-key="health" data-delta="+3">health +3</span></div>
+          <p class="flavor">You went. You cried at something small and were surprised by it. You booked the next one before you left.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Maybe next month</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+          <p class="flavor">You closed the tab. The thing that made you open it was still there. You&#39;d try again soon. You said that last month, too.</p>
+        </div></div>
+    </article>
+
+    <article class="card event" id="evt-era-pandemic-furlough-friend">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-pandemic-furlough-friend</code>
+        <span class="era-chip">pandemic</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">A friend got the call.</h3>
+      <p class="body">A friend at another company was furloughed. They texted to say they were &#39;fine, really.&#39; You sent them a long voice memo back. You haven&#39;t been furloughed. That feels like more luck than choice.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+2">network +2</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-era-pandemic-roommate-friction">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-pandemic-roommate-friction</code>
+        <span class="era-chip">pandemic</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">Two desks, one apartment.</h3>
+      <p class="body">Your roommate&#39;s standup is the same time as your sync. You take yours from the bathroom. It&#39;s been like this for nine weeks.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="network" data-delta="-1">network -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-era-pandemic-walk-routine">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-pandemic-walk-routine</code>
+        <span class="era-chip">pandemic</span>
+        <span class="tag">era</span> <span class="tag">lucky</span>
+      </header>
+      
+      <h3 class="event-title">The afternoon walk.</h3>
+      <p class="body">You started taking a 3pm walk around the block. Then four blocks. Then six. By month three, you knew every dog by name.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-3">burnout -3</span> <span class="effect-chip" data-key="health" data-delta="+3">health +3</span></div>
+    </article>
+
+    <article class="card event" id="evt-era-pandemic-zoom-fatigue">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-pandemic-zoom-fatigue</code>
+        <span class="era-chip">pandemic</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">Seven calls today.</h3>
+      <p class="body">Your face has been on a screen for nine hours. You don&#39;t remember half of what was decided. You don&#39;t think anything was.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-stat-burnout-doctor">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-stat-burnout-doctor</code>
+        <span class="era-chip">any</span>
+        <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>burnout &gt;80</code></div>
+      <h3 class="event-title">A doctor&#39;s visit.</h3>
+      <p class="body">You went in for one thing. The doctor asked about sleep. You answered honestly for the first time in months.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-5">burnout -5</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span> <span class="effect-chip" data-key="savings" data-delta="-200">savings -200</span></div>
+    </article>
+
+    <article class="card event" id="evt-stat-high-network-intro">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-stat-high-network-intro</code>
+        <span class="era-chip">any</span>
+        <span class="tag">lucky</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>network &gt;50</code></div>
+      <h3 class="event-title">An introduction.</h3>
+      <p class="body">Someone in your network connects you to someone interesting. No agenda. Just &#39;I think you two should talk.&#39; You did. You&#39;re glad you did.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+5">network +5</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-stat-low-health-cold">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-stat-low-health-cold</code>
+        <span class="era-chip">any</span>
+        <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>health &lt;40</code></div>
+      <h3 class="event-title">A cold that lasts ten days.</h3>
+      <p class="body">It started Monday. By Thursday, you&#39;d cancelled the week. By Sunday, you remembered that lying on the couch was something the body sometimes requires.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-3">burnout -3</span> <span class="effect-chip" data-key="health" data-delta="+3">health +3</span> <span class="effect-chip" data-key="reputation" data-delta="-1">reputation -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-stat-low-savings-card">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-stat-low-savings-card</code>
+        <span class="era-chip">any</span>
+        <span class="tag">money</span> <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>savings &lt;800</code></div>
+      <h3 class="event-title">Card, declined.</h3>
+      <p class="body">At the grocery checkout. The cashier said nothing. You used a different card. You stood in the parking lot for a minute before driving home.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-swe-blog-traction">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">evt-swe-blog-traction</code>
+        <span class="era-chip">any</span>
+        <span class="tag">visibility</span> <span class="tag">lucky</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>technicalSkill &gt;30</code></div>
+      <h3 class="event-title">A post finds its audience.</h3>
+      <p class="body">Something you wrote a month ago surfaces somewhere. Strangers on the internet are arguing about a paragraph you barely remember writing.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+4">reputation +4</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-swe-flow-state">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">evt-swe-flow-state</code>
+        <span class="era-chip">any</span>
+        <span class="tag">lucky</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>technicalSkill &gt;35</code></div>
+      <h3 class="event-title">An afternoon you&#39;ll remember.</h3>
+      <p class="body">Six hours felt like one. You wrote the thing in your head and then the thing on the screen and they matched. You closed your laptop and went outside while it was still light.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-4">burnout -4</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-swe-recruiter-blast">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">evt-swe-recruiter-blast</code>
+        <span class="era-chip">any</span>
+        <span class="tag">humor</span>
+      </header>
+      
+      <h3 class="event-title">InMail.</h3>
+      <p class="body">A recruiter at a six-month-old startup messages about a &#39;unique opportunity.&#39; The company has already pivoted twice. The recruiter, apparently, doesn&#39;t know this.</p>
+      
+      
+    </article>
+
+    <article class="card event" id="evt-swe-stackoverflow-rep">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">evt-swe-stackoverflow-rep</code>
+        <span class="era-chip">any</span>
+        <span class="tag">visibility</span> <span class="tag">lucky</span> <span class="tag">humor</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>technicalSkill &gt;25</code></div>
+      <h3 class="event-title">An old answer ages well.</h3>
+      <p class="body">A four-year-old answer you wrote on a forum hits a milestone of upvotes. Strangers are still finding it useful. You don&#39;t remember writing it.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-deleted-tab">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-deleted-tab</code>
+        <span class="era-chip">any</span>
+        <span class="tag">unlucky</span> <span class="tag">humor</span>
+      </header>
+      
+      <h3 class="event-title">Wrong tab. Wrong button.</h3>
+      <p class="body">You meant to close a different tab. Forty minutes of work, gone. There was an autosave. You hope.</p>
+      <ul class="scene"><li>A click.</li><li>A blank window.</li><li>A long blink.</li></ul>
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-flight-delay">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-flight-delay</code>
+        <span class="era-chip">any</span>
+        <span class="tag">lucky</span> <span class="tag">humor</span>
+      </header>
+      
+      <h3 class="event-title">Three hours in an airport bar.</h3>
+      <p class="body">Your flight is delayed three hours. The person at the next stool turns out to be in your industry. By boarding, you&#39;ve exchanged contact info and a half-baked plan.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+4">network +4</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-found-twenty">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-found-twenty</code>
+        <span class="era-chip">any</span>
+        <span class="tag">lucky</span> <span class="tag">humor</span>
+      </header>
+      
+      <h3 class="event-title">A twenty in a coat pocket.</h3>
+      <p class="body">You pull a jacket out of the closet for the first time since last fall. There is a folded twenty in the inner pocket. You have no memory of putting it there.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+20">savings +20</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-lost-wallet">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-lost-wallet</code>
+        <span class="era-chip">any</span>
+        <span class="tag">unlucky</span>
+      </header>
+      
+      <h3 class="event-title">A wallet, briefly missing.</h3>
+      <p class="body">You left it in a cab. The driver returned it the next day, untouched. You tipped him for the second ride twice as much.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-80">savings -80</span> <span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-old-friend">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-old-friend</code>
+        <span class="era-chip">any</span>
+        <span class="tag">relationship</span> <span class="tag">lucky</span>
+      </header>
+      
+      <h3 class="event-title">An old friend in town.</h3>
+      <p class="body">Someone you haven&#39;t seen in years messages: in town one night. Coffee?</p>
+      <ul class="scene"><li>A buzz on your phone.</li><li>A name you didn&#39;t expect.</li><li>You say yes before you think.</li></ul>
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+3">network +3</span> <span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-pandemic-close">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-pandemic-close</code>
+        <span class="era-chip">pandemic</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">The office closes.</h3>
+      <p class="body">An email arrives. Effective immediately. You don&#39;t know when you&#39;ll be back.</p>
+      <ul class="scene"><li>An all-staff email.</li><li>Subject line: &#39;Effective immediately.&#39;</li><li>You read it twice.</li></ul>
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-rent-hike">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-rent-hike</code>
+        <span class="era-chip">any</span>
+        <span class="tag">money</span>
+      </header>
+      
+      <h3 class="event-title">A letter from the landlord.</h3>
+      <p class="body">The lease renewal arrives. The rent is one hundred and twenty dollars higher than last year. The cover letter calls it a &#39;modest market adjustment.&#39;</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-1200">savings -1200</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-skip-breakfast">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-skip-breakfast</code>
+        <span class="era-chip">any</span>
+        <span class="tag">stress</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>burnout &gt;70</code></div>
+      <h3 class="event-title">Skipping breakfast again.</h3>
+      <p class="body">You realize halfway through the standup that you haven&#39;t eaten today. Third time this week.</p>
+      <ul class="scene"><li>Coffee.</li><li>Tab after tab.</li><li>Was that breakfast?</li></ul>
+      <div class="effects"><span class="effect-chip" data-key="health" data-delta="-2">health -2</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-storm">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-storm</code>
+        <span class="era-chip">any</span>
+        <span class="tag">flavor</span>
+      </header>
+      
+      <h3 class="event-title">A storm and a power outage.</h3>
+      <p class="body">The power went out at 10pm. You sat in the dark for two hours. You read by phone light. It felt nice not to be reachable.</p>
+      <ul class="scene"><li>A flicker.</li><li>A long click.</li><li>The dark.</li></ul>
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-sunset">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-sunset</code>
+        <span class="era-chip">any</span>
+        <span class="tag">flavor</span>
+      </header>
+      
+      <h3 class="event-title">A moment.</h3>
+      <p class="body">You stopped on the walk home for the sunset. Five minutes. Five minutes you would have spent looking at your phone.</p>
+      
+      
+    </article>
+
+    <article class="card event" id="evt-univ-talk-invite">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-talk-invite</code>
+        <span class="era-chip">any</span>
+        <span class="tag">reputation</span> <span class="tag">lucky</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>reputation &gt;40</code></div>
+      <h3 class="event-title">An invitation.</h3>
+      <p class="body">A meetup organizer reaches out. Would you give the keynote next month? It pays nothing. It would be good for you.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="network" data-delta="+5">network +5</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-voice-reminder-mishap">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m1+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-voice-reminder-mishap</code>
+        <span class="era-chip">any</span>
+        <span class="tag">humor</span> <span class="tag">unlucky</span>
+      </header>
+      
+      <h3 class="event-title">AM, PM.</h3>
+      <p class="body">You told your phone to remind you about the 8 AM standup. It heard &#39;8 PM.&#39; You realized this at 8:02 that evening, when the reminder cheerfully went off. Maybe your boss didn&#39;t notice. There&#39;s always next week&#39;s standup.</p>
+      <ul class="scene"><li>A voice command, last night.</li><li>A reminder, twelve hours late.</li><li>Oh no. Oh well.</li></ul>
+      <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-bank-error">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m2+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-bank-error</code>
+        <span class="era-chip">any</span>
+        <span class="tag">lucky</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=2</code></div>
+      <h3 class="event-title">Bank error in your favor.</h3>
+      <p class="body">A clerical error credits your account by $1,200. Three weeks later, it has not been reversed.</p>
+      <ul class="scene"><li>Your phone buzzes.</li><li>A bank notification.</li><li>Wait. That&#39;s not right.</li></ul>
+      <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+1200">savings +1200</span></div>
+    </article>
+
+    <article class="card decision" id="swe-2am-idea">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m6+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-2am-idea</code>
+        <span class="tag">stress</span> <span class="tag">work-life-balance</span> <span class="tag">humor</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=6</code></div>
+      <p class="prompt">You wake at 2:14. The idea has been chewing on you in your sleep. It&#39;s almost there. The room is very dark.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Write it down. Go back to sleep.</div>
+          <ul class="scene"><li>A reach for the phone.</li><li>Three lines, typed in the dark.</li><li>The screen, off again.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">You typed three lines into the notes app. The third line was the right one. You slept until the alarm. By Tuesday you had it working.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Try to sleep through it.</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="health" data-delta="-2">health -2</span></div>
+          <p class="flavor">You watched the ceiling. The idea got worse, then better, then dissolved. You finally slept around 4. The alarm felt personal.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Get up. Might as well be productive.</div>
+          <ul class="scene"><li>Bare feet on a cold floor.</li><li>A kitchen light, too bright.</li><li>A blinking cursor.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+5">burnout +5</span> <span class="effect-chip" data-key="health" data-delta="-3">health -3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">You sat at the kitchen table at 2:14. By five you had it working. By nine you regretted being awake. By Friday it shipped. Whether that was worth it is the kind of question you don&#39;t ask out loud.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-framework-rewrite-vs-patch">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m6+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-framework-rewrite-vs-patch</code>
+        <span class="tag">technical-debt</span> <span class="tag">ambition</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=6</code>, <code>technicalSkill &gt;25</code></div>
+      <p class="prompt">The legacy module breaks again. You can patch it for the third time, propose a full rewrite, or just write up the debt.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Patch it. Again.</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">Twenty minutes. It works. You add a comment that says &#39;TODO: rewrite this someday.&#39;</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Pitch the rewrite</div>
+          <ul class="scene"><li>A doc. A diagram.</li><li>A meeting that runs long.</li><li>Approval. Cautious.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+5">burnout +5</span> <span class="effect-chip" data-key="reputation" data-delta="+5">reputation +5</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+3">technicalSkill +3</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">You got the green light. Three months of your life are now spoken for. Worth it, probably.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Write up the debt and move on</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">You filed the ticket. Someone, someday, will read it. Maybe that someone is you.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-friday-deploy">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m6+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-friday-deploy</code>
+        <span class="tag">risk</span> <span class="tag">engineering-culture</span> <span class="tag">humor</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=6</code></div>
+      <p class="prompt">A small, urgent fix is ready. It is 4:50pm on a Friday. The deploy takes ten minutes. The rollback also takes ten minutes.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Ship it. It&#39;s tiny.</div>
+          <ul class="scene"><li>The deploy button.</li><li>A green check.</li><li>Then a red one.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+5">burnout +5</span> <span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+          <p class="flavor">The rollback held. The weekend held, just barely. You wrote &#39;no Friday deploys&#39; on a sticky note Monday.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Monday morning</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">The fix waited. The world continued. Monday at 10am, the deploy was uneventful.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-bury-vs-balance">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m6+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-bury-vs-balance</code>
+        <span class="tag">work-life-balance</span> <span class="tag">ambition</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=6</code></div>
+      <p class="prompt">There&#39;s more work than there are hours. You can pour yourself into it for a stretch, or hold the line at forty.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Pour yourself in</div>
+          <ul class="scene"><li>Mornings start dark.</li><li>Evenings end late.</li><li>Something ships.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+8">burnout +8</span> <span class="effect-chip" data-key="reputation" data-delta="+4">reputation +4</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span> <span class="effect-chip" data-key="health" data-delta="-3">health -3</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">You shipped two months early. People noticed. You haven&#39;t seen your friends since spring.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Hold the line</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="reputation" data-delta="-1">reputation -1</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span></div>
+          <p class="flavor">You walked out at five every day. The work got done. A little later than it could have.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-friends-wedding-far">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m6+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-friends-wedding-far</code>
+        <span class="tag">relationship</span> <span class="tag">money</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=6</code></div>
+      <p class="prompt">A college friend is getting married. Flight, hotel, rental, suit. The total math is uncomfortable.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Go</div>
+          <ul class="scene"><li>A red-eye.</li><li>An open bar.</li><li>A photo you&#39;ll keep.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-1200">savings -1200</span> <span class="effect-chip" data-key="network" data-delta="+5">network +5</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+          <p class="flavor">You danced with people you hadn&#39;t seen in five years. The friend remembered you came. They&#39;ll remember for a long time.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Send a gift and call that day</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-150">savings -150</span> <span class="effect-chip" data-key="network" data-delta="-1">network -1</span></div>
+          <p class="flavor">You sent the registry&#39;s nicest thing in your budget. The friend wrote a sweet note. Something, very quietly, shifted.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-mlm-pitch">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m6+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-mlm-pitch</code>
+        <span class="tag">money</span> <span class="tag">relationship</span> <span class="tag">humor</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=6</code></div>
+      <p class="prompt">A cousin you haven&#39;t spoken to in two years messages: &#39;I have an opportunity I&#39;d love to share with you.&#39; You haven&#39;t scrolled down yet.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Hear them out</div>
+          <ul class="scene"><li>A long voice memo.</li><li>The word &#39;downline&#39; six times.</li><li>You stop the audio.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+          <p class="flavor">Forty-five minutes you&#39;ll never get back. The cousin sent a follow-up the next morning.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Politely decline</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="network" data-delta="-1">network -1</span></div>
+          <p class="flavor">You typed three drafts. The one you sent said &#39;Not for me, but I hope it goes well.&#39; They left you on read.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-recruiter-call">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m6+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-recruiter-call</code>
+        <span class="tag">career-movement</span> <span class="tag">ambition</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=6</code></div>
+      <p class="prompt">A recruiter from a company you&#39;ve heard of is calling. You don&#39;t have to answer.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Take the call</div>
+          <ul class="scene"><li>You take the call.</li><li>Pleasantries.</li><li>The job sounds boring.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="network" data-delta="+5">network +5</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span></div>
+          <p class="flavor">Twenty minutes of pleasantries and a vague &#39;we should talk again.&#39; Sometimes that&#39;s the whole point.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Let it go to voicemail</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+          <p class="flavor">You don&#39;t return it. The week is full. The recruiter, presumably, calls someone else.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-side-project">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m6+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-side-project</code>
+        <span class="tag">ambition</span> <span class="tag">work-life-balance</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=6</code></div>
+      <p class="prompt">You have an idea. It&#39;s been bothering you for a month. You also have a weekend you could give to nothing.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Build it</div>
+          <ul class="scene"><li>A blank repo.</li><li>Two long days.</li><li>A working prototype.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">By Sunday night, you had something that worked. By Tuesday, you&#39;d lost interest. The repo is still public, with no commits since.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Give yourself the weekend</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-4">burnout -4</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span></div>
+          <p class="flavor">You did nothing on purpose. The idea was still there Monday. It would wait.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-hackathon-weekend">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-hackathon-weekend</code>
+        <span class="tag">fun</span> <span class="tag">work-life-balance</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=12</code></div>
+      <p class="prompt">The company hackathon is a sponsored weekend. Sleep on the floor. Build something dumb. The CEO gives out the prize.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Go</div>
+          <ul class="scene"><li>A whiteboard at 2am.</li><li>A demo at 9am.</li><li>A standing ovation. For someone else.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="network" data-delta="+5">network +5</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span> <span class="effect-chip" data-key="health" data-delta="-2">health -2</span></div>
+          <p class="flavor">You built something genuinely funny. You didn&#39;t win. You knew three people now you didn&#39;t know on Friday.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Take the weekend</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-3">burnout -3</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span></div>
+          <p class="flavor">You stayed home. You watched the winning demo on Slack Monday. You smiled. You didn&#39;t regret it.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-intern-late-review">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-intern-late-review</code>
+        <span class="tag">mentoring</span> <span class="tag">work-life-balance</span> <span class="tag">humor</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=12</code></div>
+      <p class="prompt">It&#39;s 6:12pm Friday. The intern slacks: &#39;No rush — could you take a look at my PR before Monday?&#39;</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Review it now</div>
+          <ul class="scene"><li>A four-hundred-line diff.</li><li>Five suggestions.</li><li>Sent.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+          <p class="flavor">You reviewed it. The intern was waiting. They thanked you and then immediately pushed three more commits.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Reply: &#39;Monday morning, first thing.&#39;</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">You set the boundary. The intern said &#39;sounds good!&#39; You realized too late that they had nothing else to do all weekend.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-oncall-volunteer">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-oncall-volunteer</code>
+        <span class="tag">responsibility</span> <span class="tag">burnout</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=12</code></div>
+      <p class="prompt">The on-call rotation is short a body. The lead is asking, gently.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Take the pager</div>
+          <ul class="scene"><li>A pager hits your phone.</li><li>3:14am: a page.</li><li>You fix it half-asleep.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="reputation" data-delta="+5">reputation +5</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span> <span class="effect-chip" data-key="health" data-delta="-2">health -2</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">You took two weeks. One quiet night, one rough one. The lead remembers.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Pass this round</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span> <span class="effect-chip" data-key="reputation" data-delta="-1">reputation -1</span></div>
+          <p class="flavor">You say no, politely. The lead understands, mostly. Someone else takes the pager.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-buy-car">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-buy-car</code>
+        <span class="tag">money</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=12</code></div>
+      <p class="prompt">The check engine light has been on for six weeks. The mechanic gave you a number that ends in &#39;or you could just get something newer.&#39;</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Newer car</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-9000">savings -9000</span> <span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span></div>
+          <p class="flavor">You drove it off the lot. It felt strange to not hear a rattle. By the second week, you&#39;d already gotten a door ding.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Patch it. Pray.</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-450">savings -450</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+          <p class="flavor">The mechanic shook his head, very gently. The car ran for another year. You loved it more than you should have.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-cash-out-pto">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-cash-out-pto</code>
+        <span class="tag">work-life-balance</span> <span class="tag">money</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=12</code></div>
+      <p class="prompt">HR&#39;s email: you&#39;ve hit the PTO cap. Use it or cash it out at sixty percent.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Take the time</div>
+          <ul class="scene"><li>An out-of-office.</li><li>Three time zones.</li><li>Sleep you didn&#39;t know you needed.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-10">burnout -10</span> <span class="effect-chip" data-key="health" data-delta="+4">health +4</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+          <p class="flavor">You took two weeks. You came back and didn&#39;t remember why anything felt urgent. That feeling lasted four days, then faded.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Cash it out</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+1800">savings +1800</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="health" data-delta="-1">health -1</span></div>
+          <p class="flavor">The deposit hit. You didn&#39;t take the time. Next year, you told yourself.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-charity-donation">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-charity-donation</code>
+        <span class="tag">money</span> <span class="tag">values</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=12</code></div>
+      <p class="prompt">A coworker is fundraising for a cause that matters to them. The goal isn&#39;t yours, but you respect them.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Give what they asked</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-200">savings -200</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">You donated the suggested amount. They sent a thoughtful thank-you. Five other coworkers gave after they saw your name.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Give a small amount</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-20">savings -20</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+          <p class="flavor">You gave twenty. They thanked you with the same warmth. You felt fine about it. Mostly.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Pass</div>
+          
+          
+          <p class="flavor">You closed the link. Their goal was met three days later anyway.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-date-app-match">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-date-app-match</code>
+        <span class="tag">relationship</span> <span class="tag">humor</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>relationship ==null</code>, <code>month &gt;=12</code></div>
+      <p class="prompt">A match wants coffee Thursday. The bio was witty. The pictures were three years old. Probably.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Go</div>
+          <ul class="scene"><li>A coffee shop.</li><li>A laugh.</li><li>Or not.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+          <p class="flavor">You went. They were taller in person. The conversation was fine. You walked home thinking: maybe.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Reschedule indefinitely</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+          <p class="flavor">You said &#39;next week&#39; and meant &#39;never.&#39; They got it. The app unmatched you eight days later.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-dog">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-dog</code>
+        <span class="tag">life</span> <span class="tag">money</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=12</code></div>
+      <p class="prompt">There is a dog at the shelter with a particular face. You did not go to the shelter to adopt a dog.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Take her home</div>
+          <ul class="scene"><li>A leash.</li><li>A bag of food.</li><li>A small wet nose.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-600">savings -600</span> <span class="effect-chip" data-key="burnout" data-delta="-4">burnout -4</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span></div>
+          <p class="flavor">She slept on the couch the first night. The bed by the second. You weren&#39;t a dog person. Apparently, you are now.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Walk away</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+          <p class="flavor">You walked out. You thought about her on the drive home. You thought about her for a week.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-roommate-buyout">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-roommate-buyout</code>
+        <span class="tag">money</span> <span class="tag">life</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=12</code></div>
+      <p class="prompt">Your roommate&#39;s lease is up. You could keep splitting rent or take the whole place yourself.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Live alone</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-3600">savings -3600</span> <span class="effect-chip" data-key="burnout" data-delta="-3">burnout -3</span> <span class="effect-chip" data-key="health" data-delta="+2">health +2</span></div>
+          <p class="flavor">You signed the new lease. The silence was the best part. The silence was sometimes the loudest part.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Find a new roommate</div>
+          <ul class="scene"><li>Three tours.</li><li>Two ghostings.</li><li>A handshake.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span></div>
+          <p class="flavor">You picked the second one. They were quieter than the last. But... they let their dishes &#39;soak&#39; a little longer than you prefer.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-vegas-bonus-vs-rest">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-vegas-bonus-vs-rest</code>
+        <span class="tag">money</span> <span class="tag">work-life-balance</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=12</code>, <code>savings &gt;3000</code></div>
+      <p class="prompt">The bonus hit. The group chat wants Vegas. Your couch wants you to stay.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Go all in</div>
+          <ul class="scene"><li>Boarding pass.</li><li>Neon. Bad hand. Worse hand.</li><li>The flight home is quiet.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-1500">savings -1500</span> <span class="effect-chip" data-key="network" data-delta="+4">network +4</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="health" data-delta="-2">health -2</span></div>
+          <p class="flavor">You lost $1,500 and gained two stories you&#39;ll tell for a decade. Even trade.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Low-key — food and a show</div>
+          <ul class="scene"><li>A short flight.</li><li>A long dinner.</li><li>You sleep in.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-600">savings -600</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span></div>
+          <p class="flavor">You came home rested. The group chat called you boring. You don&#39;t mind.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Keep the bonus</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span></div>
+          <p class="flavor">The bonus stays where it is. Friday, you order in. Saturday, you don&#39;t think about work.</p>
+        </div></div>
+    </article>
+
+    <article class="card event" id="evt-univ-good-physical">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m12+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-good-physical</code>
+        <span class="era-chip">any</span>
+        <span class="tag">lucky</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=12</code></div>
+      <h3 class="event-title">An annual checkup.</h3>
+      <p class="body">You went to the doctor for the first time in a while. The blood work came back unremarkable. Unremarkable is the best kind of result.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="health" data-delta="+3">health +3</span> <span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span></div>
+    </article>
+
+    <article class="card decision" id="swe-architecture-review-defend">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m18+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-architecture-review-defend</code>
+        <span class="tag">engineering-culture</span> <span class="tag">skill</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=18</code>, <code>technicalSkill &gt;40</code></div>
+      <p class="prompt">Architecture review. Your design is right. A staff engineer disagrees, loudly. Three other people are on the call.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Defend it</div>
+          <ul class="scene"><li>A whiteboard.</li><li>A long silence.</li><li>A nod.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="technicalSkill" data-delta="+3">technicalSkill +3</span> <span class="effect-chip" data-key="reputation" data-delta="+5">reputation +5</span> <span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">You held the line. You were respectful. You were also, ten minutes in, clearly correct. The staff engineer sent a friendly message after.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Capitulate</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="-3">reputation -3</span> <span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="technicalSkill" data-delta="-1">technicalSkill -1</span></div>
+          <p class="flavor">You backed down to keep the meeting moving. Six weeks later, you were rewriting the part you&#39;d been right about.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-conference-talk-cfp">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m18+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-conference-talk-cfp</code>
+        <span class="tag">visibility</span> <span class="tag">ambition</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=18</code>, <code>reputation &gt;10</code></div>
+      <p class="prompt">The CFP closes Friday. You have a talk in you, probably. You also have a deadline.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Submit the abstract</div>
+          <ul class="scene"><li>A title.</li><li>Two hundred words.</li><li>Send.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">You hit submit at 11:58 Friday. Acceptance or rejection — either way, the abstract exists.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Skip it this year</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+          <p class="flavor">You closed the tab. The CFP closes. The deadline at work, mercifully, slips by a week anyway.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-masters-degree">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m18+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-masters-degree</code>
+        <span class="tag">education</span> <span class="tag">money</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=18</code>, <code>savings &gt;10000</code></div>
+      <p class="prompt">The Master&#39;s program admits you. Part-time, two years, twenty thousand. The job won&#39;t pay for it. The job won&#39;t replace it, either.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Enroll</div>
+          <ul class="scene"><li>An acceptance letter.</li><li>A first-night syllabus.</li><li>Coffee at 11pm.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-10000">savings -10000</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+5">technicalSkill +5</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">Two years of nights. You finished. You don&#39;t know yet if it mattered. You suspect it did, somewhere, quietly.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Decline</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+          <p class="flavor">You said no. The job kept moving. You read three of the textbooks anyway.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-mentor-junior">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m18+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-mentor-junior</code>
+        <span class="tag">mentoring</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=18</code>, <code>technicalSkill &gt;35</code></div>
+      <p class="prompt">A junior on the team is struggling, not in a way they can name. The lead suggests, gently, that you&#39;d be good at this.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Commit to it</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+4">reputation +4</span> <span class="effect-chip" data-key="network" data-delta="+3">network +3</span> <span class="effect-chip" data-key="xp" data-delta="+150">xp +150</span></div>
+          <p class="flavor">You did the weekly thirties. Six months in, they shipped something hard. They credited you. You credited them. Both were a little true.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Be too busy</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span> <span class="effect-chip" data-key="reputation" data-delta="-2">reputation -2</span></div>
+          <p class="flavor">You said your plate was full. The lead nodded. The junior found mentorship somewhere else. They mentioned it once, lightly.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-startup-offer">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m18+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-startup-offer</code>
+        <span class="tag">career-movement</span> <span class="tag">risk</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=18</code>, <code>network &gt;25</code></div>
+      <p class="prompt">A former colleague is starting something. They&#39;re asking you to be employee five. The salary is lower. The equity is paper.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Join</div>
+          <ul class="scene"><li>An offer letter.</li><li>An options grant.</li><li>A folding chair.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-3000">savings -3000</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+3">technicalSkill +3</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="burnout" data-delta="+6">burnout +6</span> <span class="effect-chip" data-key="network" data-delta="+3">network +3</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">You joined. The first six months were exhilarating. You wrote a small piece of the codebase that will outlive most of the rest of it.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Stay put</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">You said no, warmly. The company shipped, or didn&#39;t — you heard secondhand. You wondered what employee-five-you would think of current-you.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-throw-colleague-under-bus">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m18+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-throw-colleague-under-bus</code>
+        <span class="tag">ethics</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=18</code></div>
+      <p class="prompt">A meeting goes sideways. Leadership is asking why the deadline slipped. There&#39;s a real reason. There&#39;s also a coworker you could name.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Name the coworker</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="network" data-delta="-6">network -6</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+          <p class="flavor">You named them. Leadership accepted it. The coworker found out on Slack from a friend. Things were never quite the same.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Take the L</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="-3">reputation -3</span> <span class="effect-chip" data-key="network" data-delta="+3">network +3</span> <span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+          <p class="flavor">You said &#39;the scope grew faster than I tracked.&#39; Leadership wasn&#39;t thrilled. The coworker, weeks later, said &#39;I owe you.&#39; You said &#39;we&#39;re fine.&#39;</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-move-cities-for-job">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m18+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-move-cities-for-job</code>
+        <span class="tag">career-movement</span> <span class="tag">life</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=18</code></div>
+      <p class="prompt">An offer arrives in another city. Thirty percent more, full relocation. A different climate. Everyone you know is here.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Take it</div>
+          <ul class="scene"><li>Movers.</li><li>Empty rooms.</li><li>An unfamiliar key in a new door.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+3500">savings +3500</span> <span class="effect-chip" data-key="network" data-delta="-12">network -12</span> <span class="effect-chip" data-key="burnout" data-delta="+5">burnout +5</span> <span class="effect-chip" data-key="reputation" data-delta="+4">reputation +4</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">You moved. The first month was a checklist. The second was lonelier than expected. The third, you started to recognize a barista.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Negotiate remote</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span></div>
+          <p class="flavor">You wrote a careful email. They said no. You declined. The recruiter said, on a follow-up call, that they&#39;d remember you.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Stay put</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+          <p class="flavor">You said no. The recruiter understood, mostly. You wondered, briefly, if you&#39;d regret it. The week ate the thought.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-parent-needs-help">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m18+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-parent-needs-help</code>
+        <span class="tag">family</span> <span class="tag">money</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=18</code></div>
+      <p class="prompt">Your parent&#39;s car needs a transmission. They mentioned it like it was nothing.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Wire the money</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-2200">savings -2200</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span></div>
+          <p class="flavor">You sent it without asking. They tried to refuse. They didn&#39;t refuse hard.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Call. Just talk.</div>
+          <ul class="scene"><li>A long call.</li><li>A long pause.</li><li>A laugh.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span> <span class="effect-chip" data-key="health" data-delta="+1">health +1</span></div>
+          <p class="flavor">You called for an hour. They didn&#39;t bring the car up again. You both knew it was on the table.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-coder-vs-architect">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m24+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-coder-vs-architect</code>
+        <span class="tag">career-path</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=24</code>, <code>technicalSkill &gt;40</code></div>
+      <p class="prompt">The director pulls you aside. There&#39;s a tech-lead role opening, and a senior IC track. Both are yours if you want them.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Stay deep in the code</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="technicalSkill" data-delta="+4">technicalSkill +4</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">You took the senior IC. You kept your hands on the keyboard. People asked you &#39;when are you going to be a lead?&#39; for two years.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Take the lead role</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="technicalSkill" data-delta="-1">technicalSkill -1</span> <span class="effect-chip" data-key="reputation" data-delta="+5">reputation +5</span> <span class="effect-chip" data-key="network" data-delta="+4">network +4</span> <span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">You took the title. The work changed. You spent more time in docs than in the editor. Sometimes you missed it.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-opensource-maintainer">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m24+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-opensource-maintainer</code>
+        <span class="tag">community</span> <span class="tag">responsibility</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=24</code>, <code>technicalSkill &gt;40</code></div>
+      <p class="prompt">The maintainer of a library you depend on asks if you&#39;d take it over. They&#39;re burnt out. The community is two thousand users.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Take it</div>
+          <ul class="scene"><li>A repo transfer.</li><li>An issue tracker.</li><li>A first 3am page.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+5">burnout +5</span> <span class="effect-chip" data-key="reputation" data-delta="+6">reputation +6</span> <span class="effect-chip" data-key="network" data-delta="+4">network +4</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+2">technicalSkill +2</span></div>
+          <p class="flavor">You merged your first PR as maintainer the same week. By month three, you understood why the last one wanted out. You kept going anyway.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Decline, gently</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span> <span class="effect-chip" data-key="reputation" data-delta="+1">reputation +1</span></div>
+          <p class="flavor">You wrote a kind email. They thanked you for the honesty. Someone else took it. The library kept working, mostly.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="univ-buy-house-or-rent">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m24+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">univ-buy-house-or-rent</code>
+        <span class="tag">money</span> <span class="tag">life</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=24</code>, <code>savings &gt;25000</code></div>
+      <p class="prompt">The down payment math finally works. The interest rate doesn&#39;t. You stare at the listing anyway.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">Make the offer</div>
+          <ul class="scene"><li>An inspection.</li><li>A long signature page.</li><li>Keys. A lot of keys.</li></ul>
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="-25000">savings -25000</span> <span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span></div>
+          <p class="flavor">You bought the place. The first month, you noticed every sound the house made. By the third, you didn&#39;t.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Keep renting, keep saving</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+800">savings +800</span> <span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+          <p class="flavor">The listing sold to someone else within the week. You looked at it on Zillow six months later, just to see.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Maybe this isn&#39;t your city</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-2">burnout -2</span></div>
+          <p class="flavor">You closed the tab. You aren&#39;t sure where home is. You aren&#39;t sure that&#39;s a problem.</p>
+        </div></div>
+    </article>
+
+    <article class="card decision" id="swe-people-manager-vs-tech-lead">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">DECISION</span>
+        <span class="month-badge">m36+</span>
+        <span class="pool-badge">swe</span>
+        <code class="id">swe-people-manager-vs-tech-lead</code>
+        <span class="tag">career-path</span>
+      </header>
+      <div class="requires"><strong>requires:</strong> <code>month &gt;=36</code>, <code>reputation &gt;25</code></div>
+      <p class="prompt">The org is splitting your team. Two roles need filling: people manager and tech lead. The director is asking which you&#39;d rather.</p>
+      <div class="options">
+        <div class="option">
+          <div class="option-label">People manager</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="technicalSkill" data-delta="-3">technicalSkill -3</span> <span class="effect-chip" data-key="reputation" data-delta="+4">reputation +4</span> <span class="effect-chip" data-key="network" data-delta="+5">network +5</span> <span class="effect-chip" data-key="burnout" data-delta="+4">burnout +4</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">You took it. Your calendar filled with one-on-ones. You learned that the hardest part of management is being patient on Wednesday afternoons.</p>
+        </div>
+        <div class="option">
+          <div class="option-label">Tech lead</div>
+          
+          <div class="effects"><span class="effect-chip" data-key="technicalSkill" data-delta="+3">technicalSkill +3</span> <span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="xp" data-delta="+300">xp +300</span></div>
+          <p class="flavor">You took it. Your calendar filled with design reviews. The code you wrote got smaller and stranger. It was usually load-bearing.</p>
+        </div></div>
+    </article>
+        </section>
+
+        <section class="era-band" id="era-rebound" data-era="rebound">
+          <header class="era-header">
+            <h2>Rebound (2023 – 2024)</h2>
+            <span class="band-count">4 cards · 3 narrative beats</span>
+          </header>
+          
+    <article class="card narrative" id="month-37">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 37</span>
+        <span class="pool-badge">2023-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">momentum</span>
+      </header>
+      <h3 class="narrative-title">Something is shifting.</h3>
+<p class="narrative-body">There is a new tempo to the work. You can feel it before you can name it.</p>
+    </article>
+
+    <article class="card narrative" id="month-49">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 49</span>
+        <span class="pool-badge">2024-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">momentum</span>
+      </header>
+      <h3 class="narrative-title">Mid-decade.</h3>
+<p class="narrative-body">Four years done. Six to go. The shape of your career is becoming visible.</p>
+    </article>
+
+    <article class="card narrative" id="month-60">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 60</span>
+        <span class="pool-badge">2024-12</span>
+        <span class="tag">roomType: minigame</span>
+        <span class="tag">momentum</span>
+      </header>
+      <p class="minigame-note"><em>minigame variant: <code>code-review</code></em></p>
+    </article>
+          
+    <article class="card event" id="evt-era-rebound-comp-jump">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m37+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-rebound-comp-jump</code>
+        <span class="era-chip">rebound</span>
+        <span class="tag">era</span> <span class="tag">lucky</span>
+      </header>
+      
+      <h3 class="event-title">Comp bands, recalibrated.</h3>
+      <p class="body">HR sends an email. The bands moved. Your base went up by eight percent. The email used the phrase &#39;reflecting market realities.&#39;</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="savings" data-delta="+3200">savings +3200</span> <span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-era-rebound-leaving-wave">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m37+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-rebound-leaving-wave</code>
+        <span class="era-chip">rebound</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">Everyone&#39;s leaving.</h3>
+      <p class="body">Three goodbye lunches in one month. Two of them for people you actually liked. The other one had really good cake.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-era-rebound-promo-wave">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m37+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-rebound-promo-wave</code>
+        <span class="era-chip">rebound</span>
+        <span class="tag">era</span> <span class="tag">lucky</span>
+      </header>
+      <div class="requires"><strong>trigger:</strong> <code>month &gt;=30</code></div>
+      <h3 class="event-title">Everyone&#39;s getting promoted.</h3>
+      <p class="body">The company&#39;s promotion cycle hits hard this year. Two of your peers leveled up. The Slack #promotions channel is louder than usual.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-return-office">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m37+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-return-office</code>
+        <span class="era-chip">rebound</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">Return-to-office.</h3>
+      <p class="body">The email says three days a week, starting next month. The reply-all thread is a study in restraint.</p>
+      <ul class="scene"><li>An all-staff email.</li><li>Subject: &#39;Looking ahead.&#39;</li><li>Three days. Starting Monday.</li></ul>
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span></div>
+    </article>
+        </section>
+
+        <section class="era-band" id="era-ai-shift" data-era="ai-shift">
+          <header class="era-header">
+            <h2>AI-Shift (2025 – 2026)</h2>
+            <span class="band-count">4 cards · 3 narrative beats</span>
+          </header>
+          
+    <article class="card narrative" id="month-61">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 61</span>
+        <span class="pool-badge">2025-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">inflection</span>
+      </header>
+      <h3 class="narrative-title">Five years.</h3>
+<p class="narrative-body">Halfway. The story you&#39;d tell about yourself five years ago is not quite the same story now.</p>
+    </article>
+
+    <article class="card narrative" id="month-73">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 73</span>
+        <span class="pool-badge">2026-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">inflection</span>
+      </header>
+      <h3 class="narrative-title">The slow arc.</h3>
+<p class="narrative-body">Months stack into years. Choices that felt small at the time have weight now.</p>
+    </article>
+
+    <article class="card narrative" id="month-75">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 75</span>
+        <span class="pool-badge">2026-03</span>
+        <span class="tag">roomType: minigame</span>
+        <span class="tag">inflection</span>
+      </header>
+      <p class="minigame-note"><em>minigame variant: <code>pong</code></em></p>
+    </article>
+          
+    <article class="card event" id="evt-era-ai-shift-adjacent-layoffs">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m61+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-ai-shift-adjacent-layoffs</code>
+        <span class="era-chip">ai-shift</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">A neighboring team gets cut.</h3>
+      <p class="body">The org chart looks different on Monday. You knew three of them. They posted open-to-work within the week. You wrote three references.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+3">burnout +3</span> <span class="effect-chip" data-key="network" data-delta="+1">network +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-era-ai-shift-junior-anxiety">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m61+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-ai-shift-junior-anxiety</code>
+        <span class="era-chip">ai-shift</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">The juniors are scared.</h3>
+      <p class="body">A junior asks you, over coffee, whether they should still be doing this. You don&#39;t have a clean answer. You give them one anyway.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-era-ai-shift-tooling-evangelism">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m61+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-ai-shift-tooling-evangelism</code>
+        <span class="era-chip">ai-shift</span>
+        <span class="tag">era</span> <span class="tag">humor</span>
+      </header>
+      
+      <h3 class="event-title">Everyone&#39;s an evangelist.</h3>
+      <p class="body">A teammate has, this week, recommended the new tooling to you in three separate channels. You&#39;ve tried it. It&#39;s fine. You don&#39;t have the heart to say so.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+1">burnout +1</span></div>
+    </article>
+
+    <article class="card event" id="evt-univ-ai-tooling">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m61+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-univ-ai-tooling</code>
+        <span class="era-chip">ai-shift</span>
+        <span class="tag">era</span> <span class="tag">lucky</span>
+      </header>
+      
+      <h3 class="event-title">The tooling lands.</h3>
+      <p class="body">A new tool eats a task that used to take three days and spits the answer back in twenty minutes. You spend the afternoon staring at the ceiling.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-3">burnout -3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+    </article>
+        </section>
+
+        <section class="era-band" id="era-uncertain-future" data-era="uncertain-future">
+          <header class="era-header">
+            <h2>Uncertain Future (2027 – 2029)</h2>
+            <span class="band-count">6 cards · 4 narrative beats</span>
+          </header>
+          
+    <article class="card narrative" id="month-85">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 85</span>
+        <span class="pool-badge">2027-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">inflection</span>
+      </header>
+      <h3 class="narrative-title">Choices have weight.</h3>
+<p class="narrative-body">Three years left in this stretch. The trajectory is harder to bend than it once was.</p>
+    </article>
+
+    <article class="card narrative" id="month-90">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 90</span>
+        <span class="pool-badge">2027-06</span>
+        <span class="tag">roomType: minigame</span>
+        <span class="tag">inflection</span>
+      </header>
+      <p class="minigame-note"><em>minigame variant: <code>reaction-sprint</code></em></p>
+    </article>
+
+    <article class="card narrative" id="month-97">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 97</span>
+        <span class="pool-badge">2028-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">consolidation</span>
+      </header>
+      <h3 class="narrative-title">Eight years in.</h3>
+<p class="narrative-body">You know yourself differently than you did at the start. Some of that you chose. Some of it chose you.</p>
+    </article>
+
+    <article class="card narrative" id="month-109">
+      <header class="card-header">
+        <span class="kind-badge narrative-badge">NARRATIVE</span>
+        <span class="month-badge">month 109</span>
+        <span class="pool-badge">2029-01</span>
+        <span class="tag">roomType: narrative</span>
+        <span class="tag">reflection</span>
+      </header>
+      <h3 class="narrative-title">The last full year.</h3>
+<p class="narrative-body">The decade closes ahead. What&#39;s left to do?</p>
+    </article>
+          
+    <article class="card event" id="evt-era-uncertain-becoming-mentor">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m85+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-uncertain-becoming-mentor</code>
+        <span class="era-chip">uncertain-future</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">Becoming the person you used to ask.</h3>
+      <p class="body">A junior asks you a question you remember asking, at the start. You answer it differently than the answer you got. Better, you think.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+2">reputation +2</span> <span class="effect-chip" data-key="network" data-delta="+2">network +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-era-uncertain-cycle-reborn">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m85+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-uncertain-cycle-reborn</code>
+        <span class="era-chip">uncertain-future</span>
+        <span class="tag">era</span> <span class="tag">humor</span>
+      </header>
+      
+      <h3 class="event-title">Everything old is new.</h3>
+      <p class="body">A pattern your team mocked in 2022 is the topic of a keynote this week. Three engineers in their twenties are very excited about it. You don&#39;t say anything.</p>
+      
+      
+    </article>
+
+    <article class="card event" id="evt-era-uncertain-decade-mark">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m85+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-uncertain-decade-mark</code>
+        <span class="era-chip">uncertain-future</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">Ten years.</h3>
+      <p class="body">You stumble onto a photo from 2020. Your face is different. The kitchen is different. The version of you in the photo could not have predicted the version of you holding the phone.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="-1">burnout -1</span></div>
+    </article>
+
+    <article class="card event" id="evt-era-uncertain-economy">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m85+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-uncertain-economy</code>
+        <span class="era-chip">uncertain-future</span>
+        <span class="tag">era</span>
+      </header>
+      
+      <h3 class="event-title">Hiring freeze.</h3>
+      <p class="body">The annual all-hands is shorter than usual. The word &#39;discipline&#39; appears three times. Internal mobility is encouraged. External mobility is not.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="burnout" data-delta="+2">burnout +2</span></div>
+    </article>
+
+    <article class="card event" id="evt-era-uncertain-old-codebase">
+      <header class="card-header">
+        <span class="kind-badge event-badge">EVENT</span>
+        <span class="month-badge">m85+</span>
+        <span class="pool-badge">universal</span>
+        <code class="id">evt-era-uncertain-old-codebase</code>
+        <span class="era-chip">uncertain-future</span>
+        <span class="tag">era</span> <span class="tag">lucky</span>
+      </header>
+      
+      <h3 class="event-title">Code you wrote, still running.</h3>
+      <p class="body">Someone messages: that service you wrote five years ago is still in production. It has not been touched. It has not gone down. The new team treats it with religious caution.</p>
+      
+      <div class="effects"><span class="effect-chip" data-key="reputation" data-delta="+3">reputation +3</span> <span class="effect-chip" data-key="technicalSkill" data-delta="+1">technicalSkill +1</span></div>
+    </article>
+
+    <article class="card decision finale" id="finale-month-120">
+      <header class="card-header">
+        <span class="kind-badge decision-badge">FINALE</span>
+        <span class="month-badge">m120</span>
+        <code class="id">finale-month-120</code>
+        <span class="tag">hardcoded in DecisionRoom.tsx</span>
+      </header>
+      <p class="prompt">Ten years. Did any of that stick?</p>
+      <div class="options">
+      <div class="option">
+        <div class="option-label">Bits did. Most didn&#39;t.</div>
+        <p class="flavor">Sounds about right.</p>
+      </div>
+      <div class="option">
+        <div class="option-label">Not really. I&#39;ll leave it here.</div>
+        <p class="flavor">Fair. The door&#39;s right there.</p>
+      </div>
+      <div class="option">
+        <div class="option-label">Hard to say. It mostly felt like a Tuesday.</div>
+        <p class="flavor">Tuesdays do most of the work.</p>
+      </div></div>
+    </article>
+        </section>
+  <section class="frontmatter">
+         <h2>Month transitions</h2>
+         <p class="muted">One is picked at random between months that have no narrative beat.</p>
+         <ul class="transition-list">
+           <li>... and life goes on</li><li>... another month passes</li><li>... you press on</li><li>... another day, another dollar</li><li>... onward and upward</li><li>... the calendar turns</li><li>... time moves forward</li>
+         </ul>
+       </section>
+  <section class="frontmatter">
+         <h2>Spouse names (random pool)</h2>
+         <p class="muted">Used by the dating-app match decision; one is picked at random when the choice fires.</p>
+         <p class="name-list">Maya · Jordan · Sam · Casey · Reese · Avery · Quinn · Riley · Ellis · Morgan · Sage · Rowan · Cameron · Hayden · Skylar · Phoenix · Emma · Olivia · Liam · Noah · Sophia · Marcus · Elena · Diego · Priya · Anish · Yuki · Daniel · Naomi · Eli · Mei · Joaquin · Layla · Omar · Beatrice · Theo · Ines · Jia · Hana · Devon</p>
+       </section>
+  
+</main>
+<footer class="page-footer">
+  <p>Voice review surface. Every line here is something the player will read in-game. If a flavor / scene / prompt sounds off, flag the card id back to the author.</p>
+</footer>
+</body>
+</html>
