@@ -279,13 +279,20 @@ export function Pong({ monthId, onComplete, mode = 'scheduled', awardRewards = t
         v.vy = Math.sin(angle) * speed;
       }
 
-      // Goal lines — ball escaped past a paddle.
+      // Goal lines — ball escaped past a paddle. handleGoal either
+      // resets the ball for the next rally (ballFrozenUntilRef gates
+      // the lockout above) or schedules a phase flip to 'result' for
+      // game-end. EITHER WAY we must keep the rAF chain alive until
+      // the effect's cleanup runs on phase change — otherwise the
+      // loop dies after the first goal and the ball never serves again.
       if (nx + BALL_SIZE < 0) {
         handleGoal('ai');
-        return; // resetBall already scheduled a new serve
+        raf = requestAnimationFrame(tick);
+        return;
       }
       if (nx > COURT_W) {
         handleGoal('player');
+        raf = requestAnimationFrame(tick);
         return;
       }
 
@@ -318,9 +325,18 @@ export function Pong({ monthId, onComplete, mode = 'scheduled', awardRewards = t
         } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
           e.preventDefault();
           inputRef.current.down = true;
+        } else if (e.key === 'Escape') {
+          // Mid-game exit: forfeit the round with the current score.
+          // Below WIN_SCORE on both sides classifies as 'fail' in
+          // classifyOutcome, so the player gets the fail XP path
+          // (and arcade-mode plays don't record). Continues straight
+          // to onComplete — no result panel for a forfeit, since the
+          // player asked to leave.
+          e.preventDefault();
+          handleContinueRef.current();
         }
       } else if (phaseRef.current === 'result') {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
           e.preventDefault();
           handleContinueRef.current();
         }
@@ -488,7 +504,7 @@ export function Pong({ monthId, onComplete, mode = 'scheduled', awardRewards = t
               opacity: 0.7,
             }}
           >
-            ↑↓ or W / S to move
+            ↑↓ or W / S to move · Esc to forfeit
           </p>
           <svg
             data-region="court"
