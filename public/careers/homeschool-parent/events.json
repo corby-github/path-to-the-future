@@ -54,7 +54,7 @@
       "weight": 0.7,
       "trigger": { "burnout": ">65" },
       "title": "Your handwriting on the dry-erase.",
-      "body": "You wrote the date and you noticed the letters wobble. Not a lot. Enough that you stood there a second and looked at it before erasing it and writing it again. The kids didn't notice. They never do, until they do.",
+      "body": "You wrote the date and you noticed the letters wobble. Not a lot. Enough that you stood there a second and looked at it before erasing it and writing it again. Bram asked why you erased it. You said 'practice.' He nodded gravely. You suspect he knew it wasn't.",
       "effects": { "burnout": "+2", "health": "-2" }
     },
 
@@ -85,18 +85,8 @@
       "tags": ["lucky", "era", "community"],
       "weight": 0.5,
       "title": "Driveway friends.",
-      "body": "The neighbor's kid — whose mom was suddenly homeschooling for the first time — wandered over with a soccer ball. Bram followed. The neighbor mom set out two camp chairs at a distance and waved. You waved back. By the end of the week you were waving on purpose.",
+      "body": "The neighbor's kid — whose mom was suddenly homeschooling for the first time — wandered over with a soccer ball. Bram followed. By Friday the mom had set out two camp chairs at the property line, with a thermos. She asked how you'd been doing this for nine years and 'still looked relatively sane.' You appreciated the 'relatively.'",
       "effects": { "network": "+3", "burnout": "-2" }
-    },
-    {
-      "id": "evt-hp-pandemic-mask-tantrum",
-      "pool": "homeschool-parent",
-      "era": ["pandemic"],
-      "tags": ["era", "stress"],
-      "weight": 0.5,
-      "title": "The mask, in the parking lot.",
-      "body": "Bram refused the mask in the car. You stood by the open door for four minutes. A woman two spaces over watched. He put it on. She didn't say anything kind or unkind. She just nodded once, like a person who'd been there.",
-      "effects": { "burnout": "+2", "network": "+1" }
     },
     {
       "id": "evt-hp-pandemic-church-stayed-open",
@@ -105,7 +95,7 @@
       "tags": ["family", "community", "era"],
       "weight": 0.5,
       "title": "Church was open.",
-      "body": "Three churches in your area closed that spring. Yours stayed open — Sundays and Wednesdays both. The pews were half-full and the windows were cracked. Bram fell asleep on your shoulder during the sermon. Hazel got the bulletin and asked what 'communion' meant. You answered honestly. You'd been going for a decade; the week the building stayed open felt like the week the building stayed open.",
+      "body": "Three churches in your area closed that spring. Yours stayed open — Sundays and Wednesdays both. The pews were half-full and the windows were cracked. Bram fell asleep on your shoulder during the sermon. Hazel got the bulletin and asked what 'communion' meant. You answered honestly. You'd been going for a decade. The pews were the same pews. That, this year, was enough.",
       "effects": { "burnout": "-2", "network": "+2", "health": "+1" }
     },
     {
@@ -189,7 +179,7 @@
       "weight": 0.4,
       "trigger": { "network": ">35" },
       "title": "The bake sale cleared.",
-      "body": "The co-op fundraiser hit its number an hour early. Someone you barely knew said you were the one who'd pulled it off. You hadn't been, really. You'd been the one who showed up. The two things were closer than you'd expected.",
+      "body": "The co-op fundraiser hit its number an hour early. By 'an hour' they meant ten minutes — someone had rounded up for the celebratory email. You ate three cookies that should have gone in the bin on the way to your car.",
       "effects": { "network": "+3", "reputation": "+3" }
     },
     {
@@ -232,7 +222,7 @@
       "weight": 0.4,
       "trigger": { "month": ">=36" },
       "title": "A package on the table.",
-      "body": "Your spouse came home with a folder. Not a bad folder. A folder. They sat at the kitchen table and didn't open it for forty minutes. You did not say anything for the forty minutes. You sat with them.",
+      "body": "Your spouse came home with a folder. Not a bad folder. A folder. It sat on the kitchen table, unopened, for forty minutes. You did not say anything for the forty minutes. You sat through them too.",
       "effects": { "savings": "-2000", "burnout": "+4", "health": "-1" }
     },
     {
@@ -283,7 +273,7 @@
       "tags": ["era", "family"],
       "weight": 0.4,
       "title": "Your spouse's workflow, halved.",
-      "body": "Your spouse came home and said 'the thing that took me a day takes me an hour now.' They were not sure if this was good for them. You weren't sure either. You did the dishes together that night and didn't say anything more about it.",
+      "body": "Your spouse came home and said 'the thing that took me a day takes me an hour now.' Hard to tell, in the moment, if that was good news. You weren't sure either. You did the dishes together that night and didn't say anything more about it.",
       "effects": { "burnout": "+1", "health": "+1" }
     },
     {
@@ -315,7 +305,7 @@
       "weight": 0.5,
       "trigger": { "month": ">=90" },
       "title": "Your spouse, on the job market.",
-      "body": "They updated the resume Sunday. They told you the number of recruiter messages on Monday. The number was lower than two years ago. They said 'it's fine.' They are, you can tell, also looking inward at the same time. You let them.",
+      "body": "Your spouse updated the resume Sunday. The recruiter-message count came up Monday — lower than two years ago. 'It's fine,' was the answer. There's a kind of looking-inward going on at the same time, you can tell. You let it sit.",
       "effects": { "burnout": "+2", "savings": "-100" }
     },
     {
@@ -347,7 +337,7 @@
       "weight": 0.6,
       "trigger": { "savings": "<800" },
       "title": "Card, declined.",
-      "body": "At the grocery checkout, with Bram in the cart. The cashier said nothing. You used a different card. You stood in the parking lot for a minute before you started the engine. Bram asked why you were sad. You said you weren't sad. He let it go. You felt that.",
+      "body": "At the grocery checkout, with Bram in the cart. The cashier said nothing. You used a different card. Approved. You sighed. The guy behind you clapped, briefly, almost accidentally. Cash next time.",
       "effects": { "burnout": "+3", "health": "-1" }
     },
     {
@@ -411,7 +401,7 @@
       "tags": ["family", "humor", "flavor"],
       "weight": 0.6,
       "title": "Mr Nobody strikes again.",
-      "body": "There's a bag of chocolate M&Ms in the center console of the school-bus (the family car). You ask: 'Who did this?' Hazel and Bram both look at you and say, 'Not me.' Of course. Mr Nobody strikes again. He has, you note, excellent taste in candy.",
+      "body": "A bag of chocolate M&Ms melted in the center console of the school-bus (the family car). You ask, 'Who did this?' Hazel and Bram both look at you and say, 'Not me.' Of course. Mr Nobody strikes again.",
       "effects": { "burnout": "-1" }
     },
     {

@@ -36,7 +36,7 @@
       "tags": ["community", "work-life-balance"],
       "weight": 1.0,
       "requires": { "month": ">=4" },
-      "prompt": "A neighborhood co-op meets Tuesday mornings. Five families, shared lessons, a craft and a snack. You'd be giving up every Tuesday.",
+      "prompt": "A neighborhood co-op meets Tuesday mornings. Five families, shared lessons, a craft and a snack. The kids get friends. You get adult conversation. You cannot, when you really think about it, find a downside.",
       "options": [
         {
           "label": "Sign on",
@@ -51,7 +51,7 @@
         {
           "label": "Stay solo for now",
           "effects": { "burnout": "-2", "network": "-1" },
-          "flavor": "You said maybe next year. The co-op kept going without you. You saw the photos in the group chat. The kids in them looked busy."
+          "flavor": "You said maybe next year. The group chat looked, frankly, like a lot. You'd survived three months on your own. You could survive a few more, probably."
         }
       ]
     },
@@ -237,7 +237,7 @@
       "tags": ["family", "money", "relationship"],
       "weight": 0.8,
       "requires": { "month": ">=10" },
-      "prompt": "Your spouse's hours are cut by a third. The check on the fridge is the household plan. They want to know if you want to talk about it tonight, or wait until the weekend.",
+      "prompt": "Your spouse's hours are cut by a third. The check on the fridge is the household plan. Should you talk about it tonight, or wait until the weekend?",
       "options": [
         {
           "label": "Tonight. After the kids are down.",
@@ -397,12 +397,12 @@
         {
           "label": "Stay. Spouse declines.",
           "effects": { "burnout": "-2", "network": "+2", "reputation": "+1" },
-          "flavor": "Your spouse turned it down. They didn't bring up the salary number for months. When it came up at Thanksgiving, you both pretended it was an old wound. It wasn't quite."
+          "flavor": "Your spouse turned it down. The salary number didn't come up for months. When it surfaced at Thanksgiving, you both pretended it was an old wound. It wasn't quite."
         },
         {
           "label": "Negotiate spouse-only commute",
           "effects": { "savings": "+3000", "burnout": "+5", "reputation": "+1", "health": "-2" },
-          "flavor": "They flew out Sunday nights, back Thursdays. The kitchen table got quieter Mondays. You held the four-day stretches together. By the eighth month you both knew the math didn't quite work."
+          "flavor": "Your spouse flew out Sunday nights, back Thursdays. The kitchen table got quieter Mondays. You held the four-day stretches together. By the eighth month you both knew the math didn't quite work."
         }
       ]
     },
@@ -572,7 +572,7 @@
       "tags": ["family", "relationship", "stress"],
       "weight": 0.8,
       "requires": { "month": ">=48" },
-      "prompt": "Your spouse hasn't laughed at the dinner table in two weeks. They say they're fine. The pattern is not fine.",
+      "prompt": "Your spouse hasn't laughed at the dinner table in two weeks. The answer is always 'fine.' The pattern is not fine.",
       "options": [
         {
           "label": "Take the weekend for them",
@@ -582,12 +582,12 @@
             "A long, slow Saturday."
           ],
           "effects": { "savings": "-500", "burnout": "+2", "health": "+2", "reputation": "+3" },
-          "flavor": "They cried on Friday night. They laughed at breakfast Sunday. Neither thing was small. You drove home Sunday afternoon listening to a podcast neither of you remembered. It was the best two days of the season."
+          "flavor": "Your spouse cried on Friday night. Laughed at breakfast Sunday. Neither thing was small. You drove home Sunday afternoon listening to a podcast neither of you remembered. It was the best two days of the season."
         },
         {
           "label": "Lighter the home load. Quietly.",
           "effects": { "burnout": "+4", "reputation": "+2" },
-          "flavor": "You took the morning routines for a month. You did the dishes you usually leave. They noticed in the third week and said so. You said 'I know.' It was, somehow, enough."
+          "flavor": "You took the morning routines for a month. You did the dishes you usually leave. Your spouse noticed in the third week and said so. You said 'I know.' It was, somehow, enough."
         },
         {
           "label": "Wait it out",
@@ -712,12 +712,12 @@
         {
           "label": "The recital",
           "effects": { "burnout": "+1", "reputation": "+2", "network": "-1" },
-          "flavor": "He played his piece. He missed two notes. He didn't notice he'd missed them. You did, and didn't mind. The friend forgave you. They wanted the long version of the story over coffee the next week."
+          "flavor": "He played his piece. He missed two notes. He didn't notice he'd missed them. You did, and didn't mind. The friend forgave you, and wanted the long version of the story over coffee the next week."
         },
         {
           "label": "The party",
           "effects": { "burnout": "+1", "reputation": "-2", "network": "+3" },
-          "flavor": "Your spouse went to the recital. They filmed it. You saw the video later that night and felt the specific small ache of not having been the one in the audience. You also had a very good evening. Both were true."
+          "flavor": "Your spouse went to the recital and filmed it. You saw the video later that night and felt the specific small ache of not having been the one in the audience. You also had a very good evening. Both were true."
         },
         {
           "label": "Half of each",
