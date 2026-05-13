@@ -105,7 +105,8 @@ export function ClassPicker({ onSelect }: Props) {
     fontSize: 22,
     fontWeight: 600,
     margin: 0,
-    letterSpacing: '-0.01em',
+    // Matches EndgameScreen / TitleScreen / CareerPicker.
+    letterSpacing: '0.02em',
   };
 
   const subtitleStyle: CSSProperties = {
@@ -120,18 +121,21 @@ export function ClassPicker({ onSelect }: Props) {
     gap: 8,
   };
 
+  // Outlined modal-button style — matches DecisionModal Continue,
+  // CreditsScreen Close, EndgameScreen actions. Centered.
   const buttonStyle: CSSProperties = {
-    alignSelf: 'flex-end',
+    alignSelf: 'center',
+    padding: '12px 32px',
+    background: 'transparent',
+    color: palette.ink,
+    border: `1px solid ${palette.ink}`,
     fontSize: 13,
-    fontWeight: 600,
-    padding: '10px 22px',
-    border: 'none',
-    borderRadius: 4,
-    background: pickedId ? palette.ink : palette.surface,
-    color: pickedId ? palette.background : palette.inkMuted,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
     cursor: pickedId ? 'pointer' : 'not-allowed',
-    letterSpacing: '0.02em',
-    transition: 'background 120ms ease',
+    fontFamily: 'inherit',
+    opacity: pickedId ? 1 : 0.4,
+    transition: 'background 120ms, opacity 120ms',
   };
 
   return (
