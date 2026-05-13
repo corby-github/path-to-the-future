@@ -18,6 +18,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
 | v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. **§23 NPCModal** gains a *Speaker header + icon (v1.2)* subsection per #28: kind-aware header above the prompt (`"Intern says…"` / `"Plant."`) plus a full-opacity sprite icon on the left as a fixed-width column. Shared `labelFor` / `speakerHeaderFor` helpers extracted to `src/game/content/interactableLabel.ts`. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
 | v2.0    | 2026-05-12 | Corby Hoback · Claude Code | **Multi-career architecture, formalized.** Engine has always loaded career-specific content from packs (§3), but the implicit assumption — never written down — was that every pack would use the SWE-shaped stat model from §7. v2.0 owns that the model is SWE-coded and gives packs two escape hatches: (1) **`manifest.statLabels`** — an optional `Record<StatKey, string>` letting a pack relabel the seven canonical stats in the HUD without touching engine code or decision JSON (e.g. Student pack relabels `technicalSkill` → "Grades", `savings` → "Money", `burnout` → "Stress"). (2) **Pack-additive `flags`** — packs may rely on `flags` fields that older saves don't have, defaulting gracefully (precedent: `meta.tutorialDismissed` in v1.3.3). New §26 *Career Packs: Beyond SWE* documents the relabel mechanism, the expanded 9-career roster, and the Student pack in detail (10-year 13→22 arc, post-HS fork at month ~66 as the structural centerpiece, the three new flags — `parentTrust`, `hasJob`, `postHSPath` — that gate its back-half decision pool). §26 also names what's deferred: a future pack-defined stat schema refactor (Option C in the design discussion), per-pack score formula, per-pack endgame framing copy, and per-pack arc length. §16 *Init Flow* career listing updated to match the new roster; "only SWE selectable in v1" line removed since v2.0 anticipates Student becoming playable. No engine code change required to ship this version of the doc — the `statLabels` plumbing is small (one HUD lookup + one optional manifest field), and the rest is content. No STATE_VERSION bump (Student's new flags are additive with graceful defaults). The honest framing in §26 — that `technicalSkill` is SWE-coded and the score formula in §21 references it by name — is the contribution that matters most; future packs will be built knowing where the joints are. |
+| v1.4    | 2026-05-12 | Corby Hoback · Claude Code | Issue #31 — **arcade cabinet (universal interactable).** New `feature?: 'arcade'` field on `InteractableDef` (§23). Universal interactables live at `public/universal/interactables.json` and are merged into every pack's interactable pool by the loader (pack-specific wins on id collision). New `obj-arcade-game` entry (`art: 'arcade-game'`, `weight: 0.4`) — the cabinet renders as an upright sprite with screen, joystick, and two buttons. `[E] play` opens **`ArcadeModal`** (`src/game/ui/ArcadeModal.tsx`) — a menu of every minigame variant in the closed `MinigameVariant` union with per-variant **READY / Cooling down · Nm** status. Picking a game renders `MinigameByVariant` inline (new shared component at `src/game/minigames/MinigameByVariant.tsx`, also used by `MinigameRoom`); on Continue the modal returns to the menu so plays chain. **Throttle:** all rewards (XP + stat effects) are gated to once per real-time hour per variant — throttled plays still run for fun but dispatch nothing. New state `progress.lastArcadeXpAt: Record<MinigameVariant, number>` + `setLastArcadeXpAt` reducer. Arcade plays are **not** recorded to `history.minigames` — the replay timeline (§11.1) is for scheduled-month plays only. Minigames gain `mode: 'scheduled' \| 'arcade'` + `awardRewards` props; `MinigameRoom` always passes `mode='scheduled'`. New §10.1 *Arcade access* documents the cabinet; §23 documents the `feature` flag + universal-interactables layer. **STATE_VERSION 1.3.0 → 1.4.0.** |
 | v1.3.4  | 2026-05-12 | Corby Hoback · Claude Code | **Finale month (December 2029) + polish bundle.** (1) **Finale layout.** Month 120 gets a special two-door layout on the right edge — a top "locked" door (examinable interactable, [E] try → opens `NPCModal` with the synthetic `LOCKED_DOOR_INTERACTABLE` containing *"This one is locked! You don't seem to have the key... oh well."*) and a bottom forward door that routes to a hardcoded `FINALE_DECISION`. The "Something about a key" foreshadowing from the rewind status pool (§11.1) pays off here. (2) **Finale decision.** Prompt: *"Ten years. Did any of that stick?"* Three deadpan options + flavors, each in a distinct rhetorical register: *"Bits did. Most didn't."* → *"Sounds about right."*; *"Not really. I'll leave it here."* → *"Fair. The door's right there."*; *"Hard to say. It mostly felt like a Tuesday."* → *"Tuesdays do most of the work."* (the Tuesday echo lifts the *"Same coffee stain"* banality motif from §11.1). Empty effects across all options — the run's score is computed before this pick lands. (3) **Finale flavor phase.** `DecisionModal` gains a `finale?: boolean` prop. When true, the flavor phase swaps the generic *"YOU CHOSE"* + icon-left layout for a centered *"Well, then."* / chosen-line / italic-flavor / **"End"** button beat. (4) **New sprite token** `locked-door` in `InteractableSprite.tsx` — padlock with shackle + body + keyhole. (5) **DevPanel** *"endgame: trigger"* button becomes a **`trigger ▼`** dropdown with three options: `endgame` (dispatch `setGameOver(true)`), `tutorial` (new `resetTutorial` action flips `meta.tutorialDismissed` back to false so the next DecisionRoom re-shows the coachmark), `finale month` (`setCurrentMonth(120)`). (6) **Tutorial overlay repositioned.** Was viewport-anchored (pushed off the canvas on widescreens, hovered above the status bar instead of next to it). Now `position: absolute` inside the DecisionRoom container (which is `width: var(--canvas-display-width); position: relative`), so the bubble anchors to the canvas frame. Per-step paddings hand-tuned: top-center for the status-bar tip, dead-center for the objects/people tip, middle-right for the door tip. No state-shape change, no STATE_VERSION bump. |
 | v1.3.3  | 2026-05-12 | Corby Hoback · Claude Code | **Day 13c polish bundle + first-run tutorial.** (1) **a11y pass:** `NPCModal` gets a focus trap, focus restore, `aria-modal="true"`, and a real `aria-label` derived from `labelFor(interactable)`; `EffectChips` chips get per-chip `aria-label` like "Burnout +5" (composed via local `STAT_NAMES_FOR_AT` map) with visual children explicitly hidden from AT; `CareerPicker` / `ClassPicker` options containers get `role="group"` + `aria-label`; `NameEntry` counter gets `aria-live="polite" aria-atomic`. New `@media (prefers-reduced-motion: reduce)` block in `global.css` collapses every keyframe + transition to 1ms (not `none` — `animationend` handlers in ScenePlayer would otherwise stall). (2) **Era mood tuning** in `public/careers/software-engineering/manifest.json`: pandemic pushed harder (saturation 0.7 → 0.55, hueShift -8 → -14 — drained-of-warmth feel without blowing out highlights); ai-shift pushed harder (saturation 1.05 → 1.18, lightness 1.0 → 1.02, hueShift +4 → +10 — sharper "rendered" vibe). Rebound and uncertain-future unchanged. (3) **Cross-viewport review:** code audit at 1024 / 1440 / narrow-laptop widths; the `--canvas-display-width` `min()` formula scales cleanly, modals use `min(WxPx, NN%)`, flex containers have `minWidth: 0` where needed. No code changes — flagged as reviewed. Known borderline: `palette.positive` contrast vs background measures 3.15-3.35:1 across eras (passes WCAG AA for large text/UI 3.0, below 4.5 for normal text). Held for future palette tuning decision rather than landed in this bundle. (4) **First-run tutorial.** New `meta.tutorialDismissed` flag (graceful default for older saves — no STATE_VERSION bump) + `dismissTutorial` reducer. `TutorialOverlay` renders a 3-step coachmark bubble (status bar / interactables / door) on the player's first DecisionRoom; Space/Enter/→ advance, ← back, Esc skip. Gameplay is paused via `tutorialActive` (player movement + E-key + door entry all gated). Dismissal dispatches `dismissTutorial` and immediately persists so the flag survives a reload. Resets on Begin Again via `resetMeta`. Replay mode never shows the tutorial. (5) **Begin-again confirmation** in `CreditsScreen` retuned: font-size 16 → 15px, line-height 1.5 → 1 for tighter visual weight on the destructive-action line. |
 | v1.3.2  | 2026-05-12 | Corby Hoback · Claude Code | Issue #26 — **endgame timeline readability**. EndgameScreen keeps its 1000×600 canvas frame (consistency with the rest of the app — no out-of-game scroll). Stats + score panels sit inline below the header; the **Career timeline** moves to a dedicated full-canvas view (`CareerTimelineScreen` — ↑↓/PgUp/PgDn/Home/End scroll, Close button, Enter/Space/Esc close) reached via a third recap action button. Three-action recap keyboard nav with wrap-around: **Career Timeline** · **Credits** · **Begin again**. Date column in the timeline widened to 124px with `whiteSpace: nowrap` — `February 2021` no longer wraps inside an 80px column (root cause of the visual collision with option text). §21 rewritten. |
@@ -182,6 +183,14 @@ Every room config has a `roomType` field. The renderer picks the right component
 - `progress.gameOver` (added Day 12) — flips true on `completeMonth(120)`. Drives
   `App.tsx` routing between `<RoomRenderer>` and `<EndgameScreen>` (§21).
 - `history.events` (always present; spelled out in v1.1 — was implicit in v1.0).
+
+**v1.4 additions (issue #31):**
+- `progress.lastArcadeXpAt: Record<MinigameVariant, number>` — per-variant
+  epoch ms of the last arcade play that awarded XP. Throttles arcade-mode
+  rewards to once per real-time hour per minigame. `0` means "never
+  awarded yet (ready)." Scheduled minigame slots (months 32 / 60 / 90)
+  don't touch this — only arcade plays write it.
+- STATE_VERSION bumped to 1.4.0.
 
 ### React refs/hooks (per-frame, never persisted)
 
@@ -425,6 +434,55 @@ Example (no mini-game):
 > "You raced through the maze to make the meeting. *(Rolling: focus + luck.)* You made it on time. The room went quiet when you walked in."
 
 This pattern is the single biggest scope-saving decision in the doc.
+
+### 10.1 Arcade access (v1.4, issue #31)
+
+The scheduled slots at months 32 / 60 / 90 are the only "official" minigame
+moments — they're load-bearing on the XP economy. The **arcade cabinet**
+gives the player ad-hoc access to any minigame without breaking that
+balance.
+
+**Interactable.** Universal `InteractableDef` with `feature: 'arcade'` (see
+§23). Sprite is an upright cabinet with a screen, joystick, and two
+buttons (`art: 'arcade-game'`). Weight `0.4` — visible but not in every
+room. Loaded from `public/universal/interactables.json` and merged into
+every pack's pool by the loader (pack-specific wins on id collision).
+
+**E-press → ArcadeModal.** `DecisionRoom` routes arcade-feature
+interactables to `src/game/ui/ArcadeModal.tsx` instead of the standard
+`NPCModal`. The modal has two phases:
+
+- **menu** — a row per `MinigameVariant`: name, blurb, and a status
+  pill — `READY · +{XP_MINIGAME_WIN} XP` or `Cooling down · Nm`.
+  ↑↓ / 1-N / Enter to pick.
+- **playing** — renders `MinigameByVariant` (the shared switch extracted
+  from `MinigameRoom`) with `mode='arcade'`. On the minigame's Continue,
+  control returns to the menu so plays chain. Esc at any time walks away
+  from the cabinet.
+
+**Throttle (real-time, all rewards gated).** XP and stat effects are
+awarded only when at least `ARCADE_THROTTLE_MS` (1 real-time hour) has
+elapsed since the last *rewarded* play of the **same variant**. Throttled
+plays still run end-to-end — the minigame is fun on its own — but the
+minigame's `handleContinue` skips every `applyStatEffect` and `addXp`
+dispatch when `awardRewards=false`. The ArcadeModal computes eligibility
+at launch time and forwards the boolean. After a rewarded play it
+dispatches `setLastArcadeXpAt({ variant, at: Date.now() })` so the next
+play of that variant cools down. Real-time was chosen over in-game time
+because real-time is grind-proof: clicking through months can't fast-
+forward the cooldown.
+
+**No history recording.** Arcade plays don't write to `history.minigames`
+(§11.1). That timeline is the player's "what happened in the scheduled
+moments" record; arcade play is for fun and doesn't belong in the
+retrospective. Minigames check `mode === 'scheduled'` before dispatching
+`recordMinigame`.
+
+**Closed `MinigameVariant` union for v1.** The arcade lists every variant
+in the union (`'blackjack' | 'code-review' | 'reaction-sprint'`). When v2
+multi-pack lands (§26), the variant list will be driven by the pack
+manifest — but for v1 with one pack and three games, the closed union is
+right-sized. A registry pattern is deferred to the v2 work.
 
 ---
 
@@ -1054,6 +1112,7 @@ interface InteractableDef {
   kind: 'npc' | 'object';
   label?: string;                     // v1.2 — short display name under [E] hint
   art: string;                        // sprite token (real art in 13b)
+  feature?: 'arcade';                 // v1.4 — routes E-press to a feature modal (§10.1)
   tags: string[];                     // 'office', 'coworker', etc.
   weight: number;                     // generator weighting (used in 13b)
   requires?: Record<string, string>;  // eligibility gate (same expr lang as decisions)
@@ -1157,6 +1216,33 @@ one source.
 **Door fade preserves canvas bounds.** The room SVG's border was moved to a
 wrapper div so it persists through the door-commit fade. Modals land on a
 visible-but-empty room outline instead of black.
+
+### Feature-flagged interactables (v1.4)
+
+`InteractableDef.feature` is an optional discriminator that swaps out the
+modal an E-press opens. The proximity system, sprite rendering, label
+caption, and adjacency halo are unchanged — only the modal routing
+branches. For v1.4 the only value is `'arcade'`, which routes to
+`ArcadeModal` (§10.1) instead of `NPCModal`. The `[E]` hint text reads
+`[E] play` for arcade-feature interactables (vs `[E] talk` for NPCs and
+`[E] look` for objects). The `dialogues` array is still authored and
+required for schema parity, but it's only consulted when no feature
+takes priority — for arcade entries, one short Tier-1 line is enough.
+
+### Universal interactables layer (v1.4)
+
+`public/universal/interactables.json` holds interactables every career
+pack inherits. The loader (`src/game/content/loader.ts`) fetches it
+optionally in parallel with the pack-specific file and merges into a
+single `pack.interactables` list. Pack-specific entries win on `id`
+collision so a pack can override or shadow a universal definition.
+
+This is where the arcade cabinet lives (`obj-arcade-game`). The layer is
+deliberately thin in v1 — one entry — but it's the right home for any
+future "every workplace has one of these" interactables (water cooler
+chats that aren't pack-themed, generic flavor objects). The placer
+treats universal and pack-specific entries identically; the
+`tags: ['universal', ...]` array is informational.
 
 ---
 

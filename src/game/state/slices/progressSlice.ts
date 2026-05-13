@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { classTierForXp } from '../../content/classes';
+import type { MinigameVariant } from '../../types/room';
 
 // XP economy. Baseline accumulation (per decision) is small and steady; the
 // jumps come from minigame wins and decision options tagged with an explicit
@@ -33,7 +34,22 @@ export interface ProgressState {
   // visual "world dims" beat, instead of trailing it. The subsequent
   // `completeMonth` advance then suppresses its natural duplicate emit.
   monthAdvanceCueNonce: number;
+  // Issue #31 — last epoch-ms timestamp an arcade play awarded XP for each
+  // minigame variant. The arcade interactable lets the player drop into
+  // any minigame at will, but XP / stat effects are throttled to once per
+  // real-time hour per variant. 0 means "never awarded yet" (ready). The
+  // scheduled minigame slots (months 32 / 60 / 90) don't touch this — only
+  // arcade plays write it.
+  lastArcadeXpAt: Record<MinigameVariant, number>;
 }
+
+export const ARCADE_THROTTLE_MS = 60 * 60 * 1000;
+
+const initialLastArcadeXpAt: Record<MinigameVariant, number> = {
+  blackjack: 0,
+  'code-review': 0,
+  'reaction-sprint': 0,
+};
 
 const initialState: ProgressState = {
   currentMonth: 1,
@@ -43,6 +59,7 @@ const initialState: ProgressState = {
   gameOver: false,
   viewingMonth: null,
   monthAdvanceCueNonce: 0,
+  lastArcadeXpAt: { ...initialLastArcadeXpAt },
 };
 
 const progressSlice = createSlice({
@@ -112,6 +129,14 @@ const progressSlice = createSlice({
     cueMonthAdvance(state) {
       state.monthAdvanceCueNonce += 1;
     },
+    // Issue #31 — stamp the throttle clock for a minigame variant when an
+    // arcade play awards XP. Dispatched only when the play was eligible
+    // (>= ARCADE_THROTTLE_MS since the last stamped play of the same
+    // variant); the caller computes eligibility. Older saves without this
+    // field rehydrate via STATE_VERSION mismatch (1.3.0 → 1.4.0 discards).
+    setLastArcadeXpAt(state, action: PayloadAction<{ variant: MinigameVariant; at: number }>) {
+      state.lastArcadeXpAt[action.payload.variant] = action.payload.at;
+    },
     resetProgress() {
       return initialState;
     },
@@ -128,6 +153,7 @@ export const {
   enterReplay,
   exitReplay,
   cueMonthAdvance,
+  setLastArcadeXpAt,
   resetProgress,
 } = progressSlice.actions;
 export default progressSlice.reducer;

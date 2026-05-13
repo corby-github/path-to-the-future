@@ -72,6 +72,11 @@ export interface PlaceArgs {
   spawn: Vector2;
   door: Rect;
   obstacles: readonly Rect[];
+  // Optional dev-only forcing — if any of these ids exist in the pool and
+  // pass requires, they're placed first and don't compete with the seeded
+  // weighted selection. Used by the DevPanel "force arcade" toggle so
+  // testers can land in a room with the arcade cabinet without wandering.
+  forceIds?: readonly string[];
 }
 
 export function placeInteractables({
@@ -81,6 +86,7 @@ export function placeInteractables({
   spawn,
   door,
   obstacles,
+  forceIds,
 }: PlaceArgs): PlacedInteractable[] {
   const eligible = pool.filter((i) => passesRequires(i.requires, ctx));
   if (eligible.length === 0) return [];
@@ -90,14 +96,36 @@ export function placeInteractables({
   const placed: PlacedInteractable[] = [];
   const remaining = [...eligible];
 
+  // Forced ids: pull them out of `remaining` and put them at the front of
+  // the placement queue. Non-existent / requires-blocked ids are silently
+  // ignored so the toggle is safe across packs that don't author the id.
+  const forcedDefs: InteractableDef[] = [];
+  if (forceIds && forceIds.length > 0) {
+    for (const id of forceIds) {
+      const idx = remaining.findIndex((d) => d.id === id);
+      if (idx >= 0) {
+        forcedDefs.push(remaining.splice(idx, 1)[0]);
+      }
+    }
+  }
+
   const doorCx = door.x + door.width / 2;
   const doorCy = door.y + door.height / 2;
 
-  for (let i = 0; i < targetCount; i++) {
-    if (remaining.length === 0) break;
-    const weights = remaining.map((d) => d.weight);
-    const idx = weightedPickIndex(rng, weights);
-    const def = remaining.splice(idx, 1)[0];
+  // Effective slot count is the seeded target plus any forced defs that
+  // are above the natural cap — the forced entries always get a slot.
+  const slots = Math.max(targetCount, forcedDefs.length);
+
+  for (let i = 0; i < slots; i++) {
+    let def: InteractableDef | null = null;
+    if (forcedDefs.length > 0) {
+      def = forcedDefs.shift()!;
+    } else if (remaining.length > 0) {
+      const weights = remaining.map((d) => d.weight);
+      const idx = weightedPickIndex(rng, weights);
+      def = remaining.splice(idx, 1)[0];
+    }
+    if (!def) break;
 
     // Find a non-overlapping position. 40 attempts is plenty for a 1000×600
     // canvas with 1-3 items; we just skip the entry if it can't fit.

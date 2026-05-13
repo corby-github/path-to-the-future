@@ -128,6 +128,13 @@ export interface InteractableDef {
   // Sprite token — later resolved to SVG art. For Day 13a we render
   // kind-based shapes; real art tokens come in 13b.
   art: string;
+  // Optional feature flag — when set, E-key opens a feature-specific
+  // modal instead of the standard NPCModal dialogue flow. 'arcade' routes
+  // to ArcadeModal (issue #31): a menu of all minigames the current pack
+  // supports, with XP throttled to once per real-time hour per game.
+  // Dialogues are still authored but only consulted when no feature
+  // takes priority.
+  feature?: 'arcade';
   tags: string[];
   weight: number;
   requires?: Record<string, string>;

@@ -33,6 +33,8 @@ export function DevPanel() {
     setForcedLayout,
     eventMode,
     setEventMode,
+    forceArcade,
+    setForceArcade,
   } = useDevControls();
   const { pack } = useCareerPack();
   const dispatch = useAppDispatch();
@@ -122,6 +124,16 @@ export function DevPanel() {
             </option>
           ))}
         </select>
+      </label>
+
+      <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+        <input
+          type="checkbox"
+          checked={forceArcade}
+          onChange={(e) => setForceArcade(e.target.checked)}
+          style={{ accentColor: '#e88' }}
+        />
+        <span>spawn arcade</span>
       </label>
 
       <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

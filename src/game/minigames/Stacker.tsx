@@ -15,6 +15,12 @@ import { recordMinigame } from '../state/slices/historySlice';
 interface Props {
   monthId: number;
   onComplete: () => void;
+  // 'scheduled' (default) = months-32/60/90 slot; rewards fire and the
+  // play is recorded to history for replay (#33).
+  // 'arcade' = arcade cabinet (#31); recording skipped, rewards gated
+  // by `awardRewards` (the arcade host computes throttle eligibility).
+  mode?: 'scheduled' | 'arcade';
+  awardRewards?: boolean;
 }
 
 const TOTAL_BLOCKS = 5;
@@ -65,7 +71,7 @@ function blockY(i: number): number {
   return STACK_BOTTOM_Y - i * BLOCK_H;
 }
 
-export function Stacker({ monthId, onComplete }: Props) {
+export function Stacker({ monthId, onComplete, mode = 'scheduled', awardRewards = true }: Props) {
   const { palette } = useCareerPack();
   const dispatch = useAppDispatch();
 
@@ -150,32 +156,34 @@ export function Stacker({ monthId, onComplete }: Props) {
   const stacks = blocks.filter((b) => b.status === 'hit').length;
 
   const handleContinue = useCallback(() => {
-    let result: 'win' | 'partial' | 'fail';
-    if (stacks >= WIN_THRESHOLD) {
-      result = 'win';
-      dispatch(applyStatEffect({ stat: 'technicalSkill', op: '+', magnitude: 5 }));
-      dispatch(applyStatEffect({ stat: 'reputation', op: '+', magnitude: 5 }));
-      dispatch(applyStatEffect({ stat: 'burnout', op: '-', magnitude: 2 }));
-      dispatch(addXp(XP_MINIGAME_WIN));
-    } else if (stacks >= PARTIAL_THRESHOLD) {
-      result = 'partial';
-      dispatch(addXp(XP_MINIGAME_PARTIAL));
-    } else {
-      result = 'fail';
-      dispatch(applyStatEffect({ stat: 'reputation', op: '-', magnitude: 3 }));
-      dispatch(applyStatEffect({ stat: 'burnout', op: '+', magnitude: 5 }));
-      dispatch(addXp(XP_MINIGAME_FAIL));
+    const result: 'win' | 'partial' | 'fail' =
+      stacks >= WIN_THRESHOLD ? 'win' : stacks >= PARTIAL_THRESHOLD ? 'partial' : 'fail';
+    if (awardRewards) {
+      if (result === 'win') {
+        dispatch(applyStatEffect({ stat: 'technicalSkill', op: '+', magnitude: 5 }));
+        dispatch(applyStatEffect({ stat: 'reputation', op: '+', magnitude: 5 }));
+        dispatch(applyStatEffect({ stat: 'burnout', op: '-', magnitude: 2 }));
+        dispatch(addXp(XP_MINIGAME_WIN));
+      } else if (result === 'partial') {
+        dispatch(addXp(XP_MINIGAME_PARTIAL));
+      } else {
+        dispatch(applyStatEffect({ stat: 'reputation', op: '-', magnitude: 3 }));
+        dispatch(applyStatEffect({ stat: 'burnout', op: '+', magnitude: 5 }));
+        dispatch(addXp(XP_MINIGAME_FAIL));
+      }
     }
-    // Record for backward-replay (#33).
-    dispatch(recordMinigame({
-      monthId,
-      variant: 'reaction-sprint',
-      result,
-      detail: `${stacks} of ${TOTAL_BLOCKS}`,
-      timestamp: Date.now(),
-    }));
+    // Record for backward-replay (#33). Arcade plays (#31) skip recording.
+    if (mode === 'scheduled') {
+      dispatch(recordMinigame({
+        monthId,
+        variant: 'reaction-sprint',
+        result,
+        detail: `${stacks} of ${TOTAL_BLOCKS}`,
+        timestamp: Date.now(),
+      }));
+    }
     onComplete();
-  }, [stacks, monthId, dispatch, onComplete]);
+  }, [stacks, monthId, mode, awardRewards, dispatch, onComplete]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -204,6 +212,7 @@ export function Stacker({ monthId, onComplete }: Props) {
       data-component="Stacker"
       data-phase={phase}
       data-result={phase === 'result' ? outcome : undefined}
+      data-mode={mode}
       style={{
         width: 'var(--canvas-display-width)',
         aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,

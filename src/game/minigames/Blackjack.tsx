@@ -16,6 +16,13 @@ import type { Palette } from '../types/careerPack';
 interface Props {
   monthId: number;
   onComplete: () => void;
+  // 'scheduled' (default) = the months-32/60/90 slots; rewards always fire
+  // and the play is recorded to history for replay (#33).
+  // 'arcade' = the player launched this minigame from the arcade cabinet
+  // (#31); recording is skipped and rewards only fire when `awardRewards`
+  // is true (the arcade host computes throttle eligibility).
+  mode?: 'scheduled' | 'arcade';
+  awardRewards?: boolean;
 }
 
 type Suit = '♠' | '♥' | '♦' | '♣';
@@ -126,7 +133,7 @@ function CardFace({ card, palette, hidden }: { card?: Card; palette: Palette; hi
   );
 }
 
-export function Blackjack({ monthId, onComplete }: Props) {
+export function Blackjack({ monthId, onComplete, mode = 'scheduled', awardRewards = true }: Props) {
   const { palette } = useCareerPack();
   const dispatch = useAppDispatch();
 
@@ -178,19 +185,23 @@ export function Blackjack({ monthId, onComplete }: Props) {
   }, [phase, deal, resolveAgainstDealer]);
 
   const handleContinue = useCallback(() => {
-    if (result === 'win') {
-      dispatch(applyStatEffect({ stat: 'savings', op: '+', magnitude: STAKE }));
-      dispatch(addXp(XP_MINIGAME_WIN));
-    } else if (result === 'lose') {
-      dispatch(applyStatEffect({ stat: 'savings', op: '-', magnitude: STAKE }));
-      dispatch(addXp(XP_MINIGAME_FAIL));
-    } else {
-      // push — neither side won, neither side lost
-      dispatch(addXp(XP_MINIGAME_PARTIAL));
+    if (awardRewards) {
+      if (result === 'win') {
+        dispatch(applyStatEffect({ stat: 'savings', op: '+', magnitude: STAKE }));
+        dispatch(addXp(XP_MINIGAME_WIN));
+      } else if (result === 'lose') {
+        dispatch(applyStatEffect({ stat: 'savings', op: '-', magnitude: STAKE }));
+        dispatch(addXp(XP_MINIGAME_FAIL));
+      } else {
+        // push — neither side won, neither side lost
+        dispatch(addXp(XP_MINIGAME_PARTIAL));
+      }
     }
     // Record for backward-replay (#33). Detail captures final totals so
-    // the frozen result screen can recreate the moment.
-    if (result) {
+    // the frozen result screen can recreate the moment. Arcade plays
+    // (#31) don't record — the replay timeline is for the scheduled
+    // months only.
+    if (result && mode === 'scheduled') {
       const pt = handTotal(deal.player);
       const dt = handTotal(deal.dealer);
       dispatch(recordMinigame({
@@ -202,7 +213,7 @@ export function Blackjack({ monthId, onComplete }: Props) {
       }));
     }
     onComplete();
-  }, [result, deal.player, deal.dealer, monthId, dispatch, onComplete]);
+  }, [result, deal.player, deal.dealer, monthId, mode, awardRewards, dispatch, onComplete]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -247,6 +258,7 @@ export function Blackjack({ monthId, onComplete }: Props) {
       data-component="Blackjack"
       data-phase={phase}
       data-result={result ?? undefined}
+      data-mode={mode}
       style={{
         width: 'var(--canvas-display-width)',
         aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,

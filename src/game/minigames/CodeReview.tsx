@@ -10,6 +10,12 @@ import { recordMinigame } from '../state/slices/historySlice';
 interface Props {
   monthId: number;
   onComplete: () => void;
+  // 'scheduled' (default) = months-32/60/90 slot; rewards fire and the
+  // play is recorded to history for replay (#33).
+  // 'arcade' = arcade cabinet (#31); recording skipped, rewards gated
+  // by `awardRewards` (the arcade host computes throttle eligibility).
+  mode?: 'scheduled' | 'arcade';
+  awardRewards?: boolean;
 }
 
 // One hand-authored snippet for v1. Procedural generation is a future polish.
@@ -37,7 +43,7 @@ const CORRECT_INDEX = 1;
 const WIN_FLAVOR = 'You spotted it in under a minute. The off-by-one. The hiring panel made eye contact. Someone wrote something down.';
 const LOSE_FLAVOR = 'You picked confidently. The panel nodded politely. You realized two minutes after the meeting which one it actually was.';
 
-export function CodeReview({ monthId, onComplete }: Props) {
+export function CodeReview({ monthId, onComplete, mode = 'scheduled', awardRewards = true }: Props) {
   const { palette } = useCareerPack();
   const dispatch = useAppDispatch();
 
@@ -58,24 +64,28 @@ export function CodeReview({ monthId, onComplete }: Props) {
 
   const handleContinue = useCallback(() => {
     const won = selected === CORRECT_INDEX;
-    if (won) {
-      dispatch(applyStatEffect({ stat: 'technicalSkill', op: '+', magnitude: 5 }));
-      dispatch(applyStatEffect({ stat: 'reputation', op: '+', magnitude: 3 }));
-      dispatch(addXp(XP_MINIGAME_WIN));
-    } else {
-      dispatch(applyStatEffect({ stat: 'reputation', op: '-', magnitude: 2 }));
-      dispatch(addXp(XP_MINIGAME_FAIL));
+    if (awardRewards) {
+      if (won) {
+        dispatch(applyStatEffect({ stat: 'technicalSkill', op: '+', magnitude: 5 }));
+        dispatch(applyStatEffect({ stat: 'reputation', op: '+', magnitude: 3 }));
+        dispatch(addXp(XP_MINIGAME_WIN));
+      } else {
+        dispatch(applyStatEffect({ stat: 'reputation', op: '-', magnitude: 2 }));
+        dispatch(addXp(XP_MINIGAME_FAIL));
+      }
     }
-    // Record for backward-replay (#33).
-    dispatch(recordMinigame({
-      monthId,
-      variant: 'code-review',
-      result: won ? 'win' : 'fail',
-      detail: won ? 'Spotted the bug' : 'Picked the wrong line',
-      timestamp: Date.now(),
-    }));
+    // Record for backward-replay (#33). Arcade plays (#31) skip recording.
+    if (mode === 'scheduled') {
+      dispatch(recordMinigame({
+        monthId,
+        variant: 'code-review',
+        result: won ? 'win' : 'fail',
+        detail: won ? 'Spotted the bug' : 'Picked the wrong line',
+        timestamp: Date.now(),
+      }));
+    }
     onComplete();
-  }, [selected, monthId, dispatch, onComplete]);
+  }, [selected, monthId, mode, awardRewards, dispatch, onComplete]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -113,6 +123,7 @@ export function CodeReview({ monthId, onComplete }: Props) {
       data-component="CodeReview"
       data-phase={phase}
       data-result={phase === 'result' ? (won ? 'win' : 'fail') : undefined}
+      data-mode={mode}
       style={{
         width: 'var(--canvas-display-width)',
         aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,

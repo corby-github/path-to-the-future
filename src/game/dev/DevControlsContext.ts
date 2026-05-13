@@ -12,6 +12,12 @@ export interface DevControls {
   setForcedLayout: (value: string | null) => void;
   eventMode: EventMode;
   setEventMode: (value: EventMode) => void;
+  // When true, the room placer guarantees an arcade interactable in every
+  // subsequent room mount (issue #31). Affects future room mounts only —
+  // current room's placements are frozen at mount. Toggle off to return
+  // to natural weighted placement.
+  forceArcade: boolean;
+  setForceArcade: (value: boolean) => void;
 }
 
 const DEFAULT: DevControls = {
@@ -21,6 +27,8 @@ const DEFAULT: DevControls = {
   setForcedLayout: () => {},
   eventMode: 'auto',
   setEventMode: () => {},
+  forceArcade: false,
+  setForceArcade: () => {},
 };
 
 export const DevControlsContext = createContext<DevControls>(DEFAULT);
