@@ -238,7 +238,7 @@
       "tags": ["era"],
       "weight": 0.5,
       "title": "Two desks, one apartment.",
-      "body": "Your roommate's standup is the same time as your sync. You take yours from the bathroom. It's been like this for nine weeks.",
+      "body": "Your roommate's standup is the same time as your morning meeting. You take yours from the bathroom. It's been like this for nine weeks.",
       "effects": { "burnout": "+2", "network": "-1" }
     },
     {
@@ -413,7 +413,7 @@
       "weight": 0.6,
       "trigger": { "savings": "<800" },
       "title": "Card, declined.",
-      "body": "At the grocery checkout. The cashier said nothing. You used a different card. You stood in the parking lot for a minute before driving home.",
+      "body": "At the grocery checkout. The cashier said nothing. You used a different card. The people behind you breathed a sigh of relief when the second card worked. 'We've all been there,' someone said.",
       "effects": { "burnout": "+3", "health": "-1" }
     },
     {
@@ -424,7 +424,7 @@
       "weight": 0.4,
       "trigger": { "technicalSkill": ">35" },
       "title": "An afternoon you'll remember.",
-      "body": "Six hours felt like one. You wrote the thing in your head and then the thing on the screen and they matched. You closed your laptop and went outside while it was still light.",
+      "body": "Six hours felt like one. The plan and the code agreed for once. You closed your laptop and went outside while it was still light.",
       "effects": { "burnout": "-4", "technicalSkill": "+2", "health": "+1" }
     },
     {

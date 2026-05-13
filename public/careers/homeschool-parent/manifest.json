@@ -56,15 +56,11 @@
     }
   },
 
-  "intro": [
-    "January 2020, {playerName}.",
-    "Hazel is six. Bram is three.",
-    "The kitchen table has a math worksheet on it.",
-    "The TV says something about a virus.",
-    "You'll figure out, in the next two weeks, that the kids are not going back.",
-    "You don't know that yet.",
-    "You'll be the teacher now. The cook. The schedule.",
-    "Ten years. One kitchen table. Begin."
+   "intro": [
+    "It's January 2020.",
+    "{playerName}, there are rumors of a virus.",
+    "A pandemic?",
+    "Every choice from here writes the next ten years."
   ],
 
   "monthTransitions": [
