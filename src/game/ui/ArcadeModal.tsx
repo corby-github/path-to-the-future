@@ -30,6 +30,7 @@ const ARCADE_VARIANTS: ReadonlyArray<{ id: MinigameVariant; label: string; blurb
   { id: 'blackjack',       label: 'Blackjack',       blurb: 'Hit, stand, walk out even.' },
   { id: 'code-review',     label: 'Code Review',     blurb: 'Spot the bug. Beat the panel.' },
   { id: 'reaction-sprint', label: 'Reaction Sprint', blurb: 'Lock the stack. Hit the column.' },
+  { id: 'pong',            label: 'Pong',            blurb: 'Two paddles. One ball. First to five.' },
 ];
 
 interface Props {

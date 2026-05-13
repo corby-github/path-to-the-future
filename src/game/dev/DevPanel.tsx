@@ -13,6 +13,7 @@ const SPEED_OPTIONS = [1, 2, 3, 4];
 const MINIGAME_JUMPS = [
   { value: 32, label: 'Blackjack (m32 · Aug 2022)' },
   { value: 60, label: 'Code Review (m60 · Dec 2024)' },
+  { value: 75, label: 'Pong (m75 · Mar 2026)' },
   { value: 90, label: 'Stacker (m90 · Jun 2027)' },
 ];
 

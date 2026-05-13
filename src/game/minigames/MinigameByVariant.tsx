@@ -1,6 +1,7 @@
 import { Blackjack } from './Blackjack';
 import { CodeReview } from './CodeReview';
 import { Stacker } from './Stacker';
+import { Pong } from './Pong';
 import type { MinigameVariant } from '../types/room';
 
 // Thin component that picks the minigame implementation for a variant.
@@ -29,5 +30,7 @@ export function MinigameByVariant({ variant, monthId, mode, awardRewards, onComp
       return <CodeReview monthId={monthId} mode={mode} awardRewards={awardRewards} onComplete={onComplete} />;
     case 'reaction-sprint':
       return <Stacker monthId={monthId} mode={mode} awardRewards={awardRewards} onComplete={onComplete} />;
+    case 'pong':
+      return <Pong monthId={monthId} mode={mode} awardRewards={awardRewards} onComplete={onComplete} />;
   }
 }

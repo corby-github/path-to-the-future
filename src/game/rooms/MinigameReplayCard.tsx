@@ -15,6 +15,7 @@ const VARIANT_LABELS: Record<MinigameVariant, string> = {
   blackjack: 'Blackjack',
   'code-review': 'Code Review',
   'reaction-sprint': 'Reaction Sprint',
+  pong: 'Pong',
 };
 
 // Backward-replay (#33) view for minigame months. Reads `history.minigames`

@@ -80,7 +80,7 @@
 
     { "id":  73, "year": 2026, "monthNum":  1, "era": "ai-shift", "theme": "inflection", "roomType": "narrative", "title": "The slow arc.", "body": "Months stack into years. Choices that felt small at the time have weight now." },
     { "id":  74, "year": 2026, "monthNum":  2, "era": "ai-shift", "theme": "inflection" },
-    { "id":  75, "year": 2026, "monthNum":  3, "era": "ai-shift", "theme": "inflection" },
+    { "id":  75, "year": 2026, "monthNum":  3, "era": "ai-shift", "theme": "inflection", "roomType": "minigame", "variant": "pong" },
     { "id":  76, "year": 2026, "monthNum":  4, "era": "ai-shift", "theme": "inflection" },
     { "id":  77, "year": 2026, "monthNum":  5, "era": "ai-shift", "theme": "inflection" },
     { "id":  78, "year": 2026, "monthNum":  6, "era": "ai-shift", "theme": "inflection" },
