@@ -153,10 +153,10 @@
       "prompt": "The on-call rotation is short a body. The lead is asking, gently.",
       "options": [
         {
-          "label": "Take the pager",
+          "label": "Take the rotation",
           "scene": [
-            "A pager hits your phone.",
-            "3:14am: a page.",
+            "Your phone is on the rotation now.",
+            "3:14am: a vibrating phone.",
             "You fix it half-asleep."
           ],
           "effects": { "burnout": "+4", "reputation": "+5", "network": "+2", "health": "-2", "xp": "+150" },
@@ -165,7 +165,7 @@
         {
           "label": "Pass this round",
           "effects": { "burnout": "-1", "reputation": "-1" },
-          "flavor": "You say no, politely. The lead understands, mostly. Someone else takes the pager."
+          "flavor": "You say no, politely. The lead understands, mostly. Someone else takes the rotation."
         }
       ]
     },
@@ -401,7 +401,7 @@
         {
           "label": "Maybe next month",
           "effects": { "burnout": "+1" },
-          "flavor": "You closed the tab. The thing that made you open it was still there. You'd try again soon. You said that last month, too."
+          "flavor": "You closed the tab. The thing that made you open it was still there. You'll try again soon. You said that last month, too."
         }
       ]
     },
@@ -442,7 +442,7 @@
           "label": "Take the time",
           "scene": [
             "An out-of-office.",
-            "Three time zones.",
+            "A couch that finally gets used.",
             "Sleep you didn't know you needed."
           ],
           "effects": { "burnout": "-10", "health": "+4", "network": "+1" },
@@ -656,7 +656,7 @@
       "tags": ["career-path"],
       "requires": { "month": ">=36", "reputation": ">25" },
       "weight": 0.5,
-      "prompt": "The org is splitting your team. Two roles need filling: people manager and tech lead. The director is asking which you'd rather.",
+      "prompt": "The org is splitting your team. Two roles need filling: people manager and tech lead. The director is asking which you'd prefer.",
       "options": [
         {
           "label": "People manager",
@@ -804,7 +804,7 @@
           "flavor": "You named them. Leadership accepted it. The coworker found out on Slack from a friend. Things were never quite the same."
         },
         {
-          "label": "Take the L",
+          "label": "Take the loss",
           "effects": { "reputation": "-3", "network": "+3", "burnout": "-1" },
           "flavor": "You said 'the scope grew faster than I tracked.' Leadership wasn't thrilled. The coworker, weeks later, said 'I owe you.' You said 'we're fine.'"
         }
@@ -823,7 +823,7 @@
           "scene": [
             "A repo transfer.",
             "An issue tracker.",
-            "A first 3am page."
+            "A 3am call."
           ],
           "effects": { "burnout": "+5", "reputation": "+6", "network": "+4", "technicalSkill": "+2" },
           "flavor": "You merged your first PR as maintainer the same week. By month three, you understood why the last one wanted out. You kept going anyway."
