@@ -729,6 +729,586 @@ export function IconCreditCard({ palette, size }: ModalIconProps): ReactElement 
   );
 }
 
+// ── SWE-specific decisions (remaining 9) ─────────────────────────────────
+
+export function IconStackoverflowAnswer({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-stackoverflow-mentor" label="Mentor on Stack Overflow" size={size}>
+      {/* Speech bubble with code lines inside — helpful answer */}
+      <path d="M 14 22 H 60 Q 66 22 66 28 V 46 Q 66 52 60 52 H 36 L 26 60 V 52 H 20 Q 14 52 14 46 Z" />
+      <line x1={22} y1={32} x2={50} y2={32} strokeWidth={2} />
+      <line x1={22} y1={38} x2={42} y2={38} strokeWidth={2} />
+      <line x1={22} y1={44} x2={48} y2={44} strokeWidth={2} />
+    </IconFrame>
+  );
+}
+
+export function IconInternClock({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-intern-late-review" label="Intern late review" size={size}>
+      {/* Junior figure on the left */}
+      <circle cx={24} cy={26} r={6} />
+      <path d="M 16 60 V 40 Q 16 34 24 34 Q 32 34 32 40 V 60" />
+      {/* Clock on the right — hands at evening */}
+      <circle cx={56} cy={40} r={12} />
+      <line x1={56} y1={40} x2={56} y2={30} strokeWidth={2} />
+      <line x1={56} y1={40} x2={64} y2={40} strokeWidth={2} />
+      <circle cx={56} cy={40} r={1.5} fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconForkedPath({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-coder-vs-architect" label="Coder or architect" size={size}>
+      {/* Y-shaped fork */}
+      <path d="M 40 60 V 40" strokeWidth={3} />
+      <path d="M 40 40 L 22 20" strokeWidth={3} />
+      <path d="M 40 40 L 58 20" strokeWidth={3} />
+      {/* Arrowheads */}
+      <path d="M 22 20 L 28 22 M 22 20 L 24 26" strokeWidth={3} />
+      <path d="M 58 20 L 52 22 M 58 20 L 56 26" strokeWidth={3} />
+      {/* Base dot */}
+      <circle cx={40} cy={62} r={3} fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconOrgChart({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-people-manager-vs-tech-lead" label="People manager or tech lead" size={size}>
+      {/* Top node */}
+      <circle cx={40} cy={22} r={5} />
+      {/* Trunk */}
+      <line x1={40} y1={28} x2={40} y2={38} />
+      {/* Branches */}
+      <line x1={22} y1={38} x2={58} y2={38} />
+      <line x1={22} y1={38} x2={22} y2={48} />
+      <line x1={40} y1={38} x2={40} y2={48} />
+      <line x1={58} y1={38} x2={58} y2={48} />
+      {/* Three reports */}
+      <circle cx={22} cy={54} r={4} />
+      <circle cx={40} cy={54} r={4} />
+      <circle cx={58} cy={54} r={4} />
+    </IconFrame>
+  );
+}
+
+export function IconMortarboard({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-masters-degree" label="Master's degree" size={size}>
+      {/* Mortarboard diamond top */}
+      <path d="M 12 32 L 40 22 L 68 32 L 40 42 Z" />
+      {/* Cap base */}
+      <path d="M 22 36 V 50 Q 40 56 58 50 V 36" />
+      {/* Tassel */}
+      <line x1={40} y1={32} x2={58} y2={42} strokeWidth={1.5} />
+      <circle cx={58} cy={44} r={2.5} fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconBriefcaseSpark({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-startup-offer" label="Startup offer" size={size}>
+      {/* Briefcase */}
+      <rect x={14} y={30} width={48} height={32} rx={3} />
+      <path d="M 28 30 V 24 Q 28 20 32 20 H 44 Q 48 20 48 24 V 30" />
+      <line x1={34} y1={44} x2={42} y2={44} strokeWidth={2} />
+      {/* Spark upper-right (startup energy) */}
+      <path d="M 64 16 L 65 20 L 69 21 L 65 22 L 64 26 L 63 22 L 59 21 L 63 20 Z" fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconWhiteboardSystem({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-architecture-review-defend" label="Architecture review" size={size}>
+      {/* Whiteboard */}
+      <rect x={12} y={18} width={56} height={36} rx={2} />
+      {/* Stand legs */}
+      <line x1={20} y1={54} x2={20} y2={62} />
+      <line x1={60} y1={54} x2={60} y2={62} />
+      {/* Three connected boxes */}
+      <rect x={18} y={28} width={12} height={8} />
+      <rect x={34} y={28} width={12} height={8} />
+      <rect x={50} y={28} width={12} height={8} />
+      <line x1={30} y1={32} x2={34} y2={32} strokeWidth={1.5} />
+      <line x1={46} y1={32} x2={50} y2={32} strokeWidth={1.5} />
+      {/* Arrow up into first box */}
+      <line x1={24} y1={48} x2={24} y2={38} strokeWidth={1.5} />
+      <path d="M 22 40 L 24 38 L 26 40" strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconBus({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-throw-colleague-under-bus" label="Throw colleague under the bus" size={size}>
+      {/* Bus body */}
+      <rect x={14} y={24} width={48} height={28} rx={4} />
+      {/* Windows */}
+      <rect x={18} y={28} width={9} height={8} />
+      <rect x={29} y={28} width={9} height={8} />
+      <rect x={40} y={28} width={9} height={8} />
+      <rect x={51} y={28} width={7} height={8} />
+      {/* Door */}
+      <rect x={18} y={40} width={6} height={12} />
+      {/* Wheels */}
+      <circle cx={24} cy={56} r={5} fill={palette.ink} stroke="none" />
+      <circle cx={56} cy={56} r={5} fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconCodeHeart({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-opensource-maintainer" label="Open-source maintainer" size={size}>
+      {/* Heart */}
+      <path d="M 40 22 Q 32 14 24 22 Q 18 32 40 52 Q 62 32 56 22 Q 48 14 40 22 Z" />
+      {/* Code brackets + slash inside */}
+      <polyline points="32,30 28,34 32,38" strokeWidth={1.5} />
+      <polyline points="48,30 52,34 48,38" strokeWidth={1.5} />
+      <line x1={44} y1={28} x2={36} y2={40} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+// ── Universal events (remaining 15) ──────────────────────────────────────
+
+export function IconSunset({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-sunset" label="Sunset moment" size={size}>
+      {/* Horizon */}
+      <line x1={10} y1={52} x2={70} y2={52} strokeWidth={2.5} />
+      {/* Half-sun rising/setting */}
+      <path d="M 22 52 Q 22 32 40 32 Q 58 32 58 52 Z" />
+      {/* Rays */}
+      <line x1={40} y1={20} x2={40} y2={26} />
+      <line x1={22} y1={32} x2={26} y2={36} />
+      <line x1={58} y1={32} x2={54} y2={36} />
+      <line x1={14} y1={42} x2={18} y2={42} />
+      <line x1={62} y1={42} x2={66} y2={42} />
+    </IconFrame>
+  );
+}
+
+export function IconDollarQuestion({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-bank-error" label="Bank error" size={size}>
+      {/* $ */}
+      <text x={26} y={52} textAnchor="middle" fontFamily="inherit" fontSize={34} fontWeight={700} fill={palette.ink} stroke="none">$</text>
+      {/* ? */}
+      <text x={54} y={52} textAnchor="middle" fontFamily="inherit" fontSize={34} fontWeight={700} fill={palette.ink} stroke="none">?</text>
+    </IconFrame>
+  );
+}
+
+export function IconCoffeeCup({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-skip-breakfast" label="Skipped breakfast" size={size}>
+      {/* Cup body */}
+      <path d="M 20 30 H 54 V 52 Q 54 58 48 58 H 26 Q 20 58 20 52 Z" />
+      {/* Handle */}
+      <path d="M 54 36 Q 64 36 64 44 Q 64 52 54 52" />
+      {/* Steam */}
+      <path d="M 28 24 Q 30 20 28 16" strokeWidth={1.5} />
+      <path d="M 36 24 Q 38 20 36 16" strokeWidth={1.5} />
+      <path d="M 44 24 Q 46 20 44 16" strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconTwoFiguresHeart({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-old-friend" label="Old friend" size={size}>
+      {/* Two figures */}
+      <circle cx={22} cy={34} r={6} />
+      <path d="M 14 60 V 44 Q 14 38 22 38 Q 30 38 30 44 V 60" />
+      <circle cx={58} cy={34} r={6} />
+      <path d="M 50 60 V 44 Q 50 38 58 38 Q 66 38 66 44 V 60" />
+      {/* Heart between, near top */}
+      <path d="M 40 18 Q 36 14 32 18 Q 30 22 40 30 Q 50 22 48 18 Q 44 14 40 18 Z" fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconReturnOffice({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-return-office" label="Return to office" size={size}>
+      {/* Building */}
+      <rect x={30} y={18} width={36} height={48} />
+      {/* Windows grid */}
+      <rect x={36} y={26} width={6} height={6} />
+      <rect x={46} y={26} width={6} height={6} />
+      <rect x={56} y={26} width={6} height={6} />
+      <rect x={36} y={36} width={6} height={6} />
+      <rect x={46} y={36} width={6} height={6} />
+      <rect x={56} y={36} width={6} height={6} />
+      {/* Door */}
+      <rect x={44} y={52} width={8} height={14} />
+      {/* Arrow pointing into building */}
+      <line x1={12} y1={42} x2={28} y2={42} strokeWidth={3} />
+      <path d="M 24 38 L 28 42 L 24 46" strokeWidth={3} />
+    </IconFrame>
+  );
+}
+
+export function IconGearSparkle({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-ai-tooling" label="AI tooling" size={size}>
+      {/* Gear */}
+      <circle cx={32} cy={42} r={11} />
+      <circle cx={32} cy={42} r={5} />
+      {/* Teeth (8) */}
+      <line x1={32} y1={28} x2={32} y2={32} strokeWidth={3} />
+      <line x1={32} y1={52} x2={32} y2={56} strokeWidth={3} />
+      <line x1={18} y1={42} x2={22} y2={42} strokeWidth={3} />
+      <line x1={42} y1={42} x2={46} y2={42} strokeWidth={3} />
+      <line x1={23} y1={33} x2={26} y2={36} strokeWidth={3} />
+      <line x1={41} y1={33} x2={38} y2={36} strokeWidth={3} />
+      <line x1={23} y1={51} x2={26} y2={48} strokeWidth={3} />
+      <line x1={41} y1={51} x2={38} y2={48} strokeWidth={3} />
+      {/* Sparkle upper-right */}
+      <path d="M 58 18 L 60 24 L 66 26 L 60 28 L 58 34 L 56 28 L 50 26 L 56 24 Z" fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconEnvelope({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-talk-invite" label="Talk invite" size={size}>
+      {/* Envelope */}
+      <rect x={14} y={24} width={52} height={32} rx={2} />
+      <polyline points="14,24 40,42 66,24" />
+      {/* Stamp star */}
+      <path d="M 56 32 L 57 35 L 60 36 L 57 37 L 56 40 L 55 37 L 52 36 L 55 35 Z" fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconCashFound({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-found-twenty" label="Found twenty" size={size}>
+      {/* Bill rectangle */}
+      <rect x={12} y={28} width={56} height={24} rx={2} />
+      {/* "$20" text */}
+      <text x={40} y={47} textAnchor="middle" fontFamily="inherit" fontSize={16} fontWeight={700} fill={palette.ink} stroke="none">$20</text>
+      {/* Corner medallions */}
+      <circle cx={22} cy={36} r={2.5} />
+      <circle cx={58} cy={36} r={2.5} />
+    </IconFrame>
+  );
+}
+
+export function IconBrowserTabX({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-deleted-tab" label="Deleted tab" size={size}>
+      {/* Tab fin + body */}
+      <path d="M 14 30 H 38 L 42 22 L 64 22 V 30" />
+      <rect x={14} y={30} width={52} height={32} rx={1} />
+      {/* Big X in middle */}
+      <line x1={28} y1={40} x2={52} y2={56} strokeWidth={3.5} />
+      <line x1={52} y1={40} x2={28} y2={56} strokeWidth={3.5} />
+    </IconFrame>
+  );
+}
+
+export function IconHouseUpArrow({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-rent-hike" label="Rent hike" size={size}>
+      {/* House */}
+      <path d="M 18 42 L 36 26 L 54 42 V 60 H 18 Z" />
+      <rect x={30} y={48} width={6} height={12} />
+      <rect x={40} y={45} width={6} height={6} />
+      {/* Up arrow on right */}
+      <line x1={64} y1={56} x2={64} y2={24} strokeWidth={3} />
+      <path d="M 60 28 L 64 24 L 68 28" strokeWidth={3} />
+    </IconFrame>
+  );
+}
+
+export function IconAirplaneClock({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-flight-delay" label="Flight delay" size={size}>
+      {/* Airplane silhouette */}
+      <path d="M 14 34 L 30 34 L 26 26 H 30 L 38 34 H 50 Q 54 34 54 36 Q 54 38 50 38 H 38 L 30 46 H 26 L 30 38 H 14 Q 12 36 14 34 Z" />
+      {/* Small clock in lower-right */}
+      <circle cx={58} cy={54} r={8} />
+      <line x1={58} y1={54} x2={58} y2={48} strokeWidth={1.5} />
+      <line x1={58} y1={54} x2={62} y2={54} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconLostWallet({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-lost-wallet" label="Lost wallet" size={size}>
+      {/* Wallet open */}
+      <rect x={14} y={22} width={52} height={36} rx={3} />
+      <line x1={14} y1={40} x2={66} y2={40} />
+      {/* Card slots on upper half */}
+      <line x1={22} y1={28} x2={44} y2={28} strokeWidth={1.5} />
+      <line x1={22} y1={34} x2={44} y2={34} strokeWidth={1.5} />
+      {/* Empty X on lower half */}
+      <line x1={48} y1={46} x2={60} y2={54} strokeWidth={2} />
+      <line x1={60} y1={46} x2={48} y2={54} strokeWidth={2} />
+    </IconFrame>
+  );
+}
+
+export function IconHeartCheck({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-good-physical" label="Good physical" size={size}>
+      {/* Heart */}
+      <path d="M 40 22 Q 32 14 24 22 Q 18 32 40 54 Q 62 32 56 22 Q 48 14 40 22 Z" />
+      {/* Checkmark inside */}
+      <path d="M 30 34 L 36 42 L 50 28" strokeWidth={3.5} />
+    </IconFrame>
+  );
+}
+
+export function IconCloudLightning({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-storm" label="Storm" size={size}>
+      {/* Cloud */}
+      <path d="M 22 38 Q 14 38 14 30 Q 14 22 22 22 Q 24 14 34 14 Q 46 14 46 22 Q 54 22 54 28 Q 60 30 60 36 Q 60 42 54 42 H 22 Z" />
+      {/* Lightning bolt below */}
+      <path d="M 38 46 L 30 58 H 36 L 32 66 L 44 52 H 36 Z" fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconSpeakerSound({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-voice-reminder-mishap" label="Voice reminder mishap" size={size}>
+      {/* Speaker */}
+      <path d="M 14 32 V 48 H 24 L 36 58 V 22 L 24 32 Z" />
+      {/* Sound waves */}
+      <path d="M 42 30 Q 48 36 48 40 Q 48 44 42 50" strokeWidth={2} />
+      <path d="M 50 24 Q 60 36 60 40 Q 60 44 50 56" strokeWidth={2} />
+    </IconFrame>
+  );
+}
+
+// ── SWE-specific events (4) ──────────────────────────────────────────────
+
+export function IconDocumentTrending({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-swe-blog-traction" label="Blog traction" size={size}>
+      {/* Document */}
+      <rect x={18} y={18} width={36} height={46} rx={2} />
+      <line x1={24} y1={26} x2={48} y2={26} strokeWidth={2} />
+      <line x1={24} y1={32} x2={48} y2={32} strokeWidth={1.5} />
+      <line x1={24} y1={38} x2={44} y2={38} strokeWidth={1.5} />
+      <line x1={24} y1={44} x2={46} y2={44} strokeWidth={1.5} />
+      <line x1={24} y1={50} x2={42} y2={50} strokeWidth={1.5} />
+      {/* Up arrow next to it */}
+      <line x1={62} y1={58} x2={62} y2={26} strokeWidth={3} />
+      <path d="M 58 30 L 62 26 L 66 30" strokeWidth={3} />
+    </IconFrame>
+  );
+}
+
+export function IconInboxBlast({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-swe-recruiter-blast" label="Recruiter blast" size={size}>
+      {/* Inbox tray */}
+      <path d="M 12 38 H 24 L 28 46 H 52 L 56 38 H 68 V 62 H 12 Z" />
+      {/* Envelopes flying in */}
+      <rect x={20} y={14} width={16} height={10} rx={1} transform="rotate(-10 28 18)" />
+      <rect x={44} y={14} width={16} height={10} rx={1} transform="rotate(10 52 18)" />
+      <rect x={32} y={24} width={16} height={10} rx={1} />
+    </IconFrame>
+  );
+}
+
+export function IconTrophy({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-swe-stackoverflow-rep" label="Stack Overflow rep" size={size}>
+      {/* Cup */}
+      <path d="M 24 22 H 56 V 32 Q 56 44 40 44 Q 24 44 24 32 Z" />
+      {/* Handles */}
+      <path d="M 24 26 Q 16 26 16 32 Q 16 36 22 36" />
+      <path d="M 56 26 Q 64 26 64 32 Q 64 36 58 36" />
+      {/* Stem + base */}
+      <line x1={40} y1={44} x2={40} y2={54} strokeWidth={2} />
+      <rect x={28} y={54} width={24} height={6} />
+      {/* Star on cup */}
+      <path d="M 40 28 L 42 32 L 46 32 L 43 35 L 44 39 L 40 37 L 36 39 L 37 35 L 34 32 L 38 32 Z" fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconFlowWaves({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-swe-flow-state" label="Flow state" size={size}>
+      {/* Three flowing wave lines */}
+      <path d="M 12 26 Q 24 20 36 26 Q 48 32 60 26 Q 66 24 68 26" strokeWidth={3} />
+      <path d="M 12 40 Q 24 34 36 40 Q 48 46 60 40 Q 66 38 68 40" strokeWidth={3} />
+      <path d="M 12 54 Q 24 48 36 54 Q 48 60 60 54 Q 66 52 68 54" strokeWidth={3} />
+    </IconFrame>
+  );
+}
+
+// ── Era events (remaining 10) ────────────────────────────────────────────
+
+export function IconRoommateFriction({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-pandemic-roommate-friction" label="Roommate friction" size={size}>
+      {/* Two figures */}
+      <circle cx={22} cy={28} r={6} />
+      <path d="M 14 60 V 42 Q 14 36 22 36 Q 30 36 30 42 V 60" />
+      <circle cx={58} cy={28} r={6} />
+      <path d="M 50 60 V 42 Q 50 36 58 36 Q 66 36 66 42 V 60" />
+      {/* Friction lines (small X) between */}
+      <line x1={36} y1={36} x2={44} y2={44} strokeWidth={2} />
+      <line x1={44} y1={36} x2={36} y2={44} strokeWidth={2} />
+    </IconFrame>
+  );
+}
+
+export function IconWalker({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-pandemic-walk-routine" label="Walk routine" size={size}>
+      {/* Head */}
+      <circle cx={36} cy={20} r={5} />
+      {/* Body (slightly tilted forward) */}
+      <line x1={32} y1={28} x2={44} y2={42} strokeWidth={3} />
+      {/* Arms */}
+      <line x1={36} y1={32} x2={26} y2={42} strokeWidth={2.5} />
+      <line x1={40} y1={36} x2={48} y2={28} strokeWidth={2.5} />
+      {/* Legs walking */}
+      <line x1={44} y1={42} x2={34} y2={58} strokeWidth={2.5} />
+      <line x1={44} y1={42} x2={54} y2={58} strokeWidth={2.5} />
+      {/* Ground */}
+      <line x1={14} y1={62} x2={66} y2={62} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconDollarUpArrow({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-rebound-comp-jump" label="Comp jump" size={size}>
+      {/* $ */}
+      <text x={32} y={52} textAnchor="middle" fontFamily="inherit" fontSize={32} fontWeight={700} fill={palette.ink} stroke="none">$</text>
+      {/* Up arrow next to it */}
+      <line x1={58} y1={58} x2={58} y2={24} strokeWidth={3} />
+      <path d="M 54 28 L 58 24 L 62 28" strokeWidth={3} />
+    </IconFrame>
+  );
+}
+
+export function IconDoorExit({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-rebound-leaving-wave" label="Leaving wave" size={size}>
+      {/* Door */}
+      <rect x={16} y={16} width={28} height={48} rx={1} />
+      <circle cx={38} cy={40} r={2} fill={palette.ink} stroke="none" />
+      {/* Exit arrow */}
+      <line x1={48} y1={40} x2={68} y2={40} strokeWidth={3} />
+      <path d="M 64 36 L 68 40 L 64 44" strokeWidth={3} />
+    </IconFrame>
+  );
+}
+
+export function IconLayoffsExit({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-ai-shift-adjacent-layoffs" label="Adjacent layoffs" size={size}>
+      {/* Building */}
+      <rect x={14} y={20} width={28} height={44} />
+      <rect x={20} y={26} width={5} height={5} />
+      <rect x={31} y={26} width={5} height={5} />
+      <rect x={20} y={36} width={5} height={5} />
+      <rect x={31} y={36} width={5} height={5} />
+      {/* Open door */}
+      <path d="M 22 56 V 64 H 34 V 56" />
+      {/* Figure walking away with box */}
+      <circle cx={56} cy={30} r={5} />
+      <line x1={56} y1={36} x2={56} y2={50} strokeWidth={2.5} />
+      <line x1={56} y1={50} x2={50} y2={60} strokeWidth={2.5} />
+      <line x1={56} y1={50} x2={62} y2={60} strokeWidth={2.5} />
+      {/* Box being carried */}
+      <rect x={60} y={40} width={8} height={8} />
+    </IconFrame>
+  );
+}
+
+export function IconBubbleSparkle({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-ai-shift-tooling-evangelism" label="Tooling evangelism" size={size}>
+      {/* Speech bubble */}
+      <path d="M 14 22 H 60 Q 66 22 66 28 V 44 Q 66 50 60 50 H 36 L 26 58 V 50 H 20 Q 14 50 14 44 Z" />
+      {/* Sparkle inside */}
+      <path d="M 40 28 L 42 34 L 48 36 L 42 38 L 40 44 L 38 38 L 32 36 L 38 34 Z" fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconArchiveBox({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-uncertain-old-codebase" label="Old codebase" size={size}>
+      {/* Lid (slightly raised) */}
+      <rect x={12} y={22} width={56} height={10} />
+      {/* Box body */}
+      <path d="M 14 32 H 66 L 60 62 H 20 Z" />
+      <line x1={14} y1={32} x2={66} y2={32} strokeWidth={2.5} />
+      {/* Label tag on front */}
+      <rect x={32} y={42} width={16} height={10} />
+      <line x1={36} y1={47} x2={44} y2={47} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconMentorPointing({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-uncertain-becoming-mentor" label="Becoming a mentor" size={size}>
+      {/* Mentor figure */}
+      <circle cx={28} cy={22} r={6} />
+      <path d="M 20 58 V 36 Q 20 30 28 30 Q 36 30 36 36 V 58" />
+      {/* Arm pointing right */}
+      <line x1={32} y1={38} x2={54} y2={38} strokeWidth={2.5} />
+      <path d="M 50 34 L 54 38 L 50 42" strokeWidth={2.5} />
+      {/* Notepad/board being pointed at */}
+      <rect x={56} y={30} width={12} height={16} />
+      <line x1={58} y1={34} x2={66} y2={34} strokeWidth={1.5} />
+      <line x1={58} y1={38} x2={66} y2={38} strokeWidth={1.5} />
+      <line x1={58} y1={42} x2={64} y2={42} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconCycleArrow({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-uncertain-cycle-reborn" label="Cycle reborn" size={size}>
+      {/* Almost-full circular path */}
+      <path d="M 40 14 Q 64 14 64 40 Q 64 64 40 64 Q 16 64 16 40" strokeWidth={3} fill="none" />
+      {/* Arrow head closing the loop at upper-left */}
+      <path d="M 12 36 L 16 40 L 20 36" strokeWidth={3} />
+      {/* Sun/center sparkle */}
+      <path d="M 40 32 L 42 38 L 48 40 L 42 42 L 40 48 L 38 42 L 32 40 L 38 38 Z" fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconEconomyDown({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-era-uncertain-economy" label="Uncertain economy" size={size}>
+      {/* Axes */}
+      <line x1={14} y1={60} x2={66} y2={60} strokeWidth={2} />
+      <line x1={14} y1={60} x2={14} y2={16} strokeWidth={2} />
+      {/* Downward line graph */}
+      <polyline points="18,22 28,32 38,28 48,42 58,52" strokeWidth={2.5} />
+      {/* Arrowhead pointing down at the end */}
+      <path d="M 54 50 L 58 54 L 62 50" strokeWidth={2.5} />
+      <line x1={58} y1={52} x2={58} y2={58} strokeWidth={2.5} />
+      {/* Dots */}
+      <circle cx={18} cy={22} r={2} fill={palette.ink} stroke="none" />
+      <circle cx={48} cy={42} r={2} fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
 interface DecisionIconProps {
   decisionId: string;
   palette: Palette;
