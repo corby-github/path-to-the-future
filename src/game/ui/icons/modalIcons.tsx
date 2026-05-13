@@ -269,16 +269,24 @@ export function IconLightbulbIdea({ palette, size }: ModalIconProps): ReactEleme
 export function IconRecruiterCall({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="univ-recruiter-call" label="Recruiter call" size={size}>
-      {/* Handset profile — single filled silhouette, tilted -30°. A
-          capsule body with flared bulb ends; no grills, no waves, no
-          extra detail. Reads as "phone receiver" at a glance. */}
-      <g transform="rotate(-30 40 40)">
-        <path
-          d="M 12 36 Q 12 28 22 28 Q 30 28 32 36 L 48 36 Q 50 28 58 28 Q 68 28 68 36 V 44 Q 68 52 58 52 Q 50 52 48 44 L 32 44 Q 30 52 22 52 Q 12 52 12 44 Z"
-          fill={palette.ink}
-          stroke="none"
-        />
-      </g>
+      {/* ☎️ — vintage desk phone. Rectangular base with a rotary dial,
+          horizontal handset resting on top via two short cradle posts. */}
+      {/* Base */}
+      <rect x={12} y={46} width={56} height={16} rx={3} />
+      {/* Rotary dial */}
+      <circle cx={40} cy={54} r={6} />
+      <circle cx={40} cy={54} r={1.5} fill={palette.ink} stroke="none" />
+      {/* Dial finger-holes — 5 small dots around the dial edge */}
+      <circle cx={40} cy={50} r={0.9} fill={palette.ink} stroke="none" />
+      <circle cx={44} cy={52} r={0.9} fill={palette.ink} stroke="none" />
+      <circle cx={44} cy={56} r={0.9} fill={palette.ink} stroke="none" />
+      <circle cx={36} cy={56} r={0.9} fill={palette.ink} stroke="none" />
+      <circle cx={36} cy={52} r={0.9} fill={palette.ink} stroke="none" />
+      {/* Cradle posts connecting base to handset */}
+      <line x1={20} y1={46} x2={20} y2={42} strokeWidth={2} />
+      <line x1={60} y1={46} x2={60} y2={42} strokeWidth={2} />
+      {/* Handset resting horizontally on top — capsule with flared ends */}
+      <path d="M 12 32 Q 12 24 20 24 Q 26 24 28 32 L 52 32 Q 54 24 60 24 Q 68 24 68 32 V 38 Q 68 42 60 42 Q 54 42 52 38 L 28 38 Q 26 42 20 42 Q 12 42 12 38 Z" />
     </IconFrame>
   );
 }
@@ -544,8 +552,6 @@ export function IconPager({ palette, size }: ModalIconProps): ReactElement {
       <rect x={28} y={22} width={24} height={36} />
       {/* Home indicator at bottom */}
       <line x1={36} y1={63} x2={44} y2={63} strokeWidth={1.5} />
-      {/* Notification badge — filled circle on the upper-right of the phone */}
-      <circle cx={54} cy={18} r={5} fill={palette.ink} stroke="none" />
       {/* Buzz waves on the right edge — phone vibrating */}
       <path d="M 60 32 Q 66 36 60 40" strokeWidth={2} />
       <path d="M 64 26 Q 72 36 64 46" strokeWidth={2} />
@@ -720,10 +726,25 @@ export function IconPaddles({ palette, size }: ModalIconProps): ReactElement {
 export function IconFortyTwo({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="forty-two" label="The Ultimate Question" size={size}>
-      {/* Letterform glyph — the answer, surfaced post-play when the joke
-          is past tense. The menu row hides it; here the timeline reveal
-          is the punchline. */}
-      <text x={40} y={54} textAnchor="middle" fontFamily="inherit" fontSize={36} fontWeight={700} fill={palette.ink} stroke="none">42</text>
+      {/* Deep Thought — retro mainframe computer silhouette. Avoids
+          showing "42" anywhere because the icon may surface BEFORE play
+          (arcade menu, MinigameReplayCard) and the punchline should
+          land on play, not pre-spoil from the icon. */}
+      {/* Mainframe cabinet */}
+      <rect x={18} y={14} width={44} height={52} rx={2} />
+      {/* Top screen */}
+      <rect x={22} y={18} width={36} height={14} />
+      {/* Row of status lights */}
+      <circle cx={26} cy={40} r={1.5} fill={palette.ink} stroke="none" />
+      <circle cx={32} cy={40} r={1.5} fill={palette.ink} stroke="none" />
+      <circle cx={38} cy={40} r={1.5} fill={palette.ink} stroke="none" />
+      <circle cx={44} cy={40} r={1.5} fill={palette.ink} stroke="none" />
+      <circle cx={50} cy={40} r={1.5} fill={palette.ink} stroke="none" />
+      <circle cx={56} cy={40} r={1.5} fill={palette.ink} stroke="none" />
+      {/* Card-reader / data-tape slots */}
+      <line x1={24} y1={48} x2={56} y2={48} strokeWidth={1.5} />
+      <line x1={24} y1={54} x2={56} y2={54} strokeWidth={1.5} />
+      <line x1={24} y1={60} x2={42} y2={60} strokeWidth={1.5} />
     </IconFrame>
   );
 }
@@ -1099,21 +1120,14 @@ export function IconCashFound({ palette, size }: ModalIconProps): ReactElement {
 export function IconBrowserTabX({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-univ-deleted-tab" label="Deleted tab" size={size}>
-      {/* Simplified browser: two tabs on top + window body + a few page
-          content lines. No close-X — the "deleted tab" reading comes
-          from context, not iconography. */}
-      {/* Tab 1 */}
-      <path d="M 10 30 L 14 20 L 36 20 L 40 30" />
-      {/* Tab 2 */}
-      <path d="M 40 30 L 44 20 L 66 20 L 70 30" />
-      {/* Window body */}
-      <rect x={10} y={30} width={60} height={32} rx={1} />
-      {/* Address-bar separator */}
-      <line x1={10} y1={38} x2={70} y2={38} strokeWidth={1.5} />
-      {/* Page-content lines */}
-      <line x1={16} y1={46} x2={62} y2={46} strokeWidth={1.5} />
-      <line x1={16} y1={52} x2={50} y2={52} strokeWidth={1.5} />
-      <line x1={16} y1={58} x2={56} y2={58} strokeWidth={1.5} />
+      {/* Single document/window with a folder-style tab notch at the top-left
+          and a few content lines inside. Matches the user-supplied
+          reference shape. */}
+      <path d="M 10 22 L 14 14 L 30 14 L 34 22 L 70 22 L 70 66 L 10 66 Z" />
+      <line x1={16} y1={36} x2={62} y2={36} strokeWidth={2} />
+      <line x1={16} y1={46} x2={62} y2={46} strokeWidth={2} />
+      <line x1={16} y1={54} x2={50} y2={54} strokeWidth={2} />
+      <line x1={16} y1={62} x2={62} y2={62} strokeWidth={2} />
     </IconFrame>
   );
 }
@@ -1326,9 +1340,6 @@ export function IconWalker({ palette, size }: ModalIconProps): ReactElement {
       <line x1={38} y1={44} x2={28} y2={60} strokeWidth={2.5} />
       {/* Ground */}
       <line x1={12} y1={62} x2={66} y2={62} strokeWidth={1.5} />
-      {/* Motion dashes trailing behind */}
-      <line x1={10} y1={32} x2={18} y2={32} strokeWidth={1.5} />
-      <line x1={6} y1={40} x2={16} y2={40} strokeWidth={1.5} />
     </IconFrame>
   );
 }
@@ -1409,22 +1420,15 @@ export function IconArchiveBox({ palette, size }: ModalIconProps): ReactElement 
 export function IconMentorPointing({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="evt-era-uncertain-becoming-mentor" label="Becoming a mentor" size={size}>
-      {/* Mentor figure on the left pointing AT a smaller mentee figure on
-          the right. The pointing arm ends in a small open hand + extended
-          finger so it reads as "pointing at someone" instead of "arrow
-          aimed at a piece of paper." */}
+      {/* Two figures — mentor (left, larger) and mentee (right, smaller).
+          Size difference + adjacency carries the "mentor / mentee"
+          reading; the pointing arm was over-explaining. */}
       {/* Mentor (left, larger) */}
-      <circle cx={22} cy={22} r={6} />
-      <path d="M 14 58 V 34 Q 14 28 22 28 Q 30 28 30 34 V 58" />
-      {/* Pointing arm — straight extended, hand + finger at the end */}
-      <line x1={30} y1={36} x2={42} y2={36} strokeWidth={3} />
-      {/* Open hand (small circle) */}
-      <circle cx={44} cy={36} r={2.5} fill={palette.ink} stroke="none" />
-      {/* Extended index finger past the hand */}
-      <line x1={46} y1={36} x2={50} y2={36} strokeWidth={2.5} />
-      {/* Mentee (right, smaller — junior in the field) */}
-      <circle cx={60} cy={30} r={5} />
-      <path d="M 54 58 V 42 Q 54 38 60 38 Q 66 38 66 42 V 58" />
+      <circle cx={26} cy={22} r={7} />
+      <path d="M 16 58 V 34 Q 16 28 26 28 Q 36 28 36 34 V 58" />
+      {/* Mentee (right, smaller) */}
+      <circle cx={56} cy={30} r={5} />
+      <path d="M 50 58 V 42 Q 50 38 56 38 Q 62 38 62 42 V 58" />
     </IconFrame>
   );
 }

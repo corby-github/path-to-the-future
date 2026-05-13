@@ -13,7 +13,7 @@
 export const ICON_DESCRIPTIONS: Record<string, string> = {
   // --- Universal decision pool ---------------------------------------------
   IconStayLate: 'clock with crescent moon — late hours, staying past close',
-  IconRecruiterCall: 'simple handset silhouette — a cold recruiter call',
+  IconRecruiterCall: 'vintage desk phone with rotary dial — a cold recruiter call',
   IconDie: 'six-pip die — bet-it-all bonus weekend',
   IconScale: 'balance scale — weighing two paths',
   IconStandupTooLong: 'clock with speech-bubble dots — meeting that drags',
@@ -34,7 +34,7 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
 
   // --- SWE decision pool ----------------------------------------------------
   IconCodeBrackets: 'angle brackets — framework rewrite vs. patch',
-  IconPager: 'phone with an alert badge and buzz waves — volunteering for on-call',
+  IconPager: 'phone with buzz waves — volunteering for on-call',
   IconLightbulbIdea: 'lightbulb with rays — a 2am idea worth keeping',
   IconMicrophone: 'microphone on stand — conference CFP',
   IconRocket: 'rocket lifting off — Friday deploy',
@@ -63,7 +63,7 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
   IconGearSparkle: 'gear with a spark — new AI tooling on the team',
   IconEnvelope: 'sealed envelope — invite to give a talk',
   IconCashFound: 'bill on the ground — found twenty dollars',
-  IconBrowserTabX: 'browser window with two tabs — deleted the wrong tab',
+  IconBrowserTabX: 'document with a folder tab notch and content lines — deleted the wrong tab',
   IconHouseUpArrow: 'house with an upward arrow — rent hike',
   IconAirplaneClock: 'airplane with a clock — flight delay',
   IconLostWallet: 'bi-fold wallet with motion lines — lost wallet',
@@ -81,7 +81,7 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
   IconPandemicFurlough: 'empty office chair — colleague furloughed',
   IconVideoCall: '2×2 grid of video tiles — zoom-fatigue',
   IconRoommateFriction: 'two figures with friction marks — roommate tension',
-  IconWalker: 'walking figure in profile mid-stride — daily walk routine',
+  IconWalker: 'walking figure in profile mid-stride on a ground line — daily walk routine',
   IconUpwardArrow: 'ascending staircase with an up-arrow — promo wave',
   IconDollarUpArrow: 'dollar sign with an upward arrow — comp jump',
   IconDoorExit: 'door frame with an outgoing arrow — friends leaving the company',
@@ -90,7 +90,7 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
   IconBubbleSparkle: 'speech bubble with a sparkle — AI-tooling evangelism',
   IconHourglass: 'hourglass — decade-mark milestone',
   IconArchiveBox: 'archive carton — opening an old codebase',
-  IconMentorPointing: 'figure pointing at a smaller figure — becoming the mentor',
+  IconMentorPointing: 'larger figure beside a smaller figure — becoming the mentor',
   IconCycleArrow: 'sun rising over a horizon — cycle reborn / starting over',
   IconEconomyDown: 'chart line trending down — soft economy',
 
@@ -105,7 +105,7 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
   IconCheckmark: 'large checkmark — code-review minigame',
   IconLightning: 'lightning bolt — reaction-sprint minigame',
   IconPaddles: 'two paddles with a ball — pong minigame',
-  IconFortyTwo: 'glyph reading 42 — the-answer minigame',
+  IconFortyTwo: 'retro mainframe computer (Deep Thought) — the ultimate-question minigame',
 
   // --- Placeholder ---------------------------------------------------------
   PlaceholderIcon: 'question mark in a frame — unregistered id fallback',
