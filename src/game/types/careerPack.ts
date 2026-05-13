@@ -53,7 +53,27 @@ export interface Manifest {
   // Career-pack themed: SWE uses "...and life goes on" / etc.; a nurse pack
   // might use shift-themed copy.
   monthTransitions?: string[];
+  // Per §26 (v2.0): optional display-name override for canonical stat keys.
+  // Keys are the canonical engine stat names from §7 (decisions/events JSON
+  // and computeScore keep referencing those names). Values are the strings
+  // the HUD / EffectChips / EndgameScreen show. Omitted keys default to the
+  // engine label. One source of truth, one fallback. SWE pack omits this
+  // entirely and renders with default labels.
+  statLabels?: Partial<Record<StatLabelKey, string>>;
 }
+
+// Canonical stat keys eligible for relabeling. Mirrors §7 plus `xp`. Kept as
+// a string literal union here (not imported from applyEffects.ts) so the
+// content-type module stays free of state-slice imports.
+export type StatLabelKey =
+  | 'burnout'
+  | 'savings'
+  | 'network'
+  | 'health'
+  | 'relationship'
+  | 'technicalSkill'
+  | 'reputation'
+  | 'xp';
 
 export type MonthRoomType = 'decision' | 'minigame' | 'narrative' | 'consequence';
 
@@ -82,7 +102,12 @@ export interface DecisionOption {
 
 export interface DecisionDef {
   id: string;
-  pool: 'universal' | 'swe';
+  // `pool` is content metadata for human authors (e.g. `'universal'`,
+  // `'swe'`, `'homeschool-parent'`). The engine never branches on it —
+  // selectDecision / rollEvents pull from one combined pack-merged array
+  // already. Typed as `string` so adding a new pack doesn't require
+  // touching this union per §26.
+  pool: string;
   tags: string[];
   requires?: Record<string, string>;
   weight: number;
@@ -92,7 +117,12 @@ export interface DecisionDef {
 
 export interface EventDef {
   id: string;
-  pool: 'universal' | 'swe';
+  // `pool` is content metadata for human authors (e.g. `'universal'`,
+  // `'swe'`, `'homeschool-parent'`). The engine never branches on it —
+  // selectDecision / rollEvents pull from one combined pack-merged array
+  // already. Typed as `string` so adding a new pack doesn't require
+  // touching this union per §26.
+  pool: string;
   era: string[];
   tags: string[];
   weight: number;

@@ -17,6 +17,8 @@ import { CreditsScreen } from './CreditsScreen';
 import { StatIcon, type StatIconName } from './icons/StatIcon';
 import { DecisionIcon } from './icons/modalIcons';
 import type { Palette } from '../types/careerPack';
+import { statLabelFor } from '../content/statLabels';
+import type { Manifest, Palette } from '../types/careerPack';
 import type { StatsState } from '../state/slices/statsSlice';
 import type { DecisionRecord } from '../state/slices/historySlice';
 import type { RootState } from '../state/store';
@@ -90,7 +92,18 @@ function ScoreRow({ label, value, palette, emphasis }: ScoreRowProps) {
   );
 }
 
-function StatsPanel({ stats, palette }: { stats: StatsState; palette: Palette }) {
+function StatsPanel({
+  stats,
+  palette,
+  manifest,
+}: {
+  stats: StatsState;
+  palette: Palette;
+  manifest: Manifest;
+}) {
+  // Labels resolved through `manifest.statLabels` (§26 v2.0). SWE pack omits
+  // the override and falls through to the defaults, preserving the existing
+  // wording. Other packs (e.g. homeschool-parent) relabel a subset.
   return (
     <div
       data-region="stats-panel"
@@ -117,11 +130,11 @@ function StatsPanel({ stats, palette }: { stats: StatsState; palette: Palette })
       >
         Final stats
       </p>
-      <StatRow icon="burnout" label="Burnout" value={stats.burnout} palette={palette} />
-      <StatRow icon="health" label="Health" value={stats.health} palette={palette} />
-      <StatRow icon="network" label="Network" value={stats.network} palette={palette} />
-      <StatRow icon="reputation" label="Reputation" value={stats.reputation} palette={palette} />
-      <StatRow icon="technicalSkill" label="Technical Skill" value={stats.technicalSkill} palette={palette} />
+      <StatRow icon="burnout" label={statLabelFor(manifest, 'burnout')} value={stats.burnout} palette={palette} />
+      <StatRow icon="health" label={statLabelFor(manifest, 'health')} value={stats.health} palette={palette} />
+      <StatRow icon="network" label={statLabelFor(manifest, 'network')} value={stats.network} palette={palette} />
+      <StatRow icon="reputation" label={statLabelFor(manifest, 'reputation')} value={stats.reputation} palette={palette} />
+      <StatRow icon="technicalSkill" label={statLabelFor(manifest, 'technicalSkill')} value={stats.technicalSkill} palette={palette} />
       {/* Relationship row hidden until any decision / event actually
           modifies the stat. v1 ships with the slot wired (state, score
           breakdown, icon, requires-clause on `univ-date-app-match`) but
@@ -129,9 +142,9 @@ function StatsPanel({ stats, palette }: { stats: StatsState; palette: Palette })
           conditional pattern as the HUD's StatChip — relationship UI
           appears only once the stat has been set. Per §20. */}
       {stats.relationship !== null && (
-        <StatRow icon="relationship" label="Relationship" value={stats.relationship} palette={palette} />
+        <StatRow icon="relationship" label={statLabelFor(manifest, 'relationship')} value={stats.relationship} palette={palette} />
       )}
-      <StatRow icon="savings" label="Savings" value={stats.savings} unit="$" palette={palette} />
+      <StatRow icon="savings" label={statLabelFor(manifest, 'savings')} value={stats.savings} unit="$" palette={palette} />
     </div>
   );
 }
@@ -141,11 +154,13 @@ function ScorePanel({
   classLabel,
   xp,
   palette,
+  manifest,
 }: {
   breakdown: ScoreBreakdown;
   classLabel: string;
   xp: number;
   palette: Palette;
+  manifest: Manifest;
 }) {
   return (
     <div
@@ -190,17 +205,26 @@ function ScorePanel({
       >
         Score
       </p>
+      {/* Score-breakdown labels: pure-stat rows route through statLabelFor
+          (§26) so a pack relabeling e.g. `burnout` → "Stress" sees "Stress
+          penalty" here too. Composite rows ("Wellbeing" = health + network +
+          technicalSkill + reputation; "Decisions" = decision-tag bonus)
+          stay as-is — they don't name a single stat. */}
       <ScoreRow label="Experience" value={breakdown.experience} palette={palette} />
-      <ScoreRow label="Savings" value={breakdown.savings} palette={palette} />
+      <ScoreRow label={statLabelFor(manifest, 'savings')} value={breakdown.savings} palette={palette} />
       <ScoreRow label="Wellbeing" value={breakdown.wellbeing} palette={palette} />
-      <ScoreRow label="Burnout penalty" value={breakdown.burnoutPenalty} palette={palette} />
+      <ScoreRow
+        label={`${statLabelFor(manifest, 'burnout')} penalty`}
+        value={breakdown.burnoutPenalty}
+        palette={palette}
+      />
       {/* Relationship score line hidden when the bonus is 0 — matches
           the StatsPanel rule (the stat starts null and no decision /
           event modifies it yet, so a 0-row is just noise). Re-shows
           automatically once any pack content actually moves the
           relationship stat. */}
       {breakdown.relationshipBonus !== 0 && (
-        <ScoreRow label="Relationship" value={breakdown.relationshipBonus} palette={palette} />
+        <ScoreRow label={statLabelFor(manifest, 'relationship')} value={breakdown.relationshipBonus} palette={palette} />
       )}
       <ScoreRow label="Decisions" value={breakdown.decisions} palette={palette} />
       <ScoreRow label="Total" value={breakdown.total} palette={palette} emphasis />
@@ -674,12 +698,13 @@ export function EndgameScreen() {
         data-region="panels"
         style={{ display: 'flex', gap: 12, alignItems: 'stretch', flex: 1, minHeight: 0 }}
       >
-        <StatsPanel stats={stats} palette={palette} />
+        <StatsPanel stats={stats} palette={palette} manifest={pack.manifest} />
         <ScorePanel
           breakdown={score}
           classLabel={tier.label}
           xp={progress.xp}
           palette={palette}
+          manifest={pack.manifest}
         />
       </div>
 

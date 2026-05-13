@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useAppSelector } from '../state/hooks';
 import { useCareerPack } from '../content/useCareerPack';
+import { statLabelFor } from '../content/statLabels';
 import { StatChip } from './StatChip';
 import { useCurrentRoom } from './currentRoomContextValue';
 
@@ -220,30 +221,35 @@ export function Hud() {
           numericValue={progress.xp}
           displayValue={formatXp(progress.xp)}
           palette={palette}
+          ariaLabel={statLabelFor(pack.manifest, 'xp')}
         />
         <StatChip
           name="burnout"
           numericValue={stats.burnout}
           displayValue={stats.burnout}
           palette={palette}
+          ariaLabel={statLabelFor(pack.manifest, 'burnout')}
         />
         <StatChip
           name="savings"
           numericValue={stats.savings}
           displayValue={formatMoney(stats.savings)}
           palette={palette}
+          ariaLabel={statLabelFor(pack.manifest, 'savings')}
         />
         <StatChip
           name="health"
           numericValue={stats.health}
           displayValue={stats.health}
           palette={palette}
+          ariaLabel={statLabelFor(pack.manifest, 'health')}
         />
         <StatChip
           name="network"
           numericValue={stats.network}
           displayValue={stats.network}
           palette={palette}
+          ariaLabel={statLabelFor(pack.manifest, 'network')}
         />
         {stats.relationship !== null && (
           <StatChip
@@ -251,6 +257,7 @@ export function Hud() {
             numericValue={stats.relationship}
             displayValue={stats.relationship}
             palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'relationship')}
           />
         )}
         <StatChip
@@ -258,12 +265,14 @@ export function Hud() {
           numericValue={stats.technicalSkill}
           displayValue={stats.technicalSkill}
           palette={palette}
+          ariaLabel={statLabelFor(pack.manifest, 'technicalSkill')}
         />
         <StatChip
           name="reputation"
           numericValue={stats.reputation}
           displayValue={formatReputation(stats.reputation)}
           palette={palette}
+          ariaLabel={statLabelFor(pack.manifest, 'reputation')}
         />
       </div>
 
