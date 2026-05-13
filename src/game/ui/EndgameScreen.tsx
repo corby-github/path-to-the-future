@@ -16,7 +16,6 @@ import { clearPersistedState } from '../state/persistence';
 import { CreditsScreen } from './CreditsScreen';
 import { StatIcon, type StatIconName } from './icons/StatIcon';
 import { DecisionIcon } from './icons/modalIcons';
-import type { Palette } from '../types/careerPack';
 import { statLabelFor } from '../content/statLabels';
 import type { Manifest, Palette } from '../types/careerPack';
 import type { StatsState } from '../state/slices/statsSlice';
