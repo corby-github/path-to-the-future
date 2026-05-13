@@ -337,7 +337,7 @@
       "tags": ["community", "humor"],
       "weight": 0.7,
       "requires": { "month": ">=10" },
-      "prompt": "A co-op parent emails the group: she'd 'love it if we could move toward all-organic snack week.' Three families are nodding. Two are not.",
+      "prompt": "A co-op parent emails the group: she'd 'love it if we could move toward all-organic snack week.' Three families have thumbs-up'd. Two have not.",
       "options": [
         {
           "label": "Reply with a measured counter",

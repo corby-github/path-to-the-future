@@ -99,6 +99,16 @@
       "effects": { "burnout": "+2", "network": "+1" }
     },
     {
+      "id": "evt-hp-pandemic-church-stayed-open",
+      "pool": "homeschool-parent",
+      "era": ["pandemic"],
+      "tags": ["family", "community", "era"],
+      "weight": 0.5,
+      "title": "Church was open.",
+      "body": "Three churches in your area closed that spring. Yours stayed open — Sundays and Wednesdays both. The pews were half-full and the windows were cracked. Bram fell asleep on your shoulder during the sermon. Hazel got the bulletin and asked what 'communion' meant. You answered honestly. You'd been going for a decade; the week the building stayed open felt like the week the building stayed open.",
+      "effects": { "burnout": "-2", "network": "+2", "health": "+1" }
+    },
+    {
       "id": "evt-hp-library-haul",
       "pool": "homeschool-parent",
       "era": ["any"],
