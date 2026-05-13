@@ -512,6 +512,58 @@ export function IconRocket({ palette, size }: ModalIconProps): ReactElement {
   );
 }
 
+export function IconMentorJunior({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-mentor-junior" label="Mentor a junior" size={size}>
+      {/* Mentor (left, larger figure) */}
+      <circle cx={22} cy={26} r={6} />
+      <path d="M 14 58 V 42 Q 14 36 22 36 Q 30 36 30 42 V 58" />
+      {/* Junior (right, smaller and shorter) */}
+      <circle cx={56} cy={32} r={5} />
+      <path d="M 49 58 V 44 Q 49 39 56 39 Q 63 39 63 44 V 58" />
+      {/* Knowledge spark — small filled 4-point star passing between them */}
+      <path d="M 40 40 L 41 44 L 45 45 L 41 46 L 40 50 L 39 46 L 35 45 L 39 44 Z" fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconHackathon({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="swe-hackathon-weekend" label="Hackathon weekend" size={size}>
+      {/* Laptop screen */}
+      <rect x={18} y={26} width={38} height={24} rx={2} />
+      {/* Laptop base */}
+      <path d="M 12 50 H 62 L 56 58 H 18 Z" />
+      {/* Lightning bolt on the screen — "hack speed" energy */}
+      <path d="M 40 30 L 32 42 H 38 L 36 48 L 44 38 H 38 Z" fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconPandemicClose({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-univ-pandemic-close" label="Pandemic close" size={size}>
+      {/* Calendar body */}
+      <rect x={14} y={18} width={52} height={46} rx={2} />
+      {/* Header band separator */}
+      <line x1={14} y1={26} x2={66} y2={26} strokeWidth={2} />
+      {/* Hanger tabs */}
+      <line x1={26} y1={14} x2={26} y2={22} strokeWidth={2} />
+      <line x1={54} y1={14} x2={54} y2={22} strokeWidth={2} />
+      {/* Grid — three rows of three cells (rough month layout) */}
+      <line x1={14} y1={36} x2={66} y2={36} strokeWidth={1.5} />
+      <line x1={14} y1={46} x2={66} y2={46} strokeWidth={1.5} />
+      <line x1={14} y1={56} x2={66} y2={56} strokeWidth={1.5} />
+      <line x1={27} y1={26} x2={27} y2={64} strokeWidth={1.5} />
+      <line x1={40} y1={26} x2={40} y2={64} strokeWidth={1.5} />
+      <line x1={53} y1={26} x2={53} y2={64} strokeWidth={1.5} />
+      {/* Big X — pandemic shuts the calendar down */}
+      <line x1={20} y1={32} x2={60} y2={60} strokeWidth={4} />
+      <line x1={60} y1={32} x2={20} y2={60} strokeWidth={4} />
+    </IconFrame>
+  );
+}
+
 // ── Finale ───────────────────────────────────────────────────────────────
 
 export function IconThresholdDoor({ palette, size }: ModalIconProps): ReactElement {

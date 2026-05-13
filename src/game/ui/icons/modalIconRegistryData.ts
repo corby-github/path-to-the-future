@@ -8,15 +8,18 @@ import {
   IconDie,
   IconDoorKey,
   IconDumbbell,
+  IconHackathon,
   IconHeartHands,
   IconHourglass,
   IconHouse,
   IconLaptopSpark,
   IconLightbulbIdea,
+  IconMentorJunior,
   IconMicrophone,
   IconNetwork,
   IconPager,
   IconPalmTree,
+  IconPandemicClose,
   IconPandemicFurlough,
   IconPawPrint,
   IconPhoneCross,
@@ -81,6 +84,8 @@ export const DECISION_ICONS: Record<string, ModalIconComponent> = {
   'swe-2am-idea': IconLightbulbIdea,
   'swe-conference-talk-cfp': IconMicrophone,
   'swe-friday-deploy': IconRocket,
+  'swe-mentor-junior': IconMentorJunior,
+  'swe-hackathon-weekend': IconHackathon,
 
   // Finale (DecisionRoom hardcodes this id at month 120).
   'finale-month-120': IconThresholdDoor,
@@ -89,6 +94,9 @@ export const DECISION_ICONS: Record<string, ModalIconComponent> = {
 // --- Event icons ------------------------------------------------------------
 
 export const EVENT_ICONS: Record<string, ModalIconComponent> = {
+  // Universal pandemic moment.
+  'evt-univ-pandemic-close': IconPandemicClose,
+
   // Era anchors — one per era.
   'evt-era-pandemic-furlough-friend': IconPandemicFurlough,
   'evt-era-pandemic-zoom-fatigue': IconVideoCall,
