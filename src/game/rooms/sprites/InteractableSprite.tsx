@@ -26,6 +26,8 @@ export function InteractableSprite({ art, kind, x, y, palette }: Props) {
       case 'person-peer': return <NPCPeer x={x} y={y} palette={palette} />;
       case 'person-newhire': return <NPCNewhire x={x} y={y} palette={palette} />;
       case 'person-skip-level': return <NPCSkipLevel x={x} y={y} palette={palette} />;
+      case 'kid-hazel': return <NPCKidHazel x={x} y={y} palette={palette} />;
+      case 'kid-bram': return <NPCKidBram x={x} y={y} palette={palette} />;
       default: return <NPCDefault x={x} y={y} palette={palette} />;
     }
   }
@@ -40,6 +42,7 @@ export function InteractableSprite({ art, kind, x, y, palette }: Props) {
     case 'water-cooler': return <ObjWaterCooler x={x} y={y} palette={palette} />;
     case 'locked-door': return <ObjLockedDoor x={x} y={y} palette={palette} />;
     case 'arcade-game': return <ObjArcadeGame x={x} y={y} palette={palette} />;
+    case 'textbook-stack': return <ObjTextbookStack x={x} y={y} palette={palette} />;
     default: return <ObjDefault x={x} y={y} palette={palette} />;
   }
 }
@@ -578,6 +581,171 @@ function ObjDefault({ x, y, palette }: SpriteProps) {
         fill={palette.surface}
         stroke={palette.ink}
         strokeWidth={2}
+      />
+    </g>
+  );
+}
+
+// Kid sprites for the homeschool pack. Same humanoid base as the adult
+// NPCs but smaller (body 36h × 24w, head r=10) so the kids read as
+// child-scale alongside adult interactables. Two variants:
+// - Hazel: book held in front of the torso (age-flex; she's a reader
+//   from month 1).
+// - Bram: small backpack visible behind, plus a tousled-hair tuft so the
+//   two kids are visually distinct at a glance.
+function NPCKidBase({ x, y, palette }: SpriteProps) {
+  return (
+    <>
+      <rect
+        x={x - 12}
+        y={y - 2}
+        width={24}
+        height={36}
+        rx={5}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      <circle
+        cx={x}
+        cy={y - 14}
+        r={10}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+    </>
+  );
+}
+
+// Hazel — eldest, the reader. Book held in front of body.
+function NPCKidHazel({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      <NPCKidBase x={x} y={y} palette={palette} />
+      {/* Book — flat-bottom rectangle held against the torso */}
+      <rect
+        x={x - 9}
+        y={y + 6}
+        width={18}
+        height={12}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      {/* Spine line down the middle of the book */}
+      <line
+        x1={x}
+        y1={y + 6}
+        x2={x}
+        y2={y + 18}
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+    </g>
+  );
+}
+
+// Bram — younger, backpack + hair tuft.
+function NPCKidBram({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Backpack behind body */}
+      <rect
+        x={x - 17}
+        y={y + 2}
+        width={7}
+        height={22}
+        rx={2}
+        fill={palette.surface}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      <NPCKidBase x={x} y={y} palette={palette} />
+      {/* Hair tuft — small filled shape on top of head */}
+      <path
+        d={`M ${x - 7} ${y - 22} q 2 -5 8 -4 q 5 1 4 4 q -1 3 -6 3 z`}
+        fill={palette.ink}
+      />
+    </g>
+  );
+}
+
+// Textbook stack — three stacked books with visible spines. Used by the
+// homeschool pack for the kitchen-table-as-school flavor. Treatment-A
+// flat-color, palette-pure. Footprint ~40×40 so the stack reads as a
+// chunky desk object next to the standard 52×80 sprite frame.
+function ObjTextbookStack({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Bottom book — widest, accent color */}
+      <rect
+        x={x - 22}
+        y={y + 6}
+        width={44}
+        height={10}
+        rx={1}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Bottom book spine band */}
+      <line
+        x1={x - 22}
+        y1={y + 13}
+        x2={x + 22}
+        y2={y + 13}
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+      {/* Middle book — slightly narrower, surface color */}
+      <rect
+        x={x - 19}
+        y={y - 4}
+        width={38}
+        height={10}
+        rx={1}
+        fill={palette.surface}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      <line
+        x1={x - 19}
+        y1={y + 3}
+        x2={x + 19}
+        y2={y + 3}
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+      {/* Top book — narrowest, positive (sage) color so the stack reads
+          as three distinct volumes */}
+      <rect
+        x={x - 16}
+        y={y - 14}
+        width={32}
+        height={10}
+        rx={1}
+        fill={palette.positive}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      <line
+        x1={x - 16}
+        y1={y - 7}
+        x2={x + 16}
+        y2={y - 7}
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+      {/* A small bookmark / sticky note peeking out the top book's right edge */}
+      <rect
+        x={x + 8}
+        y={y - 18}
+        width={4}
+        height={6}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1}
       />
     </g>
   );

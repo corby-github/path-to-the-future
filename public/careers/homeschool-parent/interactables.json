@@ -1,3 +1,330 @@
 {
-  "interactables": []
+  "interactables": [
+    {
+      "id": "obj-hp-textbook-stack",
+      "kind": "object",
+      "label": "Textbook stack",
+      "art": "textbook-stack",
+      "tags": ["home", "flavor", "teaching"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The textbook stack. Top one is the math you finished last week. Bottom one is the science you keep meaning to start."
+        },
+        {
+          "tier": 1,
+          "prompt": "The stack has a sticky note on top that says 'CHAPTER 7.' It has said CHAPTER 7 for two and a half weeks."
+        }
+      ]
+    },
+    {
+      "id": "obj-hp-art-bin",
+      "kind": "object",
+      "label": "Art supplies bin",
+      "art": "stress-ball",
+      "tags": ["home", "flavor"],
+      "weight": 0.9,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The bin of markers, crayons, and one pair of safety scissors. Two markers are missing caps. You don't pursue it."
+        },
+        {
+          "tier": 2,
+          "prompt": "The art bin. You could pull it out for an unplanned hour, or save it for after lunch when the energy crashes.",
+          "options": [
+            {
+              "label": "Pull it out now",
+              "effects": { "burnout": "-2", "health": "+1" },
+              "flavor": "An hour you didn't plan for. Bram drew the dog. Hazel drew a city. You drew, badly, alongside them. The hour cost you nothing and bought you something."
+            },
+            {
+              "label": "Save it for later",
+              "effects": {},
+              "flavor": "You closed the lid. The lid stayed closed. You forgot about it by lunch. The bin would keep."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obj-hp-kitchen-table",
+      "kind": "object",
+      "label": "Kitchen table",
+      "art": "whiteboard",
+      "tags": ["home", "flavor", "teaching"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The kitchen table. Math on one half, breakfast crumbs on the other. The crumbs are older."
+        },
+        {
+          "tier": 1,
+          "prompt": "Someone wrote 'PHOTOSYNTHESIS' across the dry-erase placemat in green. Two arrows. A sun, drawn confidently and not to scale."
+        }
+      ]
+    },
+    {
+      "id": "obj-hp-fridge-art",
+      "kind": "object",
+      "label": "Drawing on the fridge",
+      "art": "calendar",
+      "tags": ["home", "flavor", "family"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "Hazel's drawing of the family. You are slightly taller in the drawing than you are in life. You have not moved it."
+        },
+        {
+          "tier": 1,
+          "prompt": "The fridge holds, at last count: a permission slip, a postcard from your sister, two drawings, and a magnet from a museum you went to once."
+        }
+      ]
+    },
+    {
+      "id": "obj-hp-couch-blanket",
+      "kind": "object",
+      "label": "Sick-day couch",
+      "art": "plant",
+      "tags": ["home", "flavor", "family"],
+      "weight": 0.7,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The big blanket. The throw pillow with the stain you remember the origin of. The couch is shaped, slightly, like the kid who was sick last week."
+        },
+        {
+          "tier": 2,
+          "prompt": "The couch could be a ten-minute break. Or you could keep moving — the laundry doesn't fold itself.",
+          "options": [
+            {
+              "label": "Sit for ten",
+              "effects": { "burnout": "-2", "health": "+1" },
+              "flavor": "You sat. You closed your eyes. You did not fall asleep. The ten minutes was, you'd realize later, what kept the afternoon together."
+            },
+            {
+              "label": "Keep moving",
+              "effects": { "burnout": "+1" },
+              "flavor": "You folded the laundry. You did not feel any better. You did have folded laundry."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obj-hp-coop-signup",
+      "kind": "object",
+      "label": "Co-op sign-up sheet",
+      "art": "monitor",
+      "tags": ["community", "flavor"],
+      "weight": 0.7,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The shared spreadsheet. Three of the snack slots are filled. Two have your name. You signed up while half-listening to a podcast."
+        },
+        {
+          "tier": 2,
+          "prompt": "The co-op chat: anyone able to cover snack on Friday? Three nodding emojis. No volunteers yet.",
+          "options": [
+            {
+              "label": "Cover Friday",
+              "effects": { "network": "+3", "burnout": "+2", "reputation": "+1" },
+              "flavor": "You said yes. You stayed up Thursday cutting fruit. Friday morning four parents thanked you. You felt good about it. You went to bed early."
+            },
+            {
+              "label": "Stay quiet",
+              "effects": {},
+              "flavor": "You let it go. Someone else volunteered an hour later. The world did not collapse."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-hp-hazel",
+      "kind": "npc",
+      "label": "Hazel",
+      "art": "kid-hazel",
+      "tags": ["family", "kid"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "Hazel looks up from her book. \"Did you know octopuses can taste things with their suckers?\" She looks back down without waiting for the answer."
+        },
+        {
+          "tier": 1,
+          "prompt": "Hazel is doing her math at the table with the headphones on. She glances at you, gives a small nod, keeps working."
+        },
+        {
+          "tier": 2,
+          "prompt": "Hazel: \"Mom — Dad — can we be done early today?\" She has practiced this sentence. The math is, you note, mostly done.",
+          "options": [
+            {
+              "label": "Let her finish early",
+              "effects": { "burnout": "-1", "reputation": "+2", "network": "+1" },
+              "flavor": "You said okay. She did a small dance, on purpose, knowing you'd see. She put her shoes on and was outside for the next hour. You let the science slide to tomorrow. Tomorrow took it."
+            },
+            {
+              "label": "Two more pages",
+              "effects": { "technicalSkill": "+1", "reputation": "-1" },
+              "flavor": "She finished the pages. She didn't dance afterward. The pages were fine. The energy in the room dropped a notch. You weren't sure if the trade was worth it."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-hp-bram",
+      "kind": "npc",
+      "label": "Bram",
+      "art": "kid-bram",
+      "tags": ["family", "kid"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "Bram is on the kitchen floor with two trucks and a long-running narrative you can't quite follow. The narrative does not, you notice, require you."
+        },
+        {
+          "tier": 1,
+          "prompt": "Bram looks up. \"Is it lunch yet.\" It is 10:42. You say not yet. He goes back to the trucks."
+        },
+        {
+          "tier": 2,
+          "prompt": "Bram: \"Can you read this one?\" He is holding the picture book you have read forty-eight times.",
+          "options": [
+            {
+              "label": "Read it again",
+              "effects": { "burnout": "+1", "reputation": "+2", "technicalSkill": "+1" },
+              "flavor": "Forty-nine. You did the voices. He laughed in the same places. You were both, you noticed, very good at this book by now."
+            },
+            {
+              "label": "Pick a new one",
+              "effects": { "technicalSkill": "+1" },
+              "flavor": "You held up two others. He picked one. He liked it, eventually. The first request had been, you think, more about you than the book."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-hp-coop-friend",
+      "kind": "npc",
+      "label": "Co-op parent",
+      "art": "person-peer",
+      "tags": ["community", "friend"],
+      "weight": 0.9,
+      "requires": { "month": ">=5" },
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The co-op parent waves from across the driveway. \"You good?\" You say yes. She nods like she knows the question wasn't really yes-or-no."
+        },
+        {
+          "tier": 2,
+          "prompt": "Co-op friend, by the car: \"Walk Wednesday? An hour, just us, no kids?\"",
+          "options": [
+            {
+              "label": "Yes — Wednesday",
+              "effects": { "network": "+3", "burnout": "-2", "health": "+1" },
+              "flavor": "You walked four miles. You both said things you hadn't said out loud all month. You came home lighter. You scheduled the next walk before you got out of her car."
+            },
+            {
+              "label": "Maybe next week",
+              "effects": { "network": "-1" },
+              "flavor": "You said next week. She said no rush. Next week became the week after. The walk happened eventually. It was still good. Slightly less easy to schedule, every time you pushed it."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-hp-in-law",
+      "kind": "npc",
+      "label": "Mother-in-law",
+      "art": "person-skip-level",
+      "tags": ["family"],
+      "weight": 0.6,
+      "requires": { "month": ">=8" },
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "Your mother-in-law looks at the kitchen-table-as-school. \"It's so... lived-in,\" she says. The 'so' does some work."
+        },
+        {
+          "tier": 2,
+          "prompt": "Your mother-in-law, casual at the counter: \"Have you thought about the local school for next year? Just thinking out loud.\"",
+          "options": [
+            {
+              "label": "Engage politely",
+              "effects": { "burnout": "+2", "reputation": "+1" },
+              "flavor": "You walked her through the math, the curriculum, the co-op. She listened. She said 'well, I just want what's best.' You said you knew. The conversation was, neither of you said out loud, the same one as last time."
+            },
+            {
+              "label": "Change the subject",
+              "effects": { "burnout": "+1", "reputation": "-1" },
+              "flavor": "You asked about her garden. She knew you were doing it. She let you. The garden, it turned out, was having a good year."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-hp-spouse",
+      "kind": "npc",
+      "label": "Spouse",
+      "art": "person-pm",
+      "tags": ["family", "relationship"],
+      "weight": 1.0,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "Your spouse appears in the doorway with two mugs. They hand you the one with less in it. They know which one is yours."
+        },
+        {
+          "tier": 1,
+          "prompt": "Your spouse, between calls: \"You good? You look like you've been chasing Bram around the house.\" You have been chasing Bram around the house."
+        },
+        {
+          "tier": 2,
+          "prompt": "Your spouse: \"Wanna swap for an hour? I'll take the kids. Go sit outside.\"",
+          "options": [
+            {
+              "label": "Take the hour",
+              "effects": { "burnout": "-4", "health": "+2" },
+              "flavor": "You took it. You sat on the back step. You did nothing on purpose for fifty-five of the sixty minutes. The other five you actually listened to the birds."
+            },
+            {
+              "label": "Pass — they need to work",
+              "effects": { "burnout": "+1", "reputation": "+1" },
+              "flavor": "You said you were fine. They didn't push. You wished, briefly, that they had pushed. They knew that too. You both held the choice politely for the rest of the afternoon."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "npc-hp-neighbor",
+      "kind": "npc",
+      "label": "Neighbor",
+      "art": "person-newhire",
+      "tags": ["community", "flavor"],
+      "weight": 0.5,
+      "dialogues": [
+        {
+          "tier": 1,
+          "prompt": "The neighbor waves over the fence. \"Saw your kids in the yard at 11am again. Living the dream.\" You can't tell if he means it. You think he might."
+        },
+        {
+          "tier": 1,
+          "prompt": "The neighbor sets a bag of zucchini on your porch step. He'd been growing too many. The bag has, in fact, way too many zucchini."
+        }
+      ]
+    }
+  ]
 }

@@ -57,10 +57,14 @@
   },
 
   "intro": [
-    "January 2020.",
-    "The kitchen table is yours, {playerName}.",
+    "January 2020, {playerName}.",
     "Hazel is six. Bram is three.",
-    "The world is about to send the kids home for a while."
+    "The kitchen table has a math worksheet on it.",
+    "The TV says something about a virus.",
+    "You'll figure out, in the next two weeks, that the kids are not going back.",
+    "You don't know that yet.",
+    "You'll be the teacher now. The cook. The schedule.",
+    "Ten years. One kitchen table. Begin."
   ],
 
   "monthTransitions": [
@@ -70,6 +74,15 @@
     "... the laundry rotates",
     "... onward",
     "... the calendar turns",
-    "... time moves forward"
+    "... time moves forward",
+    "... the kettle goes on",
+    "... someone needs help with long division",
+    "... the kitchen table sees another lesson",
+    "... a permission slip, somewhere",
+    "... another read-aloud, another chapter",
+    "... the dishes can wait until tomorrow",
+    "... someone lost a shoe, again",
+    "... the library books are due Friday",
+    "... the day starts at the table"
   ]
 }

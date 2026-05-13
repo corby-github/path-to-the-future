@@ -56,6 +56,343 @@
       "title": "Your handwriting on the dry-erase.",
       "body": "You wrote the date and you noticed the letters wobble. Not a lot. Enough that you stood there a second and looked at it before erasing it and writing it again.",
       "effects": { "burnout": "+2", "health": "-2" }
+    },
+
+    {
+      "id": "evt-hp-pandemic-zoom-cohort",
+      "pool": "homeschool-parent",
+      "era": ["pandemic"],
+      "tags": ["era"],
+      "weight": 0.6,
+      "title": "The Zoom co-op meets.",
+      "body": "Six families on a grid. Hazel waving at a screen. A glitch every fourteen minutes. You took notes on a paper napkin so you wouldn't be tempted to open another tab.",
+      "effects": { "network": "+1", "burnout": "+1" }
+    },
+    {
+      "id": "evt-hp-pandemic-relatives-text",
+      "pool": "homeschool-parent",
+      "era": ["pandemic"],
+      "tags": ["family", "era"],
+      "weight": 0.5,
+      "title": "A check-in from your sister.",
+      "body": "She texted to ask how 'this thing' was going. You typed three honest sentences and then deleted them. You sent back two words and an emoji. She wrote back 'sending love' and you both let it sit there.",
+      "effects": { "burnout": "+1" }
+    },
+    {
+      "id": "evt-hp-pandemic-yard-friendship",
+      "pool": "homeschool-parent",
+      "era": ["pandemic"],
+      "tags": ["lucky", "era", "community"],
+      "weight": 0.5,
+      "title": "Driveway friends.",
+      "body": "The neighbor's kid wandered over with a soccer ball. Bram followed. The neighbor mom set out two camp chairs at a distance and waved. You waved back. By the end of the week you were waving on purpose.",
+      "effects": { "network": "+3", "burnout": "-2" }
+    },
+    {
+      "id": "evt-hp-pandemic-mask-tantrum",
+      "pool": "homeschool-parent",
+      "era": ["pandemic"],
+      "tags": ["era", "stress"],
+      "weight": 0.5,
+      "title": "The mask, in the parking lot.",
+      "body": "Bram refused the mask in the car. You stood by the open door for four minutes. A woman two spaces over watched. He put it on. She didn't say anything kind or unkind. She just nodded once, like a person who'd been there.",
+      "effects": { "burnout": "+2", "network": "+1" }
+    },
+    {
+      "id": "evt-hp-library-haul",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["flavor", "lucky"],
+      "weight": 0.7,
+      "title": "Twenty-three books.",
+      "body": "You came home with a stack to the chin. Bram picked one before you'd shelved them. He sat on the kitchen floor and started reading. You did not say anything to interrupt the reading.",
+      "effects": { "burnout": "-2", "technicalSkill": "+1" }
+    },
+    {
+      "id": "evt-hp-fridge-art",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["flavor"],
+      "weight": 0.8,
+      "title": "A drawing on the fridge.",
+      "body": "Hazel drew the family. She drew you taller than your spouse. You are not taller than your spouse. You looked at it for a second too long. You did not move it from the front.",
+      "effects": { "burnout": "-1" }
+    },
+    {
+      "id": "evt-hp-lost-shoe",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["humor", "flavor"],
+      "weight": 0.7,
+      "title": "Where is the other shoe.",
+      "body": "Bram's left shoe was in the dryer, somehow. You did not investigate. There are not enough hours to investigate every mystery in this house. You re-tied the right one and called it Tuesday.",
+      "effects": { "burnout": "+1" }
+    },
+    {
+      "id": "evt-hp-grandparent-phone",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["family", "flavor"],
+      "weight": 0.6,
+      "title": "Grandma on FaceTime.",
+      "body": "She told Bram a story about a goat in 1958. He listened the whole way through. He asked one good question at the end. She cried, just a little. She blamed the picture quality.",
+      "effects": { "network": "+1", "health": "+1" }
+    },
+    {
+      "id": "evt-hp-field-trip-mishap",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["community", "humor"],
+      "weight": 0.5,
+      "trigger": { "network": ">25" },
+      "title": "The wrong museum.",
+      "body": "Six families in a parking lot. The exhibit ended last Sunday. A small mutiny among the eight-year-olds. The co-op mom who organized it apologized fourteen times. Someone produced snacks. The next two hours were better than the museum would have been.",
+      "effects": { "network": "+2", "burnout": "-1" }
+    },
+    {
+      "id": "evt-hp-coop-friction",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["community", "stress"],
+      "weight": 0.5,
+      "trigger": { "month": ">=14" },
+      "title": "A passive-aggressive thread.",
+      "body": "Someone in the co-op chat wrote 'just a thought' before a paragraph that was clearly not just a thought. Four parents thumbs-up'd. Three did not. You did not. You closed the app.",
+      "effects": { "network": "-2", "burnout": "+2" }
+    },
+    {
+      "id": "evt-hp-hazel-first-chapter-book",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["lucky", "flavor"],
+      "weight": 0.6,
+      "trigger": { "month": ">=12" },
+      "title": "She read the whole thing.",
+      "body": "Hazel finished the chapter book without saying she was reading the chapter book. You found it on the couch face-down, finished. She didn't bring it up. You decided not to either. You both knew.",
+      "effects": { "technicalSkill": "+2", "health": "+1" }
+    },
+    {
+      "id": "evt-hp-co-op-fundraiser-win",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["community", "lucky"],
+      "weight": 0.4,
+      "trigger": { "network": ">35" },
+      "title": "The bake sale cleared.",
+      "body": "The co-op fundraiser hit its number an hour early. Someone you barely knew said you were the one who'd pulled it off. You hadn't been, really. You'd been the one who showed up. The two things were closer than you'd expected.",
+      "effects": { "network": "+3", "reputation": "+3" }
+    },
+    {
+      "id": "evt-hp-co-op-parent-drift",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["community"],
+      "weight": 0.4,
+      "trigger": { "month": ">=24" },
+      "title": "A friend left the co-op.",
+      "body": "She sent the email Sunday night. The reasons were vague and the warmth was real. You wrote back something kind. You meant it. You also knew you would see her less, and that part felt heavier than the reasons.",
+      "effects": { "network": "-2", "burnout": "+1" }
+    },
+    {
+      "id": "evt-hp-spouse-late",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["family", "relationship"],
+      "weight": 0.6,
+      "title": "Spouse, home late again.",
+      "body": "The text said 'one more hour' at six. The next text said 'sorry' at nine. You held dinner. Then you didn't. The kids asked twice. You answered twice. By the third you said 'soon.'",
+      "effects": { "burnout": "+2" }
+    },
+    {
+      "id": "evt-hp-spouse-promo",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["family", "lucky", "money"],
+      "weight": 0.4,
+      "trigger": { "month": ">=18" },
+      "title": "A promotion at the other house.",
+      "body": "Your spouse got the bump. You celebrated with a bottle of something nice. The next morning the math was different in a small way. The math was different in a small way for a long time.",
+      "effects": { "savings": "+3000", "burnout": "-1" }
+    },
+    {
+      "id": "evt-hp-spouse-layoff",
+      "pool": "homeschool-parent",
+      "era": ["rebound"],
+      "tags": ["family", "money", "era"],
+      "weight": 0.4,
+      "trigger": { "month": ">=36" },
+      "title": "A package on the table.",
+      "body": "Your spouse came home with a folder. Not a bad folder. A folder. They sat at the kitchen table and didn't open it for forty minutes. You did not say anything for the forty minutes. You sat with them.",
+      "effects": { "savings": "-2000", "burnout": "+4", "health": "-1" }
+    },
+    {
+      "id": "evt-hp-rebound-school-friends-return",
+      "pool": "homeschool-parent",
+      "era": ["rebound"],
+      "tags": ["community", "era"],
+      "weight": 0.6,
+      "title": "Three less cars on the street.",
+      "body": "By the time you walked the kids out Tuesday, three of the families in your circle had sent theirs back to brick-and-mortar. You'd known this was coming. The morning still felt different. You stood on the porch for a full extra minute.",
+      "effects": { "network": "-2", "burnout": "+1" }
+    },
+    {
+      "id": "evt-hp-rebound-comp-jump",
+      "pool": "homeschool-parent",
+      "era": ["rebound"],
+      "tags": ["money", "era", "lucky"],
+      "weight": 0.5,
+      "title": "Comp adjustment.",
+      "body": "Your spouse's company emailed a 'market adjustment' note. The base went up. The line about 'reflecting market realities' read, this year, like good news. You let it.",
+      "effects": { "savings": "+2400", "burnout": "-1" }
+    },
+    {
+      "id": "evt-hp-ai-shift-grocery-screen",
+      "pool": "homeschool-parent",
+      "era": ["ai-shift"],
+      "tags": ["era"],
+      "weight": 0.5,
+      "title": "The cashier-less line.",
+      "body": "The store rebuilt itself over a weekend. Hazel scanned all the things while you bagged. Bram pointed at the screen and said 'this is faster.' He was, you noted, correct.",
+      "effects": { "burnout": "-1" }
+    },
+    {
+      "id": "evt-hp-ai-shift-essay-question",
+      "pool": "homeschool-parent",
+      "era": ["ai-shift"],
+      "tags": ["era", "teaching"],
+      "weight": 0.5,
+      "trigger": { "month": ">=66" },
+      "title": "The essay sounded different.",
+      "body": "Hazel's essay used a phrase she didn't say out loud. You didn't accuse. You asked her to read it back. She did, slowly, and stopped at the phrase. She said 'okay, I rewrote it with help.' You said thank you. You both agreed on a rule. Then you agreed on a different rule the next week.",
+      "effects": { "technicalSkill": "+1", "burnout": "+2" }
+    },
+    {
+      "id": "evt-hp-ai-shift-spouse-tool",
+      "pool": "homeschool-parent",
+      "era": ["ai-shift"],
+      "tags": ["era", "family"],
+      "weight": 0.4,
+      "title": "Your spouse's workflow, halved.",
+      "body": "Your spouse came home and said 'the thing that took me a day takes me an hour now.' They were not sure if this was good for them. You weren't sure either. You did the dishes together that night and didn't say anything more about it.",
+      "effects": { "burnout": "+1", "health": "+1" }
+    },
+    {
+      "id": "evt-hp-ai-shift-evangelist-parent",
+      "pool": "homeschool-parent",
+      "era": ["ai-shift"],
+      "tags": ["era", "community", "humor"],
+      "weight": 0.5,
+      "title": "The co-op's new convert.",
+      "body": "A co-op parent has, this week, recommended the new tutor in three separate channels. You've tried it. It's fine. You don't have the heart to tell her she's the fifth person to mention it.",
+      "effects": { "burnout": "+1" }
+    },
+    {
+      "id": "evt-hp-uncertain-college-anxiety",
+      "pool": "homeschool-parent",
+      "era": ["uncertain-future"],
+      "tags": ["era", "family"],
+      "weight": 0.6,
+      "trigger": { "month": ">=96" },
+      "title": "The college number.",
+      "body": "A news article quoted the average sticker price. You stared at the number for a minute. Then you closed the tab. Then you opened a different tab and did the actual math. The math was, somehow, slightly better than the article had implied. Not much.",
+      "effects": { "burnout": "+2", "savings": "-100" }
+    },
+    {
+      "id": "evt-hp-uncertain-spouse-search",
+      "pool": "homeschool-parent",
+      "era": ["uncertain-future"],
+      "tags": ["era", "family", "money"],
+      "weight": 0.5,
+      "trigger": { "month": ">=90" },
+      "title": "Your spouse, on the job market.",
+      "body": "They updated the resume Sunday. They told you the number of recruiter messages on Monday. The number was lower than two years ago. They said 'it's fine.' They are, you can tell, also looking inward at the same time. You let them.",
+      "effects": { "burnout": "+2", "savings": "-100" }
+    },
+    {
+      "id": "evt-hp-decade-photo",
+      "pool": "homeschool-parent",
+      "era": ["uncertain-future"],
+      "tags": ["era"],
+      "weight": 0.5,
+      "title": "A photo from 2020.",
+      "body": "You found it scrolling for something else. Hazel was six. Bram was three. You were standing in a kitchen you no longer have, holding a binder you no longer use. The version of you in the photo could not have predicted the version of you holding the phone.",
+      "effects": { "burnout": "-2" }
+    },
+    {
+      "id": "evt-hp-uncertain-becoming-mentor",
+      "pool": "homeschool-parent",
+      "era": ["uncertain-future"],
+      "tags": ["era", "community"],
+      "weight": 0.5,
+      "trigger": { "network": ">35" },
+      "title": "A new parent, asking.",
+      "body": "A first-year homeschool mom in the co-op asked if you'd grab coffee. She wanted to know how you did it. You told her the truth. Some weeks great, some weeks survival. She laughed, the relieved kind. You drove home thinking about who'd told you that, eight years ago.",
+      "effects": { "reputation": "+2", "network": "+2" }
+    },
+    {
+      "id": "evt-hp-stat-low-savings-card",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["money", "stress"],
+      "weight": 0.6,
+      "trigger": { "savings": "<800" },
+      "title": "Card, declined.",
+      "body": "At the grocery checkout, with Bram in the cart. The cashier said nothing. You used a different card. You stood in the parking lot for a minute before you started the engine. Bram asked why you were sad. You said you weren't sad. He let it go. You felt that.",
+      "effects": { "burnout": "+3", "health": "-1" }
+    },
+    {
+      "id": "evt-hp-stat-low-health-cold",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["stress"],
+      "weight": 0.6,
+      "trigger": { "health": "<40" },
+      "title": "A cold the kids gave you.",
+      "body": "It started Sunday. By Tuesday you were teaching from the couch under a blanket. Hazel made cereal for Bram both mornings. She also made some for you. The bowl had more milk than cereal. You ate it.",
+      "effects": { "burnout": "-2", "health": "+3", "reputation": "+1" }
+    },
+    {
+      "id": "evt-hp-stat-high-burnout-doctor",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["stress"],
+      "weight": 0.7,
+      "trigger": { "burnout": ">80" },
+      "title": "A doctor's visit.",
+      "body": "You went in for one thing. The doctor asked about sleep, then about how it had been at home. You answered honestly for the first time in months. She wrote a referral. You took it.",
+      "effects": { "burnout": "-5", "health": "+2", "savings": "-200" }
+    },
+    {
+      "id": "evt-hp-stat-high-network-intro",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["lucky"],
+      "weight": 0.5,
+      "trigger": { "network": ">50" },
+      "title": "An introduction.",
+      "body": "A co-op friend connected you to a mom across town who'd been homeschooling for fifteen years. You met for coffee. You took two pages of notes. You drove home thinking you'd been waiting a long time to talk to someone who'd been doing this longer than you.",
+      "effects": { "network": "+4", "reputation": "+2" }
+    },
+    {
+      "id": "evt-hp-toddler-marker-on-wall",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["humor", "flavor"],
+      "weight": 0.5,
+      "title": "Marker. Permanent. The wall.",
+      "body": "You discovered it Friday. The wall does not look better. The marker is in fact permanent. Bram looked guilty in advance, again. You said 'we'll repaint it together this weekend.' You did. The patch is slightly different. You did not mention it.",
+      "effects": { "savings": "-40", "burnout": "+2" }
+    },
+    {
+      "id": "evt-hp-good-physical",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["lucky"],
+      "weight": 0.4,
+      "trigger": { "month": ">=12" },
+      "title": "An annual checkup.",
+      "body": "You went to your own doctor for the first time in a year and a half. The blood work was unremarkable. Unremarkable is the best kind of result. You scheduled the next one before you left. You meant it this time.",
+      "effects": { "health": "+3", "burnout": "-2" }
     }
   ]
 }
