@@ -15,6 +15,8 @@ import { resetMeta } from '../state/slices/metaSlice';
 import { clearPersistedState } from '../state/persistence';
 import { CreditsScreen } from './CreditsScreen';
 import { StatIcon, type StatIconName } from './icons/StatIcon';
+import { DecisionIcon } from './icons/modalIcons';
+import type { Palette } from '../types/careerPack';
 import { statLabelFor } from '../content/statLabels';
 import type { Manifest, Palette } from '../types/careerPack';
 import type { StatsState } from '../state/slices/statsSlice';
@@ -232,7 +234,7 @@ function ScorePanel({
 
 interface DecisionByYear {
   year: number;
-  rows: { monthId: number; prompt: string | undefined; optionTaken: string }[];
+  rows: { monthId: number; decisionId: string; prompt: string | undefined; optionTaken: string }[];
 }
 
 const DecisionTimeline = forwardRef<
@@ -277,6 +279,7 @@ const DecisionTimeline = forwardRef<
           {y.rows.map((r, i) => (
             <div
               key={i}
+              data-decision-id={r.decisionId}
               style={{
                 display: 'flex',
                 alignItems: 'flex-start',
@@ -286,6 +289,10 @@ const DecisionTimeline = forwardRef<
                 lineHeight: 1.45,
               }}
             >
+              {/* Decision icon — leftmost visual anchor per row. Renders the
+                  placeholder "?" for unregistered ids; real art swaps in as
+                  the registry fills. Sized at 32 for the timeline density. */}
+              <DecisionIcon decisionId={r.decisionId} palette={palette} size={32} />
               <span
                 style={{
                   color: palette.inkMuted,
@@ -569,6 +576,7 @@ export function EndgameScreen() {
           .sort((a, b) => a.monthId - b.monthId)
           .map((d) => ({
             monthId: d.monthId,
+            decisionId: d.decisionId,
             prompt: decisionById.get(d.decisionId)?.prompt,
             optionTaken: d.optionTaken,
           })),
