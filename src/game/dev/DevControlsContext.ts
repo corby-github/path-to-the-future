@@ -16,6 +16,7 @@ export interface DevControls {
   // subsequent room mount (issue #31). Affects future room mounts only —
   // current room's placements are frozen at mount. Toggle off to return
   // to natural weighted placement.
+  forceArcade: boolean;
   setForceArcade: (value: boolean) => void;
 }
 
@@ -26,6 +27,7 @@ const DEFAULT: DevControls = {
   setForcedLayout: () => {},
   eventMode: 'auto',
   setEventMode: () => {},
+  forceArcade: false,
   setForceArcade: () => {},
 };
 

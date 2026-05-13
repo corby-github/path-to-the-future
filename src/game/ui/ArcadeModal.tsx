@@ -30,6 +30,7 @@ const ARCADE_VARIANTS: ReadonlyArray<{ id: MinigameVariant; label: string; blurb
   { id: 'blackjack',       label: 'Blackjack',       blurb: 'Hit, stand, walk out even.' },
   { id: 'code-review',     label: 'Code Review',     blurb: 'Spot the bug. Beat the panel.' },
   { id: 'reaction-sprint', label: 'Reaction Sprint', blurb: 'Lock the stack. Hit the column.' },
+  { id: 'pong',            label: 'Pong',            blurb: 'Two paddles. One ball. First to five.' },
 ];
 
 interface Props {
@@ -323,13 +324,16 @@ export function ArcadeModal({ interactable, onClose }: Props) {
               onComplete={handleMinigameComplete}
             />
             <p
+              data-region="arcade-exit-hint"
               style={{
-                fontSize: 11,
-                letterSpacing: '0.08em',
+                fontSize: 12,
+                fontWeight: 600,
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                color: palette.surface,
+                position: 'relative',
+                top:-5,
+                color: palette.background,
                 margin: 0,
-                opacity: 0.85,
               }}
             >
               Esc to walk away from the cabinet
