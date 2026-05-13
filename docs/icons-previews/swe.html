@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Software Engineering — icons preview</title>
+<style>
+  :root {
+    --ink-muted: #888;
+    --surface: #cfc8b6;
+    --accent: #8b6240;
+  }
+  * { box-sizing: border-box; }
+  body { font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; margin: 0; padding: 0; }
+  main { max-width: 1200px; margin: 0 auto; padding: 0 24px 64px; }
+  .page-header { max-width: 1200px; margin: 0 auto; padding: 32px 24px 16px; }
+  .page-header h1 { margin: 0 0 4px; font-size: 28px; letter-spacing: -0.01em; }
+  .page-header .subtitle { color: var(--ink-muted); font-weight: 400; }
+  .page-header .meta { color: var(--ink-muted); font-size: 13px; margin: 4px 0; }
+  .page-header code { background: var(--surface); padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+  .cat-nav { font-size: 13px; color: var(--ink-muted); margin-top: 8px; }
+  .cat-nav a { color: var(--accent); text-decoration: none; }
+  .cat-nav a:hover { text-decoration: underline; }
+  .icon-section { margin: 32px 0; }
+  .cat-header { border-top: 2px solid var(--accent); padding: 12px 0; display: flex; align-items: baseline; justify-content: space-between; }
+  .cat-header h2 { margin: 0; font-size: 20px; }
+  .cat-count { color: var(--ink-muted); font-size: 12px; }
+  .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 12px; }
+  .icon-card { display: flex; gap: 12px; padding: 12px; background: rgba(255,255,255,0.5); border: 1px solid var(--surface); border-radius: 6px; align-items: flex-start; }
+  .icon-frame { flex-shrink: 0; }
+  .icon-frame svg { display: block; }
+  .icon-meta { flex: 1; min-width: 0; }
+  .icon-meta code.id { display: block; font-family: ui-monospace, monospace; font-size: 11px; color: var(--ink-muted); }
+  .icon-meta code.comp { display: block; font-family: ui-monospace, monospace; font-size: 12px; font-weight: 600; margin: 2px 0; }
+  .icon-meta .desc { margin: 4px 0 0; font-size: 13px; line-height: 1.4; }
+  .missing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .missing h3 { font-size: 15px; margin: 8px 0; }
+  .missing ul { margin: 0; padding-left: 18px; font-family: ui-monospace, monospace; font-size: 12px; }
+  .all-covered { padding: 12px; background: rgba(122,143,92,0.15); border: 1px solid #7a8f5c; border-radius: 4px; }
+  .warn { background: rgba(220,150,50,0.15); border: 1px solid var(--accent); border-radius: 4px; padding: 12px; }
+  .muted { color: var(--ink-muted); font-size: 13px; }
+  .page-footer { max-width: 1200px; margin: 32px auto; padding: 16px 24px; color: var(--ink-muted); font-size: 13px; border-top: 1px solid var(--surface); }
+</style>
+</head>
+<body style="background:#f5f1e8;color:#2c2c2c">
+<header class="page-header">
+  <h1>Software Engineering <span class="subtitle">— icons preview</span></h1>
+  <p class="meta">pack id: <code>software-engineering</code> · generated 2026-05-13 10:39 UTC</p>
+  <p class="meta">75 registered icons · 35 decisions + 39 events in pack · rendered with the pack's own palette.</p>
+  <nav class="cat-nav">
+    <a href="#cat-decisions-universal">Decisions — universal pool</a> · <a href="#cat-decisions-pack">Decisions — pack-specific</a> · <a href="#cat-events-universal">Events — universal pool</a> · <a href="#cat-events-pack">Events — pack-specific</a> · <a href="#cat-events-era">Events — era-anchored</a> · <a href="#cat-events-stat">Events — stat-triggered</a> · <a href="#cat-finale">Finale</a>
+    · <a href="#cat-minigames">Minigames</a> · <a href="#cat-placeholder">Placeholder</a> · <a href="#cat-missing">Missing</a>
+  </nav>
+</header>
+<main>
+  
+        <section class="icon-section" id="cat-decisions-universal">
+          <header class="cat-header"><h2>Decisions — universal pool</h2><span class="cat-count">19</span></header>
+          <div class="icon-grid">
+        <div class="icon-card" data-id="univ-bury-vs-balance">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-bury-vs-balance" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Bury in work or balance"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="40" y1="22" x2="40" y2="58"></line><line x1="20" y1="30" x2="60" y2="30"></line><path d="M 20 30 L 14 42"></path><path d="M 20 30 L 26 42"></path><path d="M 12 42 Q 20 50 28 42"></path><path d="M 60 30 L 54 42"></path><path d="M 60 30 L 66 42"></path><path d="M 52 42 Q 60 50 68 42"></path><circle cx="40" cy="58" r="2.5" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-bury-vs-balance</code>
+            <code class="comp">IconScale</code>
+            <p class="desc">balance scale — weighing two paths</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-buy-car">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-buy-car" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Buy a car"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="14" y="40" width="52" height="14" rx="3"></rect><path d="M 22 40 L 28 30 H 52 L 58 40"></path><circle cx="24" cy="54" r="6" fill="#2c2c2c" stroke="none"></circle><circle cx="56" cy="54" r="6" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-buy-car</code>
+            <code class="comp">IconCar</code>
+            <p class="desc">three-quarter sedan — buying a car</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-buy-house-or-rent">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-buy-house-or-rent" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Buy house or rent"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 16 42 L 40 22 L 64 42"></path><path d="M 22 42 V 62 H 58 V 42"></path><rect x="36" y="48" width="8" height="14"></rect><rect x="26" y="47" width="6" height="6"></rect></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-buy-house-or-rent</code>
+            <code class="comp">IconHouse</code>
+            <p class="desc">simple house outline — buy vs. keep renting</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-cash-out-pto">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-cash-out-pto" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Cash out PTO"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><ellipse cx="40" cy="62" rx="22" ry="4"></ellipse><line x1="40" y1="58" x2="40" y2="38"></line><path d="M 40 38 Q 30 32 22 36"></path><path d="M 40 38 Q 50 32 58 36"></path><path d="M 40 38 Q 32 26 28 18"></path><path d="M 40 38 Q 48 26 52 18"></path><path d="M 40 38 Q 40 24 38 14"></path><circle cx="42" cy="38" r="2" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-cash-out-pto</code>
+            <code class="comp">IconPalmTree</code>
+            <p class="desc">palm tree on an island — cashing out PTO</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-charity-donation">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-charity-donation" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Charity donation"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 40 28 Q 32 20 26 26 Q 20 34 40 48 Q 60 34 54 26 Q 48 20 40 28 Z"></path><path d="M 20 52 Q 30 62 40 62 Q 50 62 60 52"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-charity-donation</code>
+            <code class="comp">IconHeartHands</code>
+            <p class="desc">hands cradling a heart — charity donation</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-date-app-match">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-date-app-match" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Date app match"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="28" y="16" width="24" height="48" rx="3"></rect><line x1="28" y1="24" x2="52" y2="24"></line><line x1="28" y1="56" x2="52" y2="56"></line><path d="M 40 34 Q 36 30 32 34 Q 30 38 40 46 Q 50 38 48 34 Q 44 30 40 34 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-date-app-match</code>
+            <code class="comp">IconPhoneHeart</code>
+            <p class="desc">phone with a heart — a match on the app</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-dog">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-dog" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Get a dog"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><ellipse cx="40" cy="54" rx="14" ry="10"></ellipse><ellipse cx="22" cy="36" rx="5" ry="6"></ellipse><ellipse cx="34" cy="28" rx="5" ry="6"></ellipse><ellipse cx="46" cy="28" rx="5" ry="6"></ellipse><ellipse cx="58" cy="36" rx="5" ry="6"></ellipse></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-dog</code>
+            <code class="comp">IconPawPrint</code>
+            <p class="desc">paw print — adopting a dog</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-friends-wedding-far">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-friends-wedding-far" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Friend&#x27;s wedding far"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="30" cy="40" r="14"></circle><circle cx="50" cy="40" r="14"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-friends-wedding-far</code>
+            <code class="comp">IconRings</code>
+            <p class="desc">two interlocked wedding bands — friend&#39;s wedding far away</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-gym-membership">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-gym-membership" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Gym membership"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="26" y1="40" x2="54" y2="40" stroke-width="4"></line><rect x="14" y="30" width="8" height="20" fill="#2c2c2c" stroke="none"></rect><rect x="58" y="30" width="8" height="20" fill="#2c2c2c" stroke="none"></rect><line x1="14" y1="26" x2="14" y2="54"></line><line x1="66" y1="26" x2="66" y2="54"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-gym-membership</code>
+            <code class="comp">IconDumbbell</code>
+            <p class="desc">single dumbbell — gym membership decision</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-mlm-pitch">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-mlm-pitch" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="MLM pitch"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 18 24 H 58 Q 64 24 64 30 V 44 Q 64 50 58 50 H 36 L 28 58 V 50 H 24 Q 18 50 18 44 Z"></path><text x="41" y="45" text-anchor="middle" font-family="inherit" font-size="20" font-weight="700" fill="#2c2c2c" stroke="none">$</text></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-mlm-pitch</code>
+            <code class="comp">IconChatBubbleMoney</code>
+            <p class="desc">speech bubble with dollar sign — MLM pitch from a friend</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-move-cities-for-job">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-move-cities-for-job" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Move cities for job"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="18" y="32" width="44" height="28" rx="3"></rect><path d="M 32 32 V 26 Q 32 22 36 22 H 44 Q 48 22 48 26 V 32"></path><line x1="38" y1="42" x2="42" y2="42" stroke-width="2"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-move-cities-for-job</code>
+            <code class="comp">IconSuitcase</code>
+            <p class="desc">standing suitcase — moving cities for the job</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-parent-needs-help">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-parent-needs-help" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Parent needs help"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="28" y="16" width="24" height="48" rx="3"></rect><line x1="28" y1="24" x2="52" y2="24"></line><line x1="28" y1="56" x2="52" y2="56"></line><path d="M 37 34 H 43 V 38 H 47 V 44 H 43 V 48 H 37 V 44 H 33 V 38 H 37 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-parent-needs-help</code>
+            <code class="comp">IconPhoneCross</code>
+            <p class="desc">phone with a small cross — parent needs help</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-recruiter-call">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-recruiter-call" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Recruiter call"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="26" y1="26" x2="48" y2="48" stroke-width="7"></line><circle cx="22" cy="22" r="10" fill="#f5f1e8"></circle><circle cx="52" cy="52" r="10" fill="#f5f1e8"></circle><path d="M 60 20 Q 68 28 60 36" stroke-width="2"></path><path d="M 66 12 Q 78 28 66 44" stroke-width="2"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-recruiter-call</code>
+            <code class="comp">IconRecruiterCall</code>
+            <p class="desc">classic barbell handset — a cold recruiter call</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-roommate-buyout">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-roommate-buyout" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Roommate buyout"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="20" y="18" width="26" height="48" rx="1"></rect><circle cx="40" cy="42" r="2" fill="#2c2c2c" stroke="none"></circle><circle cx="56" cy="36" r="5"></circle><line x1="56" y1="41" x2="56" y2="54" stroke-width="2"></line><line x1="56" y1="48" x2="62" y2="48"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-roommate-buyout</code>
+            <code class="comp">IconDoorKey</code>
+            <p class="desc">door with a key — roommate buyout</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-side-project">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-side-project" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Side project"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="20" y="24" width="40" height="26" rx="2"></rect><path d="M 14 50 H 66 L 60 58 H 20 Z"></path><path d="M 40 30 L 42 36 L 48 38 L 42 40 L 40 46 L 38 40 L 32 38 L 38 36 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-side-project</code>
+            <code class="comp">IconLaptopSpark</code>
+            <p class="desc">laptop with a spark glyph — side project spin-up</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-standup-too-long">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-standup-too-long" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Standup too long"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="22" cy="30" r="5"></circle><path d="M 16 56 V 42 Q 16 38 22 38 Q 28 38 28 42 V 56"></path><circle cx="40" cy="30" r="5"></circle><path d="M 34 56 V 42 Q 34 38 40 38 Q 46 38 46 42 V 56"></path><circle cx="58" cy="30" r="5"></circle><path d="M 52 56 V 42 Q 52 38 58 38 Q 64 38 64 42 V 56"></path><circle cx="36" cy="18" r="1.5" fill="#2c2c2c" stroke="none"></circle><circle cx="40" cy="18" r="1.5" fill="#2c2c2c" stroke="none"></circle><circle cx="44" cy="18" r="1.5" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-standup-too-long</code>
+            <code class="comp">IconStandupTooLong</code>
+            <p class="desc">clock with speech-bubble dots — meeting that drags</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-stay-late-vs-log-off">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-stay-late-vs-log-off" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Stay late or log off"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="40" cy="40" r="22"></circle><line x1="40" y1="40" x2="29" y2="34"></line><line x1="40" y1="40" x2="40" y2="58"></line><line x1="40" y1="20" x2="40" y2="22.5"></line><line x1="60" y1="40" x2="57.5" y2="40"></line><line x1="40" y1="60" x2="40" y2="57.5"></line><line x1="20" y1="40" x2="22.5" y2="40"></line><circle cx="40" cy="40" r="2.5" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-stay-late-vs-log-off</code>
+            <code class="comp">IconStayLate</code>
+            <p class="desc">clock with crescent moon — late hours, staying past close</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-therapy-first-session">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-therapy-first-session" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="First therapy session"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="18" y="28" width="44" height="18" rx="3"></rect><rect x="14" y="42" width="52" height="14" rx="3"></rect><line x1="18" y1="56" x2="18" y2="62"></line><line x1="62" y1="56" x2="62" y2="62"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-therapy-first-session</code>
+            <code class="comp">IconCouch</code>
+            <p class="desc">low couch — first therapy session</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="univ-vegas-bonus-vs-rest">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="univ-vegas-bonus-vs-rest" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Vegas bonus or rest"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="20" y="20" width="40" height="40" rx="4"></rect><circle cx="30" cy="30" r="2.5" fill="#2c2c2c" stroke="none"></circle><circle cx="50" cy="30" r="2.5" fill="#2c2c2c" stroke="none"></circle><circle cx="40" cy="40" r="2.5" fill="#2c2c2c" stroke="none"></circle><circle cx="30" cy="50" r="2.5" fill="#2c2c2c" stroke="none"></circle><circle cx="50" cy="50" r="2.5" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">univ-vegas-bonus-vs-rest</code>
+            <code class="comp">IconDie</code>
+            <p class="desc">six-pip die — bet-it-all bonus weekend</p>
+          </div>
+        </div></div>
+        </section>
+
+        <section class="icon-section" id="cat-decisions-pack">
+          <header class="cat-header"><h2>Decisions — pack-specific</h2><span class="cat-count">16</span></header>
+          <div class="icon-grid">
+        <div class="icon-card" data-id="swe-2am-idea">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-2am-idea" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="2am idea"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 40 18 Q 28 18 26 30 Q 26 38 33 42 V 48 H 47 V 42 Q 54 38 54 30 Q 52 18 40 18 Z"></path><path d="M 34 32 L 46 38 M 46 32 L 34 38" stroke-width="1.5"></path><line x1="34" y1="52" x2="46" y2="52" stroke-width="2"></line><line x1="36" y1="56" x2="44" y2="56" stroke-width="2"></line><line x1="18" y1="28" x2="22" y2="28" stroke-width="1.5"></line><line x1="58" y1="28" x2="62" y2="28" stroke-width="1.5"></line><line x1="22" y1="18" x2="26" y2="20" stroke-width="1.5"></line><line x1="58" y1="18" x2="54" y2="20" stroke-width="1.5"></line><line x1="40" y1="10" x2="40" y2="14" stroke-width="1.5"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-2am-idea</code>
+            <code class="comp">IconLightbulbIdea</code>
+            <p class="desc">lightbulb with rays — a 2am idea worth keeping</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-architecture-review-defend">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-architecture-review-defend" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Architecture review"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="12" y="18" width="56" height="36" rx="2"></rect><line x1="20" y1="54" x2="20" y2="62"></line><line x1="60" y1="54" x2="60" y2="62"></line><rect x="18" y="28" width="12" height="8"></rect><rect x="34" y="28" width="12" height="8"></rect><rect x="50" y="28" width="12" height="8"></rect><line x1="30" y1="32" x2="34" y2="32" stroke-width="1.5"></line><line x1="46" y1="32" x2="50" y2="32" stroke-width="1.5"></line><line x1="24" y1="48" x2="24" y2="38" stroke-width="1.5"></line><path d="M 22 40 L 24 38 L 26 40" stroke-width="1.5"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-architecture-review-defend</code>
+            <code class="comp">IconWhiteboardSystem</code>
+            <p class="desc">whiteboard with a system diagram — architecture review</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-coder-vs-architect">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-coder-vs-architect" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Coder or architect"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 40 60 V 40" stroke-width="3"></path><path d="M 40 40 L 22 20" stroke-width="3"></path><path d="M 40 40 L 58 20" stroke-width="3"></path><path d="M 22 20 L 28 22 M 22 20 L 24 26" stroke-width="3"></path><path d="M 58 20 L 52 22 M 58 20 L 56 26" stroke-width="3"></path><circle cx="40" cy="62" r="3" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-coder-vs-architect</code>
+            <code class="comp">IconForkedPath</code>
+            <p class="desc">branching path — coder vs. architect track</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-conference-talk-cfp">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-conference-talk-cfp" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Conference talk CFP"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="32" y="16" width="16" height="28" rx="8"></rect><path d="M 24 38 Q 24 52 40 52 Q 56 52 56 38"></path><line x1="40" y1="52" x2="40" y2="62"></line><line x1="30" y1="62" x2="50" y2="62" stroke-width="2"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-conference-talk-cfp</code>
+            <code class="comp">IconMicrophone</code>
+            <p class="desc">microphone on stand — conference CFP</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-framework-rewrite-vs-patch">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-framework-rewrite-vs-patch" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Framework rewrite vs patch"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="22,28 12,40 22,52" stroke-width="3"></polyline><polyline points="58,28 68,40 58,52" stroke-width="3"></polyline><line x1="48" y1="22" x2="32" y2="58" stroke-width="3"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-framework-rewrite-vs-patch</code>
+            <code class="comp">IconCodeBrackets</code>
+            <p class="desc">angle brackets — framework rewrite vs. patch</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-friday-deploy">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-friday-deploy" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Friday deploy"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 40 12 Q 32 24 32 38 V 50 H 48 V 38 Q 48 24 40 12 Z"></path><circle cx="40" cy="30" r="4"></circle><path d="M 32 44 L 22 56 L 32 52 Z"></path><path d="M 48 44 L 58 56 L 48 52 Z"></path><path d="M 36 50 Q 36 62 40 66 Q 44 62 44 50" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-friday-deploy</code>
+            <code class="comp">IconRocket</code>
+            <p class="desc">rocket lifting off — Friday deploy</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-hackathon-weekend">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-hackathon-weekend" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Hackathon weekend"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="18" y="26" width="38" height="24" rx="2"></rect><path d="M 12 50 H 62 L 56 58 H 18 Z"></path><path d="M 40 30 L 32 42 H 38 L 36 48 L 44 38 H 38 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-hackathon-weekend</code>
+            <code class="comp">IconHackathon</code>
+            <p class="desc">laptop with energy lines — weekend hackathon</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-intern-late-review">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-intern-late-review" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Intern late review"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="24" cy="26" r="6"></circle><path d="M 16 60 V 40 Q 16 34 24 34 Q 32 34 32 40 V 60"></path><circle cx="56" cy="40" r="12"></circle><line x1="56" y1="40" x2="56" y2="30" stroke-width="2"></line><line x1="56" y1="40" x2="64" y2="40" stroke-width="2"></line><circle cx="56" cy="40" r="1.5" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-intern-late-review</code>
+            <code class="comp">IconInternClock</code>
+            <p class="desc">small figure with a clock — late-night intern review</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-masters-degree">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-masters-degree" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Master&#x27;s degree"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 12 32 L 40 22 L 68 32 L 40 42 Z"></path><path d="M 22 36 V 50 Q 40 56 58 50 V 36"></path><line x1="40" y1="32" x2="58" y2="42" stroke-width="1.5"></line><circle cx="58" cy="44" r="2.5" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-masters-degree</code>
+            <code class="comp">IconMortarboard</code>
+            <p class="desc">graduation cap — master&#39;s degree program</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-mentor-junior">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-mentor-junior" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Mentor a junior"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="22" cy="26" r="6"></circle><path d="M 14 58 V 42 Q 14 36 22 36 Q 30 36 30 42 V 58"></path><circle cx="56" cy="32" r="5"></circle><path d="M 49 58 V 44 Q 49 39 56 39 Q 63 39 63 44 V 58"></path><path d="M 40 40 L 41 44 L 45 45 L 41 46 L 40 50 L 39 46 L 35 45 L 39 44 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-mentor-junior</code>
+            <code class="comp">IconMentorJunior</code>
+            <p class="desc">tall and short figure side by side — mentor pairing</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-oncall-volunteer">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-oncall-volunteer" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Oncall volunteer"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="20" y="22" width="32" height="36" rx="3"></rect><rect x="24" y="26" width="24" height="14"></rect><circle cx="28" cy="50" r="1.5" fill="#2c2c2c" stroke="none"></circle><circle cx="36" cy="50" r="1.5" fill="#2c2c2c" stroke="none"></circle><circle cx="44" cy="50" r="1.5" fill="#2c2c2c" stroke="none"></circle><line x1="52" y1="22" x2="60" y2="14" stroke-width="1.5"></line><circle cx="62" cy="12" r="3" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-oncall-volunteer</code>
+            <code class="comp">IconPager</code>
+            <p class="desc">pager with antenna — volunteering for on-call</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-opensource-maintainer">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-opensource-maintainer" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Open-source maintainer"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 40 22 Q 32 14 24 22 Q 18 32 40 52 Q 62 32 56 22 Q 48 14 40 22 Z"></path><polyline points="32,30 28,34 32,38" stroke-width="1.5"></polyline><polyline points="48,30 52,34 48,38" stroke-width="1.5"></polyline><line x1="44" y1="28" x2="36" y2="40" stroke-width="1.5"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-opensource-maintainer</code>
+            <code class="comp">IconCodeHeart</code>
+            <p class="desc">heart formed from code brackets — open-source maintainer</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-people-manager-vs-tech-lead">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-people-manager-vs-tech-lead" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="People manager or tech lead"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="40" cy="22" r="5"></circle><line x1="40" y1="28" x2="40" y2="38"></line><line x1="22" y1="38" x2="58" y2="38"></line><line x1="22" y1="38" x2="22" y2="48"></line><line x1="40" y1="38" x2="40" y2="48"></line><line x1="58" y1="38" x2="58" y2="48"></line><circle cx="22" cy="54" r="4"></circle><circle cx="40" cy="54" r="4"></circle><circle cx="58" cy="54" r="4"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-people-manager-vs-tech-lead</code>
+            <code class="comp">IconOrgChart</code>
+            <p class="desc">three-node hierarchy — people manager vs. tech lead</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-stackoverflow-mentor">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-stackoverflow-mentor" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Mentor on Stack Overflow"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 14 22 H 60 Q 66 22 66 28 V 46 Q 66 52 60 52 H 36 L 26 60 V 52 H 20 Q 14 52 14 46 Z"></path><line x1="22" y1="32" x2="50" y2="32" stroke-width="2"></line><line x1="22" y1="38" x2="42" y2="38" stroke-width="2"></line><line x1="22" y1="44" x2="48" y2="44" stroke-width="2"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-stackoverflow-mentor</code>
+            <code class="comp">IconStackoverflowAnswer</code>
+            <p class="desc">speech bubble with rising arrow — answering on the public Q&amp;A</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-startup-offer">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-startup-offer" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Startup offer"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="14" y="30" width="48" height="32" rx="3"></rect><path d="M 28 30 V 24 Q 28 20 32 20 H 44 Q 48 20 48 24 V 30"></path><line x1="34" y1="44" x2="42" y2="44" stroke-width="2"></line><path d="M 64 16 L 65 20 L 69 21 L 65 22 L 64 26 L 63 22 L 59 21 L 63 20 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-startup-offer</code>
+            <code class="comp">IconBriefcaseSpark</code>
+            <p class="desc">briefcase with a spark — startup offer</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="swe-throw-colleague-under-bus">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="swe-throw-colleague-under-bus" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Throw colleague under the bus"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="14" y="24" width="48" height="28" rx="4"></rect><rect x="18" y="28" width="9" height="8"></rect><rect x="29" y="28" width="9" height="8"></rect><rect x="40" y="28" width="9" height="8"></rect><rect x="51" y="28" width="7" height="8"></rect><rect x="18" y="40" width="6" height="12"></rect><circle cx="24" cy="56" r="5" fill="#2c2c2c" stroke="none"></circle><circle cx="56" cy="56" r="5" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">swe-throw-colleague-under-bus</code>
+            <code class="comp">IconBus</code>
+            <p class="desc">school bus from the side — throwing a colleague under</p>
+          </div>
+        </div></div>
+        </section>
+
+        <section class="icon-section" id="cat-events-universal">
+          <header class="cat-header"><h2>Events — universal pool</h2><span class="cat-count">16</span></header>
+          <div class="icon-grid">
+        <div class="icon-card" data-id="evt-univ-ai-tooling">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-ai-tooling" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="AI tooling"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="32" cy="42" r="11"></circle><circle cx="32" cy="42" r="5"></circle><line x1="32" y1="28" x2="32" y2="32" stroke-width="3"></line><line x1="32" y1="52" x2="32" y2="56" stroke-width="3"></line><line x1="18" y1="42" x2="22" y2="42" stroke-width="3"></line><line x1="42" y1="42" x2="46" y2="42" stroke-width="3"></line><line x1="23" y1="33" x2="26" y2="36" stroke-width="3"></line><line x1="41" y1="33" x2="38" y2="36" stroke-width="3"></line><line x1="23" y1="51" x2="26" y2="48" stroke-width="3"></line><line x1="41" y1="51" x2="38" y2="48" stroke-width="3"></line><path d="M 58 18 L 60 24 L 66 26 L 60 28 L 58 34 L 56 28 L 50 26 L 56 24 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-ai-tooling</code>
+            <code class="comp">IconGearSparkle</code>
+            <p class="desc">gear with a spark — new AI tooling on the team</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-bank-error">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-bank-error" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Bank error"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><text x="26" y="52" text-anchor="middle" font-family="inherit" font-size="34" font-weight="700" fill="#2c2c2c" stroke="none">$</text><text x="54" y="52" text-anchor="middle" font-family="inherit" font-size="34" font-weight="700" fill="#2c2c2c" stroke="none">?</text></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-bank-error</code>
+            <code class="comp">IconDollarQuestion</code>
+            <p class="desc">dollar sign with a question mark — bank error in your favor</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-deleted-tab">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-deleted-tab" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Deleted tab"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 14 30 H 38 L 42 22 L 64 22 V 30"></path><rect x="14" y="30" width="52" height="32" rx="1"></rect><line x1="28" y1="40" x2="52" y2="56" stroke-width="3.5"></line><line x1="52" y1="40" x2="28" y2="56" stroke-width="3.5"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-deleted-tab</code>
+            <code class="comp">IconBrowserTabX</code>
+            <p class="desc">browser window with a closed tab — deleted the wrong tab</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-flight-delay">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-flight-delay" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Flight delay"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 14 34 L 30 34 L 26 26 H 30 L 38 34 H 50 Q 54 34 54 36 Q 54 38 50 38 H 38 L 30 46 H 26 L 30 38 H 14 Q 12 36 14 34 Z"></path><circle cx="58" cy="54" r="8"></circle><line x1="58" y1="54" x2="58" y2="48" stroke-width="1.5"></line><line x1="58" y1="54" x2="62" y2="54" stroke-width="1.5"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-flight-delay</code>
+            <code class="comp">IconAirplaneClock</code>
+            <p class="desc">airplane with a clock — flight delay</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-found-twenty">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-found-twenty" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Found twenty"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="12" y="28" width="56" height="24" rx="2"></rect><text x="40" y="47" text-anchor="middle" font-family="inherit" font-size="16" font-weight="700" fill="#2c2c2c" stroke="none">$20</text><circle cx="22" cy="36" r="2.5"></circle><circle cx="58" cy="36" r="2.5"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-found-twenty</code>
+            <code class="comp">IconCashFound</code>
+            <p class="desc">bill on the ground — found twenty dollars</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-good-physical">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-good-physical" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Good physical"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 40 22 Q 32 14 24 22 Q 18 32 40 54 Q 62 32 56 22 Q 48 14 40 22 Z"></path><path d="M 30 34 L 36 42 L 50 28" stroke-width="3.5"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-good-physical</code>
+            <code class="comp">IconHeartCheck</code>
+            <p class="desc">heart with a checkmark — good physical results</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-lost-wallet">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-lost-wallet" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Lost wallet"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="14" y="22" width="52" height="36" rx="3"></rect><line x1="14" y1="40" x2="66" y2="40"></line><line x1="22" y1="28" x2="44" y2="28" stroke-width="1.5"></line><line x1="22" y1="34" x2="44" y2="34" stroke-width="1.5"></line><line x1="48" y1="46" x2="60" y2="54" stroke-width="2"></line><line x1="60" y1="46" x2="48" y2="54" stroke-width="2"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-lost-wallet</code>
+            <code class="comp">IconLostWallet</code>
+            <p class="desc">wallet with motion lines — lost wallet</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-old-friend">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-old-friend" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Old friend"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="22" cy="34" r="6"></circle><path d="M 14 60 V 44 Q 14 38 22 38 Q 30 38 30 44 V 60"></path><circle cx="58" cy="34" r="6"></circle><path d="M 50 60 V 44 Q 50 38 58 38 Q 66 38 66 44 V 60"></path><path d="M 40 18 Q 36 14 32 18 Q 30 22 40 30 Q 50 22 48 18 Q 44 14 40 18 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-old-friend</code>
+            <code class="comp">IconTwoFiguresHeart</code>
+            <p class="desc">two figures with a small heart — old friend in town</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-pandemic-close">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-pandemic-close" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Pandemic close"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="14" y="18" width="52" height="46" rx="2"></rect><line x1="14" y1="26" x2="66" y2="26" stroke-width="2"></line><line x1="26" y1="14" x2="26" y2="22" stroke-width="2"></line><line x1="54" y1="14" x2="54" y2="22" stroke-width="2"></line><line x1="14" y1="36" x2="66" y2="36" stroke-width="1.5"></line><line x1="14" y1="46" x2="66" y2="46" stroke-width="1.5"></line><line x1="14" y1="56" x2="66" y2="56" stroke-width="1.5"></line><line x1="27" y1="26" x2="27" y2="64" stroke-width="1.5"></line><line x1="40" y1="26" x2="40" y2="64" stroke-width="1.5"></line><line x1="53" y1="26" x2="53" y2="64" stroke-width="1.5"></line><line x1="20" y1="32" x2="60" y2="60" stroke-width="4"></line><line x1="60" y1="32" x2="20" y2="60" stroke-width="4"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-pandemic-close</code>
+            <code class="comp">IconPandemicClose</code>
+            <p class="desc">door with a padlock — the office closes</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-rent-hike">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-rent-hike" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Rent hike"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 18 42 L 36 26 L 54 42 V 60 H 18 Z"></path><rect x="30" y="48" width="6" height="12"></rect><rect x="40" y="45" width="6" height="6"></rect><line x1="64" y1="56" x2="64" y2="24" stroke-width="3"></line><path d="M 60 28 L 64 24 L 68 28" stroke-width="3"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-rent-hike</code>
+            <code class="comp">IconHouseUpArrow</code>
+            <p class="desc">house with an upward arrow — rent hike</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-return-office">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-return-office" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Return to office"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="30" y="18" width="36" height="48"></rect><rect x="36" y="26" width="6" height="6"></rect><rect x="46" y="26" width="6" height="6"></rect><rect x="56" y="26" width="6" height="6"></rect><rect x="36" y="36" width="6" height="6"></rect><rect x="46" y="36" width="6" height="6"></rect><rect x="56" y="36" width="6" height="6"></rect><rect x="44" y="52" width="8" height="14"></rect><line x1="12" y1="42" x2="28" y2="42" stroke-width="3"></line><path d="M 24 38 L 28 42 L 24 46" stroke-width="3"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-return-office</code>
+            <code class="comp">IconReturnOffice</code>
+            <p class="desc">building with an arrow — return-to-office mandate</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-skip-breakfast">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-skip-breakfast" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Skipped breakfast"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 20 30 H 54 V 52 Q 54 58 48 58 H 26 Q 20 58 20 52 Z"></path><path d="M 54 36 Q 64 36 64 44 Q 64 52 54 52"></path><path d="M 28 24 Q 30 20 28 16" stroke-width="1.5"></path><path d="M 36 24 Q 38 20 36 16" stroke-width="1.5"></path><path d="M 44 24 Q 46 20 44 16" stroke-width="1.5"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-skip-breakfast</code>
+            <code class="comp">IconCoffeeCup</code>
+            <p class="desc">coffee cup with steam — skipping breakfast again</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-storm">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-storm" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Storm"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 22 38 Q 14 38 14 30 Q 14 22 22 22 Q 24 14 34 14 Q 46 14 46 22 Q 54 22 54 28 Q 60 30 60 36 Q 60 42 54 42 H 22 Z"></path><path d="M 38 46 L 30 58 H 36 L 32 66 L 44 52 H 36 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-storm</code>
+            <code class="comp">IconCloudLightning</code>
+            <p class="desc">storm cloud with a bolt — sudden storm</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-sunset">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-sunset" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Sunset moment"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="10" y1="52" x2="70" y2="52" stroke-width="2.5"></line><path d="M 22 52 Q 22 32 40 32 Q 58 32 58 52 Z"></path><line x1="40" y1="20" x2="40" y2="26"></line><line x1="22" y1="32" x2="26" y2="36"></line><line x1="58" y1="32" x2="54" y2="36"></line><line x1="14" y1="42" x2="18" y2="42"></line><line x1="62" y1="42" x2="66" y2="42"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-sunset</code>
+            <code class="comp">IconSunset</code>
+            <p class="desc">sun half below a horizon — a five-minute sunset pause</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-talk-invite">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-talk-invite" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Talk invite"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="14" y="24" width="52" height="32" rx="2"></rect><polyline points="14,24 40,42 66,24"></polyline><path d="M 56 32 L 57 35 L 60 36 L 57 37 L 56 40 L 55 37 L 52 36 L 55 35 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-talk-invite</code>
+            <code class="comp">IconEnvelope</code>
+            <p class="desc">sealed envelope — invite to give a talk</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-univ-voice-reminder-mishap">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-univ-voice-reminder-mishap" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Voice reminder mishap"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 14 32 V 48 H 24 L 36 58 V 22 L 24 32 Z"></path><path d="M 42 30 Q 48 36 48 40 Q 48 44 42 50" stroke-width="2"></path><path d="M 50 24 Q 60 36 60 40 Q 60 44 50 56" stroke-width="2"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-univ-voice-reminder-mishap</code>
+            <code class="comp">IconSpeakerSound</code>
+            <p class="desc">speaker with sound waves — voice reminder mishap</p>
+          </div>
+        </div></div>
+        </section>
+
+        <section class="icon-section" id="cat-events-pack">
+          <header class="cat-header"><h2>Events — pack-specific</h2><span class="cat-count">4</span></header>
+          <div class="icon-grid">
+        <div class="icon-card" data-id="evt-swe-blog-traction">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-swe-blog-traction" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Blog traction"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="18" y="18" width="36" height="46" rx="2"></rect><line x1="24" y1="26" x2="48" y2="26" stroke-width="2"></line><line x1="24" y1="32" x2="48" y2="32" stroke-width="1.5"></line><line x1="24" y1="38" x2="44" y2="38" stroke-width="1.5"></line><line x1="24" y1="44" x2="46" y2="44" stroke-width="1.5"></line><line x1="24" y1="50" x2="42" y2="50" stroke-width="1.5"></line><line x1="62" y1="58" x2="62" y2="26" stroke-width="3"></line><path d="M 58 30 L 62 26 L 66 30" stroke-width="3"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-swe-blog-traction</code>
+            <code class="comp">IconDocumentTrending</code>
+            <p class="desc">document with an upward trend line — a blog post finds traction</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-swe-flow-state">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-swe-flow-state" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Flow state"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 12 26 Q 24 20 36 26 Q 48 32 60 26 Q 66 24 68 26" stroke-width="3"></path><path d="M 12 40 Q 24 34 36 40 Q 48 46 60 40 Q 66 38 68 40" stroke-width="3"></path><path d="M 12 54 Q 24 48 36 54 Q 48 60 60 54 Q 66 52 68 54" stroke-width="3"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-swe-flow-state</code>
+            <code class="comp">IconFlowWaves</code>
+            <p class="desc">horizontal flowing waves — a long flow-state afternoon</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-swe-recruiter-blast">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-swe-recruiter-blast" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Recruiter blast"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 12 38 H 24 L 28 46 H 52 L 56 38 H 68 V 62 H 12 Z"></path><rect x="20" y="14" width="16" height="10" rx="1" transform="rotate(-10 28 18)"></rect><rect x="44" y="14" width="16" height="10" rx="1" transform="rotate(10 52 18)"></rect><rect x="32" y="24" width="16" height="10" rx="1"></rect></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-swe-recruiter-blast</code>
+            <code class="comp">IconInboxBlast</code>
+            <p class="desc">inbox with outgoing rays — recruiter cold-blast</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-swe-stackoverflow-rep">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-swe-stackoverflow-rep" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Stack Overflow rep"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 24 22 H 56 V 32 Q 56 44 40 44 Q 24 44 24 32 Z"></path><path d="M 24 26 Q 16 26 16 32 Q 16 36 22 36"></path><path d="M 56 26 Q 64 26 64 32 Q 64 36 58 36"></path><line x1="40" y1="44" x2="40" y2="54" stroke-width="2"></line><rect x="28" y="54" width="24" height="6"></rect><path d="M 40 28 L 42 32 L 46 32 L 43 35 L 44 39 L 40 37 L 36 39 L 37 35 L 34 32 L 38 32 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-swe-stackoverflow-rep</code>
+            <code class="comp">IconTrophy</code>
+            <p class="desc">small trophy — Stack Overflow reputation milestone</p>
+          </div>
+        </div></div>
+        </section>
+
+        <section class="icon-section" id="cat-events-era">
+          <header class="cat-header"><h2>Events — era-anchored</h2><span class="cat-count">15</span></header>
+          <div class="icon-grid">
+        <div class="icon-card" data-id="evt-era-ai-shift-adjacent-layoffs">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-ai-shift-adjacent-layoffs" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Adjacent layoffs"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="14" y="20" width="28" height="44"></rect><rect x="20" y="26" width="5" height="5"></rect><rect x="31" y="26" width="5" height="5"></rect><rect x="20" y="36" width="5" height="5"></rect><rect x="31" y="36" width="5" height="5"></rect><path d="M 22 56 V 64 H 34 V 56"></path><circle cx="56" cy="30" r="5"></circle><line x1="56" y1="36" x2="56" y2="50" stroke-width="2.5"></line><line x1="56" y1="50" x2="50" y2="60" stroke-width="2.5"></line><line x1="56" y1="50" x2="62" y2="60" stroke-width="2.5"></line><rect x="60" y="40" width="8" height="8"></rect></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-ai-shift-adjacent-layoffs</code>
+            <code class="comp">IconLayoffsExit</code>
+            <p class="desc">figure walking through a door — adjacent-team layoffs</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-ai-shift-junior-anxiety">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-ai-shift-junior-anxiety" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="AI shift"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 40 14 L 44 36 L 64 40 L 44 44 L 40 66 L 36 44 L 16 40 L 36 36 Z"></path><path d="M 22 22 L 23 26 L 27 27 L 23 28 L 22 32 L 21 28 L 17 27 L 21 26 Z" fill="#2c2c2c" stroke="none"></path><path d="M 58 56 L 59 60 L 63 61 L 59 62 L 58 66 L 57 62 L 53 61 L 57 60 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-ai-shift-junior-anxiety</code>
+            <code class="comp">IconSparkle</code>
+            <p class="desc">four-point sparkle — AI-shift junior anxiety</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-ai-shift-tooling-evangelism">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-ai-shift-tooling-evangelism" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Tooling evangelism"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 14 22 H 60 Q 66 22 66 28 V 44 Q 66 50 60 50 H 36 L 26 58 V 50 H 20 Q 14 50 14 44 Z"></path><path d="M 40 28 L 42 34 L 48 36 L 42 38 L 40 44 L 38 38 L 32 36 L 38 34 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-ai-shift-tooling-evangelism</code>
+            <code class="comp">IconBubbleSparkle</code>
+            <p class="desc">speech bubble with a sparkle — AI-tooling evangelism</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-pandemic-furlough-friend">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-pandemic-furlough-friend" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Pandemic furlough friend"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 22 32 Q 22 28 28 28 H 52 Q 58 28 58 32 V 46 Q 58 50 52 50 H 28 Q 22 50 22 46 Z"></path><path d="M 22 30 Q 14 36 16 44 Q 18 50 22 50"></path><path d="M 58 30 Q 66 36 64 44 Q 62 50 58 50"></path><line x1="26" y1="36" x2="54" y2="36" stroke-width="1.5"></line><line x1="26" y1="42" x2="54" y2="42" stroke-width="1.5"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-pandemic-furlough-friend</code>
+            <code class="comp">IconPandemicFurlough</code>
+            <p class="desc">empty desk with a dimmed lamp — colleague furloughed</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-pandemic-roommate-friction">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-pandemic-roommate-friction" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Roommate friction"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="22" cy="28" r="6"></circle><path d="M 14 60 V 42 Q 14 36 22 36 Q 30 36 30 42 V 60"></path><circle cx="58" cy="28" r="6"></circle><path d="M 50 60 V 42 Q 50 36 58 36 Q 66 36 66 42 V 60"></path><line x1="36" y1="36" x2="44" y2="44" stroke-width="2"></line><line x1="44" y1="36" x2="36" y2="44" stroke-width="2"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-pandemic-roommate-friction</code>
+            <code class="comp">IconRoommateFriction</code>
+            <p class="desc">two figures with friction marks — roommate tension</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-pandemic-walk-routine">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-pandemic-walk-routine" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Walk routine"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="36" cy="20" r="5"></circle><line x1="32" y1="28" x2="44" y2="42" stroke-width="3"></line><line x1="36" y1="32" x2="26" y2="42" stroke-width="2.5"></line><line x1="40" y1="36" x2="48" y2="28" stroke-width="2.5"></line><line x1="44" y1="42" x2="34" y2="58" stroke-width="2.5"></line><line x1="44" y1="42" x2="54" y2="58" stroke-width="2.5"></line><line x1="14" y1="62" x2="66" y2="62" stroke-width="1.5"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-pandemic-walk-routine</code>
+            <code class="comp">IconWalker</code>
+            <p class="desc">walking figure in profile — daily walk routine</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-pandemic-zoom-fatigue">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-pandemic-zoom-fatigue" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Pandemic zoom fatigue"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="12" y="20" width="56" height="40" rx="2"></rect><line x1="12" y1="28" x2="68" y2="28" stroke-width="1.5"></line><circle cx="18" cy="24" r="1.2" fill="#2c2c2c" stroke="none"></circle><circle cx="22" cy="24" r="1.2" fill="#2c2c2c" stroke="none"></circle><circle cx="26" cy="24" r="1.2" fill="#2c2c2c" stroke="none"></circle><circle cx="27" cy="38" r="5"></circle><circle cx="53" cy="38" r="5"></circle><circle cx="27" cy="50" r="5"></circle><circle cx="53" cy="50" r="5"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-pandemic-zoom-fatigue</code>
+            <code class="comp">IconVideoCall</code>
+            <p class="desc">laptop with a grid of faces — zoom-fatigue</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-rebound-comp-jump">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-rebound-comp-jump" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Comp jump"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><text x="32" y="52" text-anchor="middle" font-family="inherit" font-size="32" font-weight="700" fill="#2c2c2c" stroke="none">$</text><line x1="58" y1="58" x2="58" y2="24" stroke-width="3"></line><path d="M 54 28 L 58 24 L 62 28" stroke-width="3"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-rebound-comp-jump</code>
+            <code class="comp">IconDollarUpArrow</code>
+            <p class="desc">dollar sign with an upward arrow — comp jump</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-rebound-leaving-wave">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-rebound-leaving-wave" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Leaving wave"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="16" y="16" width="28" height="48" rx="1"></rect><circle cx="38" cy="40" r="2" fill="#2c2c2c" stroke="none"></circle><line x1="48" y1="40" x2="68" y2="40" stroke-width="3"></line><path d="M 64 36 L 68 40 L 64 44" stroke-width="3"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-rebound-leaving-wave</code>
+            <code class="comp">IconDoorExit</code>
+            <p class="desc">door frame with an outgoing arrow — friends leaving the company</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-rebound-promo-wave">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-rebound-promo-wave" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Rebound promo wave"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="14,54 26,42 38,48 52,30 62,30" stroke-width="2.5"></polyline><polyline points="56,28 62,30 60,36" stroke-width="2.5"></polyline><circle cx="14" cy="54" r="2" fill="#2c2c2c" stroke="none"></circle><circle cx="26" cy="42" r="2" fill="#2c2c2c" stroke="none"></circle><circle cx="38" cy="48" r="2" fill="#2c2c2c" stroke="none"></circle><circle cx="52" cy="30" r="2" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-rebound-promo-wave</code>
+            <code class="comp">IconUpwardArrow</code>
+            <p class="desc">arrow rising past a horizon — promo wave</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-uncertain-becoming-mentor">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-uncertain-becoming-mentor" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Becoming a mentor"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="28" cy="22" r="6"></circle><path d="M 20 58 V 36 Q 20 30 28 30 Q 36 30 36 36 V 58"></path><line x1="32" y1="38" x2="54" y2="38" stroke-width="2.5"></line><path d="M 50 34 L 54 38 L 50 42" stroke-width="2.5"></path><rect x="56" y="30" width="12" height="16"></rect><line x1="58" y1="34" x2="66" y2="34" stroke-width="1.5"></line><line x1="58" y1="38" x2="66" y2="38" stroke-width="1.5"></line><line x1="58" y1="42" x2="64" y2="42" stroke-width="1.5"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-uncertain-becoming-mentor</code>
+            <code class="comp">IconMentorPointing</code>
+            <p class="desc">figure pointing to a smaller figure — becoming the mentor</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-uncertain-cycle-reborn">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-uncertain-cycle-reborn" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Cycle reborn"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 40 14 Q 64 14 64 40 Q 64 64 40 64 Q 16 64 16 40" stroke-width="3" fill="none"></path><path d="M 12 36 L 16 40 L 20 36" stroke-width="3"></path><path d="M 40 32 L 42 38 L 48 40 L 42 42 L 40 48 L 38 42 L 32 40 L 38 38 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-uncertain-cycle-reborn</code>
+            <code class="comp">IconCycleArrow</code>
+            <p class="desc">circular arrow — cycle reborn / starting over</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-uncertain-decade-mark">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-uncertain-decade-mark" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Decade mark"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 24 16 H 56 L 44 38 L 56 60 H 24 L 36 38 Z"></path><line x1="24" y1="16" x2="56" y2="16" stroke-width="2.5"></line><line x1="24" y1="60" x2="56" y2="60" stroke-width="2.5"></line><circle cx="40" cy="36" r="1.5" fill="#2c2c2c" stroke="none"></circle><circle cx="40" cy="42" r="1.5" fill="#2c2c2c" stroke="none"></circle><path d="M 32 58 Q 40 52 48 58" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-uncertain-decade-mark</code>
+            <code class="comp">IconHourglass</code>
+            <p class="desc">hourglass — decade-mark milestone</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-uncertain-economy">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-uncertain-economy" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Uncertain economy"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="14" y1="60" x2="66" y2="60" stroke-width="2"></line><line x1="14" y1="60" x2="14" y2="16" stroke-width="2"></line><polyline points="18,22 28,32 38,28 48,42 58,52" stroke-width="2.5"></polyline><path d="M 54 50 L 58 54 L 62 50" stroke-width="2.5"></path><line x1="58" y1="52" x2="58" y2="58" stroke-width="2.5"></line><circle cx="18" cy="22" r="2" fill="#2c2c2c" stroke="none"></circle><circle cx="48" cy="42" r="2" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-uncertain-economy</code>
+            <code class="comp">IconEconomyDown</code>
+            <p class="desc">chart line trending down — soft economy</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-era-uncertain-old-codebase">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-era-uncertain-old-codebase" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Old codebase"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="12" y="22" width="56" height="10"></rect><path d="M 14 32 H 66 L 60 62 H 20 Z"></path><line x1="14" y1="32" x2="66" y2="32" stroke-width="2.5"></line><rect x="32" y="42" width="16" height="10"></rect><line x1="36" y1="47" x2="44" y2="47" stroke-width="1.5"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-era-uncertain-old-codebase</code>
+            <code class="comp">IconArchiveBox</code>
+            <p class="desc">archive carton — opening an old codebase</p>
+          </div>
+        </div></div>
+        </section>
+
+        <section class="icon-section" id="cat-events-stat">
+          <header class="cat-header"><h2>Events — stat-triggered</h2><span class="cat-count">4</span></header>
+          <div class="icon-grid">
+        <div class="icon-card" data-id="evt-stat-burnout-doctor">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-stat-burnout-doctor" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Burnout — see the doctor"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 40 14 Q 50 26 52 38 Q 52 52 40 60 Q 28 52 28 40 Q 30 30 40 14 Z"></path><path d="M 40 36 Q 44 42 43 50 Q 43 56 40 56 Q 37 56 37 50 Q 36 42 40 36 Z" fill="#2c2c2c" stroke="none"></path></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-stat-burnout-doctor</code>
+            <code class="comp">IconBurnoutFlame</code>
+            <p class="desc">flame — burnout doctor visit</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-stat-high-network-intro">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-stat-high-network-intro" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="High network — intro"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="40" y1="22" x2="22" y2="50"></line><line x1="40" y1="22" x2="58" y2="50"></line><line x1="22" y1="50" x2="58" y2="50"></line><circle cx="40" cy="22" r="6" fill="#2c2c2c" stroke="none"></circle><circle cx="22" cy="50" r="6" fill="#2c2c2c" stroke="none"></circle><circle cx="58" cy="50" r="6" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-stat-high-network-intro</code>
+            <code class="comp">IconNetwork</code>
+            <p class="desc">connected dots — high-network intro</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-stat-low-health-cold">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-stat-low-health-cold" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Low health — cold"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="40" cy="56" r="8" fill="#2c2c2c" stroke="#2c2c2c"></circle><rect x="36" y="22" width="8" height="36"></rect><rect x="37.5" y="28" width="5" height="26" fill="#2c2c2c" stroke="none"></rect><circle cx="40" cy="20" r="4"></circle><line x1="46" y1="30" x2="50" y2="30" stroke-width="1.5"></line><line x1="46" y1="38" x2="50" y2="38" stroke-width="1.5"></line><line x1="46" y1="46" x2="50" y2="46" stroke-width="1.5"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-stat-low-health-cold</code>
+            <code class="comp">IconThermometer</code>
+            <p class="desc">thermometer in mouth — low-health cold</p>
+          </div>
+        </div>
+        <div class="icon-card" data-id="evt-stat-low-savings-card">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="evt-stat-low-savings-card" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Low savings — declined card"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="14" y="24" width="52" height="32" rx="3"></rect><rect x="14" y="30" width="52" height="6" fill="#2c2c2c" stroke="none"></rect><circle cx="22" cy="48" r="1.5" fill="#2c2c2c" stroke="none"></circle><circle cx="28" cy="48" r="1.5" fill="#2c2c2c" stroke="none"></circle><circle cx="34" cy="48" r="1.5" fill="#2c2c2c" stroke="none"></circle><circle cx="40" cy="48" r="1.5" fill="#2c2c2c" stroke="none"></circle></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">evt-stat-low-savings-card</code>
+            <code class="comp">IconCreditCard</code>
+            <p class="desc">credit card at an angle — low-savings card swipe</p>
+          </div>
+        </div></div>
+        </section>
+
+        <section class="icon-section" id="cat-finale">
+          <header class="cat-header"><h2>Finale</h2><span class="cat-count">1</span></header>
+          <div class="icon-grid">
+        <div class="icon-card" data-id="finale-month-120">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="finale-month-120" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="The closing door"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 22 64 V 22 Q 22 14 30 14 H 50 Q 58 14 58 22 V 64"></path><path d="M 30 64 V 26 Q 30 20 36 20 H 44"></path><line x1="48" y1="30" x2="62" y2="26" stroke-width="1.5"></line><line x1="50" y1="40" x2="66" y2="40" stroke-width="1.5"></line><line x1="48" y1="50" x2="62" y2="54" stroke-width="1.5"></line></g></svg></div>
+          <div class="icon-meta">
+            <code class="id">finale-month-120</code>
+            <code class="comp">IconThresholdDoor</code>
+            <p class="desc">open doorway with an arrow — month-120 threshold</p>
+          </div>
+        </div></div>
+        </section>
+  
+    <section class="icon-section" id="cat-minigames">
+      <header class="cat-header"><h2>Minigame icons (exported, not yet registered)</h2><span class="cat-count">5</span></header>
+      <p class="muted">These ship from <code>modalIcons.tsx</code> but aren't in <code>DECISION_ICONS</code> or <code>EVENT_ICONS</code> yet. They'll feed a future <code>MinigameIcon</code> registry consumed by <code>MinigameReplayCard</code>.</p>
+      <div class="icon-grid">
+        
+          <div class="icon-card">
+            <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="blackjack" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Blackjack"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="20" y="22" width="26" height="38" rx="3" transform="rotate(-10 33 41)"></rect><rect x="34" y="22" width="26" height="38" rx="3" transform="rotate(10 47 41)"></rect></g></svg></div>
+            <div class="icon-meta">
+              <code class="comp">IconCards</code>
+              <p class="desc">fanned playing cards — blackjack minigame</p>
+            </div>
+          </div>
+          <div class="icon-card">
+            <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="code-review" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Code review"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="18" y1="26" x2="44" y2="26" stroke-width="2"></line><line x1="18" y1="36" x2="36" y2="36" stroke-width="2"></line><line x1="18" y1="46" x2="42" y2="46" stroke-width="2"></line><line x1="18" y1="56" x2="32" y2="56" stroke-width="2"></line><path d="M 48 42 L 56 50 L 68 32" stroke-width="3"></path></g></svg></div>
+            <div class="icon-meta">
+              <code class="comp">IconCheckmark</code>
+              <p class="desc">large checkmark — code-review minigame</p>
+            </div>
+          </div>
+          <div class="icon-card">
+            <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="reaction-sprint" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Reaction sprint"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M 44 12 L 24 42 H 38 L 32 68 L 56 36 H 42 Z"></path></g></svg></div>
+            <div class="icon-meta">
+              <code class="comp">IconLightning</code>
+              <p class="desc">lightning bolt — reaction-sprint minigame</p>
+            </div>
+          </div>
+          <div class="icon-card">
+            <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="pong" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Pong"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="16" y="28" width="4" height="24" fill="#2c2c2c" stroke="none"></rect><rect x="60" y="28" width="4" height="24" fill="#2c2c2c" stroke="none"></rect><circle cx="40" cy="40" r="4" fill="#2c2c2c" stroke="none"></circle><line x1="40" y1="18" x2="40" y2="26" stroke-width="1.5" opacity="0.5"></line><line x1="40" y1="36" x2="40" y2="44" stroke-width="1.5" opacity="0.5"></line><line x1="40" y1="54" x2="40" y2="62" stroke-width="1.5" opacity="0.5"></line></g></svg></div>
+            <div class="icon-meta">
+              <code class="comp">IconPaddles</code>
+              <p class="desc">two paddles with a ball — pong minigame</p>
+            </div>
+          </div>
+          <div class="icon-card">
+            <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="forty-two" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="The Ultimate Question"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><g stroke="#2c2c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><text x="40" y="54" text-anchor="middle" font-family="inherit" font-size="36" font-weight="700" fill="#2c2c2c" stroke="none">42</text></g></svg></div>
+            <div class="icon-meta">
+              <code class="comp">IconFortyTwo</code>
+              <p class="desc">glyph reading 42 — the-answer minigame</p>
+            </div>
+          </div>
+      </div>
+    </section>
+  
+    <section class="icon-section" id="cat-placeholder">
+      <header class="cat-header"><h2>Placeholder fallback</h2><span class="cat-count">1</span></header>
+      <p class="muted">Rendered for any id not in either registry. Real art swaps in by replacing the registry entry.</p>
+      <div class="icon-grid">
+        <div class="icon-card">
+          <div class="icon-frame"><svg data-region="modal-icon" data-icon-variant="placeholder" width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;flex-shrink:0" role="img" aria-label="Modal icon placeholder"><rect x="1" y="1" width="78" height="78" fill="none" stroke="#2c2c2c" stroke-width="2"></rect><text x="40" y="52" text-anchor="middle" font-family="inherit" font-size="36" font-weight="500" fill="#888888">?</text></svg></div>
+          <div class="icon-meta">
+            <code class="comp">PlaceholderIcon</code>
+            <p class="desc">question mark in a frame — unregistered id fallback</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <section class="icon-section missing" id="cat-missing">
+      <header class="cat-header"><h2>Missing icons</h2></header>
+      <p class="all-covered">✓ Every decision and event id in this pack has a registered icon.</p>
+    </section>
+  
+</main>
+<footer class="page-footer">
+  <p>Icon-review surface. Each SVG is rendered via <code>react-dom/server</code> with the pack's palette — what you see here is what ships in the modal. Flag the id to swap art.</p>
+</footer>
+</body>
+</html>
