@@ -49,7 +49,7 @@ export function PlaceholderIcon({ palette, size = 80 }: ModalIconProps): ReactEl
         y={1}
         width={78}
         height={78}
-        fill={palette.surface}
+        fill="none"
         stroke={palette.ink}
         strokeWidth={2}
       />
