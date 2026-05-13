@@ -1,4 +1,10 @@
-import { PlaceholderIcon, type ModalIconComponent } from './modalIcons';
+import {
+  IconLightbulbIdea,
+  IconPandemicFurlough,
+  IconStandupTooLong,
+  IconStayLate,
+  type ModalIconComponent,
+} from './modalIcons';
 
 // Registry data for modal icons. Sibling of `modalIcons.tsx` so the .tsx file
 // can stay "components-only" (HMR / fast-refresh friendly). Each entry maps
@@ -13,15 +19,13 @@ import { PlaceholderIcon, type ModalIconComponent } from './modalIcons';
 // --- Decision icons ---------------------------------------------------------
 
 export const DECISION_ICONS: Record<string, ModalIconComponent> = {
-  // future: rocket / launch night
-  'univ-stay-late-vs-log-off': PlaceholderIcon,
-  // future: meeting
-  'univ-standup-too-long': PlaceholderIcon,
+  'univ-stay-late-vs-log-off': IconStayLate,
+  'univ-standup-too-long': IconStandupTooLong,
+  'swe-2am-idea': IconLightbulbIdea,
 };
 
 // --- Event icons ------------------------------------------------------------
 
 export const EVENT_ICONS: Record<string, ModalIconComponent> = {
-  // future: phone
-  'evt-era-pandemic-furlough-friend': PlaceholderIcon,
+  'evt-era-pandemic-furlough-friend': IconPandemicFurlough,
 };
