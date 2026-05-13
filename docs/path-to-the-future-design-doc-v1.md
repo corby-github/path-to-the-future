@@ -1,9 +1,9 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 1.3.4
-**Status:** Living spec · Days 1–13b.3 merged · Day 13c + Day 14 (title screen) pending
-**Last updated:** 2026-05-12
+**Document version:** 2.0.1
+**Status:** Living spec · Days 1–13b.3 merged · Day 13c + Day 14 (title screen) pending · Homeschool Parent pack Phase 2 shipped
+**Last updated:** 2026-05-13
 
 ---
 
@@ -18,6 +18,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 | v1.1    | 2026-05-11 | Corby Hoback · Claude Code | Build-time deltas through Day 13a: **E** key for NPC/object interaction (§11); `progress.gameOver` state field + STATE_VERSION 1.2.0 (§6, §12); Pixelify Sans scoped to NPC modal as SNES homage (§15); Stacker mechanic for Reaction Sprint (§10); keyboard parity across init flow pickers (§16); build order updated (§17); project structure expanded (§19); spouse-name list resolved (§20). New sections: §21 Endgame & Recap, §22 Credits System, §23 Interactables. |
 | v1.2    | 2026-05-12 | Corby Hoback · Claude Code | New §16.0 **Title Screen** as the first thing on app mount — wordmark, tagline, ambient NPC autoplay, "Press any key to start." Pixel-font scope expanded from NPC-modal-only to also include the title wordmark (§15) — display size sidesteps the legibility constraint that ruled it out of body UI. New §24 **Analytics & Tracking** (GoatCounter, virtual pageviews, no PII, no cookies, no consent banner). New §25 **Future: Public Scoreboard** — deferred-but-specced graffiti board (CF Workers + D1, anon writes, no replay verification); §18 updated to point to it. **§1 Premise** gains an **Inspirations** list (Zelda/Final Fantasy/Pokémon, Kentucky Route Zero, Oregon Trail, Monopoly, Another World, Hitchhikers Guide, Ready Player One, the pandemic) — names the tonal anchors that were previously implicit. **§8 / §9** gain a *Selection: history-aware de-dup* subsection documenting the two-tier filter shipped in PR #35 (no same scenario back-to-back, prefer unseen across the run; 5-month window for decisions, 3-month for events). **§23 Interactables** gains an optional `label` field on `InteractableDef` (shown under the sprite as a name caption per #27) — additive, no schema break. **§23 NPCModal** gains a *Speaker header + icon (v1.2)* subsection per #28: kind-aware header above the prompt (`"Intern says…"` / `"Plant."`) plus a full-opacity sprite icon on the left as a fixed-width column. Shared `labelFor` / `speakerHeaderFor` helpers extracted to `src/game/content/interactableLabel.ts`. Day 14 (title screen) and Day 15 (analytics + GitHub Pages deploy) added to the build order (§17). New file entries in §19. No state-shape change (no STATE_VERSION bump). |
 | v2.0    | 2026-05-12 | Corby Hoback · Claude Code | **Multi-career architecture, formalized.** Engine has always loaded career-specific content from packs (§3), but the implicit assumption — never written down — was that every pack would use the SWE-shaped stat model from §7. v2.0 owns that the model is SWE-coded and gives packs two escape hatches: (1) **`manifest.statLabels`** — an optional `Record<StatKey, string>` letting a pack relabel the seven canonical stats in the HUD without touching engine code or decision JSON (e.g. Student pack relabels `technicalSkill` → "Grades", `savings` → "Money", `burnout` → "Stress"). (2) **Pack-additive `flags`** — packs may rely on `flags` fields that older saves don't have, defaulting gracefully (precedent: `meta.tutorialDismissed` in v1.3.3). New §26 *Career Packs: Beyond SWE* documents the relabel mechanism, the expanded 9-career roster, and the Student pack in detail (10-year 13→22 arc, post-HS fork at month ~66 as the structural centerpiece, the three new flags — `parentTrust`, `hasJob`, `postHSPath` — that gate its back-half decision pool). §26 also names what's deferred: a future pack-defined stat schema refactor (Option C in the design discussion), per-pack score formula, per-pack endgame framing copy, and per-pack arc length. §16 *Init Flow* career listing updated to match the new roster; "only SWE selectable in v1" line removed since v2.0 anticipates Student becoming playable. No engine code change required to ship this version of the doc — the `statLabels` plumbing is small (one HUD lookup + one optional manifest field), and the rest is content. No STATE_VERSION bump (Student's new flags are additive with graceful defaults). The honest framing in §26 — that `technicalSkill` is SWE-coded and the score formula in §21 references it by name — is the contribution that matters most; future packs will be built knowing where the joints are. |
+| v2.0.1  | 2026-05-13 | Corby Hoback · Claude Code | **Homeschool Parent pack Phase 2 shipped.** Second playable pack now full-scale: 30 decisions (5 Phase-1 + 25 Phase-2), 37 events (5 + 32), 12 interactables (0 + 12), 8-line cinematic intro replacing the Phase-1 placeholder, 16 monthTransitions (up from 7), 12 pack-scoped endgame taglines, and the pack's §26 section in the design doc filled in with arc, relabels, voice anchor, content counts, era distribution. Two additive engine changes: (1) **`EndgameScreen` now prefers `careers/{packId}/endgame-taglines.json`** when present, falling back to the universal pool — SWE pack unchanged, homeschool pack gets its bittersweet-register taglines. (2) **Three new sprite tokens** in `InteractableSprite.tsx`: `textbook-stack`, `kid-hazel`, `kid-bram` — all Treatment-A flat-color, palette-pure per §15. Other homeschool interactables route through existing tokens (whiteboard for kitchen-table-as-school, calendar for fridge-drawing, plant for sick-day-couch, etc.) — flagged for follow-up if visual mismatch reads wrong after playthroughs. Voice register matched the four Phase-1 anchor lines (bittersweet-contemplative-occasionally-dry, identity-sacrifice-community axis, parent's interior life). Kid-name interpolation deferred — no UI flow asks the player for kid names, "Hazel"/"Bram" stay hardcoded in copy. No STATE_VERSION bump (pure content + additive plumbing). |
 | v1.6.1  | 2026-05-12 | Corby Hoback · Claude Code | Player-facing rename: the 42 minigame is now titled **"The Ultimate Question"** in the arcade menu and the replay card. Hides the punchline from the menu row so the answer reveals during play instead of being pre-spoiled. Internal `MinigameVariant` id stays `'forty-two'` (no schema churn). Blurb tightened to *"Life, the universe, everything. Four options."* No STATE_VERSION bump. |
 | v1.6    | 2026-05-12 | Corby Hoback · Claude Code | Issue #41 — **"42"** (the Hitchhiker's Guide callback) added as the fifth minigame variant. Pure multiple-choice: one question, four options, one correct (`42`); the other three are plausible-but-wrong (`7`, `1138`, `∞`) with their own quiet references. Option order is shuffled per mount so the player can't memorise position. Binary outcome — `win` (picked 42 → `XP_MINIGAME_WIN`) or `fail` (anything else → `XP_MINIGAME_FAIL`); no `partial` bucket. Esc forfeits; arrow keys + `1-4` + Enter for selection. **Arcade-only** in v1 — no scheduled slot (per issue: "the reference lands harder when stumbled upon"). New `src/game/minigames/FortyTwo.tsx` (the smallest minigame in the codebase — no rAF loop, no physics, closer to `DecisionModal` than to `Stacker`). `MinigameVariant` widens to include `'forty-two'`; `progress.lastArcadeXpAt` gains `forty-two: number`. Added to `MinigameByVariant`, `ArcadeModal.ARCADE_VARIANTS`, and `MinigameReplayCard.VARIANT_LABELS`. **STATE_VERSION 1.5.0 → 1.6.0** (old saves discarded). §10 table grows to 5 rows. |
 | v1.5    | 2026-05-12 | Corby Hoback · Claude Code | Issue #32 — **Pong** added as the fourth minigame variant. New `src/game/minigames/Pong.tsx` — single-player vs. AI paddle, ↑↓ / W-S keyboard, first-to-5. AI tracks the ball with a capped speed (`AI_MAX_SPEED = 360 v.u./sec`) and an anti-jitter deadzone; ball speed creeps `× 1.04` per paddle hit, capped at 720, with off-centre hits adding angle ("spin"). Win/partial/fail mapping per acceptance: `5-0…5-2` wins → `win`; `5-3 / 5-4 / 4-5` → `partial`; `5-0…5-2` losses → `fail`. XP only (no stat side-effects — "purest XP" minigame per #32). Scheduled at month 75 (Mar 2026, ai-shift era) in SWE pack and listed in the arcade variant menu. `MinigameVariant` union widens to include `'pong'`; `progress.lastArcadeXpAt` gains a `pong: number` key. `MinigameReplayCard` `VARIANT_LABELS` updated. **STATE_VERSION 1.4.0 → 1.5.0** (old saves discarded on load). §10 table gains a Pong row; v1 slot list updated (32 / 60 / 75 / 90). |
@@ -1790,6 +1791,151 @@ Flag for future-us: the Student pack is the one where we learn whether
 the engine actually generalizes. If we're rewriting engine code while
 building Student, we got something wrong in v2.0 — write down what and
 fix it before pack #3.
+
+### The Homeschool Parent pack (shipped — second playable)
+
+Homeschool Parent landed as the second playable pack — earlier than
+Student in the roster timeline because the voice register clicked on the
+first batch of authored content and the user wanted to ride that. Phase 1
+(PR #56) shipped the scaffold + 5 voice-anchor decisions and 5 events
+that locked the register. Phase 2 (this PR) scaled to the full pool.
+
+#### Arc
+
+Same 120-month window as SWE (Jan 2020 → Dec 2029). Two kids hardcoded by
+name in copy:
+
+- **Hazel** — age 6 at month 1, age 16 at month 120
+- **Bram** — age 3 at month 1, age 13 at month 120
+
+The kid ages drive the arc texture: pandemic-era kindergarten/preschool
+through ai-shift-era pre-teen and uncertain-future early-teen. Teen
+rebellion / dating / college-prep beats are gated at month >=84/>=90/>=96
+respectively. No engine work was needed for the kids — they're
+content-only references. Kid-name interpolation (`{kidA}` / `{kidB}`) is
+**deferred to a follow-up PR** — current copy hardcodes "Hazel" and
+"Bram" everywhere they appear. Acceptable trade-off: kid names are not
+player-controlled in any UI flow, and templating them now would touch
+profileSlice + every JSON file with no behavior change for the player.
+The follow-up is straightforward when a future pack wants a kid-name
+pool.
+
+#### Stat relabels (final)
+
+```json
+"statLabels": {
+  "technicalSkill": "Teaching",
+  "network": "Community",
+  "reputation": "Standing"
+}
+```
+
+Notes on the choices:
+
+- **`technicalSkill` → "Teaching"** — the parent is the teacher. The
+  mechanic is competence; the surface is pedagogical craft.
+- **`network` → "Community"** — co-op parents, neighbor friends, the
+  homeschool-collective network. Same gating mechanic; native vocabulary.
+- **`reputation` → "Standing"** — how the family is regarded by extended
+  family, the wider neighborhood, the not-homeschool world. The pack uses
+  Standing for in-law judgment beats and the park-grade-question event
+  (Phase 1's voice anchor). Range stays -100..+100 — Standing can go
+  negative (the in-law-dismisses-your-choices arc).
+- `burnout`, `savings`, `health`, `relationship` — kept as engine labels.
+  Burnout is burnout at every age (the dry-erase-handwriting-wobble event
+  trades on the word). Savings displays as dollars; the pack's scale is
+  family-household (a $4,000 contract gig, a $180 boxed-curriculum spend,
+  a $400 phone purchase). `relationship` is romantic-only per §7 — the
+  spouse axis. Parent-child friction routes to `reputation` / `burnout` /
+  `technicalSkill` (the Phase-1 pattern, kept).
+
+#### Voice anchor (locked Phase 1, matched in Phase 2)
+
+Bittersweet-contemplative-occasionally-dry. Honest-friend tone.
+Identity-sacrifice-community axis. Parent's interior life, not the kid's
+milestone. **NOT sappy / snarky / lecture-y / parenting-blog.**
+
+Four anchor lines that defined the register:
+
+- *"Hazel knocked on the door once and you said 'in a minute' and then
+  forgot for forty. You didn't forget that you'd forgotten."*
+  (`hp-contract-work-offer`)
+- *"The other mom said 'cool' the way people say 'cool' when they mean
+  'huh.'"* (`evt-hp-park-grade-question`)
+- *"She is not asking permission so much as telling you where she's
+  heading."* (`hp-eldest-wants-school`)
+- *"You wrote it in the journal anyway, because someone, twenty years
+  from now, might want the date."* (`evt-hp-toddler-crayon`)
+
+Phase 2 authored against these anchors. Any new beat that drifted off
+register was rewritten. The "read it as a stranger" gate applied.
+
+#### Content counts (Phase 1 + Phase 2 = shipped)
+
+| Content | Count | Notes |
+|---|---|---|
+| Decisions | **30** | 5 Phase-1 + 25 Phase-2. Span all four eras + era-agnostic. |
+| Events | **37** | 5 Phase-1 + 32 Phase-2. Includes 5 stat-trigger events (low-savings, low-health, high-burnout, high-network, hazel-first-chapter), 5 era-anchored (pandemic), 3 (rebound), 5 (ai-shift), 4 (uncertain-future). |
+| Interactables | **12** | 6 objects + 6 NPCs. Includes Hazel + Bram as named NPCs with tier-2 dialogues; co-op friend + spouse + in-law + neighbor; textbook stack, art bin, kitchen-table-as-school, fridge drawing, sick-day couch, co-op sign-up. |
+| Months | **120** | Phase-1 lifeline frame with 10 anchor narrative rooms (Jan 2020 / 2021 / 2022 / 2023 / 2024 / 2025 / 2026 / 2027 / 2028 / 2029). |
+| `monthTransitions` | **16** | Homeschool-themed flavor lines for the post-decision blur. |
+| `intro` | **8 lines** | Cinematic intro played after class pick via ScenePlayer (§16). Supports `{playerName}`. |
+| Endgame taglines | **12** | Pack-scoped pool at `public/careers/homeschool-parent/endgame-taglines.json`. |
+
+#### Era distribution
+
+Decisions and events distribute across the four eras with these rough
+counts (era-anchored content; era-agnostic content not double-counted):
+
+| Era | Months | Decisions (era-anchored) | Events (era-anchored) |
+|---|---|---|---|
+| pandemic | 1–36 | 2 (screens-rule, spouse-furlough) | 4 (grocery-line, zoom-cohort, relatives-text, yard-friendship, mask-tantrum) |
+| rebound | 25–60 | 1 (back-to-school-wave) | 3 (school-friends-return, comp-jump, spouse-layoff) |
+| ai-shift | 61–84 | 1 (ai-tutor-decision) | 5 (ai-doorway, grocery-screen, essay-question, spouse-tool, evangelist-parent) |
+| uncertain-future | 85–120 | 4 (teen-rebellion-late-night, teen-dating, college-prep-route, college-test-or-portfolio, late-decade-empty-room, final-year-graduation-frame, mid-career-reentry partial overlap) | 4 (college-anxiety, spouse-search, decade-photo, becoming-mentor) |
+
+The era-agnostic decisions/events fire across the timeline based on month
+requires and stat triggers.
+
+#### New engine plumbing
+
+Two additive changes shipped with Phase 2 — neither bumps STATE_VERSION,
+neither requires migrations, both are graceful defaults for packs that
+don't use them:
+
+1. **Pack-scoped endgame taglines.** `EndgameScreen.tsx` now tries
+   `careers/{packId}/endgame-taglines.json` first; falls back to the
+   universal `public/endgame-taglines.json` if missing or empty. SWE has
+   no override and gets the universal pool unchanged.
+2. **Three new sprite tokens** in `InteractableSprite.tsx`:
+   `textbook-stack` (a three-book stack with bookmark), `kid-hazel`
+   (small humanoid with a book held against torso), `kid-bram` (small
+   humanoid with backpack + hair tuft). All Treatment-A flat-color,
+   palette-pure per §15. Other homeschool interactables reuse existing
+   art tokens (kitchen-table-as-school → `whiteboard`; fridge-drawing →
+   `calendar`; sick-day-couch → `plant`; co-op-sign-up → `monitor`;
+   art-supplies-bin → `stress-ball`; in-law → `person-skip-level`;
+   spouse → `person-pm`; co-op-friend → `person-peer`; neighbor →
+   `person-newhire`). Flagged for follow-up if any of those feel wrong
+   after playthroughs land.
+
+#### Deferred follow-ups (Homeschool Parent)
+
+- **Kid-name interpolation.** Templating `{kidA}` / `{kidB}` per the
+  `{playerName}` / `{spouseName}` pattern. Touch points: `interpolate.ts`
+  context, `profileSlice` defaults (`Hazel` / `Bram`), re-author every
+  `homeschool-parent/*.json` file. Held now because no UI flow asks the
+  player for kid names — would be pure refactor with zero player-visible
+  change. Worth doing when a future pack wants a kid-name pool.
+- **Pack-specific sprite art for reused tokens.** A few interactables
+  reuse SWE-flavored art (kitchen-table reuses `whiteboard`,
+  fridge-drawing reuses `calendar`). Functional but slightly off-register
+  visually. If the visual mismatch lands wrong after playtesting, draw
+  dedicated tokens (kitchen-table SVG, fridge SVG, etc.).
+- **Era-mood retuning.** Phase 2 left eras at the Phase-1 / SWE-mirror
+  values. The bittersweet register may want a softer rebound and a
+  starker uncertain-future. Held — would only retune if a playthrough
+  reads off in a specific era.
 
 ---
 

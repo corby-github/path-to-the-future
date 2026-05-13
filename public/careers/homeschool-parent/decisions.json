@@ -134,6 +134,647 @@
           "flavor": "She stayed. The year was fine. Something in how she looked at you on Tuesdays didn't quite return to where it was. You noticed. You weren't sure she did."
         }
       ]
+    },
+
+    {
+      "id": "hp-pandemic-screens-rule",
+      "pool": "homeschool-parent",
+      "tags": ["teaching", "stress"],
+      "weight": 1.0,
+      "requires": { "month": ">=3" },
+      "prompt": "Hour seven of indoor weather. The screen rule you set on Monday has not survived to Thursday. You can let it go for the week, or you can hold the line.",
+      "options": [
+        {
+          "label": "Let it go this week",
+          "effects": { "burnout": "-3", "technicalSkill": "-1", "health": "-1" },
+          "flavor": "You let them watch the show twice through. You sat next to Bram for the second one. You both knew the dialogue. He recited it to you in the car the next day."
+        },
+        {
+          "label": "Hold the line",
+          "scene": [
+            "A timer.",
+            "A small mutiny.",
+            "A board game, eventually."
+          ],
+          "effects": { "burnout": "+3", "reputation": "+1", "technicalSkill": "+1" },
+          "flavor": "The first hour was the hard one. By the third, they were drawing on the kitchen floor with sidewalk chalk you didn't remember buying. You let that part go."
+        }
+      ]
+    },
+    {
+      "id": "hp-in-law-visit",
+      "pool": "homeschool-parent",
+      "tags": ["family", "identity"],
+      "weight": 0.9,
+      "requires": { "month": ">=8" },
+      "prompt": "Your mother-in-law is visiting Friday. She has views about the kids' schooling. She has already said 'just asking, of course' on the phone.",
+      "options": [
+        {
+          "label": "Set the table and the terms",
+          "scene": [
+            "A clean kitchen.",
+            "A pointed remark.",
+            "A polite redirect."
+          ],
+          "effects": { "burnout": "+3", "reputation": "+2", "technicalSkill": "+1" },
+          "flavor": "You named the curriculum. You showed her the math workbook. She nodded. She brought it up again at dessert. You redirected again. By Sunday she was telling neighbors how thorough you were."
+        },
+        {
+          "label": "Smile and let it pass",
+          "effects": { "burnout": "+2", "reputation": "-2" },
+          "flavor": "You said 'mm-hm' four times. She left a clipping on the counter — a magazine piece about a school in the next town over. You threw it away after she was gone. You felt small about that for two days."
+        }
+      ]
+    },
+    {
+      "id": "hp-sick-day-on-test-day",
+      "pool": "homeschool-parent",
+      "tags": ["family", "teaching", "humor"],
+      "weight": 0.9,
+      "requires": { "month": ">=6" },
+      "prompt": "Hazel has a fever Tuesday morning. The math test you scheduled is the math test you scheduled. The fever is real.",
+      "options": [
+        {
+          "label": "Push the test. Make soup.",
+          "scene": [
+            "A thermometer.",
+            "A blanket on the couch.",
+            "A pot on the stove."
+          ],
+          "effects": { "burnout": "-2", "health": "+1", "reputation": "+1" },
+          "flavor": "She slept until noon. You sat next to her and read a book that wasn't on the lesson plan. The test moved to Friday. Friday came. She aced it."
+        },
+        {
+          "label": "Quiz orally from the couch",
+          "effects": { "burnout": "+2", "technicalSkill": "+2", "health": "-1" },
+          "flavor": "You read the word problems out loud. She answered between sips of broth. You got through it. The whole thing felt slightly mean and also like a small victory. You weren't sure how to file it."
+        }
+      ]
+    },
+    {
+      "id": "hp-park-defense",
+      "pool": "homeschool-parent",
+      "tags": ["community", "identity"],
+      "weight": 0.8,
+      "requires": { "month": ">=14" },
+      "prompt": "A dad at the park asks, with the careful politeness of someone winding up to disagree, what you do 'about socialization.' Hazel is right there, building something out of pinecones.",
+      "options": [
+        {
+          "label": "Answer the real question",
+          "effects": { "burnout": "+2", "reputation": "+2", "network": "+1" },
+          "flavor": "You said the co-op meets Tuesdays. You said the library Wednesdays. You said she has more friends than you did at her age. He nodded like he was filing it. You couldn't tell if you were defensive or accurate. Both, probably."
+        },
+        {
+          "label": "Just smile and watch the kids",
+          "effects": { "burnout": "+1", "reputation": "-2" },
+          "flavor": "You said 'oh, you know, plenty.' He nodded. You both watched the pinecone tower. It fell over. Hazel started a new one. You felt the dad's question still sitting in the air ten minutes after he left."
+        }
+      ]
+    },
+    {
+      "id": "hp-pandemic-spouse-furlough",
+      "pool": "homeschool-parent",
+      "tags": ["family", "money", "relationship"],
+      "weight": 0.8,
+      "requires": { "month": ">=10" },
+      "prompt": "Your spouse's hours are cut by a third. The check on the fridge is the household plan. They want to know if you want to talk about it tonight, or wait until the weekend.",
+      "options": [
+        {
+          "label": "Tonight. After the kids are down.",
+          "scene": [
+            "A glass of something.",
+            "The kitchen table, cleared.",
+            "A long math conversation."
+          ],
+          "effects": { "savings": "-200", "burnout": "+3", "reputation": "+2", "health": "-1" },
+          "flavor": "You both pulled out the budget. You both knew it before you started. You wrote down four cuts and one possible side gig. You went to bed less afraid than you'd been an hour before."
+        },
+        {
+          "label": "Wait until the weekend",
+          "effects": { "burnout": "+4", "reputation": "-2" },
+          "flavor": "You said 'let's wait.' The week was longer for it. By Friday the conversation had grown teeth it didn't need. You had it anyway. You both wished you'd had it Tuesday."
+        }
+      ]
+    },
+    {
+      "id": "hp-unschooling-week",
+      "pool": "homeschool-parent",
+      "tags": ["teaching", "identity"],
+      "weight": 0.8,
+      "requires": { "month": ">=12" },
+      "prompt": "You read a blog post about unschooling and now it's eleven PM and you're rethinking the whole curriculum. You could try one project-based week as a test.",
+      "options": [
+        {
+          "label": "One week. Lichen and bridges.",
+          "scene": [
+            "A walk in the woods.",
+            "Tape, glue, popsicle sticks.",
+            "A presentation at the kitchen table."
+          ],
+          "effects": { "burnout": "+3", "technicalSkill": "+3", "reputation": "+1", "xp": "+150" },
+          "flavor": "They went deeper than you expected. Hazel asked questions that weren't on any worksheet. Bram learned the word 'symbiosis.' You went back to the textbook on Monday anyway. You weren't ready to give it up."
+        },
+        {
+          "label": "Stick with the plan you have",
+          "effects": { "burnout": "-2", "technicalSkill": "+1" },
+          "flavor": "You closed the laptop. You'd had a long enough week. The plan you had was working. The blog would be there next month, and it was."
+        }
+      ]
+    },
+    {
+      "id": "hp-bram-reading-struggle",
+      "pool": "homeschool-parent",
+      "tags": ["family", "teaching"],
+      "weight": 1.0,
+      "requires": { "month": ">=14" },
+      "prompt": "Bram is six and the letters are still rearranging themselves on the page for him. The boxed curriculum says he should be reading by now. The boxed curriculum doesn't know him.",
+      "options": [
+        {
+          "label": "Get him evaluated",
+          "scene": [
+            "An office.",
+            "A puzzle and a stopwatch.",
+            "A report with bullet points."
+          ],
+          "effects": { "savings": "-450", "burnout": "+2", "reputation": "+2", "technicalSkill": "+2", "xp": "+150" },
+          "flavor": "The evaluator was warm. The word was 'dyslexia,' said gently. There were resources. You cried in the car for a minute before you started it. Then you started it."
+        },
+        {
+          "label": "Give him time and read together",
+          "effects": { "burnout": "+1", "technicalSkill": "+1" },
+          "flavor": "You read every night. You let the worksheet wait. Eight months later he picked up a chapter book on his own and you didn't say anything because you didn't want him to notice you'd noticed."
+        }
+      ]
+    },
+    {
+      "id": "hp-rebound-back-to-school-wave",
+      "pool": "homeschool-parent",
+      "tags": ["community", "identity"],
+      "weight": 0.9,
+      "requires": { "month": ">=25" },
+      "prompt": "Three of your park-bench parents sent their kids back to school this fall. The group chat is quieter on weekdays. Hazel asks if she can go too.",
+      "options": [
+        {
+          "label": "Talk it through",
+          "scene": [
+            "A long walk.",
+            "A list of pros and cons.",
+            "A decision, for now."
+          ],
+          "effects": { "burnout": "+2", "reputation": "+1", "network": "+1" },
+          "flavor": "She wanted, mostly, to be where her friends were. You said you understood. You said let's try one more semester. She said okay in a way that wasn't fully okay. You both knew."
+        },
+        {
+          "label": "Reaffirm the choice. Out loud.",
+          "effects": { "burnout": "+1", "technicalSkill": "+2", "reputation": "-1" },
+          "flavor": "You told her why you'd started. You told her what you saw in her this year. She nodded. She still missed her friends. You missed your park-bench parents. You both kept going."
+        }
+      ]
+    },
+    {
+      "id": "hp-coop-snack-politics",
+      "pool": "homeschool-parent",
+      "tags": ["community", "humor"],
+      "weight": 0.7,
+      "requires": { "month": ">=10" },
+      "prompt": "A co-op parent emails the group: she'd 'love it if we could move toward all-organic snack week.' Three families are nodding. Two are not.",
+      "options": [
+        {
+          "label": "Reply with a measured counter",
+          "effects": { "burnout": "+2", "reputation": "+1", "network": "+2" },
+          "flavor": "You wrote four drafts. The one you sent said 'I love the spirit — could we make it suggested rather than required?' Three people thanked you off-list. The original sender did not."
+        },
+        {
+          "label": "Stay out of it",
+          "effects": { "burnout": "-1", "network": "-2" },
+          "flavor": "You let the thread go. The new policy passed. Your Friday snack was, that week, a bag of fish-shaped crackers in a Ziploc. The kids did not, you noticed, care."
+        }
+      ]
+    },
+    {
+      "id": "hp-creative-project",
+      "pool": "homeschool-parent",
+      "tags": ["identity", "career-movement"],
+      "weight": 0.8,
+      "requires": { "month": ">=30" },
+      "prompt": "There's a small thing you used to make — pottery, a podcast, line drawings, whatever it is. It has been a long time. You could put one evening a week into it again.",
+      "options": [
+        {
+          "label": "One evening a week. Non-negotiable.",
+          "scene": [
+            "A door, closed.",
+            "A timer.",
+            "Something coming back."
+          ],
+          "effects": { "burnout": "-4", "health": "+2", "technicalSkill": "+1", "xp": "+150" },
+          "flavor": "Eight weeks in, you finished a thing. It wasn't very good. You finished a second thing. It was better. You hadn't realized how much you'd missed having a thing that was just yours."
+        },
+        {
+          "label": "Maybe when the kids are older",
+          "effects": { "burnout": "+2", "reputation": "-1" },
+          "flavor": "You closed the tab. You went to bed at the kids' bedtime, again. The version of you that made things felt one room farther away."
+        }
+      ]
+    },
+    {
+      "id": "hp-relocation-pitch",
+      "pool": "homeschool-parent",
+      "tags": ["family", "career-movement"],
+      "weight": 0.6,
+      "requires": { "month": ">=36" },
+      "prompt": "Your spouse's company is opening an office two states away. The package is generous. Your co-op, your friends, your house — those are here.",
+      "options": [
+        {
+          "label": "Pack up. Try the new place.",
+          "scene": [
+            "A moving truck.",
+            "Empty rooms.",
+            "A new park with no familiar dogs."
+          ],
+          "effects": { "savings": "+8000", "network": "-15", "burnout": "+6", "reputation": "+2", "xp": "+300" },
+          "flavor": "The new house was bigger. The first month, Bram kept asking when you were going home. By the third, he stopped asking. You weren't sure if that was good. You decided to decide later."
+        },
+        {
+          "label": "Stay. Spouse declines.",
+          "effects": { "burnout": "-2", "network": "+2", "reputation": "+1" },
+          "flavor": "Your spouse turned it down. They didn't bring up the salary number for months. When it came up at Thanksgiving, you both pretended it was an old wound. It wasn't quite."
+        },
+        {
+          "label": "Negotiate spouse-only commute",
+          "effects": { "savings": "+3000", "burnout": "+5", "reputation": "+1", "health": "-2" },
+          "flavor": "They flew out Sunday nights, back Thursdays. The kitchen table got quieter Mondays. You held the four-day stretches together. By the eighth month you both knew the math didn't quite work."
+        }
+      ]
+    },
+    {
+      "id": "hp-screen-time-teen-precursor",
+      "pool": "homeschool-parent",
+      "tags": ["family", "teaching"],
+      "weight": 0.9,
+      "requires": { "month": ">=42" },
+      "prompt": "Hazel asks for a phone. The number she names is a year older than the number you were planning. Most of her co-op friends have them.",
+      "options": [
+        {
+          "label": "Get one with rails",
+          "scene": [
+            "An activation Sunday.",
+            "A parental-control app.",
+            "Twelve months of small renegotiations."
+          ],
+          "effects": { "savings": "-400", "burnout": "+3", "network": "+1", "reputation": "+1" },
+          "flavor": "She had it by Tuesday. The first week she showed you everything she texted. The second week she didn't. You expected that and were still a little stung when it happened."
+        },
+        {
+          "label": "Hold the line another year",
+          "effects": { "burnout": "+2", "reputation": "-2" },
+          "flavor": "You explained your reasoning. She listened. She did not agree. The group chat she wasn't in continued without her, which she also did not agree with, but did not say."
+        }
+      ]
+    },
+    {
+      "id": "hp-ai-tutor-decision",
+      "pool": "homeschool-parent",
+      "tags": ["teaching", "identity", "era"],
+      "weight": 1.0,
+      "requires": { "month": ">=60" },
+      "prompt": "The AI tutor product everyone is talking about offers a family plan. The trial works — it really does. The math hour you used to teach could be its math hour.",
+      "options": [
+        {
+          "label": "Hand math to the tutor",
+          "scene": [
+            "A login screen.",
+            "Quiet hours at the kitchen table.",
+            "A teacher with a kinder voice than yours."
+          ],
+          "effects": { "savings": "-240", "burnout": "-5", "technicalSkill": "-3", "reputation": "-1", "xp": "+150" },
+          "flavor": "Bram likes it. He learns. You sit in the other room and listen to him laugh at something the bot said. It is, you suspect, slightly funnier than you. You're not sure how to feel about that one."
+        },
+        {
+          "label": "Keep teaching it yourself",
+          "effects": { "burnout": "+4", "technicalSkill": "+3", "reputation": "+2", "xp": "+150" },
+          "flavor": "You doubled down. You re-read the chapter the night before. You worked the problems first. You were a worse explainer than the bot in some moments and a better one in others. The better moments were the ones you wanted to remember."
+        },
+        {
+          "label": "Let them use it sometimes",
+          "effects": { "burnout": "-2", "technicalSkill": "+1", "reputation": "+1" },
+          "flavor": "You set it up as one tool among several. Hazel went to it when she was stuck. Bram preferred you. You weren't sure if that was about you or about the bot. You took the win."
+        }
+      ]
+    },
+    {
+      "id": "hp-mid-career-reentry",
+      "pool": "homeschool-parent",
+      "tags": ["career-movement", "identity"],
+      "weight": 0.7,
+      "requires": { "month": ">=60" },
+      "prompt": "A friend has an opening that would actually use what you used to do. Mostly remote. Four days a week. You'd have to find afternoon coverage for the kids and rewrite your whole week.",
+      "options": [
+        {
+          "label": "Take it. Build the scaffolding.",
+          "scene": [
+            "A signed offer.",
+            "A new calendar.",
+            "Three afternoons of co-op coverage."
+          ],
+          "effects": { "savings": "+9000", "reputation": "+5", "burnout": "+6", "technicalSkill": "+1", "network": "+3", "xp": "+300" },
+          "flavor": "Month one was a scramble. Month three was a routine. Month six you caught yourself describing what you did at work to someone at a party and felt how long it had been since you'd had that sentence to say."
+        },
+        {
+          "label": "Hold for now",
+          "effects": { "burnout": "-1", "reputation": "-2" },
+          "flavor": "You wrote a careful no. The friend understood. The role got filled by someone who had been waiting for something like it. You wondered if you should have been that someone. You also didn't, mostly."
+        }
+      ]
+    },
+    {
+      "id": "hp-teen-rebellion-late-night",
+      "pool": "homeschool-parent",
+      "tags": ["family", "teen"],
+      "weight": 1.0,
+      "requires": { "month": ">=84" },
+      "prompt": "Hazel comes in at 11:47. She said 11:00. She is not drunk and she is not crying and she is also not making eye contact. You can lead with the time or with the look.",
+      "options": [
+        {
+          "label": "Lead with the look",
+          "scene": [
+            "A kettle on.",
+            "Two chairs at the table.",
+            "A long silence broken first by her."
+          ],
+          "effects": { "burnout": "+2", "reputation": "+3", "technicalSkill": "+1" },
+          "flavor": "She talked for forty-five minutes about something you hadn't known was bothering her. You almost didn't get to the time at all. When you did, she said 'I know, I'm sorry' in a way that meant she'd been waiting for you to say it. You both went to bed at 1."
+        },
+        {
+          "label": "Lead with the time",
+          "effects": { "burnout": "+4", "reputation": "-3", "health": "-1" },
+          "flavor": "You started with 11:00. She defended. You escalated. By 12:15 you were both saying things you'd want to walk back by morning. You walked them back by morning. The thing she'd been about to tell you didn't come up again for a month."
+        }
+      ]
+    },
+    {
+      "id": "hp-teen-dating",
+      "pool": "homeschool-parent",
+      "tags": ["family", "teen", "identity"],
+      "weight": 0.8,
+      "requires": { "month": ">=90" },
+      "prompt": "Hazel mentions, casually, that someone from the co-op is 'kind of' her boyfriend now. She has practiced this sentence. She is watching your face.",
+      "options": [
+        {
+          "label": "Ask one good question",
+          "effects": { "burnout": "+1", "reputation": "+3", "network": "+1" },
+          "flavor": "You asked what she liked about him. She thought about it. She gave you a real answer. You wrote the answer down later, in the journal, because you knew you'd want to remember this version of her."
+        },
+        {
+          "label": "Set the rules first",
+          "effects": { "burnout": "+3", "reputation": "-2" },
+          "flavor": "You listed three things. She listened politely. You realized halfway through the third that you'd been talking for a while. She nodded and said 'okay, can I go now.' You said yes. The conversation, in the version where you'd asked a question first, did not happen."
+        },
+        {
+          "label": "Tease her gently",
+          "effects": { "burnout": "-1", "reputation": "+1" },
+          "flavor": "You smiled and said 'kind of, huh.' She rolled her eyes and laughed. The actual conversation came four days later, over dishes, exactly the way she wanted it to."
+        }
+      ]
+    },
+    {
+      "id": "hp-mental-health-flag",
+      "pool": "homeschool-parent",
+      "tags": ["family", "stress"],
+      "weight": 0.9,
+      "requires": { "month": ">=72" },
+      "prompt": "Bram has been quieter for three weeks. Not bad quiet — flat quiet. You can ask, you can wait, or you can call the pediatrician.",
+      "options": [
+        {
+          "label": "Ask. Then listen.",
+          "scene": [
+            "A drive, the long way.",
+            "A question.",
+            "A quiet answer."
+          ],
+          "effects": { "burnout": "+2", "reputation": "+3", "health": "+1" },
+          "flavor": "He told you about something at the co-op you hadn't known about. You didn't fix it on the drive. You listened. You both got fries on the way back. He was lighter at dinner. Not all-the-way lighter. Lighter."
+        },
+        {
+          "label": "Call the pediatrician",
+          "effects": { "savings": "-180", "burnout": "+3", "reputation": "+2", "health": "+2", "xp": "+150" },
+          "flavor": "She listened for forty minutes. She gave you the name of someone. The someone had a six-week wait. You took the appointment. You told Bram. He said 'okay.' He looked, very briefly, relieved."
+        },
+        {
+          "label": "Give him another week",
+          "effects": { "burnout": "+2", "health": "-2", "reputation": "-1" },
+          "flavor": "You watched. The week didn't help. You called the pediatrician on a Tuesday and wished you'd called the Tuesday before. The waitlist was the same length either week. The watching was the part that cost you."
+        }
+      ]
+    },
+    {
+      "id": "hp-spouse-burnout",
+      "pool": "homeschool-parent",
+      "tags": ["family", "relationship", "stress"],
+      "weight": 0.8,
+      "requires": { "month": ">=48" },
+      "prompt": "Your spouse hasn't laughed at the dinner table in two weeks. They say they're fine. The pattern is not fine.",
+      "options": [
+        {
+          "label": "Take the weekend for them",
+          "scene": [
+            "A friend to watch the kids.",
+            "A cabin two hours away.",
+            "A long, slow Saturday."
+          ],
+          "effects": { "savings": "-500", "burnout": "+2", "health": "+2", "reputation": "+3" },
+          "flavor": "They cried on Friday night. They laughed at breakfast Sunday. Neither thing was small. You drove home Sunday afternoon listening to a podcast neither of you remembered. It was the best two days of the season."
+        },
+        {
+          "label": "Lighter the home load. Quietly.",
+          "effects": { "burnout": "+4", "reputation": "+2" },
+          "flavor": "You took the morning routines for a month. You did the dishes you usually leave. They noticed in the third week and said so. You said 'I know.' It was, somehow, enough."
+        },
+        {
+          "label": "Wait it out",
+          "effects": { "burnout": "+1", "reputation": "-3", "health": "-1" },
+          "flavor": "You told yourself it would pass. It mostly did. The next dip came in the spring and was harder. You'd remember this one as the warning you'd let go."
+        }
+      ]
+    },
+    {
+      "id": "hp-college-prep-route",
+      "pool": "homeschool-parent",
+      "tags": ["family", "teen", "transition"],
+      "weight": 1.0,
+      "requires": { "month": ">=96" },
+      "prompt": "Hazel is fourteen. The high-school decision is real now. Dual enrollment at the community college, a private school, or finishing at home — pick a frame for the next four years.",
+      "options": [
+        {
+          "label": "Dual enrollment",
+          "scene": [
+            "A campus tour at fourteen.",
+            "An advisor meeting.",
+            "A class schedule that doesn't fit any kitchen table."
+          ],
+          "effects": { "savings": "-1800", "burnout": "+4", "reputation": "+4", "technicalSkill": "+3", "xp": "+300" },
+          "flavor": "She walked into Comp 101 the first morning carrying a notebook you'd watched her label the night before. She came home full of someone else's syllabus. You weren't her main teacher anymore. You were her ride."
+        },
+        {
+          "label": "Private school",
+          "effects": { "savings": "-12000", "burnout": "-2", "reputation": "+3", "network": "+3", "technicalSkill": "-1", "xp": "+300" },
+          "flavor": "The tuition was the conversation for a month. You signed in May. She started in August. The first week she came home with two friends' names and a story about a teacher you would have liked. The kitchen at 9am was very quiet."
+        },
+        {
+          "label": "Finish at home",
+          "effects": { "burnout": "+3", "technicalSkill": "+4", "reputation": "+2" },
+          "flavor": "You did the planning differently this year. You leaned on online classes for the things you couldn't teach. You wrote her recommendation letter eight months early because you wanted to get it right. You did get it right."
+        }
+      ]
+    },
+    {
+      "id": "hp-college-test-or-portfolio",
+      "pool": "homeschool-parent",
+      "tags": ["family", "teen", "accountability"],
+      "weight": 0.9,
+      "requires": { "month": ">=102" },
+      "prompt": "Hazel's applications need a record. You can register her for the standardized test, or build a portfolio narrative with an evaluator. Most schools take both. A few prefer one.",
+      "options": [
+        {
+          "label": "The test route",
+          "effects": { "savings": "-600", "burnout": "+4", "technicalSkill": "+2", "reputation": "+3", "xp": "+150" },
+          "flavor": "She studied harder than you'd seen her study in a year. She came home from the testing center quieter than she'd left. Her score, when it came, was good. Not the top number. A number that opened doors and closed two."
+        },
+        {
+          "label": "The portfolio route",
+          "effects": { "savings": "-800", "burnout": "+2", "technicalSkill": "+1", "reputation": "+2", "xp": "+150" },
+          "flavor": "You spent six weekends pulling artifacts together. The evaluator read four years of her work and wrote about her in a way that was true and a little kinder than strict accuracy required. You were glad to have hired her."
+        },
+        {
+          "label": "Both. It's hedging.",
+          "effects": { "savings": "-1300", "burnout": "+6", "technicalSkill": "+3", "reputation": "+4", "health": "-2" },
+          "flavor": "She did both. She was tired by November. The applications had everything. You filed them on a Sunday and made pancakes Monday. The next move was not yours anymore."
+        }
+      ]
+    },
+    {
+      "id": "hp-trade-school-suggestion",
+      "pool": "homeschool-parent",
+      "tags": ["family", "teen", "identity"],
+      "weight": 0.6,
+      "requires": { "month": ">=96" },
+      "prompt": "Bram, eleven, says, casually, that he doesn't think he wants to go to college. He's been watching videos about welding. He wants you to know.",
+      "options": [
+        {
+          "label": "Take it seriously, at eleven",
+          "effects": { "burnout": "+1", "reputation": "+3", "technicalSkill": "+1" },
+          "flavor": "You asked him what about welding. He showed you a forty-minute video. You watched the whole thing. You did not say anything about it being early to decide. You did say it sounded interesting. He kept watching the videos. He also kept doing his math."
+        },
+        {
+          "label": "Gently keep the door open",
+          "effects": { "burnout": "+2", "reputation": "+1" },
+          "flavor": "You said 'okay, we'll see what eighteen-year-old you wants.' He shrugged. You both knew you'd said the careful adult thing. He kept watching the videos anyway. So did you, sometimes."
+        }
+      ]
+    },
+    {
+      "id": "hp-elderly-parent-help",
+      "pool": "homeschool-parent",
+      "tags": ["family", "identity"],
+      "weight": 0.6,
+      "requires": { "month": ">=66" },
+      "prompt": "Your father had a fall. It was minor. It is also, you understand, the first one. He could use someone present for a few weeks.",
+      "options": [
+        {
+          "label": "Go. Bring the school with you.",
+          "scene": [
+            "A drive with two kids.",
+            "A spare room with a kitchen-table desk.",
+            "Three weeks of multi-generation breakfast."
+          ],
+          "effects": { "savings": "-700", "burnout": "+5", "reputation": "+3", "network": "+2", "health": "-1", "xp": "+150" },
+          "flavor": "The kids ran your father's house in a way he hadn't seen up close. He watched Hazel teach Bram a science thing one morning and said, later, 'huh.' That huh was worth the trip."
+        },
+        {
+          "label": "Send help. Visit on weekends.",
+          "effects": { "savings": "-400", "burnout": "+2", "reputation": "+1" },
+          "flavor": "You hired a caregiver three afternoons. You drove out Friday nights. By the third weekend he wasn't pretending he didn't need it. You wished you'd gone for the long stay. You also knew why you hadn't."
+        },
+        {
+          "label": "Call more. Visit at Thanksgiving.",
+          "effects": { "burnout": "+3", "reputation": "-2", "health": "-1" },
+          "flavor": "You called every other day. He was fine, he said. Mostly he was. The fall you didn't witness sat in the back of your mind for the season. You'd remember the season by that fact."
+        }
+      ]
+    },
+    {
+      "id": "hp-recital-conflict",
+      "pool": "homeschool-parent",
+      "tags": ["family", "humor"],
+      "weight": 0.7,
+      "requires": { "month": ">=20" },
+      "prompt": "Bram's piano recital is Saturday afternoon. So is your one friend's surprise fortieth. Both will notice if you skip.",
+      "options": [
+        {
+          "label": "The recital",
+          "effects": { "burnout": "+1", "reputation": "+2", "network": "-1" },
+          "flavor": "He played his piece. He missed two notes. He didn't notice he'd missed them. You did, and didn't mind. The friend forgave you. They wanted the long version of the story over coffee the next week."
+        },
+        {
+          "label": "The party",
+          "effects": { "burnout": "+1", "reputation": "-2", "network": "+3" },
+          "flavor": "Your spouse went to the recital. They filmed it. You saw the video later that night and felt the specific small ache of not having been the one in the audience. You also had a very good evening. Both were true."
+        },
+        {
+          "label": "Half of each",
+          "effects": { "burnout": "+3", "reputation": "+1", "network": "+1", "health": "-1" },
+          "flavor": "You did the recital, then the party. You missed the cake. You caught the toast. Bram, asked later if you'd been there, said yes. He wasn't wrong, exactly. You'd been there for the part he could see."
+        }
+      ]
+    },
+    {
+      "id": "hp-late-decade-empty-room",
+      "pool": "homeschool-parent",
+      "tags": ["identity", "transition"],
+      "weight": 0.8,
+      "requires": { "month": ">=108" },
+      "prompt": "Hazel will be away three nights a week next semester for the early-college program. Her bedroom on Tuesdays will look the way it'll look in a few years all the time. You can plan for that or you can not.",
+      "options": [
+        {
+          "label": "Plan something for those Tuesdays",
+          "effects": { "burnout": "-3", "reputation": "+2", "network": "+2", "health": "+2" },
+          "flavor": "You signed up for a class at the community center. You went the first week and felt slightly embarrassed about how good it felt. You went the second week and didn't. By the eighth week you knew people by name."
+        },
+        {
+          "label": "Sit with the quiet for a while",
+          "effects": { "burnout": "+1", "health": "+1" },
+          "flavor": "You didn't fill the time. The Tuesday quiet was uncomfortable for two weeks and then it wasn't. You read three books you'd been meaning to read. You realized you'd needed the quiet more than you'd thought."
+        }
+      ]
+    },
+    {
+      "id": "hp-final-year-graduation-frame",
+      "pool": "homeschool-parent",
+      "tags": ["family", "transition"],
+      "weight": 0.9,
+      "requires": { "month": ">=110" },
+      "prompt": "The local homeschool collective puts on a graduation ceremony every June. Caps, gowns, the works. Hazel could walk in it. She is not sure she wants to.",
+      "options": [
+        {
+          "label": "Throw something at home",
+          "scene": [
+            "A backyard.",
+            "Family who flew in.",
+            "A speech you wrote on Wednesday."
+          ],
+          "effects": { "savings": "-600", "burnout": "+3", "reputation": "+3", "network": "+2", "xp": "+150" },
+          "flavor": "Your sister came. Your father came. Hazel cried a little during your speech. She told you afterward she'd been afraid the speech would be embarrassing. She said yours wasn't. The 'yours wasn't' was the line you'd remember."
+        },
+        {
+          "label": "Walk in the ceremony",
+          "effects": { "savings": "-150", "burnout": "+1", "reputation": "+4", "network": "+3" },
+          "flavor": "You watched her walk across a small stage with twenty other homeschooled kids. The principal-equivalent said her name. You held it together for the name. You did not for the picture afterward. The picture is, somehow, the one on the fridge now."
+        },
+        {
+          "label": "Mark it small, between you",
+          "effects": { "burnout": "-2", "reputation": "+1" },
+          "flavor": "You took her out for breakfast on the actual last day of her last subject. You gave her a small thing wrapped in newspaper. She unwrapped it carefully. She kept the newspaper. You both did, in the way you keep things you don't have a word for yet."
+        }
+      ]
     }
   ]
 }

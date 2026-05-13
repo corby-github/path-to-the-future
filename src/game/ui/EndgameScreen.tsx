@@ -515,15 +515,45 @@ export function EndgameScreen() {
   const [viewingTimeline, setViewingTimeline] = useState(false);
 
   useEffect(() => {
-    fetch('/endgame-taglines.json')
-      .then((r) => r.json())
-      .then((d: { taglines: string[] }) => {
-        if (Array.isArray(d.taglines) && d.taglines.length > 0) {
-          setTagline(d.taglines[Math.floor(Math.random() * d.taglines.length)]);
+    // Pack-scoped taglines override the universal pool when present.
+    // Per §26 (v2.0), packs may extend universal content with their own
+    // flavored variants. Loader prefers `careers/{packId}/endgame-taglines.json`
+    // and falls back to the universal `/endgame-taglines.json` if missing or
+    // empty. SWE pack has no override and gets the universal pool unchanged.
+    const base = import.meta.env.BASE_URL;
+    const packUrl = `${base}careers/${pack.manifest.id}/endgame-taglines.json`;
+    const universalUrl = `${base}endgame-taglines.json`;
+
+    let cancelled = false;
+    const pick = (lines: string[]) => {
+      if (cancelled) return;
+      if (Array.isArray(lines) && lines.length > 0) {
+        setTagline(lines[Math.floor(Math.random() * lines.length)]);
+      }
+    };
+    const loadUniversal = () =>
+      fetch(universalUrl)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d: { taglines: string[] } | null) => pick(d?.taglines ?? []))
+        .catch(() => undefined);
+
+    fetch(packUrl)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { taglines: string[] } | null) => {
+        if (Array.isArray(d?.taglines) && d!.taglines.length > 0) {
+          pick(d!.taglines);
+        } else {
+          void loadUniversal();
         }
       })
-      .catch(() => undefined);
-  }, []);
+      .catch(() => {
+        void loadUniversal();
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pack.manifest.id]);
 
   useEffect(() => {
     // Skip keybindings while a sub-view (credits / timeline) is open —
