@@ -28,6 +28,10 @@ export function InteractableSprite({ art, kind, x, y, palette }: Props) {
       case 'person-skip-level': return <NPCSkipLevel x={x} y={y} palette={palette} />;
       case 'kid-hazel': return <NPCKidHazel x={x} y={y} palette={palette} />;
       case 'kid-bram': return <NPCKidBram x={x} y={y} palette={palette} />;
+      case 'parent-in-law': return <NPCMotherInLaw x={x} y={y} palette={palette} />;
+      case 'parent-spouse': return <NPCSpouse x={x} y={y} palette={palette} />;
+      case 'parent-coop': return <NPCCoopParent x={x} y={y} palette={palette} />;
+      case 'parent-neighbor': return <NPCNeighbor x={x} y={y} palette={palette} />;
       default: return <NPCDefault x={x} y={y} palette={palette} />;
     }
   }
@@ -672,6 +676,147 @@ function NPCKidBram({ x, y, palette }: SpriteProps) {
         d={`M ${x - 7} ${y - 22} q 2 -5 8 -4 q 5 1 4 4 q -1 3 -6 3 z`}
         fill={palette.ink}
       />
+    </g>
+  );
+}
+
+// ───────────────────── Homeschool NPC sprites ─────────────────────────────
+// Four adult female homeschool NPCs (mother-in-law, spouse, co-op parent,
+// neighbor). Built on NPCBase + distinguishing accessories. Hard-coded to
+// female for v1 per user direction; a future runtime gender-pick system
+// could swap in male / non-binary variants later (see follow-up issue).
+//
+// Visual differentiation: each NPC gets a distinct hair shape + one
+// identifying prop. All silhouettes stay inside the ~52×80 sprite frame.
+
+// Mother-in-law — older, glasses, hair bun, handbag at side. Slightly
+// taller body + bigger head per the skip-level "more presence" convention.
+function NPCMotherInLaw({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      <NPCBase x={x} y={y} palette={palette} bodyHeight={50} headRadius={15} />
+      {/* Hair line wrapping crown (sits above the face) */}
+      <path
+        d={`M ${x - 14} ${y - 26} Q ${x - 8} ${y - 37} ${x} ${y - 38} Q ${x + 8} ${y - 37} ${x + 14} ${y - 26}`}
+        fill="none"
+        stroke={palette.ink}
+        strokeWidth={3}
+      />
+      {/* Hair bun on top of head */}
+      <circle cx={x} cy={y - 42} r={5} fill={palette.ink} />
+      {/* Glasses (smaller, perched lower than NPCSenior) */}
+      <circle cx={x - 5} cy={y - 22} r={3} fill="none" stroke={palette.ink} strokeWidth={1.5} />
+      <circle cx={x + 5} cy={y - 22} r={3} fill="none" stroke={palette.ink} strokeWidth={1.5} />
+      <line x1={x - 2} y1={y - 22} x2={x + 2} y2={y - 22} stroke={palette.ink} strokeWidth={1.5} />
+      {/* Handbag held at right side */}
+      <rect
+        x={x + 18}
+        y={y + 10}
+        width={10}
+        height={12}
+        rx={1}
+        fill={palette.surface}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      {/* Handbag handle */}
+      <path
+        d={`M ${x + 20} ${y + 10} q 0 -4 3 -4 q 3 0 3 4`}
+        fill="none"
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+    </g>
+  );
+}
+
+// Spouse — peer-aged, long hair frame behind head/shoulders, coffee mug
+// held at chest with a small steam wisp.
+function NPCSpouse({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Long hair frame — drawn first so body/head sit on top */}
+      <rect
+        x={x - 24}
+        y={y - 42}
+        width={48}
+        height={62}
+        rx={20}
+        fill={palette.ink}
+      />
+      <NPCBase x={x} y={y} palette={palette} />
+      {/* Coffee mug at chest */}
+      <rect
+        x={x - 5}
+        y={y + 6}
+        width={10}
+        height={10}
+        rx={1}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      {/* Mug handle */}
+      <path
+        d={`M ${x + 5} ${y + 8} q 3 0 3 3 q 0 3 -3 3`}
+        fill="none"
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      {/* Steam wisp */}
+      <path
+        d={`M ${x} ${y + 4} q -1 -2 1 -4 q 2 -2 -1 -4`}
+        fill="none"
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+    </g>
+  );
+}
+
+// Co-op parent — peer-aged, ponytail offset to one side, tote bag over
+// shoulder. Tote uses palette.positive so the bag reads as a distinct
+// accent against the body.
+function NPCCoopParent({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      <NPCBase x={x} y={y} palette={palette} />
+      {/* Ponytail — small filled oval offset behind the head's right edge */}
+      <ellipse cx={x + 13} cy={y - 18} rx={6} ry={11} fill={palette.ink} />
+      {/* Re-draw the head so the ponytail sits behind it */}
+      <circle cx={x} cy={y - 22} r={14} fill={palette.accent} stroke={palette.ink} strokeWidth={2} />
+      {/* Tote bag strap diagonally across body */}
+      <line x1={x - 14} y1={y - 4} x2={x - 22} y2={y + 14} stroke={palette.ink} strokeWidth={2} />
+      <line x1={x + 6} y1={y - 8} x2={x - 18} y2={y + 16} stroke={palette.ink} strokeWidth={2} />
+      {/* Tote bag — palette.positive (sage) so it reads distinct */}
+      <rect
+        x={x - 26}
+        y={y + 12}
+        width={14}
+        height={14}
+        rx={1}
+        fill={palette.positive}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+    </g>
+  );
+}
+
+// Neighbor — peer-aged, short bob hair, casual waving hand.
+function NPCNeighbor({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      <NPCBase x={x} y={y} palette={palette} />
+      {/* Short bob hair — cap-shape on top of head, slight hairline at forehead */}
+      <path
+        d={`M ${x - 14} ${y - 22} Q ${x - 14} ${y - 38} ${x} ${y - 38} Q ${x + 14} ${y - 38} ${x + 14} ${y - 22} Q ${x + 11} ${y - 24} ${x + 7} ${y - 22} L ${x - 7} ${y - 22} Q ${x - 11} ${y - 24} ${x - 14} ${y - 22} Z`}
+        fill={palette.ink}
+      />
+      {/* Waving arm */}
+      <line x1={x + 14} y1={y - 4} x2={x + 24} y2={y - 14} stroke={palette.ink} strokeWidth={3} strokeLinecap="round" />
+      {/* Hand */}
+      <circle cx={x + 24} cy={y - 14} r={3.5} fill={palette.accent} stroke={palette.ink} strokeWidth={1.5} />
     </g>
   );
 }
