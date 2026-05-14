@@ -178,22 +178,22 @@ const FINALE_DECISION: DecisionDef = {
   pool: 'universal',
   tags: ['finale'],
   weight: 0,
-  prompt: 'Ten years. Did any of that stick?',
+  prompt: 'Congratulations on Ten Years of Button-Mashing Excellence! After a full decade of gameplay, what’s your proudest accomplishment?',
   options: [
     {
-      label: "Bits did. Most didn't.",
+      label: "I mastered the art of doing nothing… but with incredible consistency.",
       effects: {},
-      flavor: 'Sounds about right.',
+      flavor: 'Sounds about right. Ten years of elite idling is nothing to sneeze at.',
     },
     {
-      label: "Not really. I'll leave it here.",
+      label: "Ten years of story, and I couldn't explain the plot with a gun to my head.",
       effects: {},
-      flavor: "Fair. The door's right there.",
+      flavor: "Fair. You played the whole saga like it was background noise.",
     },
     {
-      label: 'Hard to say. It mostly felt like a Tuesday.',
+      label: 'My only real skill is pressing the wrong button faster than anyone else alive.',
       effects: {},
-      flavor: 'Tuesdays do most of the work.',
+      flavor: 'Nailed it. Ten years of muscle memory, zero years of accuracy.',
     },
   ],
 };
