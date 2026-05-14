@@ -16,7 +16,7 @@
             "Hazel finishes early."
           ],
           "effects": { "savings": "-180", "burnout": "-3", "technicalSkill": "+1", "network": "+1" },
-          "flavor": "The plan got you through the week. Some of the read-alouds you wouldn't have chosen. Hazel didn't mind. You sometimes did."
+          "flavor": "The plan got you through the week. Some of the read-alouds you wouldn't have chosen. Hazel didn't mind. You did, quietly, while Hazel was laughing at the read-alouds."
         },
         {
           "label": "Write your own plan",
@@ -36,7 +36,7 @@
       "tags": ["community", "work-life-balance"],
       "weight": 1.0,
       "requires": { "month": ">=4" },
-      "prompt": "A neighborhood co-op meets Tuesday mornings. Five families, shared lessons, a craft and a snack. You'd be giving up every Tuesday.",
+      "prompt": "A neighborhood co-op meets Tuesday mornings. Five families, shared lessons, a craft and a snack. The kids get friends. You get adult conversation. You cannot, when you really think about it, find a downside.",
       "options": [
         {
           "label": "Sign on",
@@ -51,7 +51,7 @@
         {
           "label": "Stay solo for now",
           "effects": { "burnout": "-2", "network": "-1" },
-          "flavor": "You said maybe next year. The co-op kept going without you. You saw the photos in the group chat. The kids in them looked busy."
+          "flavor": "You said maybe next year. The group chat looked, frankly, like a lot. You'd survived three months on your own. You could survive a few more, probably."
         }
       ]
     },
@@ -71,7 +71,7 @@
             "Three hours and a score sheet."
           ],
           "effects": { "burnout": "+4", "technicalSkill": "+3", "reputation": "+2", "health": "-1", "xp": "+150" },
-          "flavor": "She scored above grade in two subjects, below in one. The number was somehow both a relief and a verdict. You knew exactly what to work on by Monday."
+          "flavor": "She scored above grade in two subjects, below in one. The number was somehow both a relief and a verdict. You knew exactly what to work on by Monday. Math. It is, somehow, always math."
         },
         {
           "label": "Hire the evaluator",
@@ -101,7 +101,7 @@
         {
           "label": "Pass for now",
           "effects": { "burnout": "-2", "reputation": "-1", "technicalSkill": "+1" },
-          "flavor": "You wrote a careful no. The coworker said they understood — and they did, mostly. The version of you they remembered would have said yes. You weren't sure where that version had gone."
+          "flavor": "You wrote a careful no. The coworker said they understood. The version of you they remembered would have said yes in twelve minutes. The current version was reading 'There Was An Old Lady Who Swallowed A Fly' for the ninth time. Different version. Different fly."
         }
       ]
     },
@@ -121,7 +121,7 @@
             "A kitchen with one student in it."
           ],
           "effects": { "reputation": "+5", "burnout": "-3", "network": "+2", "technicalSkill": "-2", "xp": "+300" },
-          "flavor": "She walked in like she'd been planning it for a year. Maybe she had been. The kitchen at 9am was quiet in a way you weren't ready for."
+          "flavor": "She walked in like she'd been planning it for a year. Maybe she had been. The kitchen at 9am was quiet in a way you weren't ready for. You got into the quiet eventually. The quiet got into you too."
         },
         {
           "label": "Make the case for one more year",
@@ -131,7 +131,7 @@
             "The fall begins as before."
           ],
           "effects": { "burnout": "+3", "reputation": "-3", "technicalSkill": "+1" },
-          "flavor": "She stayed. The year was fine. Something in how she looked at you on Tuesdays didn't quite return to where it was. You noticed. You weren't sure she did."
+          "flavor": "She stayed. The year was fine. Something in how she looked at you on Tuesdays didn't quite return. You noticed. She noticed you noticing. Tuesdays got, somehow, longer."
         }
       ]
     },
@@ -182,7 +182,7 @@
         {
           "label": "Smile and let it pass",
           "effects": { "burnout": "+2", "reputation": "-2" },
-          "flavor": "You said 'mm-hm' four times. She left a clipping on the counter — a magazine piece about a school in the next town over. You threw it away after she was gone. You felt small about that for two days."
+          "flavor": "You said 'mm-hm' four times. She left a clipping on the counter — a magazine piece about a school in the next town over. You threw it away after she was gone. You felt small for two days. The clipping, you noted, had been printed on her printer."
         }
       ]
     },
@@ -207,7 +207,7 @@
         {
           "label": "Quiz orally from the couch",
           "effects": { "burnout": "+2", "technicalSkill": "+2", "health": "-1" },
-          "flavor": "You read the word problems out loud. She answered between sips of broth. You got through it. The whole thing felt slightly mean and also like a small victory. You weren't sure how to file it."
+          "flavor": "You read the word problems out loud. She answered between sips of broth. You got through it. The whole thing felt slightly mean and also like a small victory. You filed it under 'parenting,' which is the folder with most of the things."
         }
       ]
     },
@@ -227,7 +227,7 @@
         {
           "label": "Just smile and watch the kids",
           "effects": { "burnout": "+1", "reputation": "-2" },
-          "flavor": "You said 'oh, you know, plenty.' He nodded. You both watched the pinecone tower. It fell over. Hazel started a new one. You felt the dad's question still sitting in the air ten minutes after he left."
+          "flavor": "You said 'oh, you know, plenty.' He nodded. You both watched the pinecone tower. It fell over. Hazel started a new one. The dad's question stayed in the air for ten minutes after he left — slightly longer than the pinecone tower."
         }
       ]
     },
@@ -237,7 +237,7 @@
       "tags": ["family", "money", "relationship"],
       "weight": 0.8,
       "requires": { "month": ">=10" },
-      "prompt": "Your spouse's hours are cut by a third. The check on the fridge is the household plan. They want to know if you want to talk about it tonight, or wait until the weekend.",
+      "prompt": "Your spouse's hours are cut by a third. The check on the fridge is the household plan. Should you talk about it tonight, or wait until the weekend?",
       "options": [
         {
           "label": "Tonight. After the kids are down.",
@@ -277,7 +277,7 @@
         {
           "label": "Stick with the plan you have",
           "effects": { "burnout": "-2", "technicalSkill": "+1" },
-          "flavor": "You closed the laptop. You'd had a long enough week. The plan you had was working. The blog would be there next month, and it was."
+          "flavor": "You closed the laptop. You'd had a long enough week. The plan you had was working. The blog would be there next month. The blog is always there next month."
         }
       ]
     },
@@ -322,12 +322,12 @@
             "A decision, for now."
           ],
           "effects": { "burnout": "+2", "reputation": "+1", "network": "+1" },
-          "flavor": "She wanted, mostly, to be where her friends were. You said you understood. You said let's try one more semester. She said okay in a way that wasn't fully okay. You both knew."
+          "flavor": "She wanted, mostly, to be where her friends were. You said you understood. You said let's try one more semester. She said okay in the way nine-year-olds say okay when they're keeping a tally."
         },
         {
           "label": "Reaffirm the choice. Out loud.",
           "effects": { "burnout": "+1", "technicalSkill": "+2", "reputation": "-1" },
-          "flavor": "You told her why you'd started. You told her what you saw in her this year. She nodded. She still missed her friends. You missed your park-bench parents. You both kept going."
+          "flavor": "You told her why you'd started. You told her what you saw in her this year. She nodded. She still missed her friends. You still missed your park-bench parents. The kitchen was, however, exceptionally well-organized that fall."
         }
       ]
     },
@@ -337,7 +337,7 @@
       "tags": ["community", "humor"],
       "weight": 0.7,
       "requires": { "month": ">=10" },
-      "prompt": "A co-op parent emails the group: she'd 'love it if we could move toward all-organic snack week.' Three families are nodding. Two are not.",
+      "prompt": "A co-op parent emails the group: she'd 'love it if we could move toward all-organic snack week.' Three families have thumbs-up'd. Two have not.",
       "options": [
         {
           "label": "Reply with a measured counter",
@@ -357,7 +357,7 @@
       "tags": ["identity", "career-movement"],
       "weight": 0.8,
       "requires": { "month": ">=30" },
-      "prompt": "There's a small thing you used to make — pottery, a podcast, line drawings, whatever it is. It has been a long time. You could put one evening a week into it again.",
+      "prompt": "There's a small thing you used to make — pottery, a podcast, line drawings, whatever. It has been a long time. The last time you tried, the kids found you within twenty minutes. You could try again.",
       "options": [
         {
           "label": "One evening a week. Non-negotiable.",
@@ -367,12 +367,12 @@
             "Something coming back."
           ],
           "effects": { "burnout": "-4", "health": "+2", "technicalSkill": "+1", "xp": "+150" },
-          "flavor": "Eight weeks in, you finished a thing. It wasn't very good. You finished a second thing. It was better. You hadn't realized how much you'd missed having a thing that was just yours."
+          "flavor": "Eight weeks in, you finished a thing. It wasn't very good. You finished a second thing. It was better. You'd forgotten how much fun it was to be bad at something on purpose."
         },
         {
           "label": "Maybe when the kids are older",
           "effects": { "burnout": "+2", "reputation": "-1" },
-          "flavor": "You closed the tab. You went to bed at the kids' bedtime, again. The version of you that made things felt one room farther away."
+          "flavor": "You closed the tab. You went to bed at the kids' bedtime, again. The version of you that made things sent a postcard from one room farther away. You'd answer next year, maybe."
         }
       ]
     },
@@ -392,17 +392,17 @@
             "A new park with no familiar dogs."
           ],
           "effects": { "savings": "+8000", "network": "-15", "burnout": "+6", "reputation": "+2", "xp": "+300" },
-          "flavor": "The new house was bigger. The first month, Bram kept asking when you were going home. By the third, he stopped asking. You weren't sure if that was good. You decided to decide later."
+          "flavor": "The new house was bigger. The first month, Bram kept asking when you were going home. By the third, he stopped asking and started calling the new place 'home' without thinking about it. You took that one."
         },
         {
           "label": "Stay. Spouse declines.",
           "effects": { "burnout": "-2", "network": "+2", "reputation": "+1" },
-          "flavor": "Your spouse turned it down. They didn't bring up the salary number for months. When it came up at Thanksgiving, you both pretended it was an old wound. It wasn't quite."
+          "flavor": "Your spouse turned it down. The salary number didn't come up for months. When it surfaced at Thanksgiving, you both pretended it was an old wound. It wasn't quite."
         },
         {
           "label": "Negotiate spouse-only commute",
           "effects": { "savings": "+3000", "burnout": "+5", "reputation": "+1", "health": "-2" },
-          "flavor": "They flew out Sunday nights, back Thursdays. The kitchen table got quieter Mondays. You held the four-day stretches together. By the eighth month you both knew the math didn't quite work."
+          "flavor": "Your spouse flew out Sunday nights, back Thursdays. The kitchen table got quieter Mondays. You held the four-day stretches together. By the eighth month you both knew the math didn't quite work."
         }
       ]
     },
@@ -427,7 +427,7 @@
         {
           "label": "Hold the line another year",
           "effects": { "burnout": "+2", "reputation": "-2" },
-          "flavor": "You explained your reasoning. She listened. She did not agree. The group chat she wasn't in continued without her, which she also did not agree with, but did not say."
+          "flavor": "You explained your reasoning. She listened. She did not agree. The group chat she wasn't in continued without her. Her disagreement with this was significant and silent and you could feel it from across the kitchen."
         }
       ]
     },
@@ -447,12 +447,12 @@
             "A teacher with a kinder voice than yours."
           ],
           "effects": { "savings": "-240", "burnout": "-5", "technicalSkill": "-3", "reputation": "-1", "xp": "+150" },
-          "flavor": "Bram likes it. He learns. You sit in the other room and listen to him laugh at something the bot said. It is, you suspect, slightly funnier than you. You're not sure how to feel about that one."
+          "flavor": "Bram likes it. He learns. You sit in the other room and listen to him laugh at something the bot said. The bot is, you suspect, slightly funnier than you. You'll have to write better material."
         },
         {
           "label": "Keep teaching it yourself",
           "effects": { "burnout": "+4", "technicalSkill": "+3", "reputation": "+2", "xp": "+150" },
-          "flavor": "You doubled down. You re-read the chapter the night before. You worked the problems first. You were a worse explainer than the bot in some moments and a better one in others. The better moments were the ones you wanted to remember."
+          "flavor": "You doubled down. You re-read the chapter the night before. You worked the problems first. You were a worse explainer than the bot in some moments and a better one in others. You started a list of the better ones. The bot is, you note, still funnier."
         },
         {
           "label": "Let them use it sometimes",
@@ -477,12 +477,12 @@
             "Three afternoons of co-op coverage."
           ],
           "effects": { "savings": "+9000", "reputation": "+5", "burnout": "+6", "technicalSkill": "+1", "network": "+3", "xp": "+300" },
-          "flavor": "Month one was a scramble. Month three was a routine. Month six you caught yourself describing what you did at work to someone at a party and felt how long it had been since you'd had that sentence to say."
+          "flavor": "Month one was a scramble. Month three was a routine. Month six you described what you did at work to someone at a party and surprised yourself by having a real answer. The party was, you noted, also surprising."
         },
         {
           "label": "Hold for now",
           "effects": { "burnout": "-1", "reputation": "-2" },
-          "flavor": "You wrote a careful no. The friend understood. The role got filled by someone who had been waiting for something like it. You wondered if you should have been that someone. You also didn't, mostly."
+          "flavor": "You wrote a careful no. The friend understood. The role got filled by someone who'd been waiting for something like it. You'd been waiting for Bram to find his other shoe. Different kinds of waiting."
         }
       ]
     },
@@ -507,7 +507,7 @@
         {
           "label": "Lead with the time",
           "effects": { "burnout": "+4", "reputation": "-3", "health": "-1" },
-          "flavor": "You started with 11:00. She defended. You escalated. By 12:15 you were both saying things you'd want to walk back by morning. You walked them back by morning. The thing she'd been about to tell you didn't come up again for a month."
+          "flavor": "You started with 11:00. She defended. You escalated. By 12:15 you were both saying things you'd want to walk back by morning. You walked them back by morning. The thing she'd been about to tell you came up a month later, in the car, where neither of you could leave."
         }
       ]
     },
@@ -522,12 +522,12 @@
         {
           "label": "Ask one good question",
           "effects": { "burnout": "+1", "reputation": "+3", "network": "+1" },
-          "flavor": "You asked what she liked about him. She thought about it. She gave you a real answer. You wrote the answer down later, in the journal, because you knew you'd want to remember this version of her."
+          "flavor": "You asked what she liked about him. She thought about it. She gave you a real answer. You wrote it in the journal later. The journal has gotten thicker the year she got harder to read."
         },
         {
           "label": "Set the rules first",
           "effects": { "burnout": "+3", "reputation": "-2" },
-          "flavor": "You listed three things. She listened politely. You realized halfway through the third that you'd been talking for a while. She nodded and said 'okay, can I go now.' You said yes. The conversation, in the version where you'd asked a question first, did not happen."
+          "flavor": "You listed three things. She listened politely. You realized halfway through the third that you'd been talking for a while. She said 'okay, can I go now.' You said yes. The version of this conversation where you'd asked a question first didn't happen. You could tell, because she was already in her room."
         },
         {
           "label": "Tease her gently",
@@ -572,7 +572,7 @@
       "tags": ["family", "relationship", "stress"],
       "weight": 0.8,
       "requires": { "month": ">=48" },
-      "prompt": "Your spouse hasn't laughed at the dinner table in two weeks. They say they're fine. The pattern is not fine.",
+      "prompt": "Your spouse hasn't laughed at the dinner table in two weeks. The answer is always 'fine.' The pattern is not fine.",
       "options": [
         {
           "label": "Take the weekend for them",
@@ -582,12 +582,12 @@
             "A long, slow Saturday."
           ],
           "effects": { "savings": "-500", "burnout": "+2", "health": "+2", "reputation": "+3" },
-          "flavor": "They cried on Friday night. They laughed at breakfast Sunday. Neither thing was small. You drove home Sunday afternoon listening to a podcast neither of you remembered. It was the best two days of the season."
+          "flavor": "Your spouse cried on Friday night. Laughed at breakfast Sunday. Neither thing was small. You drove home Sunday afternoon listening to a podcast neither of you remembered. It was the best two days of the season."
         },
         {
           "label": "Lighter the home load. Quietly.",
           "effects": { "burnout": "+4", "reputation": "+2" },
-          "flavor": "You took the morning routines for a month. You did the dishes you usually leave. They noticed in the third week and said so. You said 'I know.' It was, somehow, enough."
+          "flavor": "You took the morning routines for a month. You did the dishes you usually leave. Your spouse noticed in the third week and said so. You said 'I know.' It was, somehow, enough."
         },
         {
           "label": "Wait it out",
@@ -612,17 +612,17 @@
             "A class schedule that doesn't fit any kitchen table."
           ],
           "effects": { "savings": "-1800", "burnout": "+4", "reputation": "+4", "technicalSkill": "+3", "xp": "+300" },
-          "flavor": "She walked into Comp 101 the first morning carrying a notebook you'd watched her label the night before. She came home full of someone else's syllabus. You weren't her main teacher anymore. You were her ride."
+          "flavor": "She walked into Comp 101 the first morning carrying a notebook you'd watched her label the night before. She came home full of someone else's syllabus. You weren't her main teacher anymore. You were her ride. Different job. Less paperwork."
         },
         {
           "label": "Private school",
           "effects": { "savings": "-12000", "burnout": "-2", "reputation": "+3", "network": "+3", "technicalSkill": "-1", "xp": "+300" },
-          "flavor": "The tuition was the conversation for a month. You signed in May. She started in August. The first week she came home with two friends' names and a story about a teacher you would have liked. The kitchen at 9am was very quiet."
+          "flavor": "The tuition was the conversation for a month. You signed in May. She started in August. The first week she came home with two friends' names and a story about a teacher you would have liked. The kitchen at 9am was very quiet. You filled it with podcasts. The podcasts were terrible."
         },
         {
           "label": "Finish at home",
           "effects": { "burnout": "+3", "technicalSkill": "+4", "reputation": "+2" },
-          "flavor": "You did the planning differently this year. You leaned on online classes for the things you couldn't teach. You wrote her recommendation letter eight months early because you wanted to get it right. You did get it right."
+          "flavor": "You did the planning differently this year. You leaned on online classes for the things you couldn't teach. You wrote her recommendation letter eight months early because you wanted to get it right. You wrote four drafts. You got it right on the fifth."
         }
       ]
     },
@@ -712,17 +712,17 @@
         {
           "label": "The recital",
           "effects": { "burnout": "+1", "reputation": "+2", "network": "-1" },
-          "flavor": "He played his piece. He missed two notes. He didn't notice he'd missed them. You did, and didn't mind. The friend forgave you. They wanted the long version of the story over coffee the next week."
+          "flavor": "He played his piece. He missed two notes. He didn't notice he'd missed them. You did, and didn't mind. The friend forgave you, and wanted the long version of the story over coffee the next week."
         },
         {
           "label": "The party",
           "effects": { "burnout": "+1", "reputation": "-2", "network": "+3" },
-          "flavor": "Your spouse went to the recital. They filmed it. You saw the video later that night and felt the specific small ache of not having been the one in the audience. You also had a very good evening. Both were true."
+          "flavor": "Your spouse went to the recital and filmed it. You saw the video later that night and felt the specific small ache of not having been the one in the audience. You also had a very good evening. Both were true."
         },
         {
           "label": "Half of each",
           "effects": { "burnout": "+3", "reputation": "+1", "network": "+1", "health": "-1" },
-          "flavor": "You did the recital, then the party. You missed the cake. You caught the toast. Bram, asked later if you'd been there, said yes. He wasn't wrong, exactly. You'd been there for the part he could see."
+          "flavor": "You did the recital, then the party. You missed the cake. You caught the toast. Bram, asked later if you'd been there, said yes. He wasn't wrong, exactly. You'd been there for the parts he was paying attention to. Which were, in fairness, the parts that mattered."
         }
       ]
     },
@@ -732,7 +732,7 @@
       "tags": ["identity", "transition"],
       "weight": 0.8,
       "requires": { "month": ">=108" },
-      "prompt": "Hazel will be away three nights a week next semester for the early-college program. Her bedroom on Tuesdays will look the way it'll look in a few years all the time. You can plan for that or you can not.",
+      "prompt": "Hazel will be away three nights a week next semester for the early-college program. Her bedroom on Tuesdays will look the way it'll look in a few years all the time. You can plan for the Tuesdays or you can sit in them and see what happens.",
       "options": [
         {
           "label": "Plan something for those Tuesdays",
@@ -773,6 +773,55 @@
           "label": "Mark it small, between you",
           "effects": { "burnout": "-2", "reputation": "+1" },
           "flavor": "You took her out for breakfast on the actual last day of her last subject. You gave her a small thing wrapped in newspaper. She unwrapped it carefully. She kept the newspaper. You both did, in the way you keep things you don't have a word for yet."
+        }
+      ]
+    },
+    {
+      "id": "hp-snack-rebellion",
+      "pool": "homeschool-parent",
+      "tags": ["family", "humor"],
+      "weight": 0.7,
+      "prompt": "A small but determined rebellion formed when snacks were limited. Negotiations were held. Concessions were made. The snacks won.",
+      "options": [
+        {
+          "label": "Hold the line",
+          "effects": { "burnout": "+2", "reputation": "-1" },
+          "flavor": "You denied the snack. There was a brief revolt. By the end of it, the children had organized themselves into a small protest faction with hand-lettered signs. You were impressed. You did not say so."
+        },
+        {
+          "label": "Approve the snack",
+          "effects": { "burnout": "+1", "savings": "-5", "reputation": "+1" },
+          "flavor": "Snacks were issued. Crumbs were issued shortly thereafter. Bram's shirt acquired a small topographical map of goldfish. You vacuumed twice. Nobody thanked the vacuum."
+        },
+        {
+          "label": "Be temporarily unavailable",
+          "effects": { "burnout": "-1", "reputation": "-1" },
+          "flavor": "You closed the office door, audibly. 'Mom is in a meeting,' Hazel announced to no one in particular. Bram believed it for almost ninety seconds. The granola bars stayed in the cabinet, briefly."
+        }
+      ]
+    },
+    {
+      "id": "hp-tablet-speed-complaint",
+      "pool": "homeschool-parent",
+      "tags": ["family", "humor", "money"],
+      "requires": { "month": ">=48" },
+      "weight": 0.6,
+      "prompt": "The kids are complaining that the tablet is too slow.",
+      "options": [
+        {
+          "label": "Compare it to Windows 98",
+          "effects": { "burnout": "-1", "reputation": "-1" },
+          "flavor": "You told them it was faster than Windows 98 loading a webpage over dial-up. They asked what Windows 98 was. The complaining did not stop. It now had a footnote."
+        },
+        {
+          "label": "Hunt for a warehouse deal",
+          "effects": { "savings": "-80", "burnout": "-2", "technicalSkill": "+1" },
+          "flavor": "You scrolled the warehouse deals for twenty minutes. You found a refurb for eighty dollars. The arrival window was three days. By the time it shipped, the complaining had moved on to something else."
+        },
+        {
+          "label": "Confiscate it",
+          "effects": { "burnout": "+1", "reputation": "-2" },
+          "flavor": "You unplugged the tablet, put it on top of the fridge, and went to start dinner. The first request to have it back arrived in twelve minutes. The second came at eight the next morning."
         }
       ]
     }

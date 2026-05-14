@@ -17,7 +17,7 @@
       "tags": ["era"],
       "weight": 0.6,
       "title": "The 7am line at the store.",
-      "body": "You queued in the dark with both kids in the cart. The shelves were lit and half-empty. You used to do this alone, at lunch, in fifteen minutes. You did not used to do it like this.",
+      "body": "Seven AM, in the dark, with both kids in the cart. Hazel named the produce stickers. Bram kicked a tomato with absolute deliberateness. The fifteen-minute version of this errand had less commentary.",
       "scene": [
         "A pre-dawn parking lot.",
         "A masked cashier.",
@@ -43,7 +43,7 @@
       "tags": ["era"],
       "weight": 0.6,
       "title": "Bram asks the chatbot.",
-      "body": "You stood in the doorway. Bram had typed the social-studies question into the chatbot before you got there. The answer was on the screen, formatted, with bullet points. He read it out loud to no one in particular. He didn't need you for this one. You didn't know what to do with the small drop you felt.",
+      "body": "Bram typed the social-studies question into the chatbot before you got to the doorway. The answer was on the screen, formatted, with bullet points. He read it out loud to no one in particular. You didn't know what to do with the small drop you felt. Bram, sensing nothing, asked if there were more questions.",
       "effects": { "technicalSkill": "-1", "burnout": "+1" }
     },
     {
@@ -54,7 +54,7 @@
       "weight": 0.7,
       "trigger": { "burnout": ">65" },
       "title": "Your handwriting on the dry-erase.",
-      "body": "You wrote the date and you noticed the letters wobble. Not a lot. Enough that you stood there a second and looked at it before erasing it and writing it again.",
+      "body": "You wrote the date and you noticed the letters wobble. Not a lot. Enough that you stood there a second and looked at it before erasing it and writing it again. Bram asked why you erased it. You said 'practice.' He nodded gravely. You suspect he knew it wasn't.",
       "effects": { "burnout": "+2", "health": "-2" }
     },
 
@@ -65,7 +65,7 @@
       "tags": ["era"],
       "weight": 0.6,
       "title": "The Zoom co-op meets.",
-      "body": "Six families on a grid. Hazel waving at a screen. A glitch every fourteen minutes. You took notes on a paper napkin so you wouldn't be tempted to open another tab.",
+      "body": "Six families on a grid, most of them new at this. Hazel waving at a screen. A glitch every fourteen minutes. You took notes on a paper napkin so you wouldn't be tempted to open another tab. The Zoom was the new part. The lessons weren't.",
       "effects": { "network": "+1", "burnout": "+1" }
     },
     {
@@ -75,7 +75,7 @@
       "tags": ["family", "era"],
       "weight": 0.5,
       "title": "A check-in from your sister.",
-      "body": "She texted to ask how 'this thing' was going. You typed three honest sentences and then deleted them. You sent back two words and an emoji. She wrote back 'sending love' and you both let it sit there.",
+      "body": "Your sister texted to ask how 'the homeschool thing' was going. You typed three honest sentences and deleted them. You sent back two words and an emoji you'd never used before. Working system.",
       "effects": { "burnout": "+1" }
     },
     {
@@ -85,18 +85,18 @@
       "tags": ["lucky", "era", "community"],
       "weight": 0.5,
       "title": "Driveway friends.",
-      "body": "The neighbor's kid wandered over with a soccer ball. Bram followed. The neighbor mom set out two camp chairs at a distance and waved. You waved back. By the end of the week you were waving on purpose.",
+      "body": "The neighbor's kid — whose mom was suddenly homeschooling for the first time — wandered over with a soccer ball. Bram followed. By Friday the mom had set out two camp chairs at the property line, with a thermos. She asked how you'd been doing this for nine years and 'still looked relatively sane.' You appreciated the 'relatively.'",
       "effects": { "network": "+3", "burnout": "-2" }
     },
     {
-      "id": "evt-hp-pandemic-mask-tantrum",
+      "id": "evt-hp-pandemic-church-stayed-open",
       "pool": "homeschool-parent",
       "era": ["pandemic"],
-      "tags": ["era", "stress"],
+      "tags": ["family", "community", "era"],
       "weight": 0.5,
-      "title": "The mask, in the parking lot.",
-      "body": "Bram refused the mask in the car. You stood by the open door for four minutes. A woman two spaces over watched. He put it on. She didn't say anything kind or unkind. She just nodded once, like a person who'd been there.",
-      "effects": { "burnout": "+2", "network": "+1" }
+      "title": "Church was open.",
+      "body": "Three churches in your area closed that spring. Yours stayed open — Sundays and Wednesdays both. The pews were half-full and the windows were cracked. Bram fell asleep on your shoulder. Hazel asked what 'communion' meant. You answered honestly. The pews were the same pews. That was the point.",
+      "effects": { "burnout": "-2", "network": "+2", "health": "+1" }
     },
     {
       "id": "evt-hp-library-haul",
@@ -157,7 +157,7 @@
       "weight": 0.5,
       "trigger": { "month": ">=14" },
       "title": "A passive-aggressive thread.",
-      "body": "Someone in the co-op chat wrote 'just a thought' before a paragraph that was clearly not just a thought. Four parents thumbs-up'd. Three did not. You did not. You closed the app.",
+      "body": "Someone in the co-op chat wrote 'just a thought' before a paragraph that was clearly not just a thought. Everyone knows what 'just a thought' means. The thumbs-up'ers know. The non-thumbs-up'ers know. The cat knows. Four parents thumbs-up'd. Three did not. You did not. You closed the app.",
       "effects": { "network": "-2", "burnout": "+2" }
     },
     {
@@ -179,7 +179,7 @@
       "weight": 0.4,
       "trigger": { "network": ">35" },
       "title": "The bake sale cleared.",
-      "body": "The co-op fundraiser hit its number an hour early. Someone you barely knew said you were the one who'd pulled it off. You hadn't been, really. You'd been the one who showed up. The two things were closer than you'd expected.",
+      "body": "The co-op fundraiser hit its number an hour early. By 'an hour' they meant ten minutes — someone had rounded up for the celebratory email. You ate three cookies that should have gone in the bin on the way to your car.",
       "effects": { "network": "+3", "reputation": "+3" }
     },
     {
@@ -190,7 +190,7 @@
       "weight": 0.4,
       "trigger": { "month": ">=24" },
       "title": "A friend left the co-op.",
-      "body": "She sent the email Sunday night. The reasons were vague and the warmth was real. You wrote back something kind. You meant it. You also knew you would see her less, and that part felt heavier than the reasons.",
+      "body": "A friend left the co-op Sunday night. The reasons were vague and the warmth was real. You added her to the spring-picnic list anyway. Some friendships go quiet, not gone.",
       "effects": { "network": "-2", "burnout": "+1" }
     },
     {
@@ -200,7 +200,7 @@
       "tags": ["family", "relationship"],
       "weight": 0.6,
       "title": "Spouse, home late again.",
-      "body": "The text said 'one more hour' at six. The next text said 'sorry' at nine. You held dinner. Then you didn't. The kids asked twice. You answered twice. By the third you said 'soon.'",
+      "body": "Text at six: 'one more hour.' Text at nine: 'sorry.' You held dinner. Then you didn't. By the third 'soon,' you'd run out of ways to say 'soon.'",
       "effects": { "burnout": "+2" }
     },
     {
@@ -211,7 +211,7 @@
       "weight": 0.4,
       "trigger": { "month": ">=18" },
       "title": "A promotion at the other house.",
-      "body": "Your spouse got the bump. You celebrated with a bottle of something nice. The next morning the math was different in a small way. The math was different in a small way for a long time.",
+      "body": "Your spouse got the bump. You celebrated with a bottle of something nice. The math was different the next morning in a small way that stayed small for a long time. Good problem.",
       "effects": { "savings": "+3000", "burnout": "-1" }
     },
     {
@@ -222,7 +222,7 @@
       "weight": 0.4,
       "trigger": { "month": ">=36" },
       "title": "A package on the table.",
-      "body": "Your spouse came home with a folder. Not a bad folder. A folder. They sat at the kitchen table and didn't open it for forty minutes. You did not say anything for the forty minutes. You sat with them.",
+      "body": "Your spouse came home with a folder. Not a bad folder. A folder. It sat on the kitchen table, unopened, for forty minutes. You did not say anything for the forty minutes. You sat through them too.",
       "effects": { "savings": "-2000", "burnout": "+4", "health": "-1" }
     },
     {
@@ -232,7 +232,7 @@
       "tags": ["community", "era"],
       "weight": 0.6,
       "title": "Three less cars on the street.",
-      "body": "By the time you walked the kids out Tuesday, three of the families in your circle had sent theirs back to brick-and-mortar. You'd known this was coming. The morning still felt different. You stood on the porch for a full extra minute.",
+      "body": "Three families who'd joined you in 2020 went back to brick-and-mortar Tuesday. You were doing what you'd been doing. The porch was quieter. Then Bram tripped over the step. The porch was not quieter.",
       "effects": { "network": "-2", "burnout": "+1" }
     },
     {
@@ -242,7 +242,7 @@
       "tags": ["money", "era", "lucky"],
       "weight": 0.5,
       "title": "Comp adjustment.",
-      "body": "Your spouse's company emailed a 'market adjustment' note. The base went up. The line about 'reflecting market realities' read, this year, like good news. You let it.",
+      "body": "Your spouse's company emailed a 'market adjustment.' The base went up. You read it three times to be sure. The pizza you'd been talking about for a month finally got ordered.",
       "effects": { "savings": "+2400", "burnout": "-1" }
     },
     {
@@ -263,7 +263,7 @@
       "weight": 0.5,
       "trigger": { "month": ">=66" },
       "title": "The essay sounded different.",
-      "body": "Hazel's essay used a phrase she didn't say out loud. You didn't accuse. You asked her to read it back. She did, slowly, and stopped at the phrase. She said 'okay, I rewrote it with help.' You said thank you. You both agreed on a rule. Then you agreed on a different rule the next week.",
+      "body": "Hazel's essay used a phrase she didn't say out loud. You asked her to read it back. She stopped at the phrase. 'Okay, I rewrote it with help.' You agreed on a rule. The next week, you agreed on a different rule.",
       "effects": { "technicalSkill": "+1", "burnout": "+2" }
     },
     {
@@ -273,7 +273,7 @@
       "tags": ["era", "family"],
       "weight": 0.4,
       "title": "Your spouse's workflow, halved.",
-      "body": "Your spouse came home and said 'the thing that took me a day takes me an hour now.' They were not sure if this was good for them. You weren't sure either. You did the dishes together that night and didn't say anything more about it.",
+      "body": "Your spouse: 'the thing that took me a day takes me an hour now.' Hard to tell, in the moment, if that was good news. You did the dishes together. By the last pan you'd both decided to keep being unsure.",
       "effects": { "burnout": "+1", "health": "+1" }
     },
     {
@@ -283,7 +283,7 @@
       "tags": ["era", "community", "humor"],
       "weight": 0.5,
       "title": "The co-op's new convert.",
-      "body": "A co-op parent has, this week, recommended the new tutor in three separate channels. You've tried it. It's fine. You don't have the heart to tell her she's the fifth person to mention it.",
+      "body": "A co-op parent has, this week, recommended the new tutor in three separate channels. You've tried it. It's fine. You don't have the heart to tell her she's the fifth this year. You've been here long enough to know there'll be a sixth.",
       "effects": { "burnout": "+1" }
     },
     {
@@ -294,7 +294,7 @@
       "weight": 0.6,
       "trigger": { "month": ">=96" },
       "title": "The college number.",
-      "body": "A news article quoted the average sticker price. You stared at the number for a minute. Then you closed the tab. Then you opened a different tab and did the actual math. The math was, somehow, slightly better than the article had implied. Not much.",
+      "body": "A news article quoted the average sticker price. You stared at the number for a minute. Then you closed the tab. Then you opened a different tab and did the actual math. The math was, somehow, slightly better than the article had implied. Not much. You took the not-much. The not-much was the day's win.",
       "effects": { "burnout": "+2", "savings": "-100" }
     },
     {
@@ -305,7 +305,7 @@
       "weight": 0.5,
       "trigger": { "month": ">=90" },
       "title": "Your spouse, on the job market.",
-      "body": "They updated the resume Sunday. They told you the number of recruiter messages on Monday. The number was lower than two years ago. They said 'it's fine.' They are, you can tell, also looking inward at the same time. You let them.",
+      "body": "Your spouse updated the resume Sunday. The recruiter-message count came up Monday — lower than two years ago. 'It's fine,' was the answer. There's a kind of looking-inward going on at the same time, you can tell. You let it sit.",
       "effects": { "burnout": "+2", "savings": "-100" }
     },
     {
@@ -315,7 +315,7 @@
       "tags": ["era"],
       "weight": 0.5,
       "title": "A photo from 2020.",
-      "body": "You found it scrolling for something else. Hazel was six. Bram was three. You were standing in a kitchen you no longer have, holding a binder you no longer use. The version of you in the photo could not have predicted the version of you holding the phone.",
+      "body": "You found it scrolling for something else. Hazel was six. Bram was three. You were holding a binder you no longer use, wearing the haircut you no longer admit to. The current version of you is, in fairness, more rested.",
       "effects": { "burnout": "-2" }
     },
     {
@@ -326,7 +326,7 @@
       "weight": 0.5,
       "trigger": { "network": ">35" },
       "title": "A new parent, asking.",
-      "body": "A first-year homeschool mom in the co-op asked if you'd grab coffee. She wanted to know how you did it. You told her the truth. Some weeks great, some weeks survival. She laughed, the relieved kind. You drove home thinking about who'd told you that, eight years ago.",
+      "body": "A first-year homeschool mom asked if you'd grab coffee. She wanted to know how you did it. 'Some weeks great, some weeks survival.' She laughed — the relieved kind. You drove home thinking about who'd told you that, eight years ago. The line is still working.",
       "effects": { "reputation": "+2", "network": "+2" }
     },
     {
@@ -337,7 +337,7 @@
       "weight": 0.6,
       "trigger": { "savings": "<800" },
       "title": "Card, declined.",
-      "body": "At the grocery checkout, with Bram in the cart. The cashier said nothing. You used a different card. You stood in the parking lot for a minute before you started the engine. Bram asked why you were sad. You said you weren't sad. He let it go. You felt that.",
+      "body": "At the grocery checkout, with Bram in the cart. The cashier said nothing. You used a different card. Approved. You sighed. The guy behind you clapped, briefly, almost accidentally. Cash next time.",
       "effects": { "burnout": "+3", "health": "-1" }
     },
     {
@@ -370,7 +370,7 @@
       "weight": 0.5,
       "trigger": { "network": ">50" },
       "title": "An introduction.",
-      "body": "A co-op friend connected you to a mom across town who'd been homeschooling for fifteen years. You met for coffee. You took two pages of notes. You drove home thinking you'd been waiting a long time to talk to someone who'd been doing this longer than you.",
+      "body": "A co-op friend introduced you to a mom across town with fifteen years of homeschooling behind her. You met for coffee. You took two pages of notes. You drove home with the very specific feeling of having found the manual you didn't know existed.",
       "effects": { "network": "+4", "reputation": "+2" }
     },
     {
@@ -393,6 +393,27 @@
       "title": "An annual checkup.",
       "body": "You went to your own doctor for the first time in a year and a half. The blood work was unremarkable. Unremarkable is the best kind of result. You scheduled the next one before you left. You meant it this time.",
       "effects": { "health": "+3", "burnout": "-2" }
+    },
+    {
+      "id": "evt-hp-mr-nobody-mm",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["family", "humor", "flavor"],
+      "weight": 0.6,
+      "title": "Mr Nobody strikes again.",
+      "body": "A bag of chocolate M&Ms melted in the center console of the school-bus (the family car). You ask, 'Who did this?' Hazel and Bram both look at you and say, 'Not me.' Of course. Mr Nobody strikes again.",
+      "effects": { "burnout": "-1" }
+    },
+    {
+      "id": "evt-hp-tablet-screen-flips",
+      "pool": "homeschool-parent",
+      "era": ["any"],
+      "tags": ["family", "humor"],
+      "weight": 0.5,
+      "trigger": { "month": ">=48" },
+      "title": "Research, allegedly.",
+      "body": "There's one tablet between the two kids and it's meant for learning. The older one always needs it for 'research.' You've seen how the screen flips when you walk into the room. It happens fast. Faster than the actual learning, you suspect.",
+      "effects": { "burnout": "+1", "reputation": "-1" }
     }
   ]
 }
