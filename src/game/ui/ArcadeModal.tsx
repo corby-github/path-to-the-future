@@ -26,9 +26,19 @@ import type { RootState } from '../state/store';
 // When v2 multi-pack lands, ArcadeModal will read the variant list off
 // the pack manifest. Closed union is right-sized for v1.
 
-const ARCADE_VARIANTS: ReadonlyArray<{ id: MinigameVariant; label: string; blurb: string }> = [
+// Optional `packs?: readonly string[]` filters the variant to specific
+// career packs (mirrors the layout-template pack-filter pattern from §4).
+// Undefined = universal (eligible for every pack). Listed = only those
+// packs show the variant in the arcade menu. Today: `code-review` is
+// SWE-only — the SWE-coded register doesn't fit a homeschool run.
+const ARCADE_VARIANTS: ReadonlyArray<{
+  id: MinigameVariant;
+  label: string;
+  blurb: string;
+  packs?: readonly string[];
+}> = [
   { id: 'blackjack',       label: 'Blackjack',       blurb: 'Hit, stand, walk out even.' },
-  { id: 'code-review',     label: 'Code Review',     blurb: 'Spot the bug. Beat the panel.' },
+  { id: 'code-review',     label: 'Code Review',     blurb: 'Spot the bug. Beat the panel.', packs: ['software-engineering'] },
   { id: 'reaction-sprint', label: 'Reaction Sprint', blurb: 'Lock the stack. Hit the column.' },
   { id: 'pong',            label: 'Pong',            blurb: 'Two paddles. One ball. First to five.' },
   { id: 'forty-two',       label: 'The Ultimate Question', blurb: 'Life, the universe, everything. Four options.' },
@@ -48,7 +58,7 @@ function formatCooldownRemaining(ms: number): string {
 }
 
 export function ArcadeModal({ interactable, onClose }: Props) {
-  const { palette } = useCareerPack();
+  const { palette, pack } = useCareerPack();
   const dispatch = useAppDispatch();
   const store = useStore<RootState>();
   const lastArcadeXpAt = useAppSelector((s) => s.progress.lastArcadeXpAt);
@@ -63,10 +73,17 @@ export function ArcadeModal({ interactable, onClose }: Props) {
   // overkill for an arcade menu (resolved call #7).
   const [now] = useState(() => Date.now());
 
+  // Pack-filtered variant pool. Entries with `packs` listed only appear for
+  // matching pack ids; undefined `packs` = universal. Stable per-mount.
+  const eligibleVariants = useMemo(
+    () => ARCADE_VARIANTS.filter((v) => v.packs === undefined || v.packs.includes(pack.manifest.id)),
+    [pack.manifest.id],
+  );
+
   // Per-variant throttle state. Frozen at mount per `now`, so labels stay
   // stable as the player navigates the menu.
   const variantStatus = useMemo(() => {
-    return ARCADE_VARIANTS.map((v) => {
+    return eligibleVariants.map((v) => {
       const last = lastArcadeXpAt?.[v.id] ?? 0;
       const elapsed = now - last;
       const ready = elapsed >= ARCADE_THROTTLE_MS;
@@ -114,7 +131,7 @@ export function ArcadeModal({ interactable, onClose }: Props) {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
         e.preventDefault();
-        setHighlighted((h) => Math.min(h + 1, ARCADE_VARIANTS.length - 1));
+        setHighlighted((h) => Math.min(h + 1, eligibleVariants.length - 1));
       } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
         e.preventDefault();
         setHighlighted((h) => Math.max(h - 1, 0));
@@ -123,7 +140,7 @@ export function ArcadeModal({ interactable, onClose }: Props) {
         handlePick(highlighted);
       } else {
         const num = parseInt(e.key, 10);
-        if (Number.isFinite(num) && num >= 1 && num <= ARCADE_VARIANTS.length) {
+        if (Number.isFinite(num) && num >= 1 && num <= eligibleVariants.length) {
           e.preventDefault();
           handlePick(num - 1);
         }
@@ -131,7 +148,7 @@ export function ArcadeModal({ interactable, onClose }: Props) {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [phase, highlighted, handlePick, onClose]);
+  }, [phase, highlighted, handlePick, onClose, eligibleVariants.length]);
 
   // a11y: focus trap + restore (mirrors NPCModal pattern).
   useEffect(() => {

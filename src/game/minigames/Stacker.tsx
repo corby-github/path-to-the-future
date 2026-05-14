@@ -42,8 +42,12 @@ const BLOCK_MAX_X = TRACK_RIGHT - BLOCK_W;
 // Bottom block sits at this Y; each block above is BLOCK_H higher.
 const STACK_BOTTOM_Y = 320;
 
-const BASE_SPEED = 480;        // virtual units / sec
-const SPEED_INCREMENT = 40;    // added per block index (bottom = base, top = base + 4*inc)
+// Per-block speeds (virtual units / sec) and starting sides. Block 0 starts
+// on the LEFT moving right; block 1 starts on the RIGHT moving left; and so
+// on, alternating. Speeds alternate between "moderate" and "fast" bands so
+// the player can't lock a single rhythm — every other block ramps harder.
+// Tunables, by block index 0..4: [480, 620, 520, 680, 560].
+const BLOCK_SPEEDS = [480, 620, 520, 680, 560] as const;
 
 const WIN_FLAVOR =
   'You held the focus for the full sprint. The stack lined up. You felt, for an afternoon, like a person who can do hard things on demand.';
@@ -58,10 +62,20 @@ interface Block {
   x: number;
 }
 
+// Block N starts on the left (BLOCK_MIN_X, moving right) when N is even,
+// and on the right (BLOCK_MAX_X, moving left) when N is odd.
+function startingXForBlock(index: number): number {
+  return index % 2 === 0 ? BLOCK_MIN_X : BLOCK_MAX_X;
+}
+
+function startingDirForBlock(index: number): 1 | -1 {
+  return index % 2 === 0 ? 1 : -1;
+}
+
 function makeInitialBlocks(): Block[] {
   return Array.from({ length: TOTAL_BLOCKS }, (_, i) =>
     i === 0
-      ? { status: 'active' as const, x: BLOCK_MIN_X }
+      ? { status: 'active' as const, x: startingXForBlock(0) }
       : { status: 'pending' as const, x: TARGET_X },
   );
 }
@@ -79,8 +93,8 @@ export function Stacker({ monthId, onComplete, mode = 'scheduled', awardRewards 
   const [activeIndex, setActiveIndex] = useState(0);
   const [phase, setPhase] = useState<'playing' | 'result'>('playing');
 
-  const dirRef = useRef<1 | -1>(1);
-  const speedRef = useRef(BASE_SPEED);
+  const dirRef = useRef<1 | -1>(startingDirForBlock(0));
+  const speedRef = useRef<number>(BLOCK_SPEEDS[0]);
   // Mirror state for the keydown closure so it always sees latest values
   // without re-binding the listener on every animation tick.
   const activeIndexRef = useRef(0);
@@ -134,22 +148,23 @@ export function Stacker({ monthId, onComplete, mode = 'scheduled', awardRewards 
     const blockCenter = cur.x + BLOCK_W / 2;
     const hit = blockCenter >= COLUMN_X && blockCenter <= COLUMN_X + COLUMN_W;
 
+    const nextIdx = idx + 1;
     setBlocks((prev) => {
       const arr = [...prev];
       arr[idx] = { ...arr[idx], status: hit ? 'hit' : 'miss' };
-      if (idx + 1 < TOTAL_BLOCKS) {
-        arr[idx + 1] = { status: 'active', x: BLOCK_MIN_X };
+      if (nextIdx < TOTAL_BLOCKS) {
+        arr[nextIdx] = { status: 'active', x: startingXForBlock(nextIdx) };
       }
       return arr;
     });
 
-    if (idx + 1 >= TOTAL_BLOCKS) {
+    if (nextIdx >= TOTAL_BLOCKS) {
       // Brief beat so the final lock paints before the result screen.
       window.setTimeout(() => setPhase('result'), 300);
     } else {
-      setActiveIndex(idx + 1);
-      dirRef.current = 1;
-      speedRef.current = BASE_SPEED + (idx + 1) * SPEED_INCREMENT;
+      setActiveIndex(nextIdx);
+      dirRef.current = startingDirForBlock(nextIdx);
+      speedRef.current = BLOCK_SPEEDS[nextIdx];
     }
   }, [phase]);
 
