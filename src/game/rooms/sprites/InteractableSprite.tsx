@@ -43,6 +43,11 @@ export function InteractableSprite({ art, kind, x, y, palette }: Props) {
     case 'locked-door': return <ObjLockedDoor x={x} y={y} palette={palette} />;
     case 'arcade-game': return <ObjArcadeGame x={x} y={y} palette={palette} />;
     case 'textbook-stack': return <ObjTextbookStack x={x} y={y} palette={palette} />;
+    case 'art-bin': return <ObjArtBin x={x} y={y} palette={palette} />;
+    case 'kitchen-table': return <ObjKitchenTable x={x} y={y} palette={palette} />;
+    case 'fridge-drawing': return <ObjFridgeDrawing x={x} y={y} palette={palette} />;
+    case 'couch-blanket': return <ObjCouchBlanket x={x} y={y} palette={palette} />;
+    case 'coop-signup': return <ObjCoopSignup x={x} y={y} palette={palette} />;
     default: return <ObjDefault x={x} y={y} palette={palette} />;
   }
 }
@@ -747,6 +752,225 @@ function ObjTextbookStack({ x, y, palette }: SpriteProps) {
         stroke={palette.ink}
         strokeWidth={1}
       />
+    </g>
+  );
+}
+
+// ───────────────────── Homeschool object sprites ──────────────────────────
+// Authored to replace SWE sprite tokens that were placeholder-reused per
+// design doc §26 deferred follow-ups (stress-ball→art-bin, whiteboard→
+// kitchen-table, calendar→fridge-drawing, plant→couch-blanket, monitor→
+// coop-signup). Same palette-pure + ~52×80 bounding-box conventions.
+
+// Art-supplies bin — trapezoidal container with paintbrushes/markers
+// sticking out the top.
+function ObjArtBin({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Bin body — trapezoid (wider at top) */}
+      <path
+        d={`M ${x - 18} ${y - 8} L ${x + 18} ${y - 8} L ${x + 15} ${y + 22} L ${x - 15} ${y + 22} Z`}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Bin rim */}
+      <rect x={x - 20} y={y - 12} width={40} height={5} fill={palette.surface} stroke={palette.ink} strokeWidth={2} />
+      {/* Paintbrush 1 — positive (sage) handle, ink ferrule, ink tip */}
+      <rect x={x - 14} y={y - 24} width={6} height={14} fill={palette.positive} stroke={palette.ink} strokeWidth={1.5} />
+      <path d={`M ${x - 14} ${y - 24} L ${x - 11} ${y - 30} L ${x - 8} ${y - 24} Z`} fill={palette.ink} stroke="none" />
+      {/* Paintbrush 2 — surface handle */}
+      <rect x={x - 4} y={y - 28} width={6} height={18} fill={palette.surface} stroke={palette.ink} strokeWidth={1.5} />
+      <path d={`M ${x - 4} ${y - 28} L ${x - 1} ${y - 34} L ${x + 2} ${y - 28} Z`} fill={palette.ink} stroke="none" />
+      {/* Paintbrush 3 — background (white-ish) marker */}
+      <rect x={x + 6} y={y - 22} width={6} height={12} fill={palette.background} stroke={palette.ink} strokeWidth={1.5} />
+    </g>
+  );
+}
+
+// Kitchen table — flat top + four legs (two visible from front) +
+// a worksheet on top with pencil-scribble lines.
+function ObjKitchenTable({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Worksheet on top of the table (drawn first so the table covers its bottom edge) */}
+      <rect
+        x={x - 12}
+        y={y - 14}
+        width={20}
+        height={10}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      <line x1={x - 9} y1={y - 11} x2={x + 5} y2={y - 11} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 9} y1={y - 8} x2={x + 2} y2={y - 8} stroke={palette.ink} strokeWidth={1} />
+      {/* Tabletop */}
+      <rect
+        x={x - 24}
+        y={y - 6}
+        width={48}
+        height={6}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Two visible front legs */}
+      <rect x={x - 22} y={y} width={4} height={24} fill={palette.accent} stroke={palette.ink} strokeWidth={1.5} />
+      <rect x={x + 18} y={y} width={4} height={24} fill={palette.accent} stroke={palette.ink} strokeWidth={1.5} />
+    </g>
+  );
+}
+
+// Fridge with a kid drawing taped to the front. Tall body, freezer/main
+// split, two handles, drawing in the middle of the main door.
+function ObjFridgeDrawing({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Fridge body */}
+      <rect
+        x={x - 16}
+        y={y - 32}
+        width={32}
+        height={56}
+        rx={2}
+        fill={palette.surface}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Freezer / main split */}
+      <line x1={x - 16} y1={y - 18} x2={x + 16} y2={y - 18} stroke={palette.ink} strokeWidth={1.5} />
+      {/* Freezer handle */}
+      <line x1={x + 11} y1={y - 28} x2={x + 11} y2={y - 22} stroke={palette.ink} strokeWidth={2} />
+      {/* Main handle */}
+      <line x1={x + 11} y1={y - 14} x2={x + 11} y2={y - 6} stroke={palette.ink} strokeWidth={2} />
+      {/* Drawing taped to the main door */}
+      <rect
+        x={x - 10}
+        y={y - 10}
+        width={16}
+        height={14}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+      {/* Stick figure on the drawing — head + body + arms */}
+      <circle cx={x - 2} cy={y - 6} r={1.5} stroke={palette.ink} strokeWidth={1} fill="none" />
+      <line x1={x - 2} y1={y - 4} x2={x - 2} y2={y + 1} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 5} y1={y - 2} x2={x + 1} y2={y - 2} stroke={palette.ink} strokeWidth={1} />
+      {/* Magnet dot */}
+      <circle cx={x - 2} cy={y - 10} r={1.2} fill={palette.ink} />
+    </g>
+  );
+}
+
+// Sick-day couch — low back + two rolled armrests + seat cushion + blanket
+// draped over one side.
+function ObjCouchBlanket({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Backrest */}
+      <rect
+        x={x - 22}
+        y={y - 16}
+        width={44}
+        height={14}
+        rx={3}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Left armrest */}
+      <rect
+        x={x - 26}
+        y={y - 10}
+        width={6}
+        height={18}
+        rx={2}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Right armrest */}
+      <rect
+        x={x + 20}
+        y={y - 10}
+        width={6}
+        height={18}
+        rx={2}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Seat cushion */}
+      <rect
+        x={x - 20}
+        y={y - 4}
+        width={40}
+        height={12}
+        rx={2}
+        fill={palette.surface}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Two short feet */}
+      <rect x={x - 22} y={y + 8} width={4} height={4} fill={palette.ink} />
+      <rect x={x + 18} y={y + 8} width={4} height={4} fill={palette.ink} />
+      {/* Blanket draped over the right side */}
+      <path
+        d={`M ${x + 4} ${y - 4} L ${x + 24} ${y - 4} L ${x + 28} ${y + 12} L ${x + 8} ${y + 14} Z`}
+        fill={palette.positive}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+    </g>
+  );
+}
+
+// Co-op sign-up clipboard — clip at top, paper with sign-up lines, one
+// line with a signature mark.
+function ObjCoopSignup({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Clipboard body */}
+      <rect
+        x={x - 14}
+        y={y - 22}
+        width={28}
+        height={44}
+        rx={2}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Clip at top */}
+      <rect
+        x={x - 6}
+        y={y - 26}
+        width={12}
+        height={6}
+        rx={1}
+        fill={palette.ink}
+        stroke="none"
+      />
+      {/* Paper inside */}
+      <rect
+        x={x - 11}
+        y={y - 18}
+        width={22}
+        height={36}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+      {/* Five sign-up lines */}
+      <line x1={x - 9} y1={y - 12} x2={x + 9} y2={y - 12} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 9} y1={y - 6} x2={x + 9} y2={y - 6} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 9} y1={y} x2={x + 9} y2={y} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 9} y1={y + 6} x2={x + 9} y2={y + 6} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 9} y1={y + 12} x2={x + 9} y2={y + 12} stroke={palette.ink} strokeWidth={1} />
+      {/* Signature mark on the first line */}
+      <line x1={x - 7} y1={y - 13} x2={x - 1} y2={y - 11} stroke={palette.ink} strokeWidth={1.5} />
     </g>
   );
 }
