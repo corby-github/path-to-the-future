@@ -1,11 +1,12 @@
-// Career meta-list per §16. As of the homeschool-parent Phase-1 starter,
-// two packs ship as playable (software-engineering, homeschool-parent —
-// the latter is voice-checkpoint scaffolded per §26). The remaining four
-// entries are shown in the picker as "Coming Soon" and not selectable.
+// Career meta-list per §16. Two packs ship as playable
+// (software-engineering, homeschool-parent — the latter full-scale per
+// §26 v2.0.1). The remaining three entries are shown in the picker as
+// "Coming Soon" and not selectable.
 //
 // Adding a new playable career means: (a) add the manifest/months/decisions/
 // events under `public/careers/{id}/`, (b) flip `playable: true` here, and
-// (c) optionally relabel stat names via `manifest.statLabels` (§26 v2.0).
+// (c) optionally relabel stat names via `manifest.statLabels` (§26 v2.0)
+// and/or override class labels via `manifest.classLabels` (§14 v2.0.2).
 
 export interface CareerListing {
   id: string;
