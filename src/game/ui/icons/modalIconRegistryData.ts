@@ -74,6 +74,17 @@ import {
   IconWalker,
   IconWhiteboardSystem,
   IconFlowWaves,
+  // Homeschool pack — 5+5 voice-checkpoint batch
+  IconHomeschoolBinder,
+  IconCoopGroup,
+  IconSnackProtest,
+  IconSlowTablet,
+  IconBackpack,
+  IconBittenCrayon,
+  IconParkBench,
+  IconMeltedCandy,
+  IconTabletFlip,
+  IconWobbleBoard,
   type ModalIconComponent,
 } from './modalIcons';
 
@@ -136,6 +147,13 @@ export const DECISION_ICONS: Record<string, ModalIconComponent> = {
 
   // Finale (DecisionRoom hardcodes this id at month 120).
   'finale-month-120': IconThresholdDoor,
+
+  // Homeschool pack — 5+5 voice-checkpoint batch (decisions).
+  'hp-curriculum-boxed-vs-own': IconHomeschoolBinder,
+  'hp-coop-invitation': IconCoopGroup,
+  'hp-snack-rebellion': IconSnackProtest,
+  'hp-tablet-speed-complaint': IconSlowTablet,
+  'hp-eldest-wants-school': IconBackpack,
 };
 
 // --- Event icons ------------------------------------------------------------
@@ -187,4 +205,11 @@ export const EVENT_ICONS: Record<string, ModalIconComponent> = {
   'evt-stat-low-health-cold': IconThermometer,
   'evt-stat-high-network-intro': IconNetwork,
   'evt-stat-low-savings-card': IconCreditCard,
+
+  // Homeschool pack — 5+5 voice-checkpoint batch (events).
+  'evt-hp-toddler-crayon': IconBittenCrayon,
+  'evt-hp-park-grade-question': IconParkBench,
+  'evt-hp-mr-nobody-mm': IconMeltedCandy,
+  'evt-hp-tablet-screen-flips': IconTabletFlip,
+  'evt-hp-handwriting-wobble': IconWobbleBoard,
 };

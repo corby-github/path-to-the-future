@@ -107,6 +107,18 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
   IconPaddles: 'two paddles with a ball — pong minigame',
   IconFortyTwo: 'wedge-headed monitor on a tripod stand (Deep Thought) — the ultimate-question minigame',
 
+  // --- Homeschool pack — 5+5 voice-checkpoint batch ------------------------
+  IconHomeschoolBinder: 'three-ring binder with content lines — boxed curriculum vs. own plan',
+  IconCoopGroup: 'three figures clustered — neighborhood co-op invitation',
+  IconSnackProtest: 'small figure with a "SNACKS" picket sign — snack rebellion',
+  IconSlowTablet: 'tablet with a loading spinner — the tablet is too slow',
+  IconBackpack: 'kid backpack with straps — eldest wants school',
+  IconBittenCrayon: 'crayon with a bitten tip — Bram ate part of a crayon',
+  IconParkBench: 'park bench with two seated figures — another mom at the park',
+  IconMeltedCandy: 'melted blob in a cup-holder — Mr Nobody strikes again',
+  IconTabletFlip: 'tablet at an angle with a motion arc — research, allegedly',
+  IconWobbleBoard: 'dry-erase board with wobbly handwriting — handwriting wobble',
+
   // --- Placeholder ---------------------------------------------------------
   PlaceholderIcon: 'question mark in a frame — unregistered id fallback',
 };

@@ -1481,6 +1481,177 @@ export function IconEconomyDown({ palette, size }: ModalIconProps): ReactElement
   );
 }
 
+// ── Homeschool pack — 5+5 voice-checkpoint batch ─────────────────────────
+// First batch of homeschool-specific icons. Locks the visual register for
+// the pack before scaling to the remaining ~60 hp-* / evt-hp-* ids. Same
+// Treatment A constraints as the SWE pack: 80×80 viewBox, palette.ink line
+// art at strokeWidth 2.5, rounded caps/joins, filled accents.
+
+export function IconHomeschoolBinder({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-curriculum-boxed-vs-own" label="Boxed curriculum vs. own plan" size={size}>
+      {/* Three-ring binder seen face-on with content lines */}
+      <rect x={16} y={14} width={48} height={52} rx={2} />
+      <line x1={20} y1={14} x2={20} y2={66} />
+      <circle cx={20} cy={26} r={2.5} fill={palette.ink} stroke="none" />
+      <circle cx={20} cy={40} r={2.5} fill={palette.ink} stroke="none" />
+      <circle cx={20} cy={54} r={2.5} fill={palette.ink} stroke="none" />
+      <line x1={28} y1={26} x2={56} y2={26} strokeWidth={1.5} />
+      <line x1={28} y1={34} x2={52} y2={34} strokeWidth={1.5} />
+      <line x1={28} y1={42} x2={56} y2={42} strokeWidth={1.5} />
+      <line x1={28} y1={50} x2={48} y2={50} strokeWidth={1.5} />
+      <line x1={28} y1={58} x2={56} y2={58} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconCoopGroup({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-coop-invitation" label="Co-op invitation" size={size}>
+      {/* Three figures clustered — the co-op group */}
+      <circle cx={22} cy={28} r={6} />
+      <path d="M 16 60 V 42 Q 16 36 22 36 Q 28 36 28 42 V 60" />
+      <circle cx={40} cy={22} r={7} />
+      <path d="M 32 60 V 38 Q 32 32 40 32 Q 48 32 48 38 V 60" />
+      <circle cx={58} cy={28} r={6} />
+      <path d="M 52 60 V 42 Q 52 36 58 36 Q 64 36 64 42 V 60" />
+    </IconFrame>
+  );
+}
+
+export function IconSnackProtest({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-snack-rebellion" label="Snack rebellion" size={size}>
+      {/* Picket sign held above a small figure */}
+      <rect x={20} y={8} width={40} height={18} />
+      <text
+        x={40}
+        y={22}
+        textAnchor="middle"
+        fontFamily="inherit"
+        fontSize={9}
+        fontWeight={700}
+        fill={palette.ink}
+        stroke="none"
+      >
+        SNACKS
+      </text>
+      {/* Sign post + held arms */}
+      <line x1={40} y1={26} x2={40} y2={38} strokeWidth={2} />
+      {/* Kid figure */}
+      <circle cx={40} cy={46} r={6} />
+      <path d="M 32 70 V 54 Q 32 48 40 48 Q 48 48 48 54 V 70" />
+      <line x1={36} y1={50} x2={36} y2={38} strokeWidth={2.5} />
+      <line x1={44} y1={50} x2={44} y2={38} strokeWidth={2.5} />
+    </IconFrame>
+  );
+}
+
+export function IconSlowTablet({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-tablet-speed-complaint" label="The tablet is too slow" size={size}>
+      {/* Tablet in landscape with a loading spinner on the screen */}
+      <rect x={10} y={20} width={60} height={42} rx={3} />
+      <rect x={14} y={24} width={52} height={32} />
+      {/* 3/4 spinner arc */}
+      <path d="M 28 40 A 12 12 0 1 1 40 28" strokeWidth={3} fill="none" />
+      {/* Arrowhead at arc end */}
+      <path d="M 36 26 L 40 28 L 38 32" strokeWidth={3} />
+    </IconFrame>
+  );
+}
+
+export function IconBackpack({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-eldest-wants-school" label="Eldest wants school" size={size}>
+      {/* Backpack body */}
+      <path d="M 22 26 Q 22 18 28 18 H 52 Q 58 18 58 26 V 64 Q 58 68 54 68 H 26 Q 22 68 22 64 Z" />
+      {/* Two strap loops on top */}
+      <path d="M 28 18 Q 28 10 32 10 Q 36 10 36 18" />
+      <path d="M 44 18 Q 44 10 48 10 Q 52 10 52 18" />
+      {/* Front pocket */}
+      <rect x={30} y={40} width={20} height={16} />
+      {/* Zipper detail */}
+      <line x1={26} y1={26} x2={54} y2={26} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconBittenCrayon({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-toddler-crayon" label="Bram ate part of a crayon" size={size}>
+      {/* Crayon body with an irregular bitten tip */}
+      <path d="M 32 28 L 38 14 L 40 22 L 44 16 L 48 28 Z" fill={palette.ink} stroke="none" />
+      <rect x={32} y={28} width={16} height={40} />
+      <line x1={32} y1={38} x2={48} y2={38} strokeWidth={1.5} />
+      <line x1={32} y1={52} x2={48} y2={52} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconParkBench({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-park-grade-question" label="Another mom at the park" size={size}>
+      {/* Park bench with two seated figures */}
+      <line x1={14} y1={28} x2={66} y2={28} strokeWidth={2} />
+      <line x1={14} y1={28} x2={14} y2={48} strokeWidth={2} />
+      <line x1={66} y1={28} x2={66} y2={48} strokeWidth={2} />
+      <rect x={14} y={42} width={52} height={6} />
+      <line x1={20} y1={48} x2={20} y2={62} strokeWidth={2} />
+      <line x1={60} y1={48} x2={60} y2={62} strokeWidth={2} />
+      {/* Two heads */}
+      <circle cx={28} cy={20} r={5} />
+      <circle cx={52} cy={20} r={5} />
+    </IconFrame>
+  );
+}
+
+export function IconMeltedCandy({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-mr-nobody-mm" label="Mr Nobody strikes again" size={size}>
+      {/* Cup-holder rim (top view) */}
+      <circle cx={40} cy={40} r={24} />
+      <circle cx={40} cy={40} r={20} strokeWidth={1.5} />
+      {/* Melted blob */}
+      <path
+        d="M 26 42 Q 28 30 36 28 Q 46 24 52 34 Q 58 42 52 50 Q 44 56 36 52 Q 26 50 26 42 Z"
+        fill={palette.ink}
+        stroke="none"
+      />
+    </IconFrame>
+  );
+}
+
+export function IconTabletFlip({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-tablet-screen-flips" label="Research, allegedly" size={size}>
+      {/* Tablet rotated to suggest mid-flip */}
+      <g transform="rotate(-25 40 40)">
+        <rect x={18} y={28} width={44} height={26} rx={2} />
+        <rect x={22} y={32} width={36} height={18} />
+      </g>
+      {/* Motion arc above */}
+      <path d="M 14 20 Q 40 10 66 20" strokeWidth={2} strokeDasharray="3 3" />
+      <path d="M 62 16 L 66 20 L 62 24" strokeWidth={2} />
+    </IconFrame>
+  );
+}
+
+export function IconWobbleBoard({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-handwriting-wobble" label="Handwriting wobble" size={size}>
+      {/* Dry-erase board frame */}
+      <rect x={10} y={18} width={60} height={44} />
+      {/* Marker tray at bottom */}
+      <rect x={6} y={62} width={68} height={4} fill={palette.ink} stroke="none" />
+      {/* Wobbly handwriting lines */}
+      <path d="M 16 30 Q 22 26 28 30 Q 34 34 40 30 Q 46 26 52 30 Q 58 34 64 30" strokeWidth={2} />
+      <path d="M 16 42 Q 22 38 28 42 Q 34 46 40 42 Q 46 38 52 42 Q 58 46 64 42" strokeWidth={2} />
+      <path d="M 16 54 Q 22 50 28 54 Q 34 58 40 54" strokeWidth={2} />
+    </IconFrame>
+  );
+}
+
 interface DecisionIconProps {
   decisionId: string;
   palette: Palette;
