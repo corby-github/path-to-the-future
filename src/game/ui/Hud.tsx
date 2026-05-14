@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from 're
 import { useAppSelector } from '../state/hooks';
 import { useCareerPack } from '../content/useCareerPack';
 import { statLabelFor } from '../content/statLabels';
+import { CLASSES } from '../content/classes';
 import { StatChip } from './StatChip';
 import { useCurrentRoom } from './currentRoomContextValue';
 
@@ -60,7 +61,10 @@ export function Hud() {
   const { template } = useCurrentRoom();
 
   const classLabel =
-    pack.manifest.entryClasses[progress.classTier]?.label ?? progress.classTier;
+    pack.manifest.classLabels?.[progress.classTier]?.label ??
+    CLASSES.find((c) => c.id === progress.classTier)?.label ??
+    pack.manifest.entryClasses[progress.classTier]?.label ??
+    progress.classTier;
   const monthLabel = formatMonth(currentMonth.year, currentMonth.monthNum);
 
   // Month-change emit. Track prev monthId via ref; on change, push a floater

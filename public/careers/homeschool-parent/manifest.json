@@ -56,6 +56,17 @@
     }
   },
 
+  "classLabels": {
+    "novice":    { "label": "First-Year Parent",     "role": "Year One, Surviving" },
+    "junior":    { "label": "Settled Routine",       "role": "Year Two or Three" },
+    "skilled":   { "label": "Veteran Parent",        "role": "Five Years Deep" },
+    "vanguard":  { "label": "Curriculum Sage",       "role": "The One With The Spreadsheet" },
+    "commander": { "label": "Co-op Lead",            "role": "They Call You First" },
+    "legendary": { "label": "Mentor Parent",         "role": "Other Parents Take Notes" },
+    "mythic":    { "label": "Homeschool Elder",      "role": "Has Done This Twice" },
+    "oracle":    { "label": "Reason Co-ops Exist",   "role": "Decades In" }
+  },
+
    "intro": [
     "It's January 2020.",
     "{playerName}, there are rumors of a virus.",

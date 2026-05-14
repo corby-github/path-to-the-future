@@ -164,12 +164,13 @@ export function ClassPicker({ onSelect }: Props) {
         >
           {CLASSES.map((c) => {
             const playable = Boolean(pack.manifest.entryClasses[c.id]);
+            const override = pack.manifest.classLabels?.[c.id];
             return (
               <ClassOption
                 key={c.id}
                 id={c.id}
-                label={c.label}
-                role={c.role}
+                label={override?.label ?? c.label}
+                role={override?.role ?? c.role}
                 xpRange={formatXpRange(c.xpMin, c.xpMax)}
                 playable={playable}
                 selected={pickedId === c.id}
