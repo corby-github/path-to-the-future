@@ -34,6 +34,11 @@ export interface EntryClass {
   startingStats: EntryClassStartingStats;
 }
 
+export interface ClassLabel {
+  label: string;
+  role?: string;
+}
+
 export interface Manifest {
   id: string;
   name: string;
@@ -60,6 +65,13 @@ export interface Manifest {
   // engine label. One source of truth, one fallback. SWE pack omits this
   // entirely and renders with default labels.
   statLabels?: Partial<Record<StatLabelKey, string>>;
+  // Per-pack display override for class tiers (§14). Keys are class IDs from
+  // CLASSES (novice / junior / skilled / vanguard / commander / legendary /
+  // mythic / oracle). Values override the universal labels in ClassPicker and
+  // Hud. Omitted keys fall through to the universal CLASSES.label / .role.
+  // SWE pack omits this entirely (universal labels are already SWE-flavored).
+  // Homeschool pack overrides all 8 tiers for the parenting register.
+  classLabels?: Partial<Record<string, ClassLabel>>;
 }
 
 // Canonical stat keys eligible for relabeling. Mirrors §7 plus `xp`. Kept as

@@ -726,30 +726,25 @@ export function IconPaddles({ palette, size }: ModalIconProps): ReactElement {
 export function IconFortyTwo({ palette, size }: ModalIconProps): ReactElement {
   return (
     <IconFrame palette={palette} variant="forty-two" label="The Ultimate Question" size={size}>
-      {/* Deep Thought (2005 Hitchhiker's Guide film silhouette) — wedge-
-          shaped CRT-monitor "head" tilted forward, mounted on a tripod
-          A-frame stand. Avoids the "42" glyph that would spoil the
-          minigame punchline if the icon shows pre-play. */}
-      {/* Head — trapezoidal monitor, top edge wider than bottom, tilted */}
+      {/* Deep Thought (2005 Hitchhiker's Guide film) — outlined wedge head
+          on small feet, leaning slightly forward. Line-art (not filled
+          silhouette) per the user-supplied reference: rounded top corners,
+          subtle forward lean, two short feet at the bottom corners, a
+          horizontal slot and a small status-light dot on the lower face. */}
+      {/* Head outline — rounded-top trapezoid with a slight forward lean
+          (bottom-right sits a few px lower than bottom-left) */}
       <path
-        d="M 14 10 L 64 8 L 62 40 L 16 42 Z"
-        fill={palette.ink}
-        stroke="none"
+        d="M 20 12 Q 14 12 14 18 L 14 56 L 64 58 L 64 18 Q 64 12 58 12 Z"
+        strokeWidth={3}
       />
-      {/* Small screen-glint accent (kept palette.background to read as a
-          highlight on the dark face) */}
-      <line x1={22} y1={22} x2={32} y2={24} stroke={palette.background} strokeWidth={1.5} />
-      {/* Neck — narrowing wedge connecting head to stand */}
-      <path
-        d="M 28 42 L 52 42 L 48 50 L 32 50 Z"
-        fill={palette.ink}
-        stroke="none"
-      />
-      {/* Tripod legs — A-frame */}
-      <line x1={32} y1={50} x2={14} y2={68} strokeWidth={4} />
-      <line x1={48} y1={50} x2={66} y2={68} strokeWidth={4} />
-      {/* Cross-brace stabilizer */}
-      <line x1={22} y1={60} x2={58} y2={60} strokeWidth={3} />
+      {/* Left foot — short L-shape under the bottom-left corner */}
+      <path d="M 10 58 L 10 66 L 20 66 L 20 60" strokeWidth={3} />
+      {/* Right foot — short L-shape under the bottom-right corner */}
+      <path d="M 58 60 L 58 66 L 68 66 L 68 58" strokeWidth={3} />
+      {/* Horizontal slot in the lower face */}
+      <line x1={22} y1={50} x2={44} y2={50} strokeWidth={2} />
+      {/* Status-light dot — small open circle on the lower-right of the face */}
+      <circle cx={54} cy={48} r={2.5} strokeWidth={2} fill="none" />
     </IconFrame>
   );
 }
@@ -1477,6 +1472,353 @@ export function IconEconomyDown({ palette, size }: ModalIconProps): ReactElement
       <circle cx={18} cy={22} r={2} fill={palette.ink} stroke="none" />
       <circle cx={38} cy={28} r={2} fill={palette.ink} stroke="none" />
       <circle cx={48} cy={42} r={2} fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+// ── Homeschool pack — 5+5 voice-checkpoint batch ─────────────────────────
+// First batch of homeschool-specific icons. Locks the visual register for
+// the pack before scaling to the remaining ~60 hp-* / evt-hp-* ids. Same
+// Treatment A constraints as the SWE pack: 80×80 viewBox, palette.ink line
+// art at strokeWidth 2.5, rounded caps/joins, filled accents.
+
+export function IconHomeschoolBinder({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-curriculum-boxed-vs-own" label="Boxed curriculum vs. own plan" size={size}>
+      {/* Three-ring binder seen face-on with content lines */}
+      <rect x={16} y={14} width={48} height={52} rx={2} />
+      <line x1={20} y1={14} x2={20} y2={66} />
+      <circle cx={20} cy={26} r={2.5} fill={palette.ink} stroke="none" />
+      <circle cx={20} cy={40} r={2.5} fill={palette.ink} stroke="none" />
+      <circle cx={20} cy={54} r={2.5} fill={palette.ink} stroke="none" />
+      <line x1={28} y1={26} x2={56} y2={26} strokeWidth={1.5} />
+      <line x1={28} y1={34} x2={52} y2={34} strokeWidth={1.5} />
+      <line x1={28} y1={42} x2={56} y2={42} strokeWidth={1.5} />
+      <line x1={28} y1={50} x2={48} y2={50} strokeWidth={1.5} />
+      <line x1={28} y1={58} x2={56} y2={58} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconCoopGroup({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-coop-invitation" label="Co-op invitation" size={size}>
+      {/* Three figures clustered — the co-op group */}
+      <circle cx={22} cy={28} r={6} />
+      <path d="M 16 60 V 42 Q 16 36 22 36 Q 28 36 28 42 V 60" />
+      <circle cx={40} cy={22} r={7} />
+      <path d="M 32 60 V 38 Q 32 32 40 32 Q 48 32 48 38 V 60" />
+      <circle cx={58} cy={28} r={6} />
+      <path d="M 52 60 V 42 Q 52 36 58 36 Q 64 36 64 42 V 60" />
+    </IconFrame>
+  );
+}
+
+export function IconSnackProtest({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-snack-rebellion" label="Snack rebellion" size={size}>
+      {/* Picket sign held above a small figure */}
+      <rect x={20} y={8} width={40} height={18} />
+      <text
+        x={40}
+        y={22}
+        textAnchor="middle"
+        fontFamily="inherit"
+        fontSize={9}
+        fontWeight={700}
+        fill={palette.ink}
+        stroke="none"
+      >
+        SNACKS
+      </text>
+      {/* Sign post + held arms */}
+      <line x1={40} y1={26} x2={40} y2={38} strokeWidth={2} />
+      {/* Kid figure */}
+      <circle cx={40} cy={46} r={6} />
+      <path d="M 32 70 V 54 Q 32 48 40 48 Q 48 48 48 54 V 70" />
+      <line x1={36} y1={50} x2={36} y2={38} strokeWidth={2.5} />
+      <line x1={44} y1={50} x2={44} y2={38} strokeWidth={2.5} />
+    </IconFrame>
+  );
+}
+
+export function IconSlowTablet({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-tablet-speed-complaint" label="The tablet is too slow" size={size}>
+      {/* Tablet in landscape — just the device, no spinner. Reads as
+          "tablet" cleanly; the "too slow" framing comes from context. */}
+      <rect x={10} y={20} width={60} height={42} rx={3} />
+      <rect x={14} y={24} width={52} height={32} />
+    </IconFrame>
+  );
+}
+
+export function IconBackpack({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-eldest-wants-school" label="Eldest wants school" size={size}>
+      {/* Backpack body */}
+      <path d="M 22 26 Q 22 18 28 18 H 52 Q 58 18 58 26 V 64 Q 58 68 54 68 H 26 Q 22 68 22 64 Z" />
+      {/* Two strap loops on top */}
+      <path d="M 28 18 Q 28 10 32 10 Q 36 10 36 18" />
+      <path d="M 44 18 Q 44 10 48 10 Q 52 10 52 18" />
+      {/* Front pocket */}
+      <rect x={30} y={40} width={20} height={16} />
+      {/* Zipper detail */}
+      <line x1={26} y1={26} x2={54} y2={26} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconBittenCrayon({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-toddler-crayon" label="Bram ate part of a crayon" size={size}>
+      {/* Crayon body with an irregular bitten tip */}
+      <path d="M 32 28 L 38 14 L 40 22 L 44 16 L 48 28 Z" fill={palette.ink} stroke="none" />
+      <rect x={32} y={28} width={16} height={40} />
+      <line x1={32} y1={38} x2={48} y2={38} strokeWidth={1.5} />
+      <line x1={32} y1={52} x2={48} y2={52} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconParkBench({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-park-grade-question" label="Another mom at the park" size={size}>
+      {/* Park bench with two seated figures */}
+      <line x1={14} y1={28} x2={66} y2={28} strokeWidth={2} />
+      <line x1={14} y1={28} x2={14} y2={48} strokeWidth={2} />
+      <line x1={66} y1={28} x2={66} y2={48} strokeWidth={2} />
+      <rect x={14} y={42} width={52} height={6} />
+      <line x1={20} y1={48} x2={20} y2={62} strokeWidth={2} />
+      <line x1={60} y1={48} x2={60} y2={62} strokeWidth={2} />
+      {/* Two heads */}
+      <circle cx={28} cy={20} r={5} />
+      <circle cx={52} cy={20} r={5} />
+    </IconFrame>
+  );
+}
+
+export function IconMeltedCandy({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-mr-nobody-mm" label="Mr Nobody strikes again" size={size}>
+      {/* Cup-holder rim (top view) */}
+      <circle cx={40} cy={40} r={24} />
+      <circle cx={40} cy={40} r={20} strokeWidth={1.5} />
+      {/* Melted blob */}
+      <path
+        d="M 26 42 Q 28 30 36 28 Q 46 24 52 34 Q 58 42 52 50 Q 44 56 36 52 Q 26 50 26 42 Z"
+        fill={palette.ink}
+        stroke="none"
+      />
+    </IconFrame>
+  );
+}
+
+export function IconTabletFlip({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-tablet-screen-flips" label="Research, allegedly" size={size}>
+      {/* Tablet rotated to suggest mid-flip */}
+      <g transform="rotate(-25 40 40)">
+        <rect x={18} y={28} width={44} height={26} rx={2} />
+        <rect x={22} y={32} width={36} height={18} />
+      </g>
+      {/* Motion arc above */}
+      <path d="M 14 20 Q 40 10 66 20" strokeWidth={2} strokeDasharray="3 3" />
+      <path d="M 62 16 L 66 20 L 62 24" strokeWidth={2} />
+    </IconFrame>
+  );
+}
+
+export function IconWobbleBoard({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-handwriting-wobble" label="Handwriting wobble" size={size}>
+      {/* Dry-erase board frame */}
+      <rect x={10} y={18} width={60} height={44} />
+      {/* Marker tray at bottom */}
+      <rect x={6} y={62} width={68} height={4} fill={palette.ink} stroke="none" />
+      {/* Wobbly handwriting lines */}
+      <path d="M 16 30 Q 22 26 28 30 Q 34 34 40 30 Q 46 26 52 30 Q 58 34 64 30" strokeWidth={2} />
+      <path d="M 16 42 Q 22 38 28 42 Q 34 46 40 42 Q 46 38 52 42 Q 58 46 64 42" strokeWidth={2} />
+      <path d="M 16 54 Q 22 50 28 54 Q 34 58 40 54" strokeWidth={2} />
+    </IconFrame>
+  );
+}
+
+// ── Homeschool pack — second 5+5 batch ───────────────────────────────────
+// Continues coverage past the voice-checkpoint batch. Same Treatment A
+// constraints (80×80, palette.ink line art, strokeWidth 2.5).
+
+export function IconScreenTime({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-pandemic-screens-rule" label="Screen-time rule" size={size}>
+      {/* TV with stand + a kid silhouette beside it */}
+      <rect x={12} y={18} width={44} height={32} rx={2} />
+      <line x1={20} y1={28} x2={32} y2={28} strokeWidth={1.5} />
+      <line x1={20} y1={34} x2={36} y2={34} strokeWidth={1.5} />
+      <line x1={20} y1={40} x2={28} y2={40} strokeWidth={1.5} />
+      {/* Stand */}
+      <line x1={34} y1={50} x2={34} y2={56} strokeWidth={2} />
+      <line x1={22} y1={56} x2={46} y2={56} strokeWidth={2} />
+      {/* Kid silhouette on the right */}
+      <circle cx={64} cy={34} r={5} />
+      <path d="M 58 60 V 46 Q 58 41 64 41 Q 70 41 70 46 V 60" />
+    </IconFrame>
+  );
+}
+
+export function IconInLawSpeaks({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-in-law-visit" label="In-law visit" size={size}>
+      {/* Older figure with raised arm/finger + speech dots */}
+      <circle cx={28} cy={22} r={7} />
+      <path d="M 20 60 V 38 Q 20 32 28 32 Q 36 32 36 38 V 60" />
+      {/* Raised pointing arm */}
+      <line x1={34} y1={38} x2={48} y2={26} strokeWidth={2.5} />
+      <line x1={48} y1={26} x2={54} y2={22} strokeWidth={2} />
+      {/* Speech dots — "just a thought" energy */}
+      <circle cx={58} cy={18} r={1.5} fill={palette.ink} stroke="none" />
+      <circle cx={64} cy={18} r={1.5} fill={palette.ink} stroke="none" />
+      <circle cx={70} cy={18} r={1.5} fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconThermometerSick({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-sick-day-on-test-day" label="Sick day on test day" size={size}>
+      {/* Thermometer with bulb */}
+      <rect x={36} y={10} width={8} height={44} rx={4} />
+      <circle cx={40} cy={60} r={8} />
+      <line x1={40} y1={16} x2={40} y2={50} strokeWidth={3} />
+      <circle cx={40} cy={60} r={5} fill={palette.ink} stroke="none" />
+      {/* Tick marks */}
+      <line x1={48} y1={22} x2={52} y2={22} strokeWidth={1.5} />
+      <line x1={48} y1={30} x2={52} y2={30} strokeWidth={1.5} />
+      <line x1={48} y1={38} x2={52} y2={38} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconSwingset({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-park-defense" label="Park-bench defense" size={size}>
+      {/* Swing-set side view */}
+      <line x1={14} y1={64} x2={21} y2={18} strokeWidth={2.5} />
+      <line x1={28} y1={64} x2={21} y2={18} strokeWidth={2.5} />
+      <line x1={52} y1={64} x2={59} y2={18} strokeWidth={2.5} />
+      <line x1={66} y1={64} x2={59} y2={18} strokeWidth={2.5} />
+      <line x1={21} y1={18} x2={59} y2={18} strokeWidth={3} />
+      {/* Swing chains + seat */}
+      <line x1={32} y1={18} x2={32} y2={50} strokeWidth={1.5} />
+      <line x1={48} y1={18} x2={48} y2={50} strokeWidth={1.5} />
+      <line x1={28} y1={52} x2={52} y2={52} strokeWidth={3} />
+    </IconFrame>
+  );
+}
+
+export function IconOrganicEmail({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="hp-coop-snack-politics" label="Co-op snack politics" size={size}>
+      {/* Envelope with a leaf stamp in the corner */}
+      <rect x={10} y={20} width={60} height={40} rx={1} />
+      <line x1={10} y1={20} x2={40} y2={42} strokeWidth={2} />
+      <line x1={70} y1={20} x2={40} y2={42} strokeWidth={2} />
+      {/* Leaf stamp */}
+      <path d="M 56 24 Q 48 28 50 38 Q 58 36 58 24 Z" fill={palette.ink} stroke="none" />
+      <line x1={56} y1={24} x2={56} y2={18} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconBookStack({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-library-haul" label="Library haul" size={size}>
+      {/* Five stacked books with varied offsets */}
+      <rect x={14} y={54} width={50} height={10} />
+      <rect x={18} y={44} width={50} height={10} />
+      <rect x={12} y={34} width={48} height={10} />
+      <rect x={20} y={24} width={48} height={10} />
+      <rect x={14} y={14} width={50} height={10} />
+      {/* Small spine markers */}
+      <line x1={26} y1={54} x2={26} y2={64} strokeWidth={1.5} />
+      <line x1={30} y1={44} x2={30} y2={54} strokeWidth={1.5} />
+      <line x1={22} y1={34} x2={22} y2={44} strokeWidth={1.5} />
+      <line x1={32} y1={24} x2={32} y2={34} strokeWidth={1.5} />
+      <line x1={26} y1={14} x2={26} y2={24} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconFridgeMagnetArt({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-fridge-art" label="A drawing on the fridge" size={size}>
+      {/* Fridge with freezer + main + handle */}
+      <rect x={18} y={10} width={44} height={60} rx={2} />
+      <line x1={18} y1={26} x2={62} y2={26} strokeWidth={2} />
+      <line x1={56} y1={20} x2={56} y2={28} strokeWidth={2} />
+      <line x1={56} y1={36} x2={56} y2={44} strokeWidth={2} />
+      {/* Drawing taped to the front */}
+      <rect x={26} y={34} width={28} height={24} />
+      {/* Stick figure on the drawing */}
+      <circle cx={40} cy={40} r={2} />
+      <line x1={40} y1={42} x2={40} y2={50} strokeWidth={1.5} />
+      <line x1={36} y1={46} x2={44} y2={46} strokeWidth={1.5} />
+      <line x1={40} y1={50} x2={36} y2={54} strokeWidth={1.5} />
+      <line x1={40} y1={50} x2={44} y2={54} strokeWidth={1.5} />
+      {/* Magnet dot */}
+      <circle cx={40} cy={34} r={1.8} fill={palette.ink} stroke="none" />
+    </IconFrame>
+  );
+}
+
+export function IconSingleShoe({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-lost-shoe" label="Where is the other shoe" size={size}>
+      {/* One sneaker, side view */}
+      <path d="M 12 50 Q 12 42 18 40 L 34 36 Q 44 34 52 38 L 62 42 Q 68 44 68 50 V 56 Q 68 60 64 60 H 16 Q 12 60 12 56 Z" />
+      {/* Laces (X pattern) */}
+      <line x1={28} y1={42} x2={38} y2={46} strokeWidth={1.5} />
+      <line x1={38} y1={42} x2={28} y2={46} strokeWidth={1.5} />
+      <line x1={32} y1={42} x2={32} y2={50} strokeWidth={1.5} />
+      <line x1={44} y1={44} x2={44} y2={52} strokeWidth={1.5} />
+      {/* Sole division */}
+      <line x1={12} y1={56} x2={68} y2={56} strokeWidth={2} />
+    </IconFrame>
+  );
+}
+
+export function IconGrandmaCall({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-grandparent-phone" label="Grandma on FaceTime" size={size}>
+      {/* Smartphone in portrait orientation */}
+      <rect x={24} y={10} width={32} height={60} rx={4} />
+      <line x1={34} y1={16} x2={46} y2={16} strokeWidth={1.5} />
+      <rect x={26} y={20} width={28} height={42} />
+      {/* Grandma's face on screen — head with glasses + smile */}
+      <circle cx={40} cy={36} r={6} />
+      <circle cx={37} cy={35} r={2} strokeWidth={1.5} fill="none" />
+      <circle cx={43} cy={35} r={2} strokeWidth={1.5} fill="none" />
+      <path d="M 36 40 Q 40 43 44 40" strokeWidth={1.5} fill="none" />
+      <line x1={36} y1={66} x2={44} y2={66} strokeWidth={1.5} />
+    </IconFrame>
+  );
+}
+
+export function IconHeldDinner({ palette, size }: ModalIconProps): ReactElement {
+  return (
+    <IconFrame palette={palette} variant="evt-hp-spouse-late" label="Spouse, home late again" size={size}>
+      {/* Dinner plate (side view, slight perspective) */}
+      <ellipse cx={32} cy={50} rx={20} ry={5} />
+      <ellipse cx={32} cy={46} rx={16} ry={3} />
+      {/* Fork off to one side */}
+      <line x1={12} y1={32} x2={12} y2={46} strokeWidth={2} />
+      <line x1={10} y1={32} x2={10} y2={40} strokeWidth={1.5} />
+      <line x1={14} y1={32} x2={14} y2={40} strokeWidth={1.5} />
+      {/* Clock — late hour, top-right */}
+      <circle cx={60} cy={22} r={12} />
+      <line x1={60} y1={22} x2={60} y2={14} strokeWidth={2} />
+      <line x1={60} y1={22} x2={66} y2={22} strokeWidth={2} />
+      <circle cx={60} cy={22} r={1.5} fill={palette.ink} stroke="none" />
     </IconFrame>
   );
 }

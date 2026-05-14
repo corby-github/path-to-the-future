@@ -107,6 +107,30 @@ export const ICON_DESCRIPTIONS: Record<string, string> = {
   IconPaddles: 'two paddles with a ball — pong minigame',
   IconFortyTwo: 'wedge-headed monitor on a tripod stand (Deep Thought) — the ultimate-question minigame',
 
+  // --- Homeschool pack — 5+5 voice-checkpoint batch ------------------------
+  IconHomeschoolBinder: 'three-ring binder with content lines — boxed curriculum vs. own plan',
+  IconCoopGroup: 'three figures clustered — neighborhood co-op invitation',
+  IconSnackProtest: 'small figure with a "SNACKS" picket sign — snack rebellion',
+  IconSlowTablet: 'tablet (just the device) — the tablet is too slow',
+  IconBackpack: 'kid backpack with straps — eldest wants school',
+  IconBittenCrayon: 'crayon with a bitten tip — Bram ate part of a crayon',
+  IconParkBench: 'park bench with two seated figures — another mom at the park',
+  IconMeltedCandy: 'melted blob in a cup-holder — Mr Nobody strikes again',
+  IconTabletFlip: 'tablet at an angle with a motion arc — research, allegedly',
+  IconWobbleBoard: 'dry-erase board with wobbly handwriting — handwriting wobble',
+
+  // --- Homeschool pack — second 5+5 batch ----------------------------------
+  IconScreenTime: 'TV with a kid silhouette — screen-time rule',
+  IconInLawSpeaks: 'older figure pointing with speech dots — in-law visit',
+  IconThermometerSick: 'thermometer with a bulb — sick day on test day',
+  IconSwingset: 'park swing set, side view — park-bench defense',
+  IconOrganicEmail: 'envelope with a leaf stamp — co-op snack politics',
+  IconBookStack: 'tall stack of five books — twenty-three library books',
+  IconFridgeMagnetArt: 'fridge with a kid drawing held by a magnet — drawing on the fridge',
+  IconSingleShoe: 'one sneaker — where is the other shoe',
+  IconGrandmaCall: 'smartphone with a glasses-wearing face on screen — grandma on FaceTime',
+  IconHeldDinner: 'dinner plate beside a clock — spouse, home late again',
+
   // --- Placeholder ---------------------------------------------------------
   PlaceholderIcon: 'question mark in a frame — unregistered id fallback',
 };

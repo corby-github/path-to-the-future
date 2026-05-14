@@ -28,6 +28,10 @@ export function InteractableSprite({ art, kind, x, y, palette }: Props) {
       case 'person-skip-level': return <NPCSkipLevel x={x} y={y} palette={palette} />;
       case 'kid-hazel': return <NPCKidHazel x={x} y={y} palette={palette} />;
       case 'kid-bram': return <NPCKidBram x={x} y={y} palette={palette} />;
+      case 'parent-in-law': return <NPCMotherInLaw x={x} y={y} palette={palette} />;
+      case 'parent-spouse': return <NPCSpouse x={x} y={y} palette={palette} />;
+      case 'parent-coop': return <NPCCoopParent x={x} y={y} palette={palette} />;
+      case 'parent-neighbor': return <NPCNeighbor x={x} y={y} palette={palette} />;
       default: return <NPCDefault x={x} y={y} palette={palette} />;
     }
   }
@@ -43,6 +47,11 @@ export function InteractableSprite({ art, kind, x, y, palette }: Props) {
     case 'locked-door': return <ObjLockedDoor x={x} y={y} palette={palette} />;
     case 'arcade-game': return <ObjArcadeGame x={x} y={y} palette={palette} />;
     case 'textbook-stack': return <ObjTextbookStack x={x} y={y} palette={palette} />;
+    case 'art-bin': return <ObjArtBin x={x} y={y} palette={palette} />;
+    case 'kitchen-table': return <ObjKitchenTable x={x} y={y} palette={palette} />;
+    case 'fridge-drawing': return <ObjFridgeDrawing x={x} y={y} palette={palette} />;
+    case 'couch-blanket': return <ObjCouchBlanket x={x} y={y} palette={palette} />;
+    case 'coop-signup': return <ObjCoopSignup x={x} y={y} palette={palette} />;
     default: return <ObjDefault x={x} y={y} palette={palette} />;
   }
 }
@@ -671,6 +680,147 @@ function NPCKidBram({ x, y, palette }: SpriteProps) {
   );
 }
 
+// ───────────────────── Homeschool NPC sprites ─────────────────────────────
+// Four adult female homeschool NPCs (mother-in-law, spouse, co-op parent,
+// neighbor). Built on NPCBase + distinguishing accessories. Hard-coded to
+// female for v1 per user direction; a future runtime gender-pick system
+// could swap in male / non-binary variants later (see follow-up issue).
+//
+// Visual differentiation: each NPC gets a distinct hair shape + one
+// identifying prop. All silhouettes stay inside the ~52×80 sprite frame.
+
+// Mother-in-law — older, glasses, hair bun, handbag at side. Slightly
+// taller body + bigger head per the skip-level "more presence" convention.
+function NPCMotherInLaw({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      <NPCBase x={x} y={y} palette={palette} bodyHeight={50} headRadius={15} />
+      {/* Hair line wrapping crown (sits above the face) */}
+      <path
+        d={`M ${x - 14} ${y - 26} Q ${x - 8} ${y - 37} ${x} ${y - 38} Q ${x + 8} ${y - 37} ${x + 14} ${y - 26}`}
+        fill="none"
+        stroke={palette.ink}
+        strokeWidth={3}
+      />
+      {/* Hair bun on top of head */}
+      <circle cx={x} cy={y - 42} r={5} fill={palette.ink} />
+      {/* Glasses (smaller, perched lower than NPCSenior) */}
+      <circle cx={x - 5} cy={y - 22} r={3} fill="none" stroke={palette.ink} strokeWidth={1.5} />
+      <circle cx={x + 5} cy={y - 22} r={3} fill="none" stroke={palette.ink} strokeWidth={1.5} />
+      <line x1={x - 2} y1={y - 22} x2={x + 2} y2={y - 22} stroke={palette.ink} strokeWidth={1.5} />
+      {/* Handbag held at right side */}
+      <rect
+        x={x + 18}
+        y={y + 10}
+        width={10}
+        height={12}
+        rx={1}
+        fill={palette.surface}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      {/* Handbag handle */}
+      <path
+        d={`M ${x + 20} ${y + 10} q 0 -4 3 -4 q 3 0 3 4`}
+        fill="none"
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+    </g>
+  );
+}
+
+// Spouse — peer-aged, long hair frame behind head/shoulders, coffee mug
+// held at chest with a small steam wisp.
+function NPCSpouse({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Long hair frame — drawn first so body/head sit on top */}
+      <rect
+        x={x - 24}
+        y={y - 42}
+        width={48}
+        height={62}
+        rx={20}
+        fill={palette.ink}
+      />
+      <NPCBase x={x} y={y} palette={palette} />
+      {/* Coffee mug at chest */}
+      <rect
+        x={x - 5}
+        y={y + 6}
+        width={10}
+        height={10}
+        rx={1}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      {/* Mug handle */}
+      <path
+        d={`M ${x + 5} ${y + 8} q 3 0 3 3 q 0 3 -3 3`}
+        fill="none"
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      {/* Steam wisp */}
+      <path
+        d={`M ${x} ${y + 4} q -1 -2 1 -4 q 2 -2 -1 -4`}
+        fill="none"
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+    </g>
+  );
+}
+
+// Co-op parent — peer-aged, ponytail offset to one side, tote bag over
+// shoulder. Tote uses palette.positive so the bag reads as a distinct
+// accent against the body.
+function NPCCoopParent({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      <NPCBase x={x} y={y} palette={palette} />
+      {/* Ponytail — small filled oval offset behind the head's right edge */}
+      <ellipse cx={x + 13} cy={y - 18} rx={6} ry={11} fill={palette.ink} />
+      {/* Re-draw the head so the ponytail sits behind it */}
+      <circle cx={x} cy={y - 22} r={14} fill={palette.accent} stroke={palette.ink} strokeWidth={2} />
+      {/* Tote bag strap diagonally across body */}
+      <line x1={x - 14} y1={y - 4} x2={x - 22} y2={y + 14} stroke={palette.ink} strokeWidth={2} />
+      <line x1={x + 6} y1={y - 8} x2={x - 18} y2={y + 16} stroke={palette.ink} strokeWidth={2} />
+      {/* Tote bag — palette.positive (sage) so it reads distinct */}
+      <rect
+        x={x - 26}
+        y={y + 12}
+        width={14}
+        height={14}
+        rx={1}
+        fill={palette.positive}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+    </g>
+  );
+}
+
+// Neighbor — peer-aged, short bob hair, casual waving hand.
+function NPCNeighbor({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      <NPCBase x={x} y={y} palette={palette} />
+      {/* Short bob hair — cap-shape on top of head, slight hairline at forehead */}
+      <path
+        d={`M ${x - 14} ${y - 22} Q ${x - 14} ${y - 38} ${x} ${y - 38} Q ${x + 14} ${y - 38} ${x + 14} ${y - 22} Q ${x + 11} ${y - 24} ${x + 7} ${y - 22} L ${x - 7} ${y - 22} Q ${x - 11} ${y - 24} ${x - 14} ${y - 22} Z`}
+        fill={palette.ink}
+      />
+      {/* Waving arm */}
+      <line x1={x + 14} y1={y - 4} x2={x + 24} y2={y - 14} stroke={palette.ink} strokeWidth={3} strokeLinecap="round" />
+      {/* Hand */}
+      <circle cx={x + 24} cy={y - 14} r={3.5} fill={palette.accent} stroke={palette.ink} strokeWidth={1.5} />
+    </g>
+  );
+}
+
 // Textbook stack — three stacked books with visible spines. Used by the
 // homeschool pack for the kitchen-table-as-school flavor. Treatment-A
 // flat-color, palette-pure. Footprint ~40×40 so the stack reads as a
@@ -747,6 +897,225 @@ function ObjTextbookStack({ x, y, palette }: SpriteProps) {
         stroke={palette.ink}
         strokeWidth={1}
       />
+    </g>
+  );
+}
+
+// ───────────────────── Homeschool object sprites ──────────────────────────
+// Authored to replace SWE sprite tokens that were placeholder-reused per
+// design doc §26 deferred follow-ups (stress-ball→art-bin, whiteboard→
+// kitchen-table, calendar→fridge-drawing, plant→couch-blanket, monitor→
+// coop-signup). Same palette-pure + ~52×80 bounding-box conventions.
+
+// Art-supplies bin — trapezoidal container with paintbrushes/markers
+// sticking out the top.
+function ObjArtBin({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Bin body — trapezoid (wider at top) */}
+      <path
+        d={`M ${x - 18} ${y - 8} L ${x + 18} ${y - 8} L ${x + 15} ${y + 22} L ${x - 15} ${y + 22} Z`}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Bin rim */}
+      <rect x={x - 20} y={y - 12} width={40} height={5} fill={palette.surface} stroke={palette.ink} strokeWidth={2} />
+      {/* Paintbrush 1 — positive (sage) handle, ink ferrule, ink tip */}
+      <rect x={x - 14} y={y - 24} width={6} height={14} fill={palette.positive} stroke={palette.ink} strokeWidth={1.5} />
+      <path d={`M ${x - 14} ${y - 24} L ${x - 11} ${y - 30} L ${x - 8} ${y - 24} Z`} fill={palette.ink} stroke="none" />
+      {/* Paintbrush 2 — surface handle */}
+      <rect x={x - 4} y={y - 28} width={6} height={18} fill={palette.surface} stroke={palette.ink} strokeWidth={1.5} />
+      <path d={`M ${x - 4} ${y - 28} L ${x - 1} ${y - 34} L ${x + 2} ${y - 28} Z`} fill={palette.ink} stroke="none" />
+      {/* Paintbrush 3 — background (white-ish) marker */}
+      <rect x={x + 6} y={y - 22} width={6} height={12} fill={palette.background} stroke={palette.ink} strokeWidth={1.5} />
+    </g>
+  );
+}
+
+// Kitchen table — flat top + four legs (two visible from front) +
+// a worksheet on top with pencil-scribble lines.
+function ObjKitchenTable({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Worksheet on top of the table (drawn first so the table covers its bottom edge) */}
+      <rect
+        x={x - 12}
+        y={y - 14}
+        width={20}
+        height={10}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+      <line x1={x - 9} y1={y - 11} x2={x + 5} y2={y - 11} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 9} y1={y - 8} x2={x + 2} y2={y - 8} stroke={palette.ink} strokeWidth={1} />
+      {/* Tabletop */}
+      <rect
+        x={x - 24}
+        y={y - 6}
+        width={48}
+        height={6}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Two visible front legs */}
+      <rect x={x - 22} y={y} width={4} height={24} fill={palette.accent} stroke={palette.ink} strokeWidth={1.5} />
+      <rect x={x + 18} y={y} width={4} height={24} fill={palette.accent} stroke={palette.ink} strokeWidth={1.5} />
+    </g>
+  );
+}
+
+// Fridge with a kid drawing taped to the front. Tall body, freezer/main
+// split, two handles, drawing in the middle of the main door.
+function ObjFridgeDrawing({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Fridge body */}
+      <rect
+        x={x - 16}
+        y={y - 32}
+        width={32}
+        height={56}
+        rx={2}
+        fill={palette.surface}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Freezer / main split */}
+      <line x1={x - 16} y1={y - 18} x2={x + 16} y2={y - 18} stroke={palette.ink} strokeWidth={1.5} />
+      {/* Freezer handle */}
+      <line x1={x + 11} y1={y - 28} x2={x + 11} y2={y - 22} stroke={palette.ink} strokeWidth={2} />
+      {/* Main handle */}
+      <line x1={x + 11} y1={y - 14} x2={x + 11} y2={y - 6} stroke={palette.ink} strokeWidth={2} />
+      {/* Drawing taped to the main door */}
+      <rect
+        x={x - 10}
+        y={y - 10}
+        width={16}
+        height={14}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+      {/* Stick figure on the drawing — head + body + arms */}
+      <circle cx={x - 2} cy={y - 6} r={1.5} stroke={palette.ink} strokeWidth={1} fill="none" />
+      <line x1={x - 2} y1={y - 4} x2={x - 2} y2={y + 1} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 5} y1={y - 2} x2={x + 1} y2={y - 2} stroke={palette.ink} strokeWidth={1} />
+      {/* Magnet dot */}
+      <circle cx={x - 2} cy={y - 10} r={1.2} fill={palette.ink} />
+    </g>
+  );
+}
+
+// Sick-day couch — low back + two rolled armrests + seat cushion + blanket
+// draped over one side.
+function ObjCouchBlanket({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Backrest */}
+      <rect
+        x={x - 22}
+        y={y - 16}
+        width={44}
+        height={14}
+        rx={3}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Left armrest */}
+      <rect
+        x={x - 26}
+        y={y - 10}
+        width={6}
+        height={18}
+        rx={2}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Right armrest */}
+      <rect
+        x={x + 20}
+        y={y - 10}
+        width={6}
+        height={18}
+        rx={2}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Seat cushion */}
+      <rect
+        x={x - 20}
+        y={y - 4}
+        width={40}
+        height={12}
+        rx={2}
+        fill={palette.surface}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Two short feet */}
+      <rect x={x - 22} y={y + 8} width={4} height={4} fill={palette.ink} />
+      <rect x={x + 18} y={y + 8} width={4} height={4} fill={palette.ink} />
+      {/* Blanket draped over the right side */}
+      <path
+        d={`M ${x + 4} ${y - 4} L ${x + 24} ${y - 4} L ${x + 28} ${y + 12} L ${x + 8} ${y + 14} Z`}
+        fill={palette.positive}
+        stroke={palette.ink}
+        strokeWidth={1.5}
+      />
+    </g>
+  );
+}
+
+// Co-op sign-up clipboard — clip at top, paper with sign-up lines, one
+// line with a signature mark.
+function ObjCoopSignup({ x, y, palette }: SpriteProps) {
+  return (
+    <g>
+      {/* Clipboard body */}
+      <rect
+        x={x - 14}
+        y={y - 22}
+        width={28}
+        height={44}
+        rx={2}
+        fill={palette.accent}
+        stroke={palette.ink}
+        strokeWidth={2}
+      />
+      {/* Clip at top */}
+      <rect
+        x={x - 6}
+        y={y - 26}
+        width={12}
+        height={6}
+        rx={1}
+        fill={palette.ink}
+        stroke="none"
+      />
+      {/* Paper inside */}
+      <rect
+        x={x - 11}
+        y={y - 18}
+        width={22}
+        height={36}
+        fill={palette.background}
+        stroke={palette.ink}
+        strokeWidth={1}
+      />
+      {/* Five sign-up lines */}
+      <line x1={x - 9} y1={y - 12} x2={x + 9} y2={y - 12} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 9} y1={y - 6} x2={x + 9} y2={y - 6} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 9} y1={y} x2={x + 9} y2={y} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 9} y1={y + 6} x2={x + 9} y2={y + 6} stroke={palette.ink} strokeWidth={1} />
+      <line x1={x - 9} y1={y + 12} x2={x + 9} y2={y + 12} stroke={palette.ink} strokeWidth={1} />
+      {/* Signature mark on the first line */}
+      <line x1={x - 7} y1={y - 13} x2={x - 1} y2={y - 11} stroke={palette.ink} strokeWidth={1.5} />
     </g>
   );
 }

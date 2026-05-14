@@ -22,7 +22,7 @@
       "id": "obj-hp-art-bin",
       "kind": "object",
       "label": "Art supplies bin",
-      "art": "stress-ball",
+      "art": "art-bin",
       "tags": ["home", "flavor"],
       "weight": 0.9,
       "dialogues": [
@@ -52,7 +52,7 @@
       "id": "obj-hp-kitchen-table",
       "kind": "object",
       "label": "Kitchen table",
-      "art": "whiteboard",
+      "art": "kitchen-table",
       "tags": ["home", "flavor", "teaching"],
       "weight": 1.0,
       "dialogues": [
@@ -70,7 +70,7 @@
       "id": "obj-hp-fridge-art",
       "kind": "object",
       "label": "Drawing on the fridge",
-      "art": "calendar",
+      "art": "fridge-drawing",
       "tags": ["home", "flavor", "family"],
       "weight": 1.0,
       "dialogues": [
@@ -88,7 +88,7 @@
       "id": "obj-hp-couch-blanket",
       "kind": "object",
       "label": "Sick-day couch",
-      "art": "plant",
+      "art": "couch-blanket",
       "tags": ["home", "flavor", "family"],
       "weight": 0.7,
       "dialogues": [
@@ -118,7 +118,7 @@
       "id": "obj-hp-coop-signup",
       "kind": "object",
       "label": "Co-op sign-up sheet",
-      "art": "monitor",
+      "art": "coop-signup",
       "tags": ["community", "flavor"],
       "weight": 0.7,
       "dialogues": [
@@ -216,7 +216,7 @@
       "id": "npc-hp-coop-friend",
       "kind": "npc",
       "label": "Co-op parent",
-      "art": "person-peer",
+      "art": "parent-coop",
       "tags": ["community", "friend"],
       "weight": 0.9,
       "requires": { "month": ">=5" },
@@ -247,7 +247,7 @@
       "id": "npc-hp-in-law",
       "kind": "npc",
       "label": "Mother-in-law",
-      "art": "person-skip-level",
+      "art": "parent-in-law",
       "tags": ["family"],
       "weight": 0.6,
       "requires": { "month": ">=8" },
@@ -278,7 +278,7 @@
       "id": "npc-hp-spouse",
       "kind": "npc",
       "label": "Spouse",
-      "art": "person-pm",
+      "art": "parent-spouse",
       "tags": ["family", "relationship"],
       "weight": 1.0,
       "dialogues": [
@@ -312,7 +312,7 @@
       "id": "npc-hp-neighbor",
       "kind": "npc",
       "label": "Neighbor",
-      "art": "person-newhire",
+      "art": "parent-neighbor",
       "tags": ["community", "flavor"],
       "weight": 0.5,
       "dialogues": [
