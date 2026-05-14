@@ -23,3 +23,17 @@ export function monthLabel(monthId: number): string {
   const year = START_YEAR + Math.floor((clamped - 1) / SLOTS_PER_YEAR);
   return `${MONTH_NAMES[SLOT_TO_MONTH_NUM[slot] - 1]} ${year}`;
 }
+
+// Months elapsed from START_YEAR Jan to the slot's anchor (year, monthNum).
+// Used to convert slot-id diffs into actual calendar-month diffs — most
+// adjacent slots are 2 months apart, but Jan→Feb and Dec→Jan span only 1.
+function calendarOffsetFromStart(monthId: number): number {
+  const clamped = Math.max(FIRST_MONTH_ID, Math.min(LAST_MONTH_ID, monthId));
+  const slot = (clamped - 1) % SLOTS_PER_YEAR;
+  const yearOffset = Math.floor((clamped - 1) / SLOTS_PER_YEAR);
+  return yearOffset * 12 + SLOT_TO_MONTH_NUM[slot];
+}
+
+export function calendarMonthDelta(fromMonthId: number, toMonthId: number): number {
+  return calendarOffsetFromStart(toMonthId) - calendarOffsetFromStart(fromMonthId);
+}
