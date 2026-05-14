@@ -1,5 +1,10 @@
 import type { Rect, Vector2 } from '../../types/geometry';
-import { LAYOUT_TEMPLATES, getLayoutById, type LayoutTemplate } from './layouts';
+import {
+  LAYOUT_TEMPLATES,
+  eligibleTemplates,
+  getLayoutById,
+  type LayoutTemplate,
+} from './layouts';
 import { seededRandom, pickFrom } from './seedRng';
 
 export interface RoomLayout {
@@ -43,16 +48,38 @@ function toLayout(template: LayoutTemplate): RoomLayout {
   };
 }
 
-export function generateRoom(seed: number, forcedTemplateId?: string | null): RoomLayout {
+// `packId` filters the template pool to entries eligible for the active
+// career pack (see `eligibleTemplates`). A `forcedTemplateId` (DevPanel) is
+// honored regardless of pack — devs may want to preview a template the
+// active pack normally wouldn't roll.
+export function generateRoom(
+  seed: number,
+  packId: string,
+  forcedTemplateId?: string | null,
+): RoomLayout {
   let layout: RoomLayout;
   if (forcedTemplateId) {
     const forced = getLayoutById(forcedTemplateId);
     layout = forced
       ? toLayout(forced)
-      : toLayout(pickFrom(seededRandom(seed), LAYOUT_TEMPLATES));
+      : toLayout(pickFrom(seededRandom(seed), eligibleTemplates(packId)));
   } else {
     const rng = seededRandom(seed);
-    layout = toLayout(pickFrom(rng, LAYOUT_TEMPLATES));
+    const pool = eligibleTemplates(packId);
+    // Defensive: if a pack id matches nothing (shouldn't happen — universals
+    // are always present), fall back to the full pool so the room still
+    // renders. Surfaces as a dev-mode warning.
+    const picked = pool.length > 0
+      ? pickFrom(rng, pool)
+      : pickFrom(rng, LAYOUT_TEMPLATES);
+    if (pool.length === 0 && import.meta.env.DEV) {
+      console.warn(
+        `[room-generator] No eligible templates for packId "${packId}"; ` +
+        `falling back to the universal+all pool. Add at least one universal ` +
+        `template (omit \`packs\`) or tag entries with this pack id.`,
+      );
+    }
+    layout = toLayout(picked);
   }
   assertDoorAccessible(layout);
   return layout;

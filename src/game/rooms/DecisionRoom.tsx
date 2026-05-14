@@ -253,7 +253,7 @@ export function DecisionRoom({ config, onExit }: Props) {
       monthId: config.monthId,
       state: { progress, stats, flags },
     });
-    return generateRoom(seed, forcedLayout);
+    return generateRoom(seed, profile.careerPack, forcedLayout);
   });
 
   // Interactables placed in this room (1-3, seeded, non-overlapping with
