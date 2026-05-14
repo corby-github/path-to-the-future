@@ -40,6 +40,21 @@ const DEFAULT_EVENT_CHANCE = 0.4;
 const INTERACTABLE_HALF_W = 28;
 const INTERACTABLE_HALF_H = 36;
 
+// Issue #77 — when entering a room via the REWIND_DOOR (back-walk into
+// replay of the previous month), spawn the player just LEFT of the
+// forward door rather than at the layout's default left-edge spawn.
+// Reads as "you stepped out of the door you originally exited" —
+// symmetric to the right→left door trip the player just took. The
+// standard left spawn is still used for live room entry + exitReplay
+// (return to live).
+const REPLAY_SPAWN_DOOR_GAP = 30;
+function replaySpawnFor(door: Rect): Vector2 {
+  return {
+    x: door.x - REPLAY_SPAWN_DOOR_GAP,
+    y: door.y + door.height / 2,
+  };
+}
+
 // Rewind door for backward replay (#33). Bottom-left of the canvas, away
 // from the standard middle-left spawn so the player doesn't accidentally
 // walk into it on entry. Same palette as the forward door (accent fill,
@@ -208,11 +223,14 @@ function playerInsideDoor(door: Rect, px: number, py: number): boolean {
       && py >= door.y && py <= door.y + door.height;
 }
 
-// Find the closest past month walkable for replay (#33). Skips consequence
-// rooms (per user design call: they're punchlines, replay feels wrong).
-// Also skips month 1 — the 2020 opening NarrativeRoom is a one-time framing
-// beat; walking back to it breaks the spell. Returns null if no eligible
-// past month exists.
+// Find the closest past **decision** month for replay (#33). Skips:
+//   - `consequence` rooms — punchlines, replay feels wrong (user design call).
+//   - `narrative` rooms — the cinematic Januaries are forward-only beats
+//     (year-transition cinematic). Back-walking from Feb 2021 should land
+//     on Dec 2020, not Jan 2021. Same rule for month 1: 2020 opening
+//     NarrativeRoom is a one-time framing beat; the loop also bails at
+//     id < 2 as a defensive lower bound.
+// Returns null if no eligible past month exists.
 function previousReplayableMonth(
   months: { id: number; roomType?: string }[],
   fromMonthId: number,
@@ -220,7 +238,7 @@ function previousReplayableMonth(
   for (let id = fromMonthId - 1; id >= 2; id--) {
     const m = months.find((e) => e.id === id);
     if (!m) continue;
-    if (m.roomType === 'consequence') continue;
+    if (m.roomType === 'consequence' || m.roomType === 'narrative') continue;
     return id;
   }
   return null;
@@ -490,8 +508,13 @@ export function DecisionRoom({ config, onExit }: Props) {
     }, MODAL_POP_DELAY_MS);
   }, [layout.door, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch]);
 
+  const initialSpawn = useMemo<Vector2>(
+    () => (isReplay ? replaySpawnFor(layout.door) : layout.spawn),
+    [isReplay, layout.door, layout.spawn],
+  );
+
   const playerState = usePlayerMovement({
-    initialPosition: layout.spawn,
+    initialPosition: initialSpawn,
     bounds: ROOM_BOUNDS,
     obstacles: layout.obstacles,
     active:
