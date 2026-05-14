@@ -31,7 +31,7 @@
       "era": ["any"],
       "tags": ["community", "identity"],
       "weight": 0.7,
-      "trigger": { "month": ">=18" },
+      "trigger": { "month": ">=11" },
       "title": "What grade is she in?",
       "body": "Another mom at the park asked, friendly. You said the honest thing — that you don't really track it that way. There was a small pause. The other mom said 'cool' the way people say 'cool' when they mean 'huh.'",
       "effects": { "reputation": "-2", "network": "+1" }
@@ -155,7 +155,7 @@
       "era": ["any"],
       "tags": ["community", "stress"],
       "weight": 0.5,
-      "trigger": { "month": ">=14" },
+      "trigger": { "month": ">=9" },
       "title": "A passive-aggressive thread.",
       "body": "Someone in the co-op chat wrote 'just a thought' before a paragraph that was clearly not just a thought. Everyone knows what 'just a thought' means. The thumbs-up'ers know. The non-thumbs-up'ers know. The cat knows. Four parents thumbs-up'd. Three did not. You did not. You closed the app.",
       "effects": { "network": "-2", "burnout": "+2" }
@@ -166,7 +166,7 @@
       "era": ["any"],
       "tags": ["lucky", "flavor"],
       "weight": 0.6,
-      "trigger": { "month": ">=12" },
+      "trigger": { "month": ">=7" },
       "title": "She read the whole thing.",
       "body": "Hazel finished the chapter book without saying she was reading the chapter book. You found it on the couch face-down, finished. She didn't bring it up. You decided not to either. You both knew.",
       "effects": { "technicalSkill": "+2", "health": "+1" }
@@ -188,7 +188,7 @@
       "era": ["any"],
       "tags": ["community"],
       "weight": 0.4,
-      "trigger": { "month": ">=24" },
+      "trigger": { "month": ">=14" },
       "title": "A friend left the co-op.",
       "body": "A friend left the co-op Sunday night. The reasons were vague and the warmth was real. You added her to the spring-picnic list anyway. Some friendships go quiet, not gone.",
       "effects": { "network": "-2", "burnout": "+1" }
@@ -209,7 +209,7 @@
       "era": ["any"],
       "tags": ["family", "lucky", "money"],
       "weight": 0.4,
-      "trigger": { "month": ">=18" },
+      "trigger": { "month": ">=11" },
       "title": "A promotion at the other house.",
       "body": "Your spouse got the bump. You celebrated with a bottle of something nice. The math was different the next morning in a small way that stayed small for a long time. Good problem.",
       "effects": { "savings": "+3000", "burnout": "-1" }
@@ -220,7 +220,7 @@
       "era": ["rebound"],
       "tags": ["family", "money", "era"],
       "weight": 0.4,
-      "trigger": { "month": ">=36" },
+      "trigger": { "month": ">=21" },
       "title": "A package on the table.",
       "body": "Your spouse came home with a folder. Not a bad folder. A folder. It sat on the kitchen table, unopened, for forty minutes. You did not say anything for the forty minutes. You sat through them too.",
       "effects": { "savings": "-2000", "burnout": "+4", "health": "-1" }
@@ -261,7 +261,7 @@
       "era": ["ai-shift"],
       "tags": ["era", "teaching"],
       "weight": 0.5,
-      "trigger": { "month": ">=66" },
+      "trigger": { "month": ">=39" },
       "title": "The essay sounded different.",
       "body": "Hazel's essay used a phrase she didn't say out loud. You asked her to read it back. She stopped at the phrase. 'Okay, I rewrote it with help.' You agreed on a rule. The next week, you agreed on a different rule.",
       "effects": { "technicalSkill": "+1", "burnout": "+2" }
@@ -292,7 +292,7 @@
       "era": ["uncertain-future"],
       "tags": ["era", "family"],
       "weight": 0.6,
-      "trigger": { "month": ">=96" },
+      "trigger": { "month": ">=56" },
       "title": "The college number.",
       "body": "A news article quoted the average sticker price. You stared at the number for a minute. Then you closed the tab. Then you opened a different tab and did the actual math. The math was, somehow, slightly better than the article had implied. Not much. You took the not-much. The not-much was the day's win.",
       "effects": { "burnout": "+2", "savings": "-100" }
@@ -303,7 +303,7 @@
       "era": ["uncertain-future"],
       "tags": ["era", "family", "money"],
       "weight": 0.5,
-      "trigger": { "month": ">=90" },
+      "trigger": { "month": ">=53" },
       "title": "Your spouse, on the job market.",
       "body": "Your spouse updated the resume Sunday. The recruiter-message count came up Monday — lower than two years ago. 'It's fine,' was the answer. There's a kind of looking-inward going on at the same time, you can tell. You let it sit.",
       "effects": { "burnout": "+2", "savings": "-100" }
@@ -389,7 +389,7 @@
       "era": ["any"],
       "tags": ["lucky"],
       "weight": 0.4,
-      "trigger": { "month": ">=12" },
+      "trigger": { "month": ">=7" },
       "title": "An annual checkup.",
       "body": "You went to your own doctor for the first time in a year and a half. The blood work was unremarkable. Unremarkable is the best kind of result. You scheduled the next one before you left. You meant it this time.",
       "effects": { "health": "+3", "burnout": "-2" }
@@ -410,7 +410,7 @@
       "era": ["any"],
       "tags": ["family", "humor"],
       "weight": 0.5,
-      "trigger": { "month": ">=48" },
+      "trigger": { "month": ">=28" },
       "title": "Research, allegedly.",
       "body": "There's one tablet between the two kids and it's meant for learning. The older one always needs it for 'research.' You've seen how the screen flips when you walk into the room. It happens fast. Faster than the actual learning, you suspect.",
       "effects": { "burnout": "+1", "reputation": "-1" }

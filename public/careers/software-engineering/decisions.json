@@ -33,7 +33,7 @@
       "id": "univ-recruiter-call",
       "pool": "universal",
       "tags": ["career-movement", "ambition"],
-      "requires": { "month": ">=6" },
+      "requires": { "month": ">=4" },
       "weight": 1.0,
       "prompt": "A recruiter from a company you've heard of is calling. You don't have to answer.",
       "options": [
@@ -58,7 +58,7 @@
       "id": "univ-vegas-bonus-vs-rest",
       "pool": "universal",
       "tags": ["money", "work-life-balance"],
-      "requires": { "month": ">=12", "savings": ">3000" },
+      "requires": { "month": ">=7", "savings": ">3000" },
       "weight": 1.0,
       "prompt": "The bonus hit. The group chat wants Vegas. Your couch wants you to stay.",
       "options": [
@@ -93,7 +93,7 @@
       "id": "univ-bury-vs-balance",
       "pool": "universal",
       "tags": ["work-life-balance", "ambition"],
-      "requires": { "month": ">=6" },
+      "requires": { "month": ">=4" },
       "weight": 1.0,
       "prompt": "There's more work than there are hours. You can pour yourself into it for a stretch, or hold the line at forty.",
       "options": [
@@ -118,7 +118,7 @@
       "id": "swe-framework-rewrite-vs-patch",
       "pool": "swe",
       "tags": ["technical-debt", "ambition"],
-      "requires": { "month": ">=6", "technicalSkill": ">25" },
+      "requires": { "month": ">=4", "technicalSkill": ">25" },
       "weight": 1.0,
       "prompt": "The legacy module breaks again. You can patch it for the third time, propose a full rewrite, or just write up the debt.",
       "options": [
@@ -148,7 +148,7 @@
       "id": "swe-oncall-volunteer",
       "pool": "swe",
       "tags": ["responsibility", "burnout"],
-      "requires": { "month": ">=12" },
+      "requires": { "month": ">=7" },
       "weight": 1.0,
       "prompt": "The on-call rotation is short a body. The lead is asking, gently.",
       "options": [
@@ -173,7 +173,7 @@
       "id": "swe-conference-talk-cfp",
       "pool": "swe",
       "tags": ["visibility", "ambition"],
-      "requires": { "month": ">=18", "reputation": ">10" },
+      "requires": { "month": ">=11", "reputation": ">10" },
       "weight": 0.8,
       "prompt": "The CFP closes Friday. You have a talk in you, probably. You also have a deadline.",
       "options": [
@@ -217,7 +217,7 @@
       "id": "univ-mlm-pitch",
       "pool": "universal",
       "tags": ["money", "relationship", "humor"],
-      "requires": { "month": ">=6" },
+      "requires": { "month": ">=4" },
       "weight": 0.6,
       "prompt": "A cousin you haven't spoken to in two years messages: 'I have an opportunity I'd love to share with you.' You haven't scrolled down yet.",
       "options": [
@@ -261,7 +261,7 @@
       "id": "swe-friday-deploy",
       "pool": "swe",
       "tags": ["risk", "engineering-culture", "humor"],
-      "requires": { "month": ">=6" },
+      "requires": { "month": ">=4" },
       "weight": 0.7,
       "prompt": "A small, urgent fix is ready. It is 4:50pm on a Friday. The deploy takes ten minutes. The rollback also takes ten minutes.",
       "options": [
@@ -305,7 +305,7 @@
       "id": "swe-intern-late-review",
       "pool": "swe",
       "tags": ["mentoring", "work-life-balance", "humor"],
-      "requires": { "month": ">=12" },
+      "requires": { "month": ">=7" },
       "weight": 0.6,
       "prompt": "It's 6:12pm Friday. The intern slacks: 'No rush — could you take a look at my PR before Monday?'",
       "options": [
@@ -330,7 +330,7 @@
       "id": "univ-buy-house-or-rent",
       "pool": "universal",
       "tags": ["money", "life"],
-      "requires": { "month": ">=24", "savings": ">25000" },
+      "requires": { "month": ">=14", "savings": ">25000" },
       "weight": 0.6,
       "prompt": "The down payment math finally works. The interest rate doesn't. You stare at the listing anyway.",
       "options": [
@@ -360,7 +360,7 @@
       "id": "univ-friends-wedding-far",
       "pool": "universal",
       "tags": ["relationship", "money"],
-      "requires": { "month": ">=6" },
+      "requires": { "month": ">=4" },
       "weight": 0.7,
       "prompt": "A college friend is getting married. Flight, hotel, rental, suit. The total math is uncomfortable.",
       "options": [
@@ -409,7 +409,7 @@
       "id": "univ-dog",
       "pool": "universal",
       "tags": ["life", "money"],
-      "requires": { "month": ">=12" },
+      "requires": { "month": ">=7" },
       "weight": 0.6,
       "prompt": "There is a dog at the shelter with a particular face. You did not go to the shelter to adopt a dog.",
       "options": [
@@ -434,7 +434,7 @@
       "id": "univ-cash-out-pto",
       "pool": "universal",
       "tags": ["work-life-balance", "money"],
-      "requires": { "month": ">=12" },
+      "requires": { "month": ">=7" },
       "weight": 0.7,
       "prompt": "HR's email: you've hit the PTO cap. Use it or cash it out at sixty percent.",
       "options": [
@@ -459,7 +459,7 @@
       "id": "univ-charity-donation",
       "pool": "universal",
       "tags": ["money", "values"],
-      "requires": { "month": ">=12" },
+      "requires": { "month": ">=7" },
       "weight": 0.5,
       "prompt": "A coworker is fundraising for a cause that matters to them. The goal isn't yours, but you respect them.",
       "options": [
@@ -484,7 +484,7 @@
       "id": "univ-parent-needs-help",
       "pool": "universal",
       "tags": ["family", "money"],
-      "requires": { "month": ">=18" },
+      "requires": { "month": ">=11" },
       "weight": 0.6,
       "prompt": "Your parent's car needs a transmission. They mentioned it like it was nothing.",
       "options": [
@@ -509,7 +509,7 @@
       "id": "univ-move-cities-for-job",
       "pool": "universal",
       "tags": ["career-movement", "life"],
-      "requires": { "month": ">=18" },
+      "requires": { "month": ">=11" },
       "weight": 0.5,
       "prompt": "An offer arrives in another city. Thirty percent more, full relocation. A different climate. Everyone you know is here.",
       "options": [
@@ -539,7 +539,7 @@
       "id": "univ-buy-car",
       "pool": "universal",
       "tags": ["money"],
-      "requires": { "month": ">=12" },
+      "requires": { "month": ">=7" },
       "weight": 0.6,
       "prompt": "The check engine light has been on for six weeks. The mechanic gave you a number that ends in 'or you could just get something newer.'",
       "options": [
@@ -559,7 +559,7 @@
       "id": "univ-side-project",
       "pool": "universal",
       "tags": ["ambition", "work-life-balance"],
-      "requires": { "month": ">=6" },
+      "requires": { "month": ">=4" },
       "weight": 0.7,
       "prompt": "You have an idea. It's been bothering you for a month. You also have a weekend you could give to nothing.",
       "options": [
@@ -584,7 +584,7 @@
       "id": "univ-roommate-buyout",
       "pool": "universal",
       "tags": ["money", "life"],
-      "requires": { "month": ">=12" },
+      "requires": { "month": ">=7" },
       "weight": 0.5,
       "prompt": "Your roommate's lease is up. You could keep splitting rent or take the whole place yourself.",
       "options": [
@@ -609,7 +609,7 @@
       "id": "univ-date-app-match",
       "pool": "universal",
       "tags": ["relationship", "humor"],
-      "requires": { "relationship": "==null", "month": ">=12" },
+      "requires": { "relationship": "==null", "month": ">=7" },
       "weight": 0.6,
       "prompt": "A match wants coffee Thursday. The bio was witty. The pictures were three years old. Probably.",
       "options": [
@@ -634,7 +634,7 @@
       "id": "swe-coder-vs-architect",
       "pool": "swe",
       "tags": ["career-path"],
-      "requires": { "month": ">=24", "technicalSkill": ">40" },
+      "requires": { "month": ">=14", "technicalSkill": ">40" },
       "weight": 0.5,
       "prompt": "The director pulls you aside. There's a tech-lead role opening, and a senior IC track. Both are yours if you want them.",
       "options": [
@@ -654,7 +654,7 @@
       "id": "swe-people-manager-vs-tech-lead",
       "pool": "swe",
       "tags": ["career-path"],
-      "requires": { "month": ">=36", "reputation": ">25" },
+      "requires": { "month": ">=21", "reputation": ">25" },
       "weight": 0.5,
       "prompt": "The org is splitting your team. Two roles need filling: people manager and tech lead. The director is asking which you'd prefer.",
       "options": [
@@ -674,7 +674,7 @@
       "id": "swe-masters-degree",
       "pool": "swe",
       "tags": ["education", "money"],
-      "requires": { "month": ">=18", "savings": ">10000" },
+      "requires": { "month": ">=11", "savings": ">10000" },
       "weight": 0.4,
       "prompt": "The Master's program admits you. Part-time, two years, twenty thousand. The job won't pay for it. The job won't replace it, either.",
       "options": [
@@ -699,7 +699,7 @@
       "id": "swe-startup-offer",
       "pool": "swe",
       "tags": ["career-movement", "risk"],
-      "requires": { "month": ">=18", "network": ">25" },
+      "requires": { "month": ">=11", "network": ">25" },
       "weight": 0.4,
       "prompt": "A former colleague is starting something. They're asking you to be employee five. The salary is lower. The equity is paper.",
       "options": [
@@ -724,7 +724,7 @@
       "id": "swe-mentor-junior",
       "pool": "swe",
       "tags": ["mentoring"],
-      "requires": { "month": ">=18", "technicalSkill": ">35" },
+      "requires": { "month": ">=11", "technicalSkill": ">35" },
       "weight": 0.7,
       "prompt": "A junior on the team is struggling, not in a way they can name. The lead suggests, gently, that you'd be good at this.",
       "options": [
@@ -744,7 +744,7 @@
       "id": "swe-architecture-review-defend",
       "pool": "swe",
       "tags": ["engineering-culture", "skill"],
-      "requires": { "month": ">=18", "technicalSkill": ">40" },
+      "requires": { "month": ">=11", "technicalSkill": ">40" },
       "weight": 0.6,
       "prompt": "Architecture review. Your design is right. A staff engineer disagrees, loudly. Three other people are on the call.",
       "options": [
@@ -769,7 +769,7 @@
       "id": "swe-hackathon-weekend",
       "pool": "swe",
       "tags": ["fun", "work-life-balance"],
-      "requires": { "month": ">=12" },
+      "requires": { "month": ">=7" },
       "weight": 0.6,
       "prompt": "The company hackathon is a sponsored weekend. Sleep on the floor. Build something dumb. The CEO gives out the prize.",
       "options": [
@@ -794,7 +794,7 @@
       "id": "swe-throw-colleague-under-bus",
       "pool": "swe",
       "tags": ["ethics"],
-      "requires": { "month": ">=18" },
+      "requires": { "month": ">=11" },
       "weight": 0.4,
       "prompt": "A meeting goes sideways. Leadership is asking why the deadline slipped. There's a real reason. There's also a coworker you could name.",
       "options": [
@@ -814,7 +814,7 @@
       "id": "swe-opensource-maintainer",
       "pool": "swe",
       "tags": ["community", "responsibility"],
-      "requires": { "month": ">=24", "technicalSkill": ">40" },
+      "requires": { "month": ">=14", "technicalSkill": ">40" },
       "weight": 0.4,
       "prompt": "The maintainer of a library you depend on asks if you'd take it over. They're burnt out. The community is two thousand users.",
       "options": [
@@ -839,7 +839,7 @@
       "id": "swe-2am-idea",
       "pool": "swe",
       "tags": ["stress", "work-life-balance", "humor"],
-      "requires": { "month": ">=6" },
+      "requires": { "month": ">=4" },
       "weight": 0.9,
       "prompt": "You wake at 2:14. The idea has been chewing on you in your sleep. It's almost there. The room is very dark.",
       "options": [

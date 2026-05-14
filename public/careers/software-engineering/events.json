@@ -201,7 +201,7 @@
       "era": ["any"],
       "tags": ["lucky"],
       "weight": 0.4,
-      "trigger": { "month": ">=12" },
+      "trigger": { "month": ">=7" },
       "title": "An annual checkup.",
       "body": "You went to the doctor for the first time in a while. The blood work came back unremarkable. Unremarkable is the best kind of result.",
       "effects": { "health": "+3", "burnout": "-2" }
@@ -267,7 +267,7 @@
       "era": ["rebound"],
       "tags": ["era", "lucky"],
       "weight": 0.5,
-      "trigger": { "month": ">=30" },
+      "trigger": { "month": ">=18" },
       "title": "Everyone's getting promoted.",
       "body": "The company's promotion cycle hits hard this year. Two of your peers leveled up. The Slack #promotions channel is louder than usual.",
       "effects": { "reputation": "+2", "burnout": "+1" }
