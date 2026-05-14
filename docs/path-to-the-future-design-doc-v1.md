@@ -1,8 +1,8 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 2.0.8
-**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · 12 layout templates · Half-length playthrough (1 cinematic + 6 playable months/year)
+**Document version:** 2.0.9
+**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 12 layout templates (all tier `simple` for now) · Room complexity tier framework wired (year-driven mix)
 **Last updated:** 2026-05-14
 
 ---
@@ -14,7 +14,8 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
-| v2.0.8  | 2026-05-14 | Corby Hoback · Claude Code | **Half-length playthrough — every other month is playable.** Cuts a full run roughly in half (faster sittings, less dialogue repetition) while keeping the 2020–2030 calendar arc. Each year now has 7 slots: 1 cinematic January (existing narrative beat) + 6 playable months (Feb / Apr / Jun / Aug / Oct / Dec). Total `months.json` entries drop **120 → 70** across both packs. Forward exit advances to the next slot; the existing rewind door (§11.1) walks back to the prior slot — so April's right door goes to June and the left/back door goes to February, exactly per the user's spec. (1) **`src/game/calendar.ts`** gains `SLOTS_PER_YEAR = 7` and a `SLOT_TO_MONTH_NUM = [1, 2, 4, 6, 8, 10, 12]` lookup; `monthLabel(id)` switches from `(id-1)%12` arithmetic to `SLOT_TO_MONTH_NUM[(id-1)%7]`. `LAST_MONTH_ID` moves 120 → 70. (2) **`months.json` regenerated** via new `scripts/regenerate-months.mjs` for both packs. Cinematic-January titles + bodies preserved verbatim from the pre-refactor entries (10 narratives per pack, one per year). Era assignments preserved (pandemic 2020–2022, rebound 2023–2024, ai-shift 2025–2026, uncertain-future 2027–2029); themes preserved from the existing per-month assignments. (3) **Minigame slots remapped** in SWE pack: Blackjack m32 → **m19** (still Aug 2022), Code Review m60 → **m35** (still Dec 2024), Pong m75 → **m45** (was Mar 2026 → now **Apr 2026** since March is no longer playable), Reaction Sprint m90 → **m53** (still Jun 2027). Homeschool pack has no scheduled minigames. (4) **`progressSlice`** clamps: `completeMonth`, `setCurrentMonth`, `skipMonths` all swap their `120` clamps for `70`. Game-over check fires on `id >= 70`. (5) **`DecisionRoom`** — `FINALE_MONTH_ID` moves 120 → 70; synthetic finale-decision id renamed `finale-month-120` → `finale-month` (keyed icon registry entry + IconFrame `variant` updated to match). (6) **`DevPanel`** — `FINALE_MONTH_ID` updated; `MINIGAME_JUMPS` labels and values refreshed to match the new schedule. (7) **`STATE_VERSION` 1.6.0 → 1.7.0** — old saves with `currentMonth > 70` no longer map to a valid month entry, so the bump discards them. Standing pattern for in-dev save invalidation. (8) **Replay door semantics unchanged** — `previousReplayableMonth` already walks back across narrative Januaries (skipping only `consequence` rooms), so the back-door naturally lands on the prior playable slot. Feb 2020 (id 2) has no rewind target (the loop's `id >= 2` guard returns null) — matches the existing UX on month 2. (9) Doc edits: this change-log row + a new *Half-length playthrough (v2.0.8)* paragraph under §4 explaining the slot layout and rewind semantics. **§17 Build Order** unchanged — Day 15 (analytics + Pages) is still the only ⏳ row. No engine-architecture changes; this is a content + clamp refactor. |
+| v2.0.9  | 2026-05-14 | Corby Hoback · Claude Code | **Room complexity tier framework (no new rooms yet).** New `ComplexityTier` type + required `complexity` field on `LayoutTemplate` (all 12 templates tagged `simple` for now); `YEAR_TO_COMPLEXITY_MIX` table + `pickComplexityTier(year, rng)` sampler; `eligibleTemplates(packId, complexity?)` extends the pack filter with a tier filter + downward fallback chain (expert → hard → medium → easy → simple). `generateRoom(seed, packId, year, forced?)` signature widened; `RoomLayout.complexity` exposes the picked tier. Play unchanged from v2.0.8 (every roll falls through to `simple`). New §4 *Complexity tiers (v2.0.9)* subsection. No `STATE_VERSION` bump. Companion PR to v2.0.8; both branched from `main` per the no-stacked-PRs rule. |
+| v2.0.8  | 2026-05-14 | Corby Hoback · Claude Code | **Half-length playthrough — every other month is playable, + HUD calendar-emit fix.** Each year is now 7 slots: 1 cinematic January + 6 playable months (Feb/Apr/Jun/Aug/Oct/Dec). `months.json` drops **120 → 70** across both packs. `src/game/calendar.ts` gains `SLOTS_PER_YEAR = 7` + `SLOT_TO_MONTH_NUM = [1, 2, 4, 6, 8, 10, 12]`; `monthLabel(id)` reads from the slot table. Minigame slots remapped in SWE pack (Blackjack m19, Code Review m35, Pong m45, Reaction Sprint m53). `progressSlice` clamps move 120 → 70; `FINALE_MONTH_ID` moves 120 → 70; finale-decision id renamed `finale-month-120` → `finale-month`. `STATE_VERSION` 1.6.0 → 1.7.0 to discard pre-refactor saves. Rewind door semantics unchanged (`previousReplayableMonth` walks across cinematic Januaries). New `calendarMonthDelta(fromId, toId)` helper + HUD update so the month-change floater shows the actual calendar delta (typically +2 / −2, with +1 / −1 only at the Jan↔Feb and Dec↔Jan boundaries) instead of slot delta. New §4 *Half-length playthrough (v2.0.8)* subsection. |
 | v2.0.7  | 2026-05-13 | Corby Hoback · Claude Code | **Mid-game profile editing via clickable HUD chip.** Adds the *"You: {name} [edit]"* profile card the user mocked up. (1) **New `ProfileModal` component** (`src/game/ui/ProfileModal.tsx`) — centered modal opened from the HUD identity chip. Player-name row supports inline editing: click `[Edit]` swaps the value to a text input prefilled with the current name + Save / Cancel buttons. Save dispatches `setProfile({ name })` against the existing `profileSlice`; since every decision / event / endgame string already interpolates `{playerName}` via `interpolate.ts`, mid-game edits propagate through future content automatically with no further wiring. (2) **HUD identity chip is now a `<button>`** in `Hud.tsx` (was a `<span>`) — same visual weight + size, adds pointer cursor + underline-on-hover affordance, opens the modal on click. Activates via Enter/Space if focused (free keyboard support via native button semantics; no global shortcut). (3) **Kids section (homeschool-parent pack only).** Modal shows `Hazel` and `Bram` under a *"Children"* header, mirroring the names hardcoded in `public/careers/homeschool-parent/*.json` (74 occurrences). **The kid `Edit` buttons are disabled** with a `title="Coming soon — needs the kid-name interpolation sprint to update event/decision content too."` tooltip. Tracked as a separate GitHub issue (kid-name interpolation sprint) — the full feature requires adding `profile.kidAName` / `profile.kidBName` defaults, an init-flow phase gated on `manifest.requiresKidNames`, `{kidA}` / `{kidB}` context entries in `interpolate.ts`, and a mechanical pass through all 74 occurrences. (4) **Shared sanitization** — extracted `MAX_NAME_LENGTH` and `sanitizeName(raw)` from `NameEntry.tsx` to a new `src/game/content/nameSanitize.ts` module. Both the init-flow `NameEntry` and the mid-game `ProfileModal` import from the same source, so init-time and edit-time validation rules can't drift. Move was also forced by `react-refresh/only-export-components` (a `.tsx` file with a component can't co-export non-component helpers). (5) **Interaction details:** Esc cancels an in-progress inline edit; Esc again closes the modal (standard inline-edit UX). Backdrop click also closes. Click on the dialog interior stops propagation so the player can interact without accidentally dismissing. The modal uses `position: fixed` + `zIndex: 110` so its DOM nesting inside `Hud` doesn't affect overlay positioning. (6) **§13 *Player Identity*** gains a *Mid-game profile editing (v2.0.7)* subsection documenting the trigger, the inline edit pattern, the kids section + disabled-edit rationale, and the mouse-first design choice. **No `STATE_VERSION` bump, no schema change, no save migration** — `setProfile` is an existing reducer; only the call sites grow. |
 | v2.0.6  | 2026-05-13 | Corby Hoback · Claude Code | **Pack-filtered arcade variants + Stacker variation pass.** Two unrelated polish moves bundled because both came from a single playthrough observation. (1) **Code Review excluded from homeschool arcade.** New optional `packs?: readonly string[]` field on each `ARCADE_VARIANTS` entry in `ArcadeModal.tsx` — mirrors the `LayoutTemplate.packs` pack-filter pattern from §4. Undefined = universal (every pack lists the variant). Listed = only matching pack ids. Today only `code-review` is gated (`packs: ['software-engineering']`); the SWE-coded *"spot the bug, beat the panel"* register doesn't fit a homeschool run, and homeschool months don't schedule it. Homeschool arcade now lists 4 variants (blackjack, reaction-sprint, pong, forty-two); SWE arcade still lists all 5. Filter applied via `eligibleVariants = ARCADE_VARIANTS.filter(v => v.packs === undefined || v.packs.includes(manifest.id))`, memoized on `manifest.id`. Arrow-key bounds + number-key clamps updated to `eligibleVariants.length`. (2) **Stacker (Reaction Sprint) variation.** Old behavior: every block started at `BLOCK_MIN_X` moving right at `BASE_SPEED + idx * 40` (monotonic 480/520/560/600/640 v.u./sec). Pattern was too learnable — one locked-in rhythm carried all five blocks. New behavior: (a) **starting side alternates** L→R→L→R→L per block via `startingXForBlock(i)` + `startingDirForBlock(i)` helpers (even = left/+1, odd = right/-1); (b) **per-block speeds** declared as a literal `BLOCK_SPEEDS = [480, 620, 520, 680, 560]` tuple alternating moderate/fast bands instead of the old monotonic formula. Win/partial/fail thresholds unchanged. **Doc edits:** §10 *Reaction Sprint* row reflects the new alternation; new *v2.0.6 variation tuning* paragraph names the helpers + the speed tuple. §10.1 gains a *Pack-filtered variants (v2.0.6)* paragraph documenting the `packs?` field. **No `STATE_VERSION` bump, no schema change, no save migration.** |
 | v2.0.5  | 2026-05-13 | Corby Hoback · Claude Code | **Minigame icons wired into ArcadeModal + MinigameReplayCard.** Closes the orphan-art gap left by the v1.6.x "42" iteration loop: five minigame icons (`IconCards` / `IconCheckmark` / `IconLightning` / `IconPaddles` / `IconFortyTwo`) had been authored in `modalIcons.tsx` but registered nowhere — the comment in `modalIconRegistryData.ts` named the gap as "future MinigameIcon registry." This version ships that registry. (1) **New `MINIGAME_ICONS: Record<MinigameVariant, ModalIconComponent>` map** at the bottom of `modalIconRegistryData.ts`. Keyed by the closed `MinigameVariant` union, so typecheck fails if a new variant lands without an entry. Five entries today. (2) **New `MinigameIcon` helper** in `modalIcons.tsx` — sibling of `DecisionIcon` / `EventIcon`, ~10 lines, same shape (consults the registry, defensive `PlaceholderIcon` fallback even though the union is closed). Renders `<MinigameIcon variant={...} palette={...} size={...} />`. (3) **`ArcadeModal` variant rows** restructured to `flex-row` with a 44 px leading icon column; the existing label / blurb / cooldown-pill stack moves into a `flex-column` content slot to the right. Row padding tightened 12 → 10 px to keep the menu visually compact. The 42-icon iteration loop's output (line-art Deep Thought wedge head) now actually renders next to "The Ultimate Question." (4) **`MinigameReplayCard`** gets a 64 px `MinigameIcon` rendered above the small *"…looking back"* uppercase header — gives the replay-mode summary a glance-recognizable signature of which minigame the player is recalling. (5) **Doc edits:** §10.1 *Arcade access* gains a *Per-variant icons (v2.0.5)* paragraph documenting the registry + the two render surfaces. **No engine code change beyond the new helper, no `STATE_VERSION` bump.** This is a pure-UI polish pass — addresses the user observation "we looped on 42 icon but I don't see it anywhere," which had become a worked example of the polish-loop scope-creep pattern (ship art, forget to wire it). Future minigame variants automatically need a `MINIGAME_ICONS` entry to typecheck. |
@@ -126,9 +127,12 @@ SLOT_TO_MONTH_NUM = [1, 2, 4, 6, 8, 10, 12]   // 7 slots per year
 
 Most forward room exits advance **+2 calendar months** (Feb→Apr,
 Apr→Jun, etc.). Two slots per year advance +1: Dec→Jan (next year's
-cinematic) and Jan→Feb. The HUD `+1 mo` floater stays as-is — it now
-reads as "+1 progress unit," and the status-bar calendar label remains
-the authoritative date display.
+cinematic) and Jan→Feb. The HUD month-change floater uses the helper
+`calendarMonthDelta(fromId, toId)` so it shows the **actual calendar
+delta** (typically `+2 mo` / `−2 mo`, with `+1 mo` / `−1 mo` only across
+the Jan↔Feb and Dec↔Jan boundaries) — not the slot-id delta. The
+fade-start cue handshake (§4.1) still dedups in slot units since
+`completeMonth` always advances exactly 1 slot.
 
 The rewind door (§11.1) walks back through the same slot table.
 `previousReplayableMonth` scans `id - 1, id - 2, ...` until it finds a
@@ -140,6 +144,53 @@ returns null, matching the existing first-month UX.
 Finale is monthId **70** (was 120). The synthetic finale decision was
 also renamed `finale-month-120` → `finale-month` so the id doesn't
 encode a stale magic number.
+
+### Complexity tiers (v2.0.9)
+
+Every layout template declares a `complexity` tier:
+
+| Tier | Behavior | Stat impact |
+|---|---|---|
+| `simple` | Static obstacles only — walk around to reach the door. Everything in v1 today. | None beyond standard collision-walk. |
+| `easy` | Unmovable wall patterns / mazes. Navigation-only challenge. The current `maze` template is the closest reference. | None beyond collision. |
+| `medium` | One or two random shapes oscillating vertically in front of the player. Wait for a gap, then advance. Like `maze` but with the gap moving slowly. | Collision throws the player back, takes some health, repeated collision adds burnout. Getting through untouched earns a bonus XP. |
+| `hard` | Faster moving obstacles + a "paddle" thin rectangle moving up/down in front of the door (pong-style timed gate). Advance when it slides clear. | Same as medium, faster timing windows. |
+| `expert` | Medium/hard, plus a slow-moving block tracing a deterministic diagonal/zigzag path across the room that knocks the player back on contact (no pong-style randomness — natural safe zones exist). | Same as hard. May iterate after playtest to remove bad behavior. |
+
+Tier picks come from `YEAR_TO_COMPLEXITY_MIX` in `layouts.ts`:
+
+| Year | Mix |
+|---|---|
+| 2020 | 100% simple |
+| 2021 | 75% simple / 25% easy |
+| 2022 | 50% simple / 50% easy |
+| 2023 | 50% easy / 50% medium |
+| 2024 | 50% easy / 50% medium |
+| 2025 | 50% easy / 50% medium |
+| 2026 | 20% easy / 80% medium |
+| 2027 | 50% medium / 50% hard |
+| 2028 | 20% medium / 80% hard |
+| 2029 | 50% hard / 50% expert |
+
+**Fallback chain.** If a year picks a tier that has no authored templates
+yet, `eligibleTemplates(packId, complexity)` walks DOWN the difficulty
+ladder (expert → hard → medium → easy → simple) until it finds a match.
+v2.0.9 ships with every template tagged `simple`, so every roll today
+falls through to that pool — the player experience is unchanged. The
+framework is the seam; harder tier templates ship in follow-up PRs.
+
+**NPC + interactable placement** in harder tiers follows two rules per
+the original spec:
+- For `simple` / `easy` / `medium`, NPCs and objects can sit anywhere
+  navigable (the moving walls in medium are predictable; NPCs avoid
+  spaces that would clip into a moving boundary).
+- For `hard` / `expert`, the left half of the room hosts NPCs / objects;
+  the right half hosts the movement challenge. NPCs stay clear of the
+  pong-paddle's swept area and the deterministic block's path.
+
+The placer in `src/game/rooms/generator/placeInteractables.ts` will gain
+tier-aware zone rules in the follow-up PRs; v2.0.9 doesn't change
+placement since no harder tiers ship yet.
 
 ### Generator
 

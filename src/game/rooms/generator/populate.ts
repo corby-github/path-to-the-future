@@ -3,12 +3,18 @@ import {
   LAYOUT_TEMPLATES,
   eligibleTemplates,
   getLayoutById,
+  pickComplexityTier,
   type LayoutTemplate,
+  type ComplexityTier,
 } from './layouts';
 import { seededRandom, pickFrom } from './seedRng';
 
 export interface RoomLayout {
   templateId: string;
+  // The complexity tier the generator picked. Surfaces in dev tooling and
+  // is available on the room layout for downstream room behaviors that
+  // care (e.g. moving-obstacle authoring lands here in follow-up PRs).
+  complexity: ComplexityTier;
   spawn: Vector2;
   obstacles: Rect[];
   door: Rect;
@@ -42,6 +48,7 @@ function assertDoorAccessible(layout: RoomLayout): void {
 function toLayout(template: LayoutTemplate): RoomLayout {
   return {
     templateId: template.id,
+    complexity: template.complexity,
     spawn: template.spawn,
     obstacles: template.obstacles,
     door: template.door,
@@ -49,12 +56,15 @@ function toLayout(template: LayoutTemplate): RoomLayout {
 }
 
 // `packId` filters the template pool to entries eligible for the active
-// career pack (see `eligibleTemplates`). A `forcedTemplateId` (DevPanel) is
-// honored regardless of pack — devs may want to preview a template the
-// active pack normally wouldn't roll.
+// career pack (see `eligibleTemplates`). `year` (v2.0.9) drives the
+// complexity-tier roll via `pickComplexityTier` — early years skew toward
+// `simple`, late years toward `hard`/`expert`. A `forcedTemplateId`
+// (DevPanel) is honored regardless of pack or tier — devs may want to
+// preview any template in any run.
 export function generateRoom(
   seed: number,
   packId: string,
+  year: number,
   forcedTemplateId?: string | null,
 ): RoomLayout {
   let layout: RoomLayout;
@@ -65,7 +75,11 @@ export function generateRoom(
       : toLayout(pickFrom(seededRandom(seed), eligibleTemplates(packId)));
   } else {
     const rng = seededRandom(seed);
-    const pool = eligibleTemplates(packId);
+    // Roll the complexity tier first (year-driven), then narrow the pool
+    // to that tier (with cascading fallback inside `eligibleTemplates`
+    // when the tier has no authored templates yet).
+    const complexity = pickComplexityTier(year, rng);
+    const pool = eligibleTemplates(packId, complexity);
     // Defensive: if a pack id matches nothing (shouldn't happen — universals
     // are always present), fall back to the full pool so the room still
     // renders. Surfaces as a dev-mode warning.
@@ -74,9 +88,10 @@ export function generateRoom(
       : pickFrom(rng, LAYOUT_TEMPLATES);
     if (pool.length === 0 && import.meta.env.DEV) {
       console.warn(
-        `[room-generator] No eligible templates for packId "${packId}"; ` +
-        `falling back to the universal+all pool. Add at least one universal ` +
-        `template (omit \`packs\`) or tag entries with this pack id.`,
+        `[room-generator] No eligible templates for packId "${packId}" ` +
+        `(tier "${complexity}"); falling back to the universal+all pool. ` +
+        `Add at least one universal template (omit \`packs\`) or tag ` +
+        `entries with this pack id.`,
       );
     }
     layout = toLayout(picked);
