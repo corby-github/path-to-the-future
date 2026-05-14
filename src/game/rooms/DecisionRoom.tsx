@@ -40,6 +40,21 @@ const DEFAULT_EVENT_CHANCE = 0.4;
 const INTERACTABLE_HALF_W = 28;
 const INTERACTABLE_HALF_H = 36;
 
+// Issue #77 — when entering a room via the REWIND_DOOR (back-walk into
+// replay of the previous month), spawn the player just LEFT of the
+// forward door rather than at the layout's default left-edge spawn.
+// Reads as "you stepped out of the door you originally exited" —
+// symmetric to the right→left door trip the player just took. The
+// standard left spawn is still used for live room entry + exitReplay
+// (return to live).
+const REPLAY_SPAWN_DOOR_GAP = 30;
+function replaySpawnFor(door: Rect): Vector2 {
+  return {
+    x: door.x - REPLAY_SPAWN_DOOR_GAP,
+    y: door.y + door.height / 2,
+  };
+}
+
 // Rewind door for backward replay (#33). Bottom-left of the canvas, away
 // from the standard middle-left spawn so the player doesn't accidentally
 // walk into it on entry. Same palette as the forward door (accent fill,
@@ -490,8 +505,13 @@ export function DecisionRoom({ config, onExit }: Props) {
     }, MODAL_POP_DELAY_MS);
   }, [layout.door, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch]);
 
+  const initialSpawn = useMemo<Vector2>(
+    () => (isReplay ? replaySpawnFor(layout.door) : layout.spawn),
+    [isReplay, layout.door, layout.spawn],
+  );
+
   const playerState = usePlayerMovement({
-    initialPosition: layout.spawn,
+    initialPosition: initialSpawn,
     bounds: ROOM_BOUNDS,
     obstacles: layout.obstacles,
     active:

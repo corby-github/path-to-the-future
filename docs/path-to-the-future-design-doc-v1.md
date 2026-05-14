@@ -1,7 +1,7 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 2.0.11
+**Document version:** 2.0.12
 **Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 12 layout templates (all tier `simple` for now) · Room complexity tier framework wired (year-driven mix) · All 8 class tiers selectable in both packs
 **Last updated:** 2026-05-14
 
@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.12 | 2026-05-14 | Corby Hoback · Claude Code | **Replay back-door spawn position fix ([issue #77](https://github.com/corby-github/path-to-the-future/issues/77)).** Entering a previous month via the rewind door now spawns the player just LEFT of the forward door (`{ x: door.x - 30, y: door.y + door.height / 2 }`) instead of at the layout's default left-edge spawn. Reads as "you stepped out of the door you originally exited" — symmetric to the right→left back-door trip the player just took. Live entry + `exitReplay` (return to live) still use the standard left spawn. New `replaySpawnFor(door)` helper in `DecisionRoom.tsx`; component selects via `isReplay ? replaySpawnFor(layout.door) : layout.spawn`. §11.1 *Backward replay* gains a v2.0.12 paragraph documenting the spawn rule. |
 | v2.0.11 | 2026-05-14 | Corby Hoback · Claude Code | **All 8 class tiers selectable.** SWE + Homeschool manifests gain `entryClasses` for `junior` / `vanguard` / `commander` / `legendary` / `mythic` / `oracle` with calibrated `startingXp` + `startingStats` per tier. Labels match each pack's `classLabels` overrides where present (Homeschool: Settled Routine / Curriculum Sage / Co-op Lead / Mentor Parent / Elder / The Oracle). ClassPicker auto-gates by `entryClasses` membership, so no engine code change. §18 *Out of Scope* updated — the "Class entry points beyond Novice and Skilled" item retired with a v2.0.11 strike-through pointing at the new entries. Starting stats are unplaytested; tuning will follow runs. |
 | v2.0.10 | 2026-05-14 | Corby Hoback · Claude Code | **Doc-sync + content `requires.month` gate remap after v2.0.8.** PR #78 regenerated `months.json` (120 → 70) but left `requires.month` / `trigger.month` gates in `decisions.json` / `events.json` on the old 12-slot/year calendar — leaving 9 homeschool decisions + 2 events **unreachable** (gates above the new 70 cap) and silently shifting SWE arc pacing ~4 months earlier than authored. New one-shot `scripts/remap-old-month-gates.mjs` converts each old monthId to the smallest new slot whose calendar month is ≥ the old monthNum. **72 gates remapped** across 4 JSON files (SWE 32 + Homeschool 40). Doc sync: §24 analytics slugs refreshed (`/month/{001..120}` → `/month/{01..70}`; minigame slug list expanded to all 5 variants — was a stale 3-entry list); `game_completed` event description updated; inline 120→70 sweep of engine-cap references across §2, §3, §5, §6, §8, §11.2, §21, §25, §26 (Homeschool era table + counts; Student fork-month note pinned to v2.0.8 scale). |
 | v2.0.9  | 2026-05-14 | Corby Hoback · Claude Code | **Room complexity tier framework (no new rooms yet).** New `ComplexityTier` type + required `complexity` field on `LayoutTemplate` (all 12 templates tagged `simple` for now); `YEAR_TO_COMPLEXITY_MIX` table + `pickComplexityTier(year, rng)` sampler; `eligibleTemplates(packId, complexity?)` extends the pack filter with a tier filter + downward fallback chain (expert → hard → medium → easy → simple). `generateRoom(seed, packId, year, forced?)` signature widened; `RoomLayout.complexity` exposes the picked tier. Play unchanged from v2.0.8 (every roll falls through to `simple`). New §4 *Complexity tiers (v2.0.9)* subsection. No `STATE_VERSION` bump. Companion PR to v2.0.8; both branched from `main` per the no-stacked-PRs rule. |
@@ -807,6 +808,17 @@ is set on the HUD root for devtools / future styling hooks.
 door from a replay room to go further back. All the way to month 1 if
 desired. The return door always exits to the live month, not the
 intermediate ones.
+
+**Replay spawn position (v2.0.12, issue #77).** When the player walks
+*through* the rewind door into a previous month's room, the player
+spawns **just left of the forward door** of the replayed room — not at
+the layout's default left-edge spawn. Reads as "you stepped out of the
+door you originally exited," symmetric to the right→left back-door trip
+the player just took. Implementation: `replaySpawnFor(door)` in
+`DecisionRoom.tsx` returns `{ x: door.x - 30, y: door.y + door.height / 2 }`;
+the component selects `isReplay ? replaySpawnFor(layout.door) : layout.spawn`
+as `usePlayerMovement`'s `initialPosition`. The standard left spawn is
+still used for forward room entry + `exitReplay` (return to live).
 
 **Out of scope** (called out in the issue): inventory; jumping back
 multiple months at once (only one-step navigation); replaying mid-decision
