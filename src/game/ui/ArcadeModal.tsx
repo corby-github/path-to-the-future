@@ -9,6 +9,7 @@ import {
 } from '../state/slices/progressSlice';
 import { MinigameByVariant } from '../minigames/MinigameByVariant';
 import { InteractableSprite } from '../rooms/sprites/InteractableSprite';
+import { MinigameIcon } from './icons/modalIcons';
 import { labelFor } from '../content/interactableLabel';
 import type { InteractableDef } from '../types/careerPack';
 import type { MinigameVariant } from '../types/room';
@@ -289,7 +290,7 @@ export function ArcadeModal({ interactable, onClose }: Props) {
                     onMouseEnter={() => setHighlighted(i)}
                     style={{
                       textAlign: 'left',
-                      padding: '12px 14px',
+                      padding: '10px 14px',
                       background: active ? palette.surface : 'transparent',
                       color: palette.ink,
                       border: `1px solid ${palette.ink}`,
@@ -298,32 +299,43 @@ export function ArcadeModal({ interactable, onClose }: Props) {
                       cursor: 'pointer',
                       fontFamily: 'inherit',
                       display: 'flex',
-                      flexDirection: 'column',
-                      gap: 4,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 12,
                       transition: 'background 120ms',
                     }}
                   >
-                    <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                      <span>
-                        <span style={{ opacity: 0.6, marginRight: 10 }}>{i + 1}.</span>
-                        <span style={{ fontWeight: 600 }}>{v.label}</span>
-                      </span>
-                      <span
-                        data-region="status"
-                        style={{
-                          fontSize: 11,
-                          letterSpacing: '0.08em',
-                          textTransform: 'uppercase',
-                          color: v.ready ? palette.positive : palette.inkMuted,
-                          fontWeight: 600,
-                        }}
-                      >
-                        {v.ready
-                          ? `Ready · +${XP_MINIGAME_WIN} XP`
-                          : `Cooling down · ${formatCooldownRemaining(v.remaining)}`}
-                      </span>
+                    <span
+                      data-region="variant-icon"
+                      style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}
+                      aria-hidden="true"
+                    >
+                      <MinigameIcon variant={v.id} palette={palette} size={44} />
                     </span>
-                    <span style={{ fontSize: 12, opacity: 0.7 }}>{v.blurb}</span>
+                    <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+                      <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
+                        <span>
+                          <span style={{ opacity: 0.6, marginRight: 10 }}>{i + 1}.</span>
+                          <span style={{ fontWeight: 600 }}>{v.label}</span>
+                        </span>
+                        <span
+                          data-region="status"
+                          style={{
+                            fontSize: 11,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            color: v.ready ? palette.positive : palette.inkMuted,
+                            fontWeight: 600,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {v.ready
+                            ? `Ready · +${XP_MINIGAME_WIN} XP`
+                            : `Cooling down · ${formatCooldownRemaining(v.remaining)}`}
+                        </span>
+                      </span>
+                      <span style={{ fontSize: 12, opacity: 0.7 }}>{v.blurb}</span>
+                    </span>
                   </button>
                 );
               })}
