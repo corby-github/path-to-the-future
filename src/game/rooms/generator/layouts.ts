@@ -1,12 +1,31 @@
 import type { Rect, Vector2 } from '../../types/geometry';
 import { ROOM_VIEWBOX } from '../../coordinates';
 
+// Room complexity tier (v2.0.9 — framework only). Drives the year → tier
+// mix in `YEAR_TO_COMPLEXITY_MIX`. v1 ships with every existing template
+// tagged `simple` (no moving obstacles, no physics challenges); harder
+// tiers — `easy` (unmovable walls / maze patterns), `medium` (slow moving
+// walls + collision push-back), `hard` (faster moving walls + paddle-style
+// blockers), `expert` (deterministic sliding/zigzag obstacles) — get
+// authored in follow-up PRs. See §4 *Complexity tiers* in the design doc.
+export type ComplexityTier = 'simple' | 'easy' | 'medium' | 'hard' | 'expert';
+
+// Ordered easier → harder so callers can degrade cleanly when no template
+// is authored for a requested tier (see `eligibleTemplates`).
+export const COMPLEXITY_TIERS: readonly ComplexityTier[] = [
+  'simple', 'easy', 'medium', 'hard', 'expert',
+] as const;
+
 export interface LayoutTemplate {
   id: string;
   label: string;
   spawn: Vector2;
   obstacles: Rect[];
   door: Rect;
+  // Required complexity tier. v2.0.9 ships every template as 'simple';
+  // future PRs introduce easy/medium/hard/expert variants with moving
+  // obstacles and physics. See §4.
+  complexity: ComplexityTier;
   // Optional pack filter. Undefined = universal (eligible for every pack).
   // Listed = only that pack's rooms can roll this template. Matched by
   // `manifest.id` in `generateRoom`. See §4.
@@ -42,6 +61,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 450, y: 100, width: 100, height: 80 },
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
     packs: ['software-engineering'],
   },
   {
@@ -55,6 +75,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 160, y: 420, width: 240, height: 60 },    // table
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
     packs: ['software-engineering'],
   },
   {
@@ -68,6 +89,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 600, y: 360, width: 130, height: 100 },   // bottom-right cubicle
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
     packs: ['software-engineering'],
   },
   {
@@ -79,6 +101,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 200, y: 440, width: 500, height: 60 },    // lower shelf
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
   },
   {
     id: 'divided',
@@ -89,6 +112,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 450, y: 330, width: 60, height: 220 },    // wall-bottom, gap to y:330
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
   },
   {
     id: 'park',
@@ -99,6 +123,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 620, y: 380, width: 120, height: 120 },   // tree-blob (square stand-in)
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
   },
   {
     id: 'grocery-store',
@@ -113,6 +138,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 720, y: 360, width: 60, height: 160 },    // aisle 3 bottom
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
   },
   {
     id: 'kitchen',
@@ -124,6 +150,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 350, y: 380, width: 200, height: 80 },    // center island
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
   },
   {
     id: 'living-room',
@@ -135,6 +162,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 700, y: 200, width: 60,  height: 200 },   // TV stand
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
   },
   {
     id: 'church',
@@ -154,6 +182,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 820, y: 460, width: 40, height: 40 },
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
   },
   {
     id: 'classroom',
@@ -167,6 +196,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 800, y: 100, width: 120, height: 60 },    // teacher's desk near front
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
     packs: ['homeschool-parent'],
   },
   {
@@ -197,6 +227,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 800, y: 330, width: 60, height: 270 },
     ],
     door: DEFAULT_DOOR,
+    complexity: 'simple',
   },
 ];
 
@@ -204,12 +235,85 @@ export function getLayoutById(id: string): LayoutTemplate | undefined {
   return LAYOUT_TEMPLATES.find((t) => t.id === id);
 }
 
+// Year → complexity tier mix (v2.0.9). Each year names a weighted set of
+// tiers; the room generator rolls one tier per room using the weights. The
+// progression is "100% simple" in 2020 → "50% hard, 50% expert" by 2029.
+// All weights in a year-row sum to 1.0; rows are kept sorted ascending by
+// tier so reading them top-down feels like the difficulty curve.
+//
+// Until easy/medium/hard/expert templates ship in follow-up PRs, every
+// roll degrades to 'simple' via the `eligibleTemplates` fallback below —
+// so the game today plays identically. The mix data is the seam.
+export interface ComplexityMixEntry {
+  tier: ComplexityTier;
+  weight: number;
+}
+
+export const YEAR_TO_COMPLEXITY_MIX: Record<number, ComplexityMixEntry[]> = {
+  2020: [{ tier: 'simple', weight: 1.0 }],
+  2021: [{ tier: 'simple', weight: 0.75 }, { tier: 'easy', weight: 0.25 }],
+  2022: [{ tier: 'simple', weight: 0.5 },  { tier: 'easy', weight: 0.5 }],
+  2023: [{ tier: 'easy',   weight: 0.5 },  { tier: 'medium', weight: 0.5 }],
+  2024: [{ tier: 'easy',   weight: 0.5 },  { tier: 'medium', weight: 0.5 }],
+  2025: [{ tier: 'easy',   weight: 0.5 },  { tier: 'medium', weight: 0.5 }],
+  2026: [{ tier: 'easy',   weight: 0.2 },  { tier: 'medium', weight: 0.8 }],
+  2027: [{ tier: 'medium', weight: 0.5 },  { tier: 'hard',   weight: 0.5 }],
+  2028: [{ tier: 'medium', weight: 0.2 },  { tier: 'hard',   weight: 0.8 }],
+  2029: [{ tier: 'hard',   weight: 0.5 },  { tier: 'expert', weight: 0.5 }],
+};
+
+// Default mix for any year not in the table — keep the game playable.
+const DEFAULT_COMPLEXITY_MIX: ComplexityMixEntry[] = [
+  { tier: 'simple', weight: 1.0 },
+];
+
+export function complexityMixForYear(year: number): ComplexityMixEntry[] {
+  return YEAR_TO_COMPLEXITY_MIX[year] ?? DEFAULT_COMPLEXITY_MIX;
+}
+
+// Pick a complexity tier from a year's mix using the provided rng.
+// Treats the weight list as a discrete distribution; the rng yields a
+// number in [0, 1). Returns the LAST tier if the rng hits the upper
+// boundary, defensively.
+export function pickComplexityTier(year: number, rng: () => number): ComplexityTier {
+  const mix = complexityMixForYear(year);
+  const total = mix.reduce((sum, e) => sum + e.weight, 0);
+  if (total <= 0) return 'simple';
+  const target = rng() * total;
+  let acc = 0;
+  for (const entry of mix) {
+    acc += entry.weight;
+    if (target < acc) return entry.tier;
+  }
+  return mix[mix.length - 1].tier;
+}
+
 // Filter templates eligible for a given pack. `undefined` packs entries are
 // universal; entries with `packs: [...]` only roll for matching pack ids.
 // Returns at least the universal subset, so callers always have something
 // to pick from even when a pack has no pack-specific entries authored.
-export function eligibleTemplates(packId: string): readonly LayoutTemplate[] {
-  return LAYOUT_TEMPLATES.filter(
+//
+// `complexity` (v2.0.9) optionally narrows to a tier. When provided and the
+// tier has no eligible templates, falls back DOWN the difficulty ladder
+// (expert → hard → medium → easy → simple). Stops at 'simple' which always
+// has templates today. This keeps the game playable while harder tiers are
+// being authored.
+export function eligibleTemplates(
+  packId: string,
+  complexity?: ComplexityTier,
+): readonly LayoutTemplate[] {
+  const byPack = LAYOUT_TEMPLATES.filter(
     (t) => t.packs === undefined || t.packs.includes(packId),
   );
+  if (!complexity) return byPack;
+  // Try requested tier; if empty, walk down the ladder.
+  const startIdx = COMPLEXITY_TIERS.indexOf(complexity);
+  for (let i = startIdx; i >= 0; i--) {
+    const tier = COMPLEXITY_TIERS[i];
+    const filtered = byPack.filter((t) => t.complexity === tier);
+    if (filtered.length > 0) return filtered;
+  }
+  // No template matches at any tier for this pack — return the unfiltered
+  // pack pool so the caller still has something to render.
+  return byPack;
 }

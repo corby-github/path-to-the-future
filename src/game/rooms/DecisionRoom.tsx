@@ -254,7 +254,9 @@ export function DecisionRoom({ config, onExit }: Props) {
       monthId: config.monthId,
       state: { progress, stats, flags },
     });
-    return generateRoom(seed, profile.careerPack, forcedLayout);
+    // Pass the room's calendar year so the generator can roll a
+    // year-appropriate complexity tier (v2.0.9 — `YEAR_TO_COMPLEXITY_MIX`).
+    return generateRoom(seed, profile.careerPack, monthEntry.year, forcedLayout);
   });
 
   // Interactables placed in this room (1-3, seeded, non-overlapping with
