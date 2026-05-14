@@ -26,3 +26,4 @@ dist-ssr
 # moved to user-global (~/.claude/skills/punch/) so it's discoverable
 # across all projects.
 .claude/
+docs/ignore
