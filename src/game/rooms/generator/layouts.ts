@@ -169,6 +169,35 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     door: DEFAULT_DOOR,
     packs: ['homeschool-parent'],
   },
+  {
+    // Four vertical walls in a zigzag, each with a 60-px gap (PLAYER_RADIUS=14
+    // so the gap is >2× player diameter). Gaps alternate center → top →
+    // bottom → center to force the player to navigate up/down across the
+    // canvas before reaching the door. Universal template — feels generic
+    // enough that either pack can roll it.
+    //
+    // Path:  spawn(80,300) → east → wall-1 center gap (y=300) → up to
+    //        y~110 → wall-2 top gap → down to y~490 → wall-3 bottom gap →
+    //        up to y~300 → wall-4 center gap → east → door(950,300).
+    id: 'maze',
+    label: 'Maze',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      // Wall 1 — center gap (y=270..330)
+      { x: 200, y: 0,   width: 60, height: 270 },
+      { x: 200, y: 330, width: 60, height: 270 },
+      // Wall 2 — top gap (y=80..140)
+      { x: 400, y: 0,   width: 60, height: 80 },
+      { x: 400, y: 140, width: 60, height: 460 },
+      // Wall 3 — bottom gap (y=460..520)
+      { x: 600, y: 0,   width: 60, height: 460 },
+      { x: 600, y: 520, width: 60, height: 80 },
+      // Wall 4 — center gap (y=270..330)
+      { x: 800, y: 0,   width: 60, height: 270 },
+      { x: 800, y: 330, width: 60, height: 270 },
+    ],
+    door: DEFAULT_DOOR,
+  },
 ];
 
 export function getLayoutById(id: string): LayoutTemplate | undefined {
