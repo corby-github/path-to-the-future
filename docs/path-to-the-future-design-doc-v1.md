@@ -1,8 +1,8 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 2.0.5
-**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · 12 layout templates · Per-variant minigame icons in ArcadeModal + MinigameReplayCard
+**Document version:** 2.0.6
+**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · 12 layout templates · Pack-filtered arcade variants · Stacker variation pass
 **Last updated:** 2026-05-13
 
 ---
@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.6  | 2026-05-13 | Corby Hoback · Claude Code | **Pack-filtered arcade variants + Stacker variation pass.** Two unrelated polish moves bundled because both came from a single playthrough observation. (1) **Code Review excluded from homeschool arcade.** New optional `packs?: readonly string[]` field on each `ARCADE_VARIANTS` entry in `ArcadeModal.tsx` — mirrors the `LayoutTemplate.packs` pack-filter pattern from §4. Undefined = universal (every pack lists the variant). Listed = only matching pack ids. Today only `code-review` is gated (`packs: ['software-engineering']`); the SWE-coded *"spot the bug, beat the panel"* register doesn't fit a homeschool run, and homeschool months don't schedule it. Homeschool arcade now lists 4 variants (blackjack, reaction-sprint, pong, forty-two); SWE arcade still lists all 5. Filter applied via `eligibleVariants = ARCADE_VARIANTS.filter(v => v.packs === undefined || v.packs.includes(manifest.id))`, memoized on `manifest.id`. Arrow-key bounds + number-key clamps updated to `eligibleVariants.length`. (2) **Stacker (Reaction Sprint) variation.** Old behavior: every block started at `BLOCK_MIN_X` moving right at `BASE_SPEED + idx * 40` (monotonic 480/520/560/600/640 v.u./sec). Pattern was too learnable — one locked-in rhythm carried all five blocks. New behavior: (a) **starting side alternates** L→R→L→R→L per block via `startingXForBlock(i)` + `startingDirForBlock(i)` helpers (even = left/+1, odd = right/-1); (b) **per-block speeds** declared as a literal `BLOCK_SPEEDS = [480, 620, 520, 680, 560]` tuple alternating moderate/fast bands instead of the old monotonic formula. Win/partial/fail thresholds unchanged. **Doc edits:** §10 *Reaction Sprint* row reflects the new alternation; new *v2.0.6 variation tuning* paragraph names the helpers + the speed tuple. §10.1 gains a *Pack-filtered variants (v2.0.6)* paragraph documenting the `packs?` field. **No `STATE_VERSION` bump, no schema change, no save migration.** |
 | v2.0.5  | 2026-05-13 | Corby Hoback · Claude Code | **Minigame icons wired into ArcadeModal + MinigameReplayCard.** Closes the orphan-art gap left by the v1.6.x "42" iteration loop: five minigame icons (`IconCards` / `IconCheckmark` / `IconLightning` / `IconPaddles` / `IconFortyTwo`) had been authored in `modalIcons.tsx` but registered nowhere — the comment in `modalIconRegistryData.ts` named the gap as "future MinigameIcon registry." This version ships that registry. (1) **New `MINIGAME_ICONS: Record<MinigameVariant, ModalIconComponent>` map** at the bottom of `modalIconRegistryData.ts`. Keyed by the closed `MinigameVariant` union, so typecheck fails if a new variant lands without an entry. Five entries today. (2) **New `MinigameIcon` helper** in `modalIcons.tsx` — sibling of `DecisionIcon` / `EventIcon`, ~10 lines, same shape (consults the registry, defensive `PlaceholderIcon` fallback even though the union is closed). Renders `<MinigameIcon variant={...} palette={...} size={...} />`. (3) **`ArcadeModal` variant rows** restructured to `flex-row` with a 44 px leading icon column; the existing label / blurb / cooldown-pill stack moves into a `flex-column` content slot to the right. Row padding tightened 12 → 10 px to keep the menu visually compact. The 42-icon iteration loop's output (line-art Deep Thought wedge head) now actually renders next to "The Ultimate Question." (4) **`MinigameReplayCard`** gets a 64 px `MinigameIcon` rendered above the small *"…looking back"* uppercase header — gives the replay-mode summary a glance-recognizable signature of which minigame the player is recalling. (5) **Doc edits:** §10.1 *Arcade access* gains a *Per-variant icons (v2.0.5)* paragraph documenting the registry + the two render surfaces. **No engine code change beyond the new helper, no `STATE_VERSION` bump.** This is a pure-UI polish pass — addresses the user observation "we looped on 42 icon but I don't see it anywhere," which had become a worked example of the polish-loop scope-creep pattern (ship art, forget to wire it). Future minigame variants automatically need a `MINIGAME_ICONS` entry to typecheck. |
 | v2.0.4  | 2026-05-13 | Corby Hoback · Claude Code | **`maze` layout template added (universal).** Twelfth template; first navigation-heavy entry. Four vertical walls at x = 200 / 400 / 600 / 800 (60 px wide each), each with a 60-px gap that alternates **center → top → bottom → center** — forces the player to zigzag up/down across the canvas before reaching the door instead of walking a straight line. Gap height (60 px) is >2× `PLAYER_RADIUS` (14, so diameter 28), comfortably navigable; matches the existing `divided` template's gap size. 8 obstacle rects total (2 per wall). Universal pack-filter (`packs` omitted) — both packs can roll it; mazes aren't pack-coded the way cubicles or classrooms are. **Pool sizes now:** SWE = 11 (universal 8 + swe 3), Homeschool = 9 (universal 8 + homeschool 1). Avg repeats drop again from ~11/14 → ~10/12 per template. §4 *Layout templates* table updated with the new row + pool-size math; no schema change, no `STATE_VERSION` bump. Path-correctness was authored once (the user verifies in-game) — no preview iteration loop per the `polish-loop-scope-creep.md` rule. |
 | v2.0.3  | 2026-05-13 | Corby Hoback · Claude Code | **Room-template expansion + pack-aware layout filtering.** Doubles the layout pool from 4 templates to **11** and introduces a pack-filter mechanism so the room generator no longer reads as "the office is everywhere I go." (1) **New `packs?: readonly string[]` field on `LayoutTemplate`** in `src/game/rooms/generator/layouts.ts`. Undefined = universal (eligible for every pack); listed = only those packs roll the template. New `eligibleTemplates(packId)` helper does the filter. (2) **`generateRoom(seed, packId, forced?)`** signature widened — pulls the eligible pool, falls back to the full pool with a dev-mode warning if a pack matches nothing (defensive). `forcedTemplateId` from DevPanel still bypasses the filter so devs can preview any template. (3) **7 new templates authored** in one pass per the polish-loop research artifact's rules (no per-template review rounds, trust the rectangles): **`cubicles`** (swe — 4 small blocks in 2×2 grid), **`classroom`** (homeschool — 4 student desks + teacher's desk), **`park`** (universal — bench + tree-blob, asymmetric), **`grocery-store`** (universal — 3 vertical aisles with mid-aisle gaps for navigation), **`kitchen`** (universal — top counter + right counter + center island), **`living-room`** (universal — couch + coffee table + TV stand cluster), **`church`** (universal — 2 rows of 3 pews + 2 plants flanking the altar). Existing `open-office` + `shared-desks` got the `software-engineering` tag; `library` and `divided` left untagged (universal). (4) **Pool sizes per pack:** SWE = 10 (7 universal + 3 swe), Homeschool = 8 (7 universal + 1 homeschool). Across ~110 DecisionRooms the avg-repeats-per-template drop from ~27 to ~11–14 — the "felt-unpolished" beat the user named was 4-template monotony, not a deeper structural issue. (5) **New *Layout templates (v2.0.3)* subsection in §4** documents the schema, the pack-filter spirit ("spaces both packs visit are universal; spaces only one pack visits get tagged"), the current 11-template table with pack tags, and the three-layer visual-variety frame (template + interactables + palette/era-mood). The §4 generator-step list now references the new subsection. (6) **DevPanel unchanged** — the Force-layout dropdown still lists every template (`LAYOUT_TEMPLATES`, unfiltered) so any template can be previewed in any run. (7) **Engine surface kept minimal** — no JSON-per-pack refactor (templates stay in TS for v1; pack-JSON migration is the post-v1 architecture move that matches the interactables pattern). **No STATE_VERSION bump, no schema change to save data.** DecisionRoom is the only caller of `generateRoom`; it passes `profile.careerPack` for the active run. Authoring guardrails followed per the user's "no nit-picking jokes no one may ever see" directive: one-pass obstacle authoring, no preview generator, no per-template iteration loop. |
@@ -501,7 +502,7 @@ SVGs swap in one event at a time; the modal layout is fixed.
 |---------------------|-------------|-----------------------------------------------|
 | **Blackjack**       | Chance — hit/stand only, dealer plays to 17, $200 stake | Vegas / gambling decisions |
 | **Code Review**     | Skill — one hand-authored snippet, find the bug from 4 options | Senior-tier work decisions |
-| **Reaction Sprint** (Stacker) | Timing — block slides L↔R; **SPACE** locks; land inside the highlighted column. 5 blocks visible from start, bottom-up activation, speed ramps per block | High-pressure deadline decisions |
+| **Reaction Sprint** (Stacker) | Timing — block slides L↔R; **SPACE** locks; land inside the highlighted column. 5 blocks visible from start, bottom-up activation. **Starting side alternates** L→R→L→R→L per block (even-indexed from left, odd-indexed from right) and **speed alternates** between moderate / fast bands (480 / 620 / 520 / 680 / 560 v.u./sec) so the player can't lock a single rhythm — every other block ramps harder than its neighbors | High-pressure deadline decisions |
 | **Pong** (v1.5) | Reflex — ↑↓ / W-S paddle vs. AI paddle, ball bounces between, off-centre hits add spin, first to 5 points wins | Arcade-only by default; one scheduled slot at month 75 |
 | **The Ultimate Question** (v1.6) | Multiple-choice — one question (*"What is the answer to the ultimate question of life, the universe, and everything?"*), four options, order shuffled per mount, binary right/wrong (`42` is correct) | Arcade-only — no scheduled slot |
 
@@ -509,6 +510,23 @@ SVGs swap in one event at a time; the modal layout is fixed.
 original "twitch" framing was reshaped to a keyboard-driven timing game — see
 `src/game/minigames/Stacker.tsx`. Win threshold: 4-5 stacks. Partial: 2-3.
 Fail: 0-1.
+
+**v2.0.6 variation tuning.** The original Stacker had every block start on
+the left moving right at `BASE_SPEED + idx * 40` (monotonic ramp:
+480/520/560/600/640 v.u./sec). The pattern was too learnable — a single
+locked-in rhythm carried all five blocks. v2.0.6 introduces two
+alternations:
+
+- **Starting side** flips per block. Even indices (0, 2, 4) start on the
+  left (`BLOCK_MIN_X`, direction +1); odd indices (1, 3) start on the
+  right (`BLOCK_MAX_X`, direction -1). Helpers `startingXForBlock(i)` and
+  `startingDirForBlock(i)` in `Stacker.tsx` own the mapping.
+- **Per-block speeds** declared as a literal `BLOCK_SPEEDS = [480, 620, 520, 680, 560]`
+  tuple — alternates moderate / fast / moderate / fast / moderate
+  bands. Replaces the old `BASE_SPEED + idx * SPEED_INCREMENT` formula.
+  The player can't pre-load a rhythm; every block is a fresh recalibration.
+
+Win/partial/fail thresholds unchanged.
 
 **v1 slot placements:** month 32 (Blackjack), month 60 (Code Review),
 month 75 (Pong — added v1.5), month 90 (Stacker). These four appear in
@@ -595,10 +613,20 @@ retrospective. Minigames check `mode === 'scheduled'` before dispatching
 `recordMinigame`.
 
 **Closed `MinigameVariant` union for v1.** The arcade lists every variant
-in the union (`'blackjack' | 'code-review' | 'reaction-sprint'`). When v2
-multi-pack lands (§26), the variant list will be driven by the pack
-manifest — but for v1 with one pack and three games, the closed union is
-right-sized. A registry pattern is deferred to the v2 work.
+in the union (`'blackjack' | 'code-review' | 'reaction-sprint' | 'pong' | 'forty-two'`).
+The union is closed by design — no plugin model in v1.
+
+**Pack-filtered variants (v2.0.6).** Each `ARCADE_VARIANTS` entry in
+`ArcadeModal.tsx` carries an optional `packs?: readonly string[]` field —
+mirrors the layout-template pack-filter pattern from §4. Undefined =
+universal (every pack shows the variant). Listed = only those packs show
+it. Today only `code-review` is gated (`packs: ['software-engineering']`)
+— the SWE-coded *"spot the bug, beat the panel"* register doesn't fit a
+homeschool run, and homeschool months don't schedule it. Homeschool
+players see 4 variants in the arcade menu (blackjack, reaction-sprint,
+pong, forty-two); SWE players see all 5. Adding a future pack-specific
+variant means listing its pack id on the entry — same shape as
+`LayoutTemplate.packs`.
 
 **Per-variant icons (v2.0.5).** Each `ArcadeModal` row carries a
 **44×44 leading icon** rendered by the shared `MinigameIcon` helper
