@@ -29,6 +29,53 @@ import type { RootState } from '../state/store';
 const ACTIONS = ['timeline', 'credits', 'replay'] as const;
 type ActionId = (typeof ACTIONS)[number];
 
+// Trophy crown at the top of the recap. Treatment-A flat-color line art:
+// `palette.accent` fills the cup + stem + base, `palette.ink` strokes
+// the outlines and handles. Sized to feel ceremonial without dominating
+// the recap — 88px tall, centered. The cup carries a single ink dot as
+// a stand-in for a star/insignia (matches the small-decoration register
+// used elsewhere; avoids the visual noise of a full star glyph).
+function TrophyCrown({ palette, size = 88 }: { palette: Palette; size?: number }) {
+  return (
+    <svg
+      data-region="finale-trophy"
+      width={size}
+      height={size}
+      viewBox="0 0 120 120"
+      fill="none"
+      role="img"
+      aria-label="Trophy"
+      style={{ display: 'block' }}
+    >
+      <g
+        stroke={palette.ink}
+        strokeWidth={2.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {/* Cup */}
+        <path
+          d="M30 20 L30 48 Q30 72 60 72 Q90 72 90 48 L90 20 Z"
+          fill={palette.accent}
+        />
+        {/* Left handle */}
+        <path d="M30 28 Q14 28 14 42 Q14 56 30 54" fill="none" />
+        {/* Right handle */}
+        <path d="M90 28 Q106 28 106 42 Q106 56 90 54" fill="none" />
+        {/* Stem */}
+        <rect x={52} y={72} width={16} height={16} fill={palette.accent} />
+        {/* Base (tiered) */}
+        <rect x={38} y={88} width={44} height={8} fill={palette.accent} />
+        <rect x={30} y={96} width={60} height={8} fill={palette.accent} />
+        {/* Rim accent (line across the top of the cup) */}
+        <path d="M30 28 L90 28" fill="none" />
+      </g>
+      {/* Center dot on the cup (insignia stand-in) */}
+      <circle cx={60} cy={44} r={3} fill={palette.ink} stroke="none" />
+    </svg>
+  );
+}
+
 interface StatRowProps {
   label: string;
   value: number | null;
@@ -246,9 +293,9 @@ const DecisionTimeline = forwardRef<
       data-region="career-timeline"
       style={{
         // Lives inside CareerTimelineScreen as the flex:1 region. Internal
-        // scroll handles the full 120-decision list. (The dedicated screen
-        // provides the title + decision count above, so this panel renders
-        // just the year-grouped rows.)
+        // scroll handles the full decision list (~60 rows under v2.0.8).
+        // The dedicated screen provides the title + decision count above,
+        // so this panel renders just the year-grouped rows.
         flex: 1,
         minHeight: 0,
         background: palette.background,
@@ -693,10 +740,19 @@ export function EndgameScreen() {
         minHeight: 0,
       }}
     >
-      <div data-region="header" style={{ textAlign: 'center' }}>
+      <div
+        data-region="header"
+        style={{
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <TrophyCrown palette={palette} />
         <p
           style={{
-            margin: 0,
+            margin: '4px 0 0 0',
             fontSize: 11,
             letterSpacing: '0.2em',
             color: palette.inkMuted,
