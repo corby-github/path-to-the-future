@@ -392,18 +392,19 @@ function formatMonth(year: number, monthNum: number): string {
   return `${MONTH_NAMES[idx]} ${year}`;
 }
 
-// 5,000 → "5,000". 12,345 → "12K". 1,234,567 → "1.2M". Matches the HUD chip
-// width budget (~3-4 chars). Locale 'en-US' for the comma separator.
+// Always show the full integer with comma separators (en-US locale).
+// The pre-v2.0.13 `12K` / `1.2M` abbreviations were a width hedge for
+// numbers that don't fit; with all 8 class tiers selectable (v2.0.11)
+// XP can start at 300,000 and savings at 4,000,000, and players reported
+// the abbreviation hid small deltas (`+50` to a 15,000 XP value stayed
+// reading as `15K`). StatChip already sets `whiteSpace: nowrap` so
+// individual values won't break across lines if the chip is squeezed.
 function formatXp(xp: number): string {
-  if (xp < 10_000) return xp.toLocaleString('en-US');
-  if (xp < 1_000_000) return `${Math.floor(xp / 1000)}K`;
-  return `${(xp / 1_000_000).toFixed(1)}M`;
+  return xp.toLocaleString('en-US');
 }
 
 function formatMoney(amount: number): string {
-  if (amount < 10_000) return amount.toLocaleString('en-US');
-  if (amount < 1_000_000) return `${Math.floor(amount / 1000)}K`;
-  return `${(amount / 1_000_000).toFixed(1)}M`;
+  return amount.toLocaleString('en-US');
 }
 
 // Reputation per §7: -100 to +100. Always show the sign.
