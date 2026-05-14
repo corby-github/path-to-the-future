@@ -4,8 +4,8 @@ import { useCareerPack } from '../content/useCareerPack';
 import { CAREERS } from '../content/careers';
 
 // Career picker per §16 step 1. Lists all five v1 careers; only `playable: true`
-// entries (in v1, just Software Engineering) are selectable. Others appear
-// grayed with a "Coming Soon" tag.
+// entries (Software Engineering + Homeschool Parent in v2.0.1+) are selectable.
+// Others appear grayed with a "Coming Soon" tag.
 //
 // Keyboard: ↑↓ (or ←→) cycles through PLAYABLE entries only; Enter/Space
 // confirms the current pick and advances. Mouse two-step (click option →
@@ -127,7 +127,7 @@ export function CareerPicker({ onSelect }: Props) {
       <div style={cardStyle}>
         <h1 style={titleStyle}>Choose your career</h1>
         <p style={subtitleStyle}>
-          Six paths in v1 — two playable. More on the way.
+          Five paths in v1 — two playable. More on the way.
         </p>
 
         <div
