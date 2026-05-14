@@ -13,7 +13,8 @@ import type { Palette } from '../../types/careerPack';
 // this file, plus a one-line registry entry. The DecisionModal / EventModal
 // never change when art swaps in.
 
-import { DECISION_ICONS, EVENT_ICONS } from './modalIconRegistryData';
+import { DECISION_ICONS, EVENT_ICONS, MINIGAME_ICONS } from './modalIconRegistryData';
+import type { MinigameVariant } from '../../types/room';
 
 export interface ModalIconProps {
   palette: Palette;
@@ -1854,5 +1855,22 @@ export function DecisionIcon({ decisionId, palette, size }: DecisionIconProps): 
  */
 export function EventIcon({ eventId, palette, size }: EventIconProps): ReactElement {
   const render = EVENT_ICONS[eventId] ?? PlaceholderIcon;
+  return render({ palette, size });
+}
+
+interface MinigameIconProps {
+  variant: MinigameVariant;
+  palette: Palette;
+  size?: number;
+}
+
+/**
+ * Renders the icon for a given minigame variant. The `MinigameVariant`
+ * union is closed, so the registry is exhaustive at type-check time — no
+ * PlaceholderIcon fallback is needed (kept as a defensive read in case the
+ * union widens before the registry is updated).
+ */
+export function MinigameIcon({ variant, palette, size }: MinigameIconProps): ReactElement {
+  const render = MINIGAME_ICONS[variant] ?? PlaceholderIcon;
   return render({ palette, size });
 }
