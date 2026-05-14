@@ -223,11 +223,14 @@ function playerInsideDoor(door: Rect, px: number, py: number): boolean {
       && py >= door.y && py <= door.y + door.height;
 }
 
-// Find the closest past month walkable for replay (#33). Skips consequence
-// rooms (per user design call: they're punchlines, replay feels wrong).
-// Also skips month 1 — the 2020 opening NarrativeRoom is a one-time framing
-// beat; walking back to it breaks the spell. Returns null if no eligible
-// past month exists.
+// Find the closest past **decision** month for replay (#33). Skips:
+//   - `consequence` rooms — punchlines, replay feels wrong (user design call).
+//   - `narrative` rooms — the cinematic Januaries are forward-only beats
+//     (year-transition cinematic). Back-walking from Feb 2021 should land
+//     on Dec 2020, not Jan 2021. Same rule for month 1: 2020 opening
+//     NarrativeRoom is a one-time framing beat; the loop also bails at
+//     id < 2 as a defensive lower bound.
+// Returns null if no eligible past month exists.
 function previousReplayableMonth(
   months: { id: number; roomType?: string }[],
   fromMonthId: number,
@@ -235,7 +238,7 @@ function previousReplayableMonth(
   for (let id = fromMonthId - 1; id >= 2; id--) {
     const m = months.find((e) => e.id === id);
     if (!m) continue;
-    if (m.roomType === 'consequence') continue;
+    if (m.roomType === 'consequence' || m.roomType === 'narrative') continue;
     return id;
   }
   return null;
