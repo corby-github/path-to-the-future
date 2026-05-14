@@ -85,6 +85,17 @@ import {
   IconMeltedCandy,
   IconTabletFlip,
   IconWobbleBoard,
+  // Homeschool pack — second 5+5 batch
+  IconScreenTime,
+  IconInLawSpeaks,
+  IconThermometerSick,
+  IconSwingset,
+  IconOrganicEmail,
+  IconBookStack,
+  IconFridgeMagnetArt,
+  IconSingleShoe,
+  IconGrandmaCall,
+  IconHeldDinner,
   type ModalIconComponent,
 } from './modalIcons';
 
@@ -154,6 +165,13 @@ export const DECISION_ICONS: Record<string, ModalIconComponent> = {
   'hp-snack-rebellion': IconSnackProtest,
   'hp-tablet-speed-complaint': IconSlowTablet,
   'hp-eldest-wants-school': IconBackpack,
+
+  // Homeschool pack — second 5+5 batch (decisions).
+  'hp-pandemic-screens-rule': IconScreenTime,
+  'hp-in-law-visit': IconInLawSpeaks,
+  'hp-sick-day-on-test-day': IconThermometerSick,
+  'hp-park-defense': IconSwingset,
+  'hp-coop-snack-politics': IconOrganicEmail,
 };
 
 // --- Event icons ------------------------------------------------------------
@@ -212,4 +230,11 @@ export const EVENT_ICONS: Record<string, ModalIconComponent> = {
   'evt-hp-mr-nobody-mm': IconMeltedCandy,
   'evt-hp-tablet-screen-flips': IconTabletFlip,
   'evt-hp-handwriting-wobble': IconWobbleBoard,
+
+  // Homeschool pack — second 5+5 batch (events).
+  'evt-hp-library-haul': IconBookStack,
+  'evt-hp-fridge-art': IconFridgeMagnetArt,
+  'evt-hp-lost-shoe': IconSingleShoe,
+  'evt-hp-grandparent-phone': IconGrandmaCall,
+  'evt-hp-spouse-late': IconHeldDinner,
 };
