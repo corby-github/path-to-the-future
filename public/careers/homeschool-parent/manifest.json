@@ -31,7 +31,7 @@
 
   "entryClasses": {
     "novice": {
-      "label": "First-Year Parent",
+      "label": "Homeschooler Newbie",
       "startingXp": 0,
       "startingStats": {
         "burnout": 15,
@@ -43,7 +43,7 @@
       }
     },
     "skilled": {
-      "label": "Veteran Parent",
+      "label": "Experienced Veteran",
       "startingXp": 5000,
       "startingStats": {
         "burnout": 25,
@@ -57,14 +57,14 @@
   },
 
   "classLabels": {
-    "novice":    { "label": "First-Year Parent",     "role": "Year One, Surviving" },
+    "novice":    { "label": "Homeschooler Newbie",     "role": "Year One, Surviving" },
     "junior":    { "label": "Settled Routine",       "role": "Year Two or Three" },
-    "skilled":   { "label": "Veteran Parent",        "role": "Five Years Deep" },
+    "skilled":   { "label": "Experienced Veteran",        "role": "Five Years Deep" },
     "vanguard":  { "label": "Curriculum Sage",       "role": "The One With The Spreadsheet" },
     "commander": { "label": "Co-op Lead",            "role": "They Call You First" },
     "legendary": { "label": "Mentor Parent",         "role": "Other Parents Take Notes" },
-    "mythic":    { "label": "Homeschool Elder",      "role": "Has Done This Twice" },
-    "oracle":    { "label": "Reason Co-ops Exist",   "role": "Decades In" }
+    "mythic":    { "label": "Elder",                 "role": "Has Done This Twice" },
+    "oracle":    { "label": "The Oracle",            "role": "Decades In" }
   },
 
    "intro": [
