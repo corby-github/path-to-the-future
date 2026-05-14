@@ -1,8 +1,8 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 2.0.13
-**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 12 layout templates (all tier `simple` for now) · Room complexity tier framework wired (year-driven mix) · All 8 class tiers selectable · Finale trophy on the recap screen
+**Document version:** 2.0.14
+**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 12 layout templates (all tier `simple` for now) · Room complexity tier framework wired (year-driven mix) · All 8 class tiers selectable · Finale trophy on the recap screen · Kid names player-controlled in Homeschool pack
 **Last updated:** 2026-05-14
 
 ---
@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.14 | 2026-05-14 | Corby Hoback · Claude Code | **Kid-name interpolation sprint shipped ([closes #76](https://github.com/corby-github/path-to-the-future/issues/76)).** `profileSlice` gains `kidAName` / `kidBName` (defaults `Hazel` / `Bram`) + `kidNamesSet` flag. New `KidNamesEntry` init-flow phase between Name and Class, mounted only when `manifest.requiresKidNames` is set (Homeschool: `2`; SWE omits and skips the phase). New optional `requiresKidNames` field on `Manifest`. `interpolate.ts` context expanded with `kidA` / `kidB`; wired into `DecisionModal` / `EventModal` / `IntroScene` / `NPCModal` / `NarrativeRoom` (the last two previously bypassed interpolation entirely). `labelFor` / `speakerHeaderFor` take an optional `vars` arg so kid-NPC labels resolve `{kidA}` / `{kidB}` at render time. **74 `Hazel` / `Bram` occurrences** across 5 homeschool JSON files (`decisions` / `events` / `interactables` / `months` / `endgame-taglines`) retemplated to `{kidA}` / `{kidB}` via a one-shot perl pass. ProfileModal Children rows are now inline-editable (Save dispatches `setProfile({ kidAName | kidBName })`); the `[Edit]` buttons' "Coming soon" tooltip retired. §13 ProfileModal section + §26 Homeschool *Deferred follow-ups* updated to reflect the shipped state. No `STATE_VERSION` bump — defaults back-compat old saves. |
 | v2.0.13 | 2026-05-14 | Corby Hoback · Claude Code | **Finale trophy on the recap screen.** New inline `TrophyCrown` component in `EndgameScreen.tsx` — Treatment-A flat-color SVG (cup + handles + stem + tiered base, `palette.accent` fill + `palette.ink` strokes + a small ink-dot insignia), 88 px tall, rendered as a centered crown above the *"Ten years done."* header. No emoji (cross-platform render consistency). Also fixes two stale narrative comments left over from the v2.0.8 half-length playthrough: `EndgameScreen.tsx` "full 120-decision list" → "~60 rows under v2.0.8"; `progressSlice.ts` XP economy comment updated to acknowledge the 60-playable-month arc + flagged for a future tuning pass. **No `STATE_VERSION` bump, no schema change.** §21 *Endgame & Recap* gains a v2.0.13 trophy note. |
 | v2.0.12 | 2026-05-14 | Corby Hoback · Claude Code | **Replay back-door spawn position + rewind narrative-skip ([issue #77](https://github.com/corby-github/path-to-the-future/issues/77) + follow-up).** (1) **Spawn position.** Entering a previous month via the rewind door now spawns the player just LEFT of the forward door (`{ x: door.x - 30, y: door.y + door.height / 2 }`) instead of at the layout's default left-edge spawn. Reads as "you stepped out of the door you originally exited." Live forward-entry + `exitReplay` still use the standard left spawn. New `replaySpawnFor(door)` helper; `isReplay ? replaySpawnFor(layout.door) : layout.spawn`. (2) **Rewind narrative skip.** `previousReplayableMonth()` now skips both `consequence` AND `narrative` rooms — walking back from Feb 2021 (id 9) lands on Dec 2020 (id 7), not Jan 2021 narrative (id 8). Per v2.0.8 the cinematic Januaries are forward-only year-transition beats; the back-door target should be the previous *decision* room. §11.1 *Backward replay* updated with the new spawn rule + the narrative-skip rule. |
 | v2.0.11 | 2026-05-14 | Corby Hoback · Claude Code | **All 8 class tiers selectable.** SWE + Homeschool manifests gain `entryClasses` for `junior` / `vanguard` / `commander` / `legendary` / `mythic` / `oracle` with calibrated `startingXp` + `startingStats` per tier. Labels match each pack's `classLabels` overrides where present (Homeschool: Settled Routine / Curriculum Sage / Co-op Lead / Mentor Parent / Elder / The Oracle). ClassPicker auto-gates by `entryClasses` membership, so no engine code change. §18 *Out of Scope* updated — the "Class entry points beyond Novice and Skilled" item retired with a v2.0.11 strike-through pointing at the new entries. Starting stats are unplaytested; tuning will follow runs. |
@@ -943,16 +944,16 @@ sanitizes via the shared `sanitizeName` helper exported from
 dispatches. Esc cancels the edit; Esc again (or backdrop click) closes
 the modal.
 
-**Children section (homeschool-parent pack only).** The modal shows
-`Hazel` and `Bram` under a *"Children"* header, mirroring the names
-hardcoded in `public/careers/homeschool-parent/*.json` (74 occurrences).
-**The kid `Edit` buttons are disabled** with a `title="Coming soon"`
-tooltip — enabling them requires the broader **kid-name interpolation
-sprint**: adding `profile.kidAName` / `profile.kidBName` defaults, an
-`InitFlow` phase that asks for kid names when `manifest.requiresKidNames`
-is set, `{kidA}` / `{kidB}` context entries in `interpolate.ts`, and a
-mechanical pass through all 74 hardcoded occurrences. Tracked as a
-GitHub issue (see Day 4 evening handoff — *"Next sprint"*).
+**Children section (homeschool-parent pack only, v2.0.14).** The modal
+shows the live `profile.kidAName` and `profile.kidBName` under a
+*"Children"* header. Both rows are inline-editable via the same Save /
+Cancel pattern as the player-name row — the kid-name interpolation
+sprint ([issue #76](https://github.com/corby-github/path-to-the-future/issues/76))
+shipped the underlying state + content rewrites (74 `Hazel` / `Bram`
+occurrences in `public/careers/homeschool-parent/*.json` retemplated to
+`{kidA}` / `{kidB}`), so mid-game edits propagate through every
+decision / event / interactable / narrative beat immediately. Pre-v2.0.14
+the Edit buttons were disabled with a *"Coming soon"* tooltip.
 
 **Mouse-first by design.** Per the v2.0.7 build call, the trigger is a
 mouse click (the HUD chip is now a `<button>` so it also activates via
@@ -2219,7 +2220,7 @@ homeschool-specific class labels and the 20-icon coverage batch.
 |---|---|---|
 | Decisions | **32** | 5 Phase-1 + 25 Phase-2 + 2 tone-pass (snack-rebellion + tablet). Span all four eras + era-agnostic. |
 | Events | **39** | 5 Phase-1 + 32 Phase-2 + 2 tone-pass (Mr-Nobody + church-stayed-open) — plus an evt-hp-research piece in the tone-pass bundle. Includes 5 stat-trigger events (low-savings, low-health, high-burnout, high-network, hazel-first-chapter), 5 era-anchored (pandemic), 3 (rebound), 5 (ai-shift), 4 (uncertain-future). |
-| Interactables | **12** | 6 objects + 6 NPCs. Includes Hazel + Bram as named NPCs with tier-2 dialogues; co-op friend + spouse + in-law + neighbor; textbook stack, art bin, kitchen-table-as-school, fridge drawing, sick-day couch, co-op sign-up. |
+| Interactables | **12** | 6 objects + 6 NPCs. Includes the two kid NPCs (default names `Hazel` / `Bram`, player-renameable via the v2.0.14 init-flow + ProfileModal — content uses `{kidA}` / `{kidB}` tokens) with tier-2 dialogues; co-op friend + spouse + in-law + neighbor; textbook stack, art bin, kitchen-table-as-school, fridge drawing, sick-day couch, co-op sign-up. |
 | Months | **70** | 10 anchor narrative rooms (Jan 2020 / 2021 / 2022 / 2023 / 2024 / 2025 / 2026 / 2027 / 2028 / 2029) + 60 playable monthIds across Feb/Apr/Jun/Aug/Oct/Dec of each year (v2.0.8 half-length playthrough; was 120 monthIds pre-refactor). |
 | `monthTransitions` | **16** | Homeschool-themed flavor lines for the post-decision blur. |
 | `intro` | **4 lines** | Cinematic intro played after class pick via ScenePlayer (§16). Supports `{playerName}`. The Phase-2 8-line version was tightened in the tone pass to land sooner. |
@@ -2278,18 +2279,15 @@ migrations, all are graceful defaults for packs that don't use them:
 
 #### Deferred follow-ups (Homeschool Parent)
 
-- **Kid-name interpolation.** Templating `{kidA}` / `{kidB}` per the
-  `{playerName}` / `{spouseName}` pattern. Touch points:
-  `src/game/content/interpolate.ts` context, `src/game/state/profileSlice.ts`
-  defaults (`kidAName: 'Hazel'` / `kidBName: 'Bram'`), a new init-flow
-  phase in `src/game/ui/InitFlow.tsx` after `CareerPicker` (two name
-  inputs, only mounted when `manifest.requiresKidNames === 2`), then
-  re-author every "Hazel" / "Bram" in `public/careers/homeschool-parent/*.json`
-  to `{kidA}` / `{kidB}`. STATE_VERSION bump optional — graceful default
-  has old saves fall through to "Hazel" / "Bram". Held now because no
-  UI flow asks the player for kid names; ~3 hours of clean lift when
-  picked up. Named as the explicit next sprint in the
-  2026-05-13 evening handoff.
+- ~~**Kid-name interpolation.**~~ **Shipped in v2.0.14** ([issue #76](https://github.com/corby-github/path-to-the-future/issues/76)).
+  `profileSlice` gained `kidAName` / `kidBName` (defaults `Hazel` /
+  `Bram`) + a `kidNamesSet` flag for the init-flow gate. `InitFlow` adds
+  a `KidNamesEntry` phase between name and class, mounted only when
+  `manifest.requiresKidNames` is set (Homeschool: `2`). `interpolate.ts`
+  context grows `kidA` / `kidB`; `NarrativeRoom` / `NPCModal` /
+  `labelFor` now interpolate too (previously bypassed). 74 `Hazel` /
+  `Bram` occurrences across 5 JSON files retemplated to `{kidA}` /
+  `{kidB}`. ProfileModal `[Edit]` buttons enabled for the kid rows.
 - **Era-mood retuning.** Phase 2 left eras at the Phase-1 / SWE-mirror
   values. The bittersweet register may want a softer rebound and a
   starker uncertain-future. Held — would only retune if a playthrough

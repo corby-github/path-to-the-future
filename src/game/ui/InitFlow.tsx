@@ -6,6 +6,7 @@ import { setStats } from '../state/slices/statsSlice';
 import { addXp, setClassTier } from '../state/slices/progressSlice';
 import { CareerPicker } from './CareerPicker';
 import { NameEntry } from './NameEntry';
+import { KidNamesEntry } from './KidNamesEntry';
 import { ClassPicker } from './ClassPicker';
 import { IntroScene } from './IntroScene';
 import type { CareerPack } from '../types/careerPack';
@@ -14,6 +15,8 @@ import type { AppDispatch } from '../state/store';
 // Init-flow orchestrator per §16. Walks the player through:
 //   1. Career picker — sets profile.careerPack
 //   2. Name entry — sets profile.name
+//   2a. Kid names — only for packs with `manifest.requiresKidNames` (issue
+//       #76). Homeschool prompts for kidA / kidB names here.
 //   3. Class picker — sets profile.entryClass + seeds starting stats / XP
 //   4. Intro scene — pre-game narrative from manifest.intro
 //
@@ -21,7 +24,7 @@ import type { AppDispatch } from '../state/store';
 // the gate from this component to the game proper. Intermediate state
 // persists, so reloading mid-init resumes at the last completed step.
 
-type Phase = 'career' | 'name' | 'class' | 'intro';
+type Phase = 'career' | 'name' | 'kid-names' | 'class' | 'intro';
 
 interface Props {
   onComplete: () => void;
@@ -32,7 +35,8 @@ export function InitFlow({ onComplete }: Props) {
   const { pack } = useCareerPack();
   const profile = useAppSelector((s) => s.profile);
 
-  const phase = currentPhase(profile);
+  const requiresKidNames = (pack.manifest.requiresKidNames ?? 0) >= 2;
+  const phase = currentPhase(profile, requiresKidNames);
 
   const handleCareerPicked = useCallback(
     (careerId: string) => {
@@ -44,6 +48,13 @@ export function InitFlow({ onComplete }: Props) {
   const handleNameSubmitted = useCallback(
     (name: string) => {
       dispatch(setProfile({ name }));
+    },
+    [dispatch],
+  );
+
+  const handleKidNamesSubmitted = useCallback(
+    (kidAName: string, kidBName: string) => {
+      dispatch(setProfile({ kidAName, kidBName, kidNamesSet: true }));
     },
     [dispatch],
   );
@@ -67,6 +78,13 @@ export function InitFlow({ onComplete }: Props) {
     <div data-component="InitFlow" data-phase={phase}>
       {phase === 'career' && <CareerPicker onSelect={handleCareerPicked} />}
       {phase === 'name' && <NameEntry onSubmit={handleNameSubmitted} />}
+      {phase === 'kid-names' && (
+        <KidNamesEntry
+          initialKidAName={profile.kidAName}
+          initialKidBName={profile.kidBName}
+          onSubmit={handleKidNamesSubmitted}
+        />
+      )}
       {phase === 'class' && <ClassPicker onSelect={handleClassPicked} />}
       {phase === 'intro' && <IntroScene onComplete={handleIntroComplete} />}
       {import.meta.env.DEV && (
@@ -80,6 +98,10 @@ export function InitFlow({ onComplete }: Props) {
                 entryClass: 'novice',
                 createdAt: Date.now(),
                 initComplete: true,
+                // Dev skip targets SWE which doesn't require kid names, but
+                // flip the flag anyway so a later switch can't trip a stale
+                // unfinished-init phase.
+                kidNamesSet: true,
               }),
             );
             onComplete();
@@ -92,13 +114,18 @@ export function InitFlow({ onComplete }: Props) {
 
 // ---- phase resolver ----
 
-function currentPhase(profile: {
-  careerPack: string;
-  name: string;
-  entryClass: string;
-}): Phase {
+function currentPhase(
+  profile: {
+    careerPack: string;
+    name: string;
+    entryClass: string;
+    kidNamesSet: boolean;
+  },
+  requiresKidNames: boolean,
+): Phase {
   if (!profile.careerPack) return 'career';
   if (!profile.name) return 'name';
+  if (requiresKidNames && !profile.kidNamesSet) return 'kid-names';
   if (!profile.entryClass) return 'class';
   return 'intro';
 }

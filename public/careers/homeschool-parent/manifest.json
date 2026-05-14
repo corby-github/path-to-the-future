@@ -3,6 +3,7 @@
   "name": "Homeschool Parent",
   "tagline": "Two kids, ten years, one kitchen table.",
   "eventChance": 0.4,
+  "requiresKidNames": 2,
 
   "statLabels": {
     "technicalSkill": "Teaching",
