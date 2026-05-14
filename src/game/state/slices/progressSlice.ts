@@ -18,7 +18,7 @@ export interface ProgressState {
   completedMonths: number[];
   xp: number;
   classTier: string;
-  // True once the player has completed month 120 (or an endsGame event fired).
+  // True once the player has completed month 70 (or an endsGame event fired).
   // Drives App.tsx routing to <EndgameScreen /> instead of <RoomRenderer />.
   // Once true, the only escape is "Begin again" which dispatches resetProgress.
   gameOver: boolean;
@@ -73,12 +73,12 @@ const progressSlice = createSlice({
       if (!state.completedMonths.includes(id)) {
         state.completedMonths.push(id);
       }
-      state.currentMonth = Math.min(120, id + 1);
+      state.currentMonth = Math.min(70, id + 1);
       // Last month completed → game over.
-      if (id >= 120) state.gameOver = true;
+      if (id >= 70) state.gameOver = true;
     },
     setCurrentMonth(state, action: PayloadAction<number>) {
-      state.currentMonth = Math.max(1, Math.min(120, action.payload));
+      state.currentMonth = Math.max(1, Math.min(70, action.payload));
     },
     addXp(state, action: PayloadAction<number>) {
       state.xp = Math.max(0, state.xp + action.payload);
@@ -91,18 +91,18 @@ const progressSlice = createSlice({
       state.classTier = action.payload;
     },
     // Jump multiple months at once (event.advanceMonths). Marks each skipped
-    // month as completed and clamps at 120.
+    // month as completed and clamps at 70 (half-length playthrough).
     skipMonths(state, action: PayloadAction<number>) {
       const n = action.payload;
       if (n <= 0) return;
       for (let i = 0; i < n; i++) {
         const id = state.currentMonth + i;
-        if (id >= 1 && id <= 120 && !state.completedMonths.includes(id)) {
+        if (id >= 1 && id <= 70 && !state.completedMonths.includes(id)) {
           state.completedMonths.push(id);
         }
       }
-      state.currentMonth = Math.min(120, state.currentMonth + n);
-      if (state.currentMonth >= 120 && state.completedMonths.includes(120)) {
+      state.currentMonth = Math.min(70, state.currentMonth + n);
+      if (state.currentMonth >= 70 && state.completedMonths.includes(70)) {
         state.gameOver = true;
       }
     },

@@ -123,11 +123,12 @@ const POST_EFFECT_PAUSE_MS = 900;
 // "locked" (decorative, never opens — just shows a wry status-bar line when
 // the player walks into it), the bottom one routing to a hardcoded
 // FINALE_DECISION instead of a pack-selected one. After Continue, normal
-// onExit flow fires → completeMonth(120) → gameOver=true → EndgameScreen.
+// onExit flow fires → completeMonth(70) → gameOver=true → EndgameScreen.
 //
 // Both doors live at the right edge, vertically separated. Door dims match
-// the standard 40×100.
-const FINALE_MONTH_ID = 120;
+// the standard 40×100. monthId moved 120 → 70 in v2.0.8 when the playthrough
+// was halved (1 cinematic + 6 playable months/year × 10 years).
+const FINALE_MONTH_ID = 70;
 const FINALE_LOCKED_DOOR: Rect = {
   x: ROOM_VIEWBOX.width - 40 - 10,
   y: 110,
@@ -165,7 +166,7 @@ const LOCKED_DOOR_INTERACTABLE: InteractableDef = {
   ],
 };
 
-// Hardcoded final decision — replaces pack-selected decision for month 120.
+// Hardcoded final decision — replaces pack-selected decision for the finale.
 // Empty effects across all options: stat changes here would have no audible
 // downstream impact (score is computed from the state BEFORE this final
 // pick lands and the player never sees the room again). The deadpan options
@@ -173,7 +174,7 @@ const LOCKED_DOOR_INTERACTABLE: InteractableDef = {
 // choice. Kept inline rather than added to the pack so it can't be
 // accidentally selected for non-finale months by the pool filter.
 const FINALE_DECISION: DecisionDef = {
-  id: 'finale-month-120',
+  id: 'finale-month',
   pool: 'universal',
   tags: ['finale'],
   weight: 0,
@@ -301,9 +302,9 @@ export function DecisionRoom({ config, onExit }: Props) {
   const [activeInteractable, setActiveInteractable] = useState<InteractableDef | null>(null);
   const [activeDialogue, setActiveDialogue] = useState<InteractableDialogue | null>(null);
 
-  // Finale month (December 2029, the player's last room). Replays of month
-  // 120 use the normal layout — the finale is a one-time live beat, not a
-  // walkable replay state. Two doors render, the top one decorative-locked
+  // Finale month (December 2029, the player's last room). Replays of the
+  // finale use the normal layout — the finale is a one-time live beat, not
+  // a walkable replay state. Two doors render, the top one decorative-locked
   // and the bottom one routing to the hardcoded FINALE_DECISION.
   const isFinale = config.monthId === FINALE_MONTH_ID && !isReplay;
   // True while the player is within INTERACT_PROXIMITY of the locked-door
@@ -449,7 +450,7 @@ export function DecisionRoom({ config, onExit }: Props) {
       return;
     }
 
-    // Finale forward-door substitutes for layout.door on month 120. The
+    // Finale forward-door substitutes for layout.door on the finale. The
     // locked door (top) is never a commit target — it just shows a
     // status-bar message via lockedDoorActive above.
     const forwardDoor = isFinale ? FINALE_FORWARD_DOOR : layout.door;
@@ -855,7 +856,7 @@ export function DecisionRoom({ config, onExit }: Props) {
             fill={palette.background}
           />
 
-          {/* Forward door — uses FINALE_FORWARD_DOOR coords on month 120
+          {/* Forward door — uses FINALE_FORWARD_DOOR coords on the finale
               (right edge, bottom-half) so a fixed locked door can sit
               symmetrically above it. Other months use the generator's
               layout.door position. */}
@@ -898,7 +899,7 @@ export function DecisionRoom({ config, onExit }: Props) {
             );
           })()}
 
-          {/* Finale locked door (decorative). Appears only on month 120,
+          {/* Finale locked door (decorative). Appears only on the finale,
               top-right of canvas. Walking into the rect swaps the status
               bar to FINALE_LOCKED_MESSAGE via lockedDoorActive — no
               commit, no transition. Visually distinct: surface fill +

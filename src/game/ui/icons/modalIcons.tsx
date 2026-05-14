@@ -643,7 +643,7 @@ export function IconPandemicClose({ palette, size }: ModalIconProps): ReactEleme
 
 export function IconThresholdDoor({ palette, size }: ModalIconProps): ReactElement {
   return (
-    <IconFrame palette={palette} variant="finale-month-120" label="The closing door" size={size}>
+    <IconFrame palette={palette} variant="finale-month" label="The closing door" size={size}>
       {/* Door frame — plain rectangle (was an arch). Door panel inside
           swings outward (ajar), hinged on the LEFT, so the right edge of
           the panel is offset and you can see through the opening. An

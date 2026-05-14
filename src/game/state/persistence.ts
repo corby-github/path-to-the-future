@@ -18,7 +18,10 @@ export const SAVE_KEY = 'pttf:save:default';
 // 1.6.0: Issue #41 — `MinigameVariant` gains `'forty-two'` so
 //        `lastArcadeXpAt` widens to include `forty-two: number`. Old
 //        saves without the key are discarded on load.
-export const STATE_VERSION = '1.6.0';
+// 1.7.0: Half-length playthrough (v2.0.8) — monthId range shrinks from
+//        1..120 to 1..70. Old saves with currentMonth > 70 no longer map
+//        to a valid month and would mis-render the finale; bump discards.
+export const STATE_VERSION = '1.7.0';
 
 export function loadPersistedState(): unknown {
   try {
