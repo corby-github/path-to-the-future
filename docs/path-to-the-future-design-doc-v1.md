@@ -1,8 +1,8 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 2.0.6
-**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · 12 layout templates · Pack-filtered arcade variants · Stacker variation pass
+**Document version:** 2.0.7
+**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · 12 layout templates · Mid-game name edit via clickable HUD chip
 **Last updated:** 2026-05-13
 
 ---
@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.7  | 2026-05-13 | Corby Hoback · Claude Code | **Mid-game profile editing via clickable HUD chip.** Adds the *"You: {name} [edit]"* profile card the user mocked up. (1) **New `ProfileModal` component** (`src/game/ui/ProfileModal.tsx`) — centered modal opened from the HUD identity chip. Player-name row supports inline editing: click `[Edit]` swaps the value to a text input prefilled with the current name + Save / Cancel buttons. Save dispatches `setProfile({ name })` against the existing `profileSlice`; since every decision / event / endgame string already interpolates `{playerName}` via `interpolate.ts`, mid-game edits propagate through future content automatically with no further wiring. (2) **HUD identity chip is now a `<button>`** in `Hud.tsx` (was a `<span>`) — same visual weight + size, adds pointer cursor + underline-on-hover affordance, opens the modal on click. Activates via Enter/Space if focused (free keyboard support via native button semantics; no global shortcut). (3) **Kids section (homeschool-parent pack only).** Modal shows `Hazel` and `Bram` under a *"Children"* header, mirroring the names hardcoded in `public/careers/homeschool-parent/*.json` (74 occurrences). **The kid `Edit` buttons are disabled** with a `title="Coming soon — needs the kid-name interpolation sprint to update event/decision content too."` tooltip. Tracked as a separate GitHub issue (kid-name interpolation sprint) — the full feature requires adding `profile.kidAName` / `profile.kidBName` defaults, an init-flow phase gated on `manifest.requiresKidNames`, `{kidA}` / `{kidB}` context entries in `interpolate.ts`, and a mechanical pass through all 74 occurrences. (4) **Shared sanitization** — extracted `MAX_NAME_LENGTH` and `sanitizeName(raw)` from `NameEntry.tsx` to a new `src/game/content/nameSanitize.ts` module. Both the init-flow `NameEntry` and the mid-game `ProfileModal` import from the same source, so init-time and edit-time validation rules can't drift. Move was also forced by `react-refresh/only-export-components` (a `.tsx` file with a component can't co-export non-component helpers). (5) **Interaction details:** Esc cancels an in-progress inline edit; Esc again closes the modal (standard inline-edit UX). Backdrop click also closes. Click on the dialog interior stops propagation so the player can interact without accidentally dismissing. The modal uses `position: fixed` + `zIndex: 110` so its DOM nesting inside `Hud` doesn't affect overlay positioning. (6) **§13 *Player Identity*** gains a *Mid-game profile editing (v2.0.7)* subsection documenting the trigger, the inline edit pattern, the kids section + disabled-edit rationale, and the mouse-first design choice. **No `STATE_VERSION` bump, no schema change, no save migration** — `setProfile` is an existing reducer; only the call sites grow. |
 | v2.0.6  | 2026-05-13 | Corby Hoback · Claude Code | **Pack-filtered arcade variants + Stacker variation pass.** Two unrelated polish moves bundled because both came from a single playthrough observation. (1) **Code Review excluded from homeschool arcade.** New optional `packs?: readonly string[]` field on each `ARCADE_VARIANTS` entry in `ArcadeModal.tsx` — mirrors the `LayoutTemplate.packs` pack-filter pattern from §4. Undefined = universal (every pack lists the variant). Listed = only matching pack ids. Today only `code-review` is gated (`packs: ['software-engineering']`); the SWE-coded *"spot the bug, beat the panel"* register doesn't fit a homeschool run, and homeschool months don't schedule it. Homeschool arcade now lists 4 variants (blackjack, reaction-sprint, pong, forty-two); SWE arcade still lists all 5. Filter applied via `eligibleVariants = ARCADE_VARIANTS.filter(v => v.packs === undefined || v.packs.includes(manifest.id))`, memoized on `manifest.id`. Arrow-key bounds + number-key clamps updated to `eligibleVariants.length`. (2) **Stacker (Reaction Sprint) variation.** Old behavior: every block started at `BLOCK_MIN_X` moving right at `BASE_SPEED + idx * 40` (monotonic 480/520/560/600/640 v.u./sec). Pattern was too learnable — one locked-in rhythm carried all five blocks. New behavior: (a) **starting side alternates** L→R→L→R→L per block via `startingXForBlock(i)` + `startingDirForBlock(i)` helpers (even = left/+1, odd = right/-1); (b) **per-block speeds** declared as a literal `BLOCK_SPEEDS = [480, 620, 520, 680, 560]` tuple alternating moderate/fast bands instead of the old monotonic formula. Win/partial/fail thresholds unchanged. **Doc edits:** §10 *Reaction Sprint* row reflects the new alternation; new *v2.0.6 variation tuning* paragraph names the helpers + the speed tuple. §10.1 gains a *Pack-filtered variants (v2.0.6)* paragraph documenting the `packs?` field. **No `STATE_VERSION` bump, no schema change, no save migration.** |
 | v2.0.5  | 2026-05-13 | Corby Hoback · Claude Code | **Minigame icons wired into ArcadeModal + MinigameReplayCard.** Closes the orphan-art gap left by the v1.6.x "42" iteration loop: five minigame icons (`IconCards` / `IconCheckmark` / `IconLightning` / `IconPaddles` / `IconFortyTwo`) had been authored in `modalIcons.tsx` but registered nowhere — the comment in `modalIconRegistryData.ts` named the gap as "future MinigameIcon registry." This version ships that registry. (1) **New `MINIGAME_ICONS: Record<MinigameVariant, ModalIconComponent>` map** at the bottom of `modalIconRegistryData.ts`. Keyed by the closed `MinigameVariant` union, so typecheck fails if a new variant lands without an entry. Five entries today. (2) **New `MinigameIcon` helper** in `modalIcons.tsx` — sibling of `DecisionIcon` / `EventIcon`, ~10 lines, same shape (consults the registry, defensive `PlaceholderIcon` fallback even though the union is closed). Renders `<MinigameIcon variant={...} palette={...} size={...} />`. (3) **`ArcadeModal` variant rows** restructured to `flex-row` with a 44 px leading icon column; the existing label / blurb / cooldown-pill stack moves into a `flex-column` content slot to the right. Row padding tightened 12 → 10 px to keep the menu visually compact. The 42-icon iteration loop's output (line-art Deep Thought wedge head) now actually renders next to "The Ultimate Question." (4) **`MinigameReplayCard`** gets a 64 px `MinigameIcon` rendered above the small *"…looking back"* uppercase header — gives the replay-mode summary a glance-recognizable signature of which minigame the player is recalling. (5) **Doc edits:** §10.1 *Arcade access* gains a *Per-variant icons (v2.0.5)* paragraph documenting the registry + the two render surfaces. **No engine code change beyond the new helper, no `STATE_VERSION` bump.** This is a pure-UI polish pass — addresses the user observation "we looped on 42 icon but I don't see it anywhere," which had become a worked example of the polish-loop scope-creep pattern (ship art, forget to wire it). Future minigame variants automatically need a `MINIGAME_ICONS` entry to typecheck. |
 | v2.0.4  | 2026-05-13 | Corby Hoback · Claude Code | **`maze` layout template added (universal).** Twelfth template; first navigation-heavy entry. Four vertical walls at x = 200 / 400 / 600 / 800 (60 px wide each), each with a 60-px gap that alternates **center → top → bottom → center** — forces the player to zigzag up/down across the canvas before reaching the door instead of walking a straight line. Gap height (60 px) is >2× `PLAYER_RADIUS` (14, so diameter 28), comfortably navigable; matches the existing `divided` template's gap size. 8 obstacle rects total (2 per wall). Universal pack-filter (`packs` omitted) — both packs can roll it; mazes aren't pack-coded the way cubicles or classrooms are. **Pool sizes now:** SWE = 11 (universal 8 + swe 3), Homeschool = 9 (universal 8 + homeschool 1). Avg repeats drop again from ~11/14 → ~10/12 per template. §4 *Layout templates* table updated with the new row + pool-size math; no schema change, no `STATE_VERSION` bump. Path-correctness was authored once (the user verifies in-game) — no preview iteration loop per the `polish-loop-scope-creep.md` rule. |
@@ -818,6 +819,41 @@ Before entering the game, the player provides a **name**. Sanitized (HTML stripp
 > *"Maya, the world has gone quiet..."*
 
 Spouse name (when relationship begins) is randomly drawn from a list, or eventually player-named.
+
+### Mid-game profile editing (v2.0.7)
+
+The **HUD identity chip** (top-left, see `src/game/ui/Hud.tsx`) is
+clickable — it opens a `ProfileModal` (`src/game/ui/ProfileModal.tsx`)
+that lets the player edit their name in-place mid-run. Edits dispatch
+`setProfile({ name })` against the existing `profileSlice` — since every
+decision / event / endgame string already interpolates `{playerName}` via
+`interpolate.ts`, mid-game name changes propagate through future content
+automatically. Already-rendered modal text isn't retroactively updated
+(no live re-render), but the next room / next event sees the new name.
+
+**Inline edit pattern.** The name row swaps between view-mode
+(`Name [Edit]`) and edit-mode (`<input> [Save] [Cancel]`). Enter / Save
+sanitizes via the shared `sanitizeName` helper exported from
+`NameEntry.tsx` (so the rule is identical to init-flow validation) and
+dispatches. Esc cancels the edit; Esc again (or backdrop click) closes
+the modal.
+
+**Children section (homeschool-parent pack only).** The modal shows
+`Hazel` and `Bram` under a *"Children"* header, mirroring the names
+hardcoded in `public/careers/homeschool-parent/*.json` (74 occurrences).
+**The kid `Edit` buttons are disabled** with a `title="Coming soon"`
+tooltip — enabling them requires the broader **kid-name interpolation
+sprint**: adding `profile.kidAName` / `profile.kidBName` defaults, an
+`InitFlow` phase that asks for kid names when `manifest.requiresKidNames`
+is set, `{kidA}` / `{kidB}` context entries in `interpolate.ts`, and a
+mechanical pass through all 74 hardcoded occurrences. Tracked as a
+GitHub issue (see Day 4 evening handoff — *"Next sprint"*).
+
+**Mouse-first by design.** Per the v2.0.7 build call, the trigger is a
+mouse click (the HUD chip is now a `<button>` so it also activates via
+Enter / Space if focused). No global keyboard shortcut for opening the
+modal — the click target is the primary entry. Esc within the modal
+behaves per standard inline-edit UX (cancels edit first, then closes).
 
 ---
 

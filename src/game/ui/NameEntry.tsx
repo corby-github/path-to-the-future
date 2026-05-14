@@ -1,13 +1,12 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
+import { MAX_NAME_LENGTH, sanitizeName } from '../content/nameSanitize';
 
 // Name entry per §13. Strips HTML and caps at 24 chars. The submitted name is
 // trimmed; an all-whitespace input is treated as empty.
 //
 // Calls `onSubmit(name)` when the user clicks Continue or hits Enter.
-
-const MAX_NAME_LENGTH = 24;
 
 interface Props {
   onSubmit: (name: string) => void;
@@ -146,10 +145,3 @@ export function NameEntry({ onSubmit }: Props) {
   );
 }
 
-// §13: "Sanitized (HTML stripped, length capped at 24 chars)."
-// Strip anything that looks like an HTML tag, collapse whitespace, then cap.
-function sanitizeName(raw: string): string {
-  const noTags = raw.replace(/<[^>]*>/g, '');
-  const collapsed = noTags.replace(/\s+/g, ' ').trim();
-  return collapsed.slice(0, MAX_NAME_LENGTH);
-}

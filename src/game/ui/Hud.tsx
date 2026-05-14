@@ -4,6 +4,7 @@ import { useCareerPack } from '../content/useCareerPack';
 import { statLabelFor } from '../content/statLabels';
 import { CLASSES } from '../content/classes';
 import { StatChip } from './StatChip';
+import { ProfileModal } from './ProfileModal';
 import { useCurrentRoom } from './currentRoomContextValue';
 
 // Month-change feedback. Pulse the label + emit a "+N mo" floater whenever
@@ -59,6 +60,10 @@ export function Hud() {
   const stats = useAppSelector((s) => s.stats);
   const cueNonce = useAppSelector((s) => s.progress.monthAdvanceCueNonce);
   const { template } = useCurrentRoom();
+
+  // Profile card (v2.0.7). Opened by clicking the identity chip; closed
+  // via the modal's own Close button, backdrop click, or Esc.
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const classLabel =
     pack.manifest.classLabels?.[progress.classTier]?.label ??
@@ -156,11 +161,23 @@ export function Hud() {
     minWidth: 140,
   };
 
+  // Name reads as a clickable target — keeps the original font weight and
+  // size but adds a subtle underline-on-hover affordance + pointer cursor.
+  // Implemented as a `<button>` for semantics + free keyboard activation;
+  // styled to look like the original `<span>` so the HUD chrome doesn't
+  // gain visual noise. See v2.0.7 / ProfileModal.
   const nameStyle: CSSProperties = {
     fontSize: 14,
     fontWeight: 600,
     color: palette.ink,
     lineHeight: 1.2,
+    background: 'transparent',
+    border: 'none',
+    padding: 0,
+    margin: 0,
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    textAlign: 'left',
   };
 
   const metaStyle: CSSProperties = {
@@ -215,7 +232,17 @@ export function Hud() {
       aria-label="Player status"
     >
       <div data-region="identity" style={identityStyle}>
-        <span style={nameStyle}>{profile.name || '…'}</span>
+        <button
+          type="button"
+          data-action="open-profile"
+          aria-label={`Profile: ${profile.name || 'unset'} — click to edit`}
+          style={nameStyle}
+          onClick={() => setProfileOpen(true)}
+          onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+          onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+        >
+          {profile.name || '…'}
+        </button>
         <span style={metaStyle}>{classLabel}</span>
       </div>
 
@@ -325,6 +352,7 @@ export function Hud() {
           );
         })}
       </div>
+      {profileOpen && <ProfileModal onClose={() => setProfileOpen(false)} />}
     </div>
   );
 }
