@@ -4,6 +4,7 @@ import { monthLabel } from '../calendar';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { exitReplay } from '../state/slices/progressSlice';
+import { MinigameIcon } from '../ui/icons/modalIcons';
 import type { MinigameVariant } from '../types/room';
 
 interface Props {
@@ -66,6 +67,9 @@ export function MinigameReplayCard({ monthId, variant }: Props) {
         fontFamily: 'inherit',
       }}
     >
+      <div data-region="variant-icon" style={{ marginBottom: 16 }} aria-hidden="true">
+        <MinigameIcon variant={variant} palette={palette} size={64} />
+      </div>
       <p
         style={{
           fontSize: 11,
