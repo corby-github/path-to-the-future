@@ -96,8 +96,15 @@ import {
   IconSingleShoe,
   IconGrandmaCall,
   IconHeldDinner,
+  // Minigame icons
+  IconCards,
+  IconCheckmark,
+  IconLightning,
+  IconPaddles,
+  IconFortyTwo,
   type ModalIconComponent,
 } from './modalIcons';
+import type { MinigameVariant } from '../../types/room';
 
 // Registry data for modal icons. Sibling of `modalIcons.tsx` so the .tsx file
 // can stay "components-only" (HMR / fast-refresh friendly). Each entry maps
@@ -109,10 +116,9 @@ import {
 // (2) swap the value at the relevant id below. No content / modal changes
 // needed.
 //
-// Minigame icons (IconCards / IconCheckmark / IconLightning / IconPaddles /
-// IconFortyTwo) are exported from `modalIcons.tsx` but not registered here —
-// they belong to a future MinigameIcon registry (e.g. consumed by
-// `MinigameReplayCard`).
+// Minigame icons live in their own `MINIGAME_ICONS` map at the bottom of
+// this file, keyed by `MinigameVariant`. Consumed by the `MinigameIcon`
+// helper in `modalIcons.tsx` (sibling of `DecisionIcon` / `EventIcon`).
 
 // --- Decision icons ---------------------------------------------------------
 
@@ -237,4 +243,21 @@ export const EVENT_ICONS: Record<string, ModalIconComponent> = {
   'evt-hp-lost-shoe': IconSingleShoe,
   'evt-hp-grandparent-phone': IconGrandmaCall,
   'evt-hp-spouse-late': IconHeldDinner,
+};
+
+// --- Minigame icons ---------------------------------------------------------
+// Keyed by `MinigameVariant` (the closed union from `types/room.ts`). The
+// closed union means TypeScript will fail the build if a new variant is
+// added without a registry entry — keeps the map exhaustive.
+//
+// Consumed by `MinigameIcon` in `modalIcons.tsx`. Surfaces today:
+//   - `ArcadeModal` — leading icon per variant row (v2.0.5).
+//   - `MinigameReplayCard` — leading icon next to the replay summary.
+
+export const MINIGAME_ICONS: Record<MinigameVariant, ModalIconComponent> = {
+  'blackjack':       IconCards,
+  'code-review':     IconCheckmark,
+  'reaction-sprint': IconLightning,
+  'pong':            IconPaddles,
+  'forty-two':       IconFortyTwo,
 };

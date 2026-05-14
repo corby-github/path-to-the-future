@@ -9,6 +9,7 @@ import {
 } from '../state/slices/progressSlice';
 import { MinigameByVariant } from '../minigames/MinigameByVariant';
 import { InteractableSprite } from '../rooms/sprites/InteractableSprite';
+import { MinigameIcon } from './icons/modalIcons';
 import { labelFor } from '../content/interactableLabel';
 import type { InteractableDef } from '../types/careerPack';
 import type { MinigameVariant } from '../types/room';
@@ -26,9 +27,19 @@ import type { RootState } from '../state/store';
 // When v2 multi-pack lands, ArcadeModal will read the variant list off
 // the pack manifest. Closed union is right-sized for v1.
 
-const ARCADE_VARIANTS: ReadonlyArray<{ id: MinigameVariant; label: string; blurb: string }> = [
+// Optional `packs?: readonly string[]` filters the variant to specific
+// career packs (mirrors the layout-template pack-filter pattern from §4).
+// Undefined = universal (eligible for every pack). Listed = only those
+// packs show the variant in the arcade menu. Today: `code-review` is
+// SWE-only — the SWE-coded register doesn't fit a homeschool run.
+const ARCADE_VARIANTS: ReadonlyArray<{
+  id: MinigameVariant;
+  label: string;
+  blurb: string;
+  packs?: readonly string[];
+}> = [
   { id: 'blackjack',       label: 'Blackjack',       blurb: 'Hit, stand, walk out even.' },
-  { id: 'code-review',     label: 'Code Review',     blurb: 'Spot the bug. Beat the panel.' },
+  { id: 'code-review',     label: 'Code Review',     blurb: 'Spot the bug. Beat the panel.', packs: ['software-engineering'] },
   { id: 'reaction-sprint', label: 'Reaction Sprint', blurb: 'Lock the stack. Hit the column.' },
   { id: 'pong',            label: 'Pong',            blurb: 'Two paddles. One ball. First to five.' },
   { id: 'forty-two',       label: 'The Ultimate Question', blurb: 'Life, the universe, everything. Four options.' },
@@ -48,7 +59,7 @@ function formatCooldownRemaining(ms: number): string {
 }
 
 export function ArcadeModal({ interactable, onClose }: Props) {
-  const { palette } = useCareerPack();
+  const { palette, pack } = useCareerPack();
   const dispatch = useAppDispatch();
   const store = useStore<RootState>();
   const lastArcadeXpAt = useAppSelector((s) => s.progress.lastArcadeXpAt);
@@ -63,10 +74,17 @@ export function ArcadeModal({ interactable, onClose }: Props) {
   // overkill for an arcade menu (resolved call #7).
   const [now] = useState(() => Date.now());
 
+  // Pack-filtered variant pool. Entries with `packs` listed only appear for
+  // matching pack ids; undefined `packs` = universal. Stable per-mount.
+  const eligibleVariants = useMemo(
+    () => ARCADE_VARIANTS.filter((v) => v.packs === undefined || v.packs.includes(pack.manifest.id)),
+    [pack.manifest.id],
+  );
+
   // Per-variant throttle state. Frozen at mount per `now`, so labels stay
   // stable as the player navigates the menu.
   const variantStatus = useMemo(() => {
-    return ARCADE_VARIANTS.map((v) => {
+    return eligibleVariants.map((v) => {
       const last = lastArcadeXpAt?.[v.id] ?? 0;
       const elapsed = now - last;
       const ready = elapsed >= ARCADE_THROTTLE_MS;
@@ -114,7 +132,7 @@ export function ArcadeModal({ interactable, onClose }: Props) {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
         e.preventDefault();
-        setHighlighted((h) => Math.min(h + 1, ARCADE_VARIANTS.length - 1));
+        setHighlighted((h) => Math.min(h + 1, eligibleVariants.length - 1));
       } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
         e.preventDefault();
         setHighlighted((h) => Math.max(h - 1, 0));
@@ -123,7 +141,7 @@ export function ArcadeModal({ interactable, onClose }: Props) {
         handlePick(highlighted);
       } else {
         const num = parseInt(e.key, 10);
-        if (Number.isFinite(num) && num >= 1 && num <= ARCADE_VARIANTS.length) {
+        if (Number.isFinite(num) && num >= 1 && num <= eligibleVariants.length) {
           e.preventDefault();
           handlePick(num - 1);
         }
@@ -131,7 +149,7 @@ export function ArcadeModal({ interactable, onClose }: Props) {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [phase, highlighted, handlePick, onClose]);
+  }, [phase, highlighted, handlePick, onClose, eligibleVariants.length]);
 
   // a11y: focus trap + restore (mirrors NPCModal pattern).
   useEffect(() => {
@@ -272,7 +290,7 @@ export function ArcadeModal({ interactable, onClose }: Props) {
                     onMouseEnter={() => setHighlighted(i)}
                     style={{
                       textAlign: 'left',
-                      padding: '12px 14px',
+                      padding: '10px 14px',
                       background: active ? palette.surface : 'transparent',
                       color: palette.ink,
                       border: `1px solid ${palette.ink}`,
@@ -281,32 +299,43 @@ export function ArcadeModal({ interactable, onClose }: Props) {
                       cursor: 'pointer',
                       fontFamily: 'inherit',
                       display: 'flex',
-                      flexDirection: 'column',
-                      gap: 4,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 12,
                       transition: 'background 120ms',
                     }}
                   >
-                    <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                      <span>
-                        <span style={{ opacity: 0.6, marginRight: 10 }}>{i + 1}.</span>
-                        <span style={{ fontWeight: 600 }}>{v.label}</span>
-                      </span>
-                      <span
-                        data-region="status"
-                        style={{
-                          fontSize: 11,
-                          letterSpacing: '0.08em',
-                          textTransform: 'uppercase',
-                          color: v.ready ? palette.positive : palette.inkMuted,
-                          fontWeight: 600,
-                        }}
-                      >
-                        {v.ready
-                          ? `Ready · +${XP_MINIGAME_WIN} XP`
-                          : `Cooling down · ${formatCooldownRemaining(v.remaining)}`}
-                      </span>
+                    <span
+                      data-region="variant-icon"
+                      style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}
+                      aria-hidden="true"
+                    >
+                      <MinigameIcon variant={v.id} palette={palette} size={44} />
                     </span>
-                    <span style={{ fontSize: 12, opacity: 0.7 }}>{v.blurb}</span>
+                    <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+                      <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
+                        <span>
+                          <span style={{ opacity: 0.6, marginRight: 10 }}>{i + 1}.</span>
+                          <span style={{ fontWeight: 600 }}>{v.label}</span>
+                        </span>
+                        <span
+                          data-region="status"
+                          style={{
+                            fontSize: 11,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            color: v.ready ? palette.positive : palette.inkMuted,
+                            fontWeight: 600,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {v.ready
+                            ? `Ready · +${XP_MINIGAME_WIN} XP`
+                            : `Cooling down · ${formatCooldownRemaining(v.remaining)}`}
+                        </span>
+                      </span>
+                      <span style={{ fontSize: 12, opacity: 0.7 }}>{v.blurb}</span>
+                    </span>
                   </button>
                 );
               })}
