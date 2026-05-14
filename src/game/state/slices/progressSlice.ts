@@ -4,10 +4,10 @@ import type { MinigameVariant } from '../../types/room';
 
 // XP economy. Baseline accumulation (per decision) is small and steady; the
 // jumps come from minigame wins and decision options tagged with an explicit
-// `xp` effect (promotions, new jobs, big stretches). 120-decision arcs land
-// a "play it safe" Novice in low-Skilled (~6000 XP) and a "go for it" run
-// in mid-to-high-Skilled (~9-13000 XP). Vanguard (15000+) stays out of reach
-// for v1.
+// `xp` effect (promotions, new jobs, big stretches). Under v2.0.8 the
+// 60-playable-month arc cuts baseline XP roughly in half from the pre-v2.0.8
+// 120-decision target — the economy is unplaytested at the new room count
+// and likely wants a tuning pass once the half-length playthrough settles.
 export const XP_PER_DECISION = 50;
 export const XP_MINIGAME_WIN = 250;
 export const XP_MINIGAME_PARTIAL = 100;
