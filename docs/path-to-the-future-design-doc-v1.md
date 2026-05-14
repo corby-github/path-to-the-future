@@ -1,8 +1,8 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 2.0.2
-**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent)
+**Document version:** 2.0.3
+**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · 11 layout templates
 **Last updated:** 2026-05-13
 
 ---
@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.3  | 2026-05-13 | Corby Hoback · Claude Code | **Room-template expansion + pack-aware layout filtering.** Doubles the layout pool from 4 templates to **11** and introduces a pack-filter mechanism so the room generator no longer reads as "the office is everywhere I go." (1) **New `packs?: readonly string[]` field on `LayoutTemplate`** in `src/game/rooms/generator/layouts.ts`. Undefined = universal (eligible for every pack); listed = only those packs roll the template. New `eligibleTemplates(packId)` helper does the filter. (2) **`generateRoom(seed, packId, forced?)`** signature widened — pulls the eligible pool, falls back to the full pool with a dev-mode warning if a pack matches nothing (defensive). `forcedTemplateId` from DevPanel still bypasses the filter so devs can preview any template. (3) **7 new templates authored** in one pass per the polish-loop research artifact's rules (no per-template review rounds, trust the rectangles): **`cubicles`** (swe — 4 small blocks in 2×2 grid), **`classroom`** (homeschool — 4 student desks + teacher's desk), **`park`** (universal — bench + tree-blob, asymmetric), **`grocery-store`** (universal — 3 vertical aisles with mid-aisle gaps for navigation), **`kitchen`** (universal — top counter + right counter + center island), **`living-room`** (universal — couch + coffee table + TV stand cluster), **`church`** (universal — 2 rows of 3 pews + 2 plants flanking the altar). Existing `open-office` + `shared-desks` got the `software-engineering` tag; `library` and `divided` left untagged (universal). (4) **Pool sizes per pack:** SWE = 10 (7 universal + 3 swe), Homeschool = 8 (7 universal + 1 homeschool). Across ~110 DecisionRooms the avg-repeats-per-template drop from ~27 to ~11–14 — the "felt-unpolished" beat the user named was 4-template monotony, not a deeper structural issue. (5) **New *Layout templates (v2.0.3)* subsection in §4** documents the schema, the pack-filter spirit ("spaces both packs visit are universal; spaces only one pack visits get tagged"), the current 11-template table with pack tags, and the three-layer visual-variety frame (template + interactables + palette/era-mood). The §4 generator-step list now references the new subsection. (6) **DevPanel unchanged** — the Force-layout dropdown still lists every template (`LAYOUT_TEMPLATES`, unfiltered) so any template can be previewed in any run. (7) **Engine surface kept minimal** — no JSON-per-pack refactor (templates stay in TS for v1; pack-JSON migration is the post-v1 architecture move that matches the interactables pattern). **No STATE_VERSION bump, no schema change to save data.** DecisionRoom is the only caller of `generateRoom`; it passes `profile.careerPack` for the active run. Authoring guardrails followed per the user's "no nit-picking jokes no one may ever see" directive: one-pass obstacle authoring, no preview generator, no per-template iteration loop. |
 | v2.0.2  | 2026-05-13 | Corby Hoback · Claude Code | **Design-doc sync pass.** Doc had drifted from `main` after the Day-4 PRs (#61 SWE icon coverage, #62 preview generator + SWE text+icon previews, #63 SWE icon revisions ×30, #64 SWE+homeschool language pass, #65 homeschool tone pass, #69 pack-aware class labels + 20 modal icons + 9 sprite components). This revision is doc-only with one cosmetic code fix: (1) **§16 *Init Flow*** career listing rebuilt to match `src/game/content/careers.ts` — **5 shipped entries** (SWE ✅, Homeschool Parent ✅, Accounting 🔒, Nursing 🔒, Security / Police 🔒) instead of the aspirational 9-entry v2.0 roster; "only SWE selectable" line replaced with the two-playable reality. (2) **§26 *The expanded roster*** table similarly compressed from 9 rows to 5 rows; the 9-career aspiration kept as design intent in surrounding prose so the v2.0 thesis (life-stages-as-careers) doesn't get lost. (3) **§14 *Class System*** gains a new *Pack-aware class labels (v2.0.2)* subsection documenting the `Manifest.classLabels?: Partial<Record<ClassId, ClassLabel>>` override that ClassPicker + Hud both consume — homeschool overrides all 8 tiers (Homeschooler Newbie → The Oracle), SWE omits the field and falls through to `CLASSES.label`. Engine playability gates unchanged — still only Novice + Skilled selectable. (4) **§17 *Build Order*** Day 13c (polish bundle, shipped per v1.3.3) and Day 14 (title screen, `src/game/ui/TitleScreen.tsx` wired in `App.tsx`) flipped from ⏳ to ✅; Day 15 (analytics + Pages deploy) is now the only ⏳ row. (5) **§18 *Out of Scope*** "other careers — we just don't ship the JSON" softened — homeschool JSON ships; three packs (accounting / nursing / security-police) remain JSON-less. (6) **§26 *The Homeschool Parent pack*** sub-section content counts updated to current JSON state — **32 decisions** (was 30) and **39 events** (was 37) after the PR #65 tone pass added the snack-rebellion / Mr-Nobody / Research-allegedly / tablet decisions / church-stayed-open beats; **12 dedicated sprite tokens** (was 3) after PR #69 added 5 homeschool objects (`art-bin`, `kitchen-table`, `fridge-drawing`, `couch-blanket`, `coop-signup`) + 4 female parent NPCs (`parent-in-law`, `parent-spouse`, `parent-coop`, `parent-neighbor`); modal-icon coverage explicitly named at **20 of 71** real `hp-*` + `evt-hp-*` icons with 51 still `PlaceholderIcon` per [`docs/research/polish-loop-scope-creep.md`](research/polish-loop-scope-creep.md); the "Pack-specific sprite art for reused tokens" deferred-follow-up retired since PR #69 shipped it. (7) One cosmetic code edit in `src/game/ui/CareerPicker.tsx` — the subtitle string "Six paths in v1 — two playable" was off-by-one from the actual 5-entry roster; fixed to "Five paths in v1 — two playable" so the picker copy matches what it renders. Comment in `careers.ts` ("remaining four entries") similarly corrected to "remaining three." **No engine code change, no schema change, no STATE_VERSION bump.** This pass closes the design-doc-vs-`main` gap that opened across PRs #61–#69; future PRs should land their design-doc updates inline per the `feedback_update_design_doc_with_prs.md` memory rule. |
 | v2.0.1  | 2026-05-13 | Corby Hoback · Claude Code | **Homeschool Parent pack Phase 2 shipped.** Second playable pack now full-scale: 30 decisions (5 Phase-1 + 25 Phase-2), 37 events (5 + 32), 12 interactables (0 + 12), 8-line cinematic intro replacing the Phase-1 placeholder, 16 monthTransitions (up from 7), 12 pack-scoped endgame taglines, and the pack's §26 section in the design doc filled in with arc, relabels, voice anchor, content counts, era distribution. Two additive engine changes: (1) **`EndgameScreen` now prefers `careers/{packId}/endgame-taglines.json`** when present, falling back to the universal pool — SWE pack unchanged, homeschool pack gets its bittersweet-register taglines. (2) **Three new sprite tokens** in `InteractableSprite.tsx`: `textbook-stack`, `kid-hazel`, `kid-bram` — all Treatment-A flat-color, palette-pure per §15. Other homeschool interactables route through existing tokens (whiteboard for kitchen-table-as-school, calendar for fridge-drawing, plant for sick-day-couch, etc.) — flagged for follow-up if visual mismatch reads wrong after playthroughs. Voice register matched the four Phase-1 anchor lines (bittersweet-contemplative-occasionally-dry, identity-sacrifice-community axis, parent's interior life). Kid-name interpolation deferred — no UI flow asks the player for kid names, "Hazel"/"Bram" stay hardcoded in copy. No STATE_VERSION bump (pure content + additive plumbing). |
 | v2.0    | 2026-05-12 | Corby Hoback · Claude Code | **Multi-career architecture, formalized.** Engine has always loaded career-specific content from packs (§3), but the implicit assumption — never written down — was that every pack would use the SWE-shaped stat model from §7. v2.0 owns that the model is SWE-coded and gives packs two escape hatches: (1) **`manifest.statLabels`** — an optional `Record<StatKey, string>` letting a pack relabel the seven canonical stats in the HUD without touching engine code or decision JSON (e.g. Student pack relabels `technicalSkill` → "Grades", `savings` → "Money", `burnout` → "Stress"). (2) **Pack-additive `flags`** — packs may rely on `flags` fields that older saves don't have, defaulting gracefully (precedent: `meta.tutorialDismissed` in v1.3.3). New §26 *Career Packs: Beyond SWE* documents the relabel mechanism, the expanded 9-career roster, and the Student pack in detail (10-year 13→22 arc, post-HS fork at month ~66 as the structural centerpiece, the three new flags — `parentTrust`, `hasJob`, `postHSPath` — that gate its back-half decision pool). §26 also names what's deferred: a future pack-defined stat schema refactor (Option C in the design discussion), per-pack score formula, per-pack endgame framing copy, and per-pack arc length. §16 *Init Flow* career listing updated to match the new roster; "only SWE selectable in v1" line removed since v2.0 anticipates Student becoming playable. No engine code change required to ship this version of the doc — the `statLabels` plumbing is small (one HUD lookup + one optional manifest field), and the rest is content. No STATE_VERSION bump (Student's new flags are additive with graceful defaults). The honest framing in §26 — that `technicalSkill` is SWE-coded and the score formula in §21 references it by name — is the contribution that matters most; future packs will be built knowing where the joints are. |
@@ -115,13 +116,85 @@ Where `gameStateHash` includes only the *macro* state that should affect room sh
 **Same seed → same room.** A player who restarts mid-game sees the same Jan 2024 they saw before. But two players (or two playthroughs) with different paths see different Jan 2024s.
 
 The generator uses the seed to:
-1. Pick a layout template (4–6 templates total: open, corridor, divided, etc.)
-2. Place the decision trigger
-3. Pick interactables from the career pack, weighted by month theme
-4. Optionally place stat-modifier objects and hazards
-5. Place exits
+1. Pick a **layout template** from the active pack's eligible pool (see *Layout templates* below).
+2. Place the decision trigger.
+3. Pick interactables from the career pack, weighted by month theme.
+4. Optionally place stat-modifier objects and hazards.
+5. Place exits.
 
 Generation runs once per room entry; output is rendered.
+
+### Layout templates (v2.0.3)
+
+Templates live in `src/game/rooms/generator/layouts.ts` as a flat
+`LAYOUT_TEMPLATES` array. Each entry declares a `spawn` point, an
+`obstacles: Rect[]` pattern, a `door` rect, and an optional `packs?: readonly string[]`
+filter:
+
+```ts
+interface LayoutTemplate {
+  id: string;
+  label: string;
+  spawn: Vector2;
+  obstacles: Rect[];
+  door: Rect;
+  packs?: readonly string[];  // undefined = universal
+}
+```
+
+**Pack filtering.** `generateRoom(seed, packId, forced?)` calls
+`eligibleTemplates(packId)`, which keeps entries where
+`packs === undefined` (universal) **or** `packs.includes(packId)`
+(pack-specific). The active pack is `profile.careerPack`. A
+`forcedTemplateId` from the DevPanel bypasses the filter — devs may want
+to preview a homeschool-only template inside an SWE run.
+
+**Spirit: spaces both packs visit are universal; spaces only one pack
+visits get tagged.** SWE-ers spend time in offices, but also go to
+parks, grocery stores, kitchens, libraries, and churches. Homeschool
+parents don't typically walk into a cubicle farm. The tag is for
+*exclusion of the obviously-wrong*, not for fine-grained per-pack
+curation — most templates are universal.
+
+**Current pool (11 templates):**
+
+| Template id | Label | Pack filter | Notes |
+|---|---|---|---|
+| `open-office` | Open office | `software-engineering` | 1 mid-canvas blob (smallest template) |
+| `shared-desks` | Shared desks | `software-engineering` | Desk + 2 shelves + table |
+| `cubicles` | Cubicles | `software-engineering` | 4 small blocks in 2×2 grid |
+| `classroom` | Classroom | `homeschool-parent` | 4 student desks + teacher's desk |
+| `library` | Library | universal | Long shelves top + bottom |
+| `divided` | Divided | universal | Center wall with gap |
+| `park` | Park | universal | Bench + tree-blob, asymmetric |
+| `grocery-store` | Grocery store | universal | 3 vertical aisles, gaps mid-aisle |
+| `kitchen` | Kitchen | universal | Top counter + right counter + center island |
+| `living-room` | Living room | universal | Couch + coffee table + TV stand |
+| `church` | Church | universal | 2 rows of 3 pews + 2 plants |
+
+**Pool sizes per pack:** SWE = 10 (universal 7 + swe 3). Homeschool = 8
+(universal 7 + homeschool 1). Across ~110 DecisionRooms this gives ~11
+repeats / template on SWE runs and ~14 on homeschool runs — down from
+the original 4-template / ~27-repeat baseline.
+
+**Visual variety comes from three layers**, not template count alone:
+the obstacle pattern (this section), the interactables placed on top
+(pack-aware via `interactables.json`), and the palette / era-mood
+(pack-aware via `manifest.palette` + per-era mood transforms). A "park"
+template + homeschool palette + a `parent-neighbor` NPC reads as a
+*homeschool* park; the same template + SWE palette + a `person-pm` NPC
+reads as a *coworker-met-at-the-park* park.
+
+**Door accessibility lint.** `populate.ts` includes a dev-mode
+`assertDoorAccessible` check that warns if any obstacle intersects the
+door rect — catches the "obstacle placed on top of the door" authoring
+mistake. Full spawn → door pathfinding is deferred until templates gain
+seeded within-template variation; the current obstacle sets are
+hand-tuned to leave clear corridors.
+
+**DevPanel.** The Force layout dropdown lists every template
+(`LAYOUT_TEMPLATES`, unfiltered) — overrides the pack filter at pick
+time. Useful for previewing pack-specific templates in any run.
 
 ### 4.1 Room transition (v1.3+)
 
