@@ -42,6 +42,18 @@
         "reputation": 0
       }
     },
+    "junior": {
+      "label": "Settled Routine",
+      "startingXp": 1000,
+      "startingStats": {
+        "burnout": 22,
+        "savings": 8000,
+        "network": 28,
+        "health": 82,
+        "technicalSkill": 38,
+        "reputation": 5
+      }
+    },
     "skilled": {
       "label": "Experienced Veteran",
       "startingXp": 5000,
@@ -52,6 +64,66 @@
         "health": 80,
         "technicalSkill": 55,
         "reputation": 10
+      }
+    },
+    "vanguard": {
+      "label": "Curriculum Sage",
+      "startingXp": 15000,
+      "startingStats": {
+        "burnout": 28,
+        "savings": 35000,
+        "network": 60,
+        "health": 75,
+        "technicalSkill": 70,
+        "reputation": 22
+      }
+    },
+    "commander": {
+      "label": "Co-op Lead",
+      "startingXp": 60000,
+      "startingStats": {
+        "burnout": 30,
+        "savings": 70000,
+        "network": 78,
+        "health": 72,
+        "technicalSkill": 82,
+        "reputation": 40
+      }
+    },
+    "legendary": {
+      "label": "Mentor Parent",
+      "startingXp": 130000,
+      "startingStats": {
+        "burnout": 28,
+        "savings": 120000,
+        "network": 88,
+        "health": 68,
+        "technicalSkill": 90,
+        "reputation": 60
+      }
+    },
+    "mythic": {
+      "label": "Elder",
+      "startingXp": 200000,
+      "startingStats": {
+        "burnout": 25,
+        "savings": 220000,
+        "network": 94,
+        "health": 62,
+        "technicalSkill": 95,
+        "reputation": 78
+      }
+    },
+    "oracle": {
+      "label": "The Oracle",
+      "startingXp": 300000,
+      "startingStats": {
+        "burnout": 22,
+        "savings": 500000,
+        "network": 98,
+        "health": 58,
+        "technicalSkill": 99,
+        "reputation": 92
       }
     }
   },
