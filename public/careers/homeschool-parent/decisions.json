@@ -101,7 +101,7 @@
         {
           "label": "Pass for now",
           "effects": { "burnout": "-2", "reputation": "-1", "technicalSkill": "+1" },
-          "flavor": "You wrote a careful no. The coworker said they understood — and they did, mostly. The version of you they remembered would have said yes. You weren't sure where that version had gone."
+          "flavor": "You wrote a careful no. The coworker said they understood. The version of you they remembered would have said yes in twelve minutes. The current version was reading 'There Was An Old Lady Who Swallowed A Fly' for the ninth time. Different version. Different fly."
         }
       ]
     },
@@ -227,7 +227,7 @@
         {
           "label": "Just smile and watch the kids",
           "effects": { "burnout": "+1", "reputation": "-2" },
-          "flavor": "You said 'oh, you know, plenty.' He nodded. You both watched the pinecone tower. It fell over. Hazel started a new one. You felt the dad's question still sitting in the air ten minutes after he left."
+          "flavor": "You said 'oh, you know, plenty.' He nodded. You both watched the pinecone tower. It fell over. Hazel started a new one. The dad's question stayed in the air for ten minutes after he left — slightly longer than the pinecone tower."
         }
       ]
     },
@@ -322,12 +322,12 @@
             "A decision, for now."
           ],
           "effects": { "burnout": "+2", "reputation": "+1", "network": "+1" },
-          "flavor": "She wanted, mostly, to be where her friends were. You said you understood. You said let's try one more semester. She said okay in a way that wasn't fully okay. You both knew."
+          "flavor": "She wanted, mostly, to be where her friends were. You said you understood. You said let's try one more semester. She said okay in the way nine-year-olds say okay when they're keeping a tally."
         },
         {
           "label": "Reaffirm the choice. Out loud.",
           "effects": { "burnout": "+1", "technicalSkill": "+2", "reputation": "-1" },
-          "flavor": "You told her why you'd started. You told her what you saw in her this year. She nodded. She still missed her friends. You missed your park-bench parents. You both kept going."
+          "flavor": "You told her why you'd started. You told her what you saw in her this year. She nodded. She still missed her friends. You still missed your park-bench parents. The kitchen was, however, exceptionally well-organized that fall."
         }
       ]
     },
@@ -372,7 +372,7 @@
         {
           "label": "Maybe when the kids are older",
           "effects": { "burnout": "+2", "reputation": "-1" },
-          "flavor": "You closed the tab. You went to bed at the kids' bedtime, again. The version of you that made things felt one room farther away."
+          "flavor": "You closed the tab. You went to bed at the kids' bedtime, again. The version of you that made things sent a postcard from one room farther away. You'd answer next year, maybe."
         }
       ]
     },
@@ -427,7 +427,7 @@
         {
           "label": "Hold the line another year",
           "effects": { "burnout": "+2", "reputation": "-2" },
-          "flavor": "You explained your reasoning. She listened. She did not agree. The group chat she wasn't in continued without her, which she also did not agree with, but did not say."
+          "flavor": "You explained your reasoning. She listened. She did not agree. The group chat she wasn't in continued without her. Her disagreement with this was significant and silent and you could feel it from across the kitchen."
         }
       ]
     },
@@ -447,7 +447,7 @@
             "A teacher with a kinder voice than yours."
           ],
           "effects": { "savings": "-240", "burnout": "-5", "technicalSkill": "-3", "reputation": "-1", "xp": "+150" },
-          "flavor": "Bram likes it. He learns. You sit in the other room and listen to him laugh at something the bot said. It is, you suspect, slightly funnier than you. You're not sure how to feel about that one."
+          "flavor": "Bram likes it. He learns. You sit in the other room and listen to him laugh at something the bot said. The bot is, you suspect, slightly funnier than you. You'll have to write better material."
         },
         {
           "label": "Keep teaching it yourself",
@@ -477,12 +477,12 @@
             "Three afternoons of co-op coverage."
           ],
           "effects": { "savings": "+9000", "reputation": "+5", "burnout": "+6", "technicalSkill": "+1", "network": "+3", "xp": "+300" },
-          "flavor": "Month one was a scramble. Month three was a routine. Month six you caught yourself describing what you did at work to someone at a party and felt how long it had been since you'd had that sentence to say."
+          "flavor": "Month one was a scramble. Month three was a routine. Month six you described what you did at work to someone at a party and surprised yourself by having a real answer. The party was, you noted, also surprising."
         },
         {
           "label": "Hold for now",
           "effects": { "burnout": "-1", "reputation": "-2" },
-          "flavor": "You wrote a careful no. The friend understood. The role got filled by someone who had been waiting for something like it. You wondered if you should have been that someone. You also didn't, mostly."
+          "flavor": "You wrote a careful no. The friend understood. The role got filled by someone who'd been waiting for something like it. You'd been waiting for Bram to find his other shoe. Different kinds of waiting."
         }
       ]
     },
@@ -612,12 +612,12 @@
             "A class schedule that doesn't fit any kitchen table."
           ],
           "effects": { "savings": "-1800", "burnout": "+4", "reputation": "+4", "technicalSkill": "+3", "xp": "+300" },
-          "flavor": "She walked into Comp 101 the first morning carrying a notebook you'd watched her label the night before. She came home full of someone else's syllabus. You weren't her main teacher anymore. You were her ride."
+          "flavor": "She walked into Comp 101 the first morning carrying a notebook you'd watched her label the night before. She came home full of someone else's syllabus. You weren't her main teacher anymore. You were her ride. Different job. Less paperwork."
         },
         {
           "label": "Private school",
           "effects": { "savings": "-12000", "burnout": "-2", "reputation": "+3", "network": "+3", "technicalSkill": "-1", "xp": "+300" },
-          "flavor": "The tuition was the conversation for a month. You signed in May. She started in August. The first week she came home with two friends' names and a story about a teacher you would have liked. The kitchen at 9am was very quiet."
+          "flavor": "The tuition was the conversation for a month. You signed in May. She started in August. The first week she came home with two friends' names and a story about a teacher you would have liked. The kitchen at 9am was very quiet. You filled it with podcasts. The podcasts were terrible."
         },
         {
           "label": "Finish at home",
