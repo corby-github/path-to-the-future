@@ -5,16 +5,17 @@ import { setCurrentMonth, setGameOver } from '../state/slices/progressSlice';
 import { resetTutorial } from '../state/slices/metaSlice';
 import { LAYOUT_TEMPLATES } from '../rooms/generator/layouts';
 
-const FINALE_MONTH_ID = 120;
+const FINALE_MONTH_ID = 70;
 
 const SPEED_OPTIONS = [1, 2, 3, 4];
 
-// Hand-picked month slots that host minigames (see months.json).
+// Hand-picked month slots that host minigames (see months.json). Ids
+// remapped after the half-length playthrough refactor (v2.0.8).
 const MINIGAME_JUMPS = [
-  { value: 32, label: 'Blackjack (m32 · Aug 2022)' },
-  { value: 60, label: 'Code Review (m60 · Dec 2024)' },
-  { value: 75, label: 'Pong (m75 · Mar 2026)' },
-  { value: 90, label: 'Stacker (m90 · Jun 2027)' },
+  { value: 19, label: 'Blackjack (m19 · Aug 2022)' },
+  { value: 35, label: 'Code Review (m35 · Dec 2024)' },
+  { value: 45, label: 'Pong (m45 · Apr 2026)' },
+  { value: 53, label: 'Stacker (m53 · Jun 2027)' },
 ];
 
 const selectStyle = {

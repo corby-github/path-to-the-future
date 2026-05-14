@@ -162,8 +162,9 @@ export const DECISION_ICONS: Record<string, ModalIconComponent> = {
   'swe-throw-colleague-under-bus': IconBus,
   'swe-opensource-maintainer': IconCodeHeart,
 
-  // Finale (DecisionRoom hardcodes this id at month 120).
-  'finale-month-120': IconThresholdDoor,
+  // Finale (DecisionRoom hardcodes this id; renamed in v2.0.8 when the
+  // finale month moved from 120 → 70 under the half-length playthrough).
+  'finale-month': IconThresholdDoor,
 
   // Homeschool pack — 5+5 voice-checkpoint batch (decisions).
   'hp-curriculum-boxed-vs-own': IconHomeschoolBinder,

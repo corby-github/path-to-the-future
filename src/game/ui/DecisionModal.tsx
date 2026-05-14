@@ -25,7 +25,7 @@ interface Props {
   decision: DecisionDef;
   onChoose: (index: number) => void;
   onContinue: () => void;
-  // True on month 120 — the flavor phase drops the generic "YOU CHOSE"
+  // True on the finale month — the flavor phase drops the generic "YOU CHOSE"
   // header and decision-icon, centers the chosen line, and the button
   // reads "End" instead of "Continue". DecisionRoom toggles this on for
   // the hardcoded FINALE_DECISION.

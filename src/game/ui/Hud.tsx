@@ -3,6 +3,7 @@ import { useAppSelector } from '../state/hooks';
 import { useCareerPack } from '../content/useCareerPack';
 import { statLabelFor } from '../content/statLabels';
 import { CLASSES } from '../content/classes';
+import { calendarMonthDelta } from '../calendar';
 import { StatChip } from './StatChip';
 import { ProfileModal } from './ProfileModal';
 import { useCurrentRoom } from './currentRoomContextValue';
@@ -10,12 +11,15 @@ import { useCurrentRoom } from './currentRoomContextValue';
 // Month-change feedback. Pulse the label + emit a "+N mo" floater whenever
 // monthId advances (or jumps via event.advanceMonths). The two signals
 // together: pulse = "the month changed" (subtle), floater = "by how much"
-// (loud for the multi-month-jump case the dev call surfaced).
+// (loud for the multi-month-jump case the dev call surfaced). Delta is
+// measured in **calendar months** via `calendarMonthDelta`, not slot units
+// — a single forward door usually reads "+2 mo" (Apr → Jun) under the
+// half-length playthrough scheme.
 //
 // Tiered prominence — bigger jumps deserve bigger signals because they
-// represent more "time lost." Thresholds in months:
-//   1     → small (13px, 1200ms)
-//   2-5   → medium (18px, 1900ms)
+// represent more "time lost." Thresholds in calendar months:
+//   1     → small (13px, 1200ms)  [Jan→Feb, Dec→Jan boundaries]
+//   2-5   → medium (18px, 1900ms) [normal forward door, ±2 months]
 //   6+    → large (24px, 2700ms), wording flips to "months pass"
 const MONTH_DELTA_TIER_SMALL_MS = 1200;
 const MONTH_DELTA_TIER_MEDIUM_MS = 1900;
@@ -81,10 +85,12 @@ export function Hud() {
   // Issue #30 — fade-start cue handshake. `useRoomTransition.exitRoom`
   // bumps `monthAdvanceCueNonce` at the instant the canvas begins to fade
   // (before the 220ms wait → `completeMonth` dispatch). The Hud emits the
-  // `+1 mo` floater on that cue and arms `suppressNextCompleteEmitRef` so
-  // the subsequent natural `currentMonth.id +1` advance doesn't emit a
-  // duplicate. Multi-month `skipMonths` jumps don't go through the cue
-  // path — they emit naturally via the currentMonth.id effect.
+  // calendar-delta floater on that cue and arms `suppressNextCompleteEmitRef`
+  // so the subsequent natural `currentMonth.id +1` advance doesn't emit a
+  // duplicate. Multi-slot `skipMonths` jumps don't go through the cue
+  // path — they emit naturally via the currentMonth.id effect. Dedup
+  // condition still compares slot units (`completeMonth` always advances
+  // exactly 1 slot), even though the emitted value is in calendar months.
   const prevCueNonceRef = useRef<number>(cueNonce);
   const suppressNextCompleteEmitRef = useRef<boolean>(false);
 
@@ -109,26 +115,33 @@ export function Hud() {
     const prev = prevCueNonceRef.current;
     prevCueNonceRef.current = cueNonce;
     if (prev === cueNonce) return;
-    // Cue is always a +1 advance (completeMonth advances by exactly 1).
-    pushMonthDelta(1);
+    // Cue precedes completeMonth (fires at fade-start, before the 220ms
+    // wait). completeMonth advances slot id by exactly 1, so the upcoming
+    // transition is `currentMonth.id → currentMonth.id + 1`. Emit the
+    // calendar-month delta for that slot pair (usually +2; +1 across the
+    // cinematic-January boundary).
+    const calendarDiff = calendarMonthDelta(currentMonth.id, currentMonth.id + 1);
+    if (calendarDiff !== 0) pushMonthDelta(calendarDiff);
     suppressNextCompleteEmitRef.current = true;
-  }, [cueNonce, pushMonthDelta]);
+  }, [cueNonce, currentMonth.id, pushMonthDelta]);
 
   useEffect(() => {
     const prev = prevMonthIdRef.current;
     prevMonthIdRef.current = currentMonth.id;
     if (prev === currentMonth.id) return;
 
-    const diff = currentMonth.id - prev;
-    if (diff === 0) return;
-    // Dedup against the fade-start cue. The cue emits +1 at fade-start;
-    // the subsequent completeMonth advances currentMonth.id by 1, which
-    // would otherwise re-emit. Swallow it.
-    if (diff === 1 && suppressNextCompleteEmitRef.current) {
+    const slotDiff = currentMonth.id - prev;
+    if (slotDiff === 0) return;
+    // Dedup against the fade-start cue. The cue emits at fade-start; the
+    // subsequent completeMonth advances currentMonth.id by 1 slot, which
+    // would otherwise re-emit. Compare in slot units (not calendar months)
+    // since completeMonth always advances exactly 1 slot.
+    if (slotDiff === 1 && suppressNextCompleteEmitRef.current) {
       suppressNextCompleteEmitRef.current = false;
       return;
     }
-    pushMonthDelta(diff);
+    const calendarDiff = calendarMonthDelta(prev, currentMonth.id);
+    if (calendarDiff !== 0) pushMonthDelta(calendarDiff);
   }, [currentMonth.id, pushMonthDelta]);
 
   const containerStyle: CSSProperties = {

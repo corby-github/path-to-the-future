@@ -1122,7 +1122,7 @@ function ObjCoopSignup({ x, y, palette }: SpriteProps) {
 
 // Locked door speaker icon for the finale month. Renders inside the
 // NPCModal speaker column when the player tries the top-right door on
-// month 120. Shape: a padlock — shackle above, square body below. Scaled
+// the finale. Shape: a padlock — shackle above, square body below. Scaled
 // to roughly match the NPC/object 52×80 footprint so it sits naturally
 // in the icon-left layout without throwing off the dialog's vertical
 // rhythm.
