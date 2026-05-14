@@ -35,7 +35,7 @@
       "pool": "homeschool-parent",
       "tags": ["community", "work-life-balance"],
       "weight": 1.0,
-      "requires": { "month": ">=4" },
+      "requires": { "month": ">=3" },
       "prompt": "A neighborhood co-op meets Tuesday mornings. Five families, shared lessons, a craft and a snack. The kids get friends. You get adult conversation. You cannot, when you really think about it, find a downside.",
       "options": [
         {
@@ -60,7 +60,7 @@
       "pool": "homeschool-parent",
       "tags": ["teaching", "money", "accountability"],
       "weight": 1.0,
-      "requires": { "month": ">=24" },
+      "requires": { "month": ">=14" },
       "prompt": "The state wants an end-of-year evaluation. You can put Hazel through a standardized test, or pay an evaluator to write a portfolio review instead.",
       "options": [
         {
@@ -85,7 +85,7 @@
       "pool": "homeschool-parent",
       "tags": ["career-movement", "identity", "money"],
       "weight": 0.9,
-      "requires": { "month": ">=36" },
+      "requires": { "month": ">=21" },
       "prompt": "An old coworker has a remote contract that fits — twenty-five hours a week, decent rate. Bram is finally old enough to read in the other room. The work would not get done at the kitchen table.",
       "options": [
         {
@@ -110,7 +110,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "identity", "transition"],
       "weight": 1.0,
-      "requires": { "month": ">=72" },
+      "requires": { "month": ">=42" },
       "prompt": "Hazel is twelve. She asks, calmly, if she can go to school in the fall. She has thought about it. She is not asking permission so much as telling you where she's heading.",
       "options": [
         {
@@ -166,7 +166,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "identity"],
       "weight": 0.9,
-      "requires": { "month": ">=8" },
+      "requires": { "month": ">=5" },
       "prompt": "Your mother-in-law is visiting Friday. She has views about the kids' schooling. She has already said 'just asking, of course' on the phone.",
       "options": [
         {
@@ -191,7 +191,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "teaching", "humor"],
       "weight": 0.9,
-      "requires": { "month": ">=6" },
+      "requires": { "month": ">=4" },
       "prompt": "Hazel has a fever Tuesday morning. The math test you scheduled is the math test you scheduled. The fever is real.",
       "options": [
         {
@@ -216,7 +216,7 @@
       "pool": "homeschool-parent",
       "tags": ["community", "identity"],
       "weight": 0.8,
-      "requires": { "month": ">=14" },
+      "requires": { "month": ">=9" },
       "prompt": "A dad at the park asks, with the careful politeness of someone winding up to disagree, what you do 'about socialization.' Hazel is right there, building something out of pinecones.",
       "options": [
         {
@@ -236,7 +236,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "money", "relationship"],
       "weight": 0.8,
-      "requires": { "month": ">=10" },
+      "requires": { "month": ">=6" },
       "prompt": "Your spouse's hours are cut by a third. The check on the fridge is the household plan. Should you talk about it tonight, or wait until the weekend?",
       "options": [
         {
@@ -261,7 +261,7 @@
       "pool": "homeschool-parent",
       "tags": ["teaching", "identity"],
       "weight": 0.8,
-      "requires": { "month": ">=12" },
+      "requires": { "month": ">=7" },
       "prompt": "You read a blog post about unschooling and now it's eleven PM and you're rethinking the whole curriculum. You could try one project-based week as a test.",
       "options": [
         {
@@ -286,7 +286,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "teaching"],
       "weight": 1.0,
-      "requires": { "month": ">=14" },
+      "requires": { "month": ">=9" },
       "prompt": "Bram is six and the letters are still rearranging themselves on the page for him. The boxed curriculum says he should be reading by now. The boxed curriculum doesn't know him.",
       "options": [
         {
@@ -311,7 +311,7 @@
       "pool": "homeschool-parent",
       "tags": ["community", "identity"],
       "weight": 0.9,
-      "requires": { "month": ">=25" },
+      "requires": { "month": ">=15" },
       "prompt": "Three of your park-bench parents sent their kids back to school this fall. The group chat is quieter on weekdays. Hazel asks if she can go too.",
       "options": [
         {
@@ -336,7 +336,7 @@
       "pool": "homeschool-parent",
       "tags": ["community", "humor"],
       "weight": 0.7,
-      "requires": { "month": ">=10" },
+      "requires": { "month": ">=6" },
       "prompt": "A co-op parent emails the group: she'd 'love it if we could move toward all-organic snack week.' Three families have thumbs-up'd. Two have not.",
       "options": [
         {
@@ -356,7 +356,7 @@
       "pool": "homeschool-parent",
       "tags": ["identity", "career-movement"],
       "weight": 0.8,
-      "requires": { "month": ">=30" },
+      "requires": { "month": ">=18" },
       "prompt": "There's a small thing you used to make — pottery, a podcast, line drawings, whatever. It has been a long time. The last time you tried, the kids found you within twenty minutes. You could try again.",
       "options": [
         {
@@ -381,7 +381,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "career-movement"],
       "weight": 0.6,
-      "requires": { "month": ">=36" },
+      "requires": { "month": ">=21" },
       "prompt": "Your spouse's company is opening an office two states away. The package is generous. Your co-op, your friends, your house — those are here.",
       "options": [
         {
@@ -411,7 +411,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "teaching"],
       "weight": 0.9,
-      "requires": { "month": ">=42" },
+      "requires": { "month": ">=25" },
       "prompt": "Hazel asks for a phone. The number she names is a year older than the number you were planning. Most of her co-op friends have them.",
       "options": [
         {
@@ -436,7 +436,7 @@
       "pool": "homeschool-parent",
       "tags": ["teaching", "identity", "era"],
       "weight": 1.0,
-      "requires": { "month": ">=60" },
+      "requires": { "month": ">=35" },
       "prompt": "The AI tutor product everyone is talking about offers a family plan. The trial works — it really does. The math hour you used to teach could be its math hour.",
       "options": [
         {
@@ -466,7 +466,7 @@
       "pool": "homeschool-parent",
       "tags": ["career-movement", "identity"],
       "weight": 0.7,
-      "requires": { "month": ">=60" },
+      "requires": { "month": ">=35" },
       "prompt": "A friend has an opening that would actually use what you used to do. Mostly remote. Four days a week. You'd have to find afternoon coverage for the kids and rewrite your whole week.",
       "options": [
         {
@@ -491,7 +491,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "teen"],
       "weight": 1.0,
-      "requires": { "month": ">=84" },
+      "requires": { "month": ">=49" },
       "prompt": "Hazel comes in at 11:47. She said 11:00. She is not drunk and she is not crying and she is also not making eye contact. You can lead with the time or with the look.",
       "options": [
         {
@@ -516,7 +516,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "teen", "identity"],
       "weight": 0.8,
-      "requires": { "month": ">=90" },
+      "requires": { "month": ">=53" },
       "prompt": "Hazel mentions, casually, that someone from the co-op is 'kind of' her boyfriend now. She has practiced this sentence. She is watching your face.",
       "options": [
         {
@@ -541,7 +541,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "stress"],
       "weight": 0.9,
-      "requires": { "month": ">=72" },
+      "requires": { "month": ">=42" },
       "prompt": "Bram has been quieter for three weeks. Not bad quiet — flat quiet. You can ask, you can wait, or you can call the pediatrician.",
       "options": [
         {
@@ -571,7 +571,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "relationship", "stress"],
       "weight": 0.8,
-      "requires": { "month": ">=48" },
+      "requires": { "month": ">=28" },
       "prompt": "Your spouse hasn't laughed at the dinner table in two weeks. The answer is always 'fine.' The pattern is not fine.",
       "options": [
         {
@@ -601,7 +601,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "teen", "transition"],
       "weight": 1.0,
-      "requires": { "month": ">=96" },
+      "requires": { "month": ">=56" },
       "prompt": "Hazel is fourteen. The high-school decision is real now. Dual enrollment at the community college, a private school, or finishing at home — pick a frame for the next four years.",
       "options": [
         {
@@ -631,7 +631,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "teen", "accountability"],
       "weight": 0.9,
-      "requires": { "month": ">=102" },
+      "requires": { "month": ">=60" },
       "prompt": "Hazel's applications need a record. You can register her for the standardized test, or build a portfolio narrative with an evaluator. Most schools take both. A few prefer one.",
       "options": [
         {
@@ -656,7 +656,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "teen", "identity"],
       "weight": 0.6,
-      "requires": { "month": ">=96" },
+      "requires": { "month": ">=56" },
       "prompt": "Bram, eleven, says, casually, that he doesn't think he wants to go to college. He's been watching videos about welding. He wants you to know.",
       "options": [
         {
@@ -676,7 +676,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "identity"],
       "weight": 0.6,
-      "requires": { "month": ">=66" },
+      "requires": { "month": ">=39" },
       "prompt": "Your father had a fall. It was minor. It is also, you understand, the first one. He could use someone present for a few weeks.",
       "options": [
         {
@@ -706,7 +706,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "humor"],
       "weight": 0.7,
-      "requires": { "month": ">=20" },
+      "requires": { "month": ">=12" },
       "prompt": "Bram's piano recital is Saturday afternoon. So is your one friend's surprise fortieth. Both will notice if you skip.",
       "options": [
         {
@@ -731,7 +731,7 @@
       "pool": "homeschool-parent",
       "tags": ["identity", "transition"],
       "weight": 0.8,
-      "requires": { "month": ">=108" },
+      "requires": { "month": ">=63" },
       "prompt": "Hazel will be away three nights a week next semester for the early-college program. Her bedroom on Tuesdays will look the way it'll look in a few years all the time. You can plan for the Tuesdays or you can sit in them and see what happens.",
       "options": [
         {
@@ -751,7 +751,7 @@
       "pool": "homeschool-parent",
       "tags": ["family", "transition"],
       "weight": 0.9,
-      "requires": { "month": ">=110" },
+      "requires": { "month": ">=65" },
       "prompt": "The local homeschool collective puts on a graduation ceremony every June. Caps, gowns, the works. Hazel could walk in it. She is not sure she wants to.",
       "options": [
         {
@@ -804,7 +804,7 @@
       "id": "hp-tablet-speed-complaint",
       "pool": "homeschool-parent",
       "tags": ["family", "humor", "money"],
-      "requires": { "month": ">=48" },
+      "requires": { "month": ">=28" },
       "weight": 0.6,
       "prompt": "The kids are complaining that the tablet is too slow.",
       "options": [

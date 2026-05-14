@@ -1,7 +1,7 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 2.0.9
+**Document version:** 2.0.10
 **Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 12 layout templates (all tier `simple` for now) · Room complexity tier framework wired (year-driven mix)
 **Last updated:** 2026-05-14
 
@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.10 | 2026-05-14 | Corby Hoback · Claude Code | **Doc-sync + content `requires.month` gate remap after v2.0.8.** PR #78 regenerated `months.json` (120 → 70) but left `requires.month` / `trigger.month` gates in `decisions.json` / `events.json` on the old 12-slot/year calendar — leaving 9 homeschool decisions + 2 events **unreachable** (gates above the new 70 cap) and silently shifting SWE arc pacing ~4 months earlier than authored. New one-shot `scripts/remap-old-month-gates.mjs` converts each old monthId to the smallest new slot whose calendar month is ≥ the old monthNum. **72 gates remapped** across 4 JSON files (SWE 32 + Homeschool 40). Doc sync: §24 analytics slugs refreshed (`/month/{001..120}` → `/month/{01..70}`; minigame slug list expanded to all 5 variants — was a stale 3-entry list); `game_completed` event description updated; inline 120→70 sweep of engine-cap references across §2, §3, §5, §6, §8, §11.2, §21, §25, §26 (Homeschool era table + counts; Student fork-month note pinned to v2.0.8 scale). |
 | v2.0.9  | 2026-05-14 | Corby Hoback · Claude Code | **Room complexity tier framework (no new rooms yet).** New `ComplexityTier` type + required `complexity` field on `LayoutTemplate` (all 12 templates tagged `simple` for now); `YEAR_TO_COMPLEXITY_MIX` table + `pickComplexityTier(year, rng)` sampler; `eligibleTemplates(packId, complexity?)` extends the pack filter with a tier filter + downward fallback chain (expert → hard → medium → easy → simple). `generateRoom(seed, packId, year, forced?)` signature widened; `RoomLayout.complexity` exposes the picked tier. Play unchanged from v2.0.8 (every roll falls through to `simple`). New §4 *Complexity tiers (v2.0.9)* subsection. No `STATE_VERSION` bump. Companion PR to v2.0.8; both branched from `main` per the no-stacked-PRs rule. |
 | v2.0.8  | 2026-05-14 | Corby Hoback · Claude Code | **Half-length playthrough — every other month is playable, + HUD calendar-emit fix.** Each year is now 7 slots: 1 cinematic January + 6 playable months (Feb/Apr/Jun/Aug/Oct/Dec). `months.json` drops **120 → 70** across both packs. `src/game/calendar.ts` gains `SLOTS_PER_YEAR = 7` + `SLOT_TO_MONTH_NUM = [1, 2, 4, 6, 8, 10, 12]`; `monthLabel(id)` reads from the slot table. Minigame slots remapped in SWE pack (Blackjack m19, Code Review m35, Pong m45, Reaction Sprint m53). `progressSlice` clamps move 120 → 70; `FINALE_MONTH_ID` moves 120 → 70; finale-decision id renamed `finale-month-120` → `finale-month`. `STATE_VERSION` 1.6.0 → 1.7.0 to discard pre-refactor saves. Rewind door semantics unchanged (`previousReplayableMonth` walks across cinematic Januaries). New `calendarMonthDelta(fromId, toId)` helper + HUD update so the month-change floater shows the actual calendar delta (typically +2 / −2, with +1 / −1 only at the Jan↔Feb and Dec↔Jan boundaries) instead of slot delta. New §4 *Half-length playthrough (v2.0.8)* subsection. |
 | v2.0.7  | 2026-05-13 | Corby Hoback · Claude Code | **Mid-game profile editing via clickable HUD chip.** Adds the *"You: {name} [edit]"* profile card the user mocked up. (1) **New `ProfileModal` component** (`src/game/ui/ProfileModal.tsx`) — centered modal opened from the HUD identity chip. Player-name row supports inline editing: click `[Edit]` swaps the value to a text input prefilled with the current name + Save / Cancel buttons. Save dispatches `setProfile({ name })` against the existing `profileSlice`; since every decision / event / endgame string already interpolates `{playerName}` via `interpolate.ts`, mid-game edits propagate through future content automatically with no further wiring. (2) **HUD identity chip is now a `<button>`** in `Hud.tsx` (was a `<span>`) — same visual weight + size, adds pointer cursor + underline-on-hover affordance, opens the modal on click. Activates via Enter/Space if focused (free keyboard support via native button semantics; no global shortcut). (3) **Kids section (homeschool-parent pack only).** Modal shows `Hazel` and `Bram` under a *"Children"* header, mirroring the names hardcoded in `public/careers/homeschool-parent/*.json` (74 occurrences). **The kid `Edit` buttons are disabled** with a `title="Coming soon — needs the kid-name interpolation sprint to update event/decision content too."` tooltip. Tracked as a separate GitHub issue (kid-name interpolation sprint) — the full feature requires adding `profile.kidAName` / `profile.kidBName` defaults, an init-flow phase gated on `manifest.requiresKidNames`, `{kidA}` / `{kidB}` context entries in `interpolate.ts`, and a mechanical pass through all 74 occurrences. (4) **Shared sanitization** — extracted `MAX_NAME_LENGTH` and `sanitizeName(raw)` from `NameEntry.tsx` to a new `src/game/content/nameSanitize.ts` module. Both the init-flow `NameEntry` and the mid-game `ProfileModal` import from the same source, so init-time and edit-time validation rules can't drift. Move was also forced by `react-refresh/only-export-components` (a `.tsx` file with a component can't co-export non-component helpers). (5) **Interaction details:** Esc cancels an in-progress inline edit; Esc again closes the modal (standard inline-edit UX). Backdrop click also closes. Click on the dialog interior stops propagation so the player can interact without accidentally dismissing. The modal uses `position: fixed` + `zIndex: 110` so its DOM nesting inside `Hud` doesn't affect overlay positioning. (6) **§13 *Player Identity*** gains a *Mid-game profile editing (v2.0.7)* subsection documenting the trigger, the inline edit pattern, the kids section + disabled-edit rationale, and the mouse-first design choice. **No `STATE_VERSION` bump, no schema change, no save migration** — `setProfile` is an existing reducer; only the call sites grow. |
@@ -68,7 +69,7 @@ A narrative life-simulation game in which the player navigates 10 years (2020–
 
 ## 2. The Player's Loop
 
-For each of 120 months, the player:
+For each of 70 monthIds (10 cinematic Januaries + 60 playable months across 2020–2029, per §4 *Half-length playthrough*), the player:
 
 1. **Enters a room** (the month). Their character spawns at an entry point.
 2. **Walks around.** Optionally interacts with flavor objects (read text), grabs stat modifiers (coffee, books), avoids hazards (stress clouds).
@@ -88,7 +89,7 @@ The game engine is generic. All career-specific content is loaded from a **caree
 ```
 public/careers/software-engineering/
   manifest.json           ← career metadata, entry classes, palette
-  months.json             ← 120 month entries with seed + theme
+  months.json             ← 70 month entries with seed + theme (per §4 half-length playthrough)
   decisions/
     universal/*.json      ← decisions reusable across careers
     swe/*.json            ← SWE-specific decisions
@@ -320,7 +321,7 @@ Premium alternative (deferred): a true crossfade — render outgoing + incoming 
 
 | Type             | Purpose                                                  | Approx. count |
 |------------------|----------------------------------------------------------|---------------|
-| `DecisionRoom`   | Default — walk + decision + exit                         | ~110 of 120   |
+| `DecisionRoom`   | Default — walk + decision + exit                         | ~60 of 70     |
 | `MinigameRoom`   | Blackjack, code-review puzzle, twitch reaction           | ~3 total      |
 | `NarrativeRoom`  | Pure text, no walking. Intro screen, year transitions    | ~5–10         |
 | `ConsequenceRoom`| Framing for major outcomes (got fired, baby born, time-skip recap) | ~5–10 |
@@ -348,7 +349,7 @@ Every room config has a `roomType` field. The renderer picks the right component
 **v1.1 additions:**
 - `profile.initComplete` (added Day 9) — flips true once the player completes
   Career → Name → Class → Intro. Drives `App.tsx` routing between `<InitFlow>` and `<Game>`.
-- `progress.gameOver` (added Day 12) — flips true on `completeMonth(120)`. Drives
+- `progress.gameOver` (added Day 12) — flips true on `completeMonth(70)` (LAST_MONTH_ID, was 120 pre-v2.0.8). Drives
   `App.tsx` routing between `<RoomRenderer>` and `<EndgameScreen>` (§21).
 - `history.events` (always present; spelled out in v1.1 — was implicit in v1.0).
 
@@ -435,7 +436,7 @@ weighted random pick:
 
 Fallback chain: `neverSeen → notRecent → eligible`. The selector never
 returns null due to filtering; only if no decisions pass `requires` at
-all. With current SWE content (34 decisions vs 120 months) the fallback
+all. With current SWE content (34 decisions vs 60 playable months under v2.0.8) the fallback
 degrades gracefully — adding content automatically reduces repetition
 without code changes. Configured by `RECENT_WINDOW_MONTHS` in
 `src/game/content/selectDecision.ts`.
@@ -813,7 +814,7 @@ multiple months at once (only one-step navigation); replaying mid-decision
 
 ### 11.2 Finale month (v1.3.4+)
 
-Month **120** (December 2029) is the player's last live room — a special
+Month **70** (December 2029, per the v2.0.8 slot table) is the player's last live room — a special
 DecisionRoom layout that wraps the run on a small smile rather than the
 generic forward-door commit.
 
@@ -850,12 +851,12 @@ flavor phase replaces the generic *"YOU CHOSE"* header + decision-icon
 column with a centered three-beat layout: small italic *"Well, then."*,
 larger centered chosen-label, italic muted flavor line. The Continue
 button becomes **"End"**, hint reads *"Press Enter to roll credits"*.
-After Continue, normal `onExit` flow fires → `completeMonth(120)` →
+After Continue, normal `onExit` flow fires → `completeMonth(70)` →
 `gameOver=true` → `<EndgameScreen />`.
 
-**Replay of month 120 uses the standard layout** — the finale is a
+**Replay of month 70 uses the standard layout** — the finale is a
 one-time live beat, not a walkable replay state (`isFinale = monthId ===
-120 && !isReplay`). The rewind door still renders so the player can walk
+FINALE_MONTH_ID && !isReplay`). The rewind door still renders so the player can walk
 back through prior months before sealing the run.
 
 **Implementation.** All constants (`FINALE_MONTH_ID`,
@@ -1337,7 +1338,7 @@ path-to-the-future/
 Added Day 12.
 
 **Trigger.** `progress.gameOver` flips true inside the `completeMonth` reducer
-when the player completes month 120 (or, theoretically, when an `endsGame: true`
+when the player completes month 70 (LAST_MONTH_ID under v2.0.8; was 120) — or, theoretically, when an `endsGame: true`
 event fires — wired in the schema but no events use it yet). `App.tsx` routes to
 `<EndgameScreen />` instead of `<RoomRenderer />` when `gameOver` is true. Once
 true, the only escape is "Begin again" which dispatches a full state reset.
@@ -1374,7 +1375,7 @@ Weights are tunable — interpretability over precision.
 - **Career timeline lives in a dedicated full-canvas view** (#26)
   (`CareerTimelineScreen`, defined alongside `EndgameScreen`). Opened via
   the leftmost recap action (see below). Internal scroll handles the full
-  120-decision list; year grouping preserved. Each row renders the
+  60-room decision list (one row per playable monthId, minus the 10 cinematic Januaries); year grouping preserved. Each row renders the
   **decision prompt** above the **option taken** (resolved from
   `pack.decisions` by `decisionId` — falls back to option-only if a stored
   decision was removed/renamed from the pack). Without the prompt, option
@@ -1640,8 +1641,8 @@ Both swallow errors silently. **Analytics must never break the game.**
 | `/init/name` | Name entry mounts |
 | `/init/class` | Class picker mounts |
 | `/init/intro` | Narrative intro mounts |
-| `/month/{001..120}` | Each room mount (zero-padded month id) |
-| `/minigame/{blackjack\|code-review\|stacker}` | Minigame room mounts |
+| `/month/{01..70}` | Each room mount (zero-padded monthId, 1–70 under v2.0.8 half-length playthrough) |
+| `/minigame/{blackjack\|code-review\|reaction-sprint\|pong\|forty-two}` | Minigame room mounts (mirrors the `MinigameVariant` union in `src/game/types/room.ts`) |
 | `/endgame` | Endgame screen mounts |
 | `/credits` | Credits screen mounts |
 | `/restart` | "Begin again" confirm dispatched |
@@ -1651,7 +1652,7 @@ Both swallow errors silently. **Analytics must never break the game.**
 | Event | Params | Fired when |
 |-------|--------|------------|
 | `game_started` | `career`, `class` | First month entered after init complete (not on resume) |
-| `game_completed` | none | Month 120 commit (also fires the `/endgame` pageview) |
+| `game_completed` | none | Month 70 commit (also fires the `/endgame` pageview) |
 | `restart_confirmed` | none | After "Yes, begin again" — pairs with `/restart` pageview |
 | `minigame_completed` | `id`, `result` ('win' \| 'partial' \| 'fail') | Each minigame finish |
 
@@ -1660,7 +1661,7 @@ Career and class are gameplay metadata, not identifiers — they tell us
 
 ### What we explicitly don't track
 
-- **Per-decision events.** 120 decisions × N players would dwarf the rest
+- **Per-decision events.** 70 month-decisions × N players would dwarf the rest
   of the funnel; pageview depth by month slug is enough signal for v1.
 - **Stat values.** Final stats might be interesting later, but shipping
   them off-device feels off-vibe for a game this contemplative.
@@ -1707,7 +1708,7 @@ One table. One row per finished run. No accounts, no auth, no session.
 | `name`        | Player-chosen, sanitized + profanity-filtered server-side      |
 | `score`       | Final score from `computeScore` (§21)                          |
 | `class`       | Entry class (Novice / Skilled / …)                             |
-| `final_month` | 120 if completed; lower if soft-permadeath ends the run early  |
+| `final_month` | 70 if completed (LAST_MONTH_ID under v2.0.8); lower if soft-permadeath ends the run early |
 | `run_id`      | Client-generated UUID at endgame; server uses as dedupe key    |
 | `timestamp`   | Server-set on insert                                           |
 
@@ -1891,8 +1892,11 @@ question lands somewhere in this section because Student is what raised it.
 
 #### Arc
 
-10 years, January 2020 → December 2029, ages 13 → 22. Same 120-month
-shape as SWE — no engine month-count change needed.
+10 years, January 2020 → December 2029, ages 13 → 22. Same 70-monthId
+shape as SWE under v2.0.8 (was 120 months pre-refactor). The post-HS
+fork at month ~39 (was 66) is the structural centerpiece — see
+*Adjustments for v2.0 (#26)* below for the gating decisions still pinned
+to the 120-id scale.
 
 | Year span | Age | Phase |
 |---|---|---|
@@ -2068,10 +2072,11 @@ build later.
   Student vs. Homeschool Parent vs. Small Business Owner. Build it after
   we've felt the mismatch firsthand.
 
-- **Per-pack starting year / arc length.** The 2020–2030 / 120-month
-  assumption lives in the engine in a few places (`completeMonth(120)`
-  triggers gameOver, month-index math elsewhere). For v2.0, every pack
-  uses the same 120-month / 2020–2030 window — Student lands here
+- **Per-pack starting year / arc length.** The 2020–2030 / 70-monthId
+  assumption (10-year calendar, 7 slots/year per the v2.0.8 half-length
+  playthrough; was 120 monthIds pre-v2.0.8) lives in the engine in a few
+  places (`completeMonth(70)` triggers gameOver, month-index math
+  elsewhere). For v2.0, every pack uses the same 70-monthId / 2020–2030 window — Student lands here
   naturally (ages 13–22 fits the decade), and no other pack we've
   scaffolded needs a different window. If a pack later wants a different
   arc (a "Retirement" pack starting at age 65? a "Childhood" pack at
@@ -2088,8 +2093,9 @@ No assigned build day. Two prerequisite tasks land first:
    placeholder palette, `playable: false`. Maybe an hour. Doesn't ship
    anything but unblocks parallel content authoring.
 
-Then the real work is content: 120 months of Student decisions, the
-post-HS fork at month 66, the seven post-HS sub-pools, era-flavored events
+Then the real work is content: 70 monthIds' worth of Student decisions
+(under the v2.0.8 7-slot/year scheme), the post-HS fork at month ~39
+(was month 66 on the 120-id scale), the seven post-HS sub-pools, era-flavored events
 filtered for teens, sprite art for school/dorm/etc. interactables, the
 endgame copy decision. Multi-day build; estimate after the scaffold
 exists and the first 12 months are written (the SWE pack's own estimate
@@ -2110,16 +2116,18 @@ that locked the register. Phase 2 (this PR) scaled to the full pool.
 
 #### Arc
 
-Same 120-month window as SWE (Jan 2020 → Dec 2029). Two kids hardcoded by
-name in copy:
+Same 10-year window as SWE (Jan 2020 → Dec 2029), now spanning 70 monthIds under v2.0.8 (1 cinematic January + 6 playable months/year). Two kids hardcoded by name in copy:
 
-- **Hazel** — age 6 at month 1, age 16 at month 120
-- **Bram** — age 3 at month 1, age 13 at month 120
+- **Hazel** — age 6 at month 1, age 16 at month 70
+- **Bram** — age 3 at month 1, age 13 at month 70
 
 The kid ages drive the arc texture: pandemic-era kindergarten/preschool
 through ai-shift-era pre-teen and uncertain-future early-teen. Teen
-rebellion / dating / college-prep beats are gated at month >=84/>=90/>=96
-respectively. No engine work was needed for the kids — they're
+rebellion / dating / college-prep beats were originally gated at month
+≥84/≥90/≥96 on the 120-id scheme; under v2.0.8 the equivalent slot
+thresholds are roughly month ≥49/≥52/≥56 (pro-rata; final values were
+re-tuned during the `feat/half-length-playthrough` regen, see
+`scripts/regenerate-months.mjs`). No engine work was needed for the kids — they're
 content-only references. Kid-name interpolation (`{kidA}` / `{kidB}`) is
 **deferred to a follow-up PR** — current copy hardcodes "Hazel" and
 "Bram" everywhere they appear. Acceptable trade-off: kid names are not
@@ -2190,7 +2198,7 @@ homeschool-specific class labels and the 20-icon coverage batch.
 | Decisions | **32** | 5 Phase-1 + 25 Phase-2 + 2 tone-pass (snack-rebellion + tablet). Span all four eras + era-agnostic. |
 | Events | **39** | 5 Phase-1 + 32 Phase-2 + 2 tone-pass (Mr-Nobody + church-stayed-open) — plus an evt-hp-research piece in the tone-pass bundle. Includes 5 stat-trigger events (low-savings, low-health, high-burnout, high-network, hazel-first-chapter), 5 era-anchored (pandemic), 3 (rebound), 5 (ai-shift), 4 (uncertain-future). |
 | Interactables | **12** | 6 objects + 6 NPCs. Includes Hazel + Bram as named NPCs with tier-2 dialogues; co-op friend + spouse + in-law + neighbor; textbook stack, art bin, kitchen-table-as-school, fridge drawing, sick-day couch, co-op sign-up. |
-| Months | **120** | Phase-1 lifeline frame with 10 anchor narrative rooms (Jan 2020 / 2021 / 2022 / 2023 / 2024 / 2025 / 2026 / 2027 / 2028 / 2029). |
+| Months | **70** | 10 anchor narrative rooms (Jan 2020 / 2021 / 2022 / 2023 / 2024 / 2025 / 2026 / 2027 / 2028 / 2029) + 60 playable monthIds across Feb/Apr/Jun/Aug/Oct/Dec of each year (v2.0.8 half-length playthrough; was 120 monthIds pre-refactor). |
 | `monthTransitions` | **16** | Homeschool-themed flavor lines for the post-decision blur. |
 | `intro` | **4 lines** | Cinematic intro played after class pick via ScenePlayer (§16). Supports `{playerName}`. The Phase-2 8-line version was tightened in the tone pass to land sooner. |
 | Endgame taglines | **12** | Pack-scoped pool at `public/careers/homeschool-parent/endgame-taglines.json`. |
@@ -2202,12 +2210,12 @@ homeschool-specific class labels and the 20-icon coverage batch.
 Decisions and events distribute across the four eras with these rough
 counts (era-anchored content; era-agnostic content not double-counted):
 
-| Era | Months | Decisions (era-anchored) | Events (era-anchored) |
+| Era | Months (v2.0.8) | Decisions (era-anchored) | Events (era-anchored) |
 |---|---|---|---|
-| pandemic | 1–36 | 2 (screens-rule, spouse-furlough) | 4 (grocery-line, zoom-cohort, relatives-text, yard-friendship, mask-tantrum) |
-| rebound | 25–60 | 1 (back-to-school-wave) | 3 (school-friends-return, comp-jump, spouse-layoff) |
-| ai-shift | 61–84 | 1 (ai-tutor-decision) | 5 (ai-doorway, grocery-screen, essay-question, spouse-tool, evangelist-parent) |
-| uncertain-future | 85–120 | 4 (teen-rebellion-late-night, teen-dating, college-prep-route, college-test-or-portfolio, late-decade-empty-room, final-year-graduation-frame, mid-career-reentry partial overlap) | 4 (college-anxiety, spouse-search, decade-photo, becoming-mentor) |
+| pandemic | 1–21 | 2 (screens-rule, spouse-furlough) | 4 (grocery-line, zoom-cohort, relatives-text, yard-friendship, mask-tantrum) |
+| rebound | 15–35 | 1 (back-to-school-wave) | 3 (school-friends-return, comp-jump, spouse-layoff) |
+| ai-shift | 36–49 | 1 (ai-tutor-decision) | 5 (ai-doorway, grocery-screen, essay-question, spouse-tool, evangelist-parent) |
+| uncertain-future | 50–70 | 4 (teen-rebellion-late-night, teen-dating, college-prep-route, college-test-or-portfolio, late-decade-empty-room, final-year-graduation-frame, mid-career-reentry partial overlap) | 4 (college-anxiety, spouse-search, decade-photo, becoming-mentor) |
 
 The era-agnostic decisions/events fire across the timeline based on month
 requires and stat triggers.
