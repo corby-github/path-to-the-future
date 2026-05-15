@@ -534,6 +534,7 @@ export function DecisionRoom({ config, onExit }: Props) {
         const slideSpeedPxPerSec =
           MOVING_OBSTACLE_KNOCKBACK_PX / (MOVING_OBSTACLE_SLIDE_MS / 1000);
         knockbackVelocityRef.current = { x: -slideSpeedPxPerSec, y: 0 };
+        setIsStunnedRef.current(true);
 
         // Side-effects per §4: small health hit on each contact;
         // burnout +5 once a per-room hit threshold is crossed (so
@@ -568,6 +569,7 @@ export function DecisionRoom({ config, onExit }: Props) {
       const sinceHit = now - lastMovingObstacleHitAtRef.current;
       if (sinceHit >= MOVING_OBSTACLE_TOTAL_LOCK_MS) {
         knockbackVelocityRef.current = null;
+        setIsStunnedRef.current(false);
       } else if (sinceHit >= MOVING_OBSTACLE_SLIDE_MS && knockbackVelocityRef.current.x !== 0) {
         knockbackVelocityRef.current = { x: 0, y: 0 };
       }
@@ -687,6 +689,13 @@ export function DecisionRoom({ config, onExit }: Props) {
   const untouchedBonusFiredRef = useRef(false);
   const [damageFloaters, setDamageFloaters] = useState<DamageFloater[]>([]);
   const damageFloaterIdRef = useRef(0);
+  // Render-only flag: drives the "stunned" stars above the player for
+  // the 1-sec lock window. Mirrors the lifetime of knockbackVelocityRef
+  // (set on hit, cleared on unlock) but lives in state so React re-renders.
+  const [isStunned, setIsStunned] = useState(false);
+  const setIsStunnedRef = useRef(setIsStunned);
+  // eslint-disable-next-line react-hooks/immutability
+  useEffect(() => { setIsStunnedRef.current = setIsStunned; }, [setIsStunned]);
   // Mirror the per-frame moving-obstacle rects + the player setter so
   // handleTick (a stable useCallback declared above) can read fresh
   // values without rebinding the game-loop subscription each frame.
@@ -1307,6 +1316,46 @@ export function DecisionRoom({ config, onExit }: Props) {
           })}
 
           <Player state={playerState} />
+
+          {/* "Stunned" stars during the 1-sec moving-obstacle lock. Three
+              ★ characters in a small fan above the player's head, each
+              twinkling at a 200ms phase offset for a wave effect. Follow
+              the player position so they ride along with the slide and
+              then sit above the stationary stunned player. */}
+          {isStunned && (
+            <g data-region="stun-stars" pointerEvents="none">
+              <text
+                x={playerState.position.x - 16}
+                y={playerState.position.y - PLAYER_RADIUS - 14}
+                fontSize={16}
+                fill="#ffd54f"
+                textAnchor="middle"
+                style={{ animation: 'stun-twinkle 600ms ease-in-out infinite' }}
+              >
+                ★
+              </text>
+              <text
+                x={playerState.position.x}
+                y={playerState.position.y - PLAYER_RADIUS - 22}
+                fontSize={18}
+                fill="#ffd54f"
+                textAnchor="middle"
+                style={{ animation: 'stun-twinkle 600ms ease-in-out infinite 200ms' }}
+              >
+                ★
+              </text>
+              <text
+                x={playerState.position.x + 16}
+                y={playerState.position.y - PLAYER_RADIUS - 14}
+                fontSize={16}
+                fill="#ffd54f"
+                textAnchor="middle"
+                style={{ animation: 'stun-twinkle 600ms ease-in-out infinite 400ms' }}
+              >
+                ★
+              </text>
+            </g>
+          )}
 
           {/* Moving-obstacle damage floaters (v2.0.18). Rendered after
               the player so they layer on top. `text-anchor="middle"`
