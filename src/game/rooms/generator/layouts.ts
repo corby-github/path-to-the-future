@@ -1,4 +1,4 @@
-import type { Rect, Vector2 } from '../../types/geometry';
+import type { MovingObstacle, Rect, Vector2 } from '../../types/geometry';
 import { ROOM_VIEWBOX } from '../../coordinates';
 
 // Room complexity tier (v2.0.9 — framework only). Drives the year → tier
@@ -30,6 +30,11 @@ export interface LayoutTemplate {
   // Listed = only that pack's rooms can roll this template. Matched by
   // `manifest.id` in `generateRoom`. See §4.
   packs?: readonly string[];
+  // Optional vertically-oscillating obstacles (v2.0.18, §4 medium tier).
+  // Detected separately from static `obstacles` — the player can walk
+  // through but takes a knockback + health hit. See DecisionRoom's
+  // moving-obstacle collision callback.
+  movingObstacles?: readonly MovingObstacle[];
 }
 
 const DEFAULT_DOOR: Rect = {
@@ -270,6 +275,54 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     ],
     door: DEFAULT_DOOR,
     complexity: 'easy',
+  },
+  {
+    // Single vertically-oscillating block in the middle of the canvas.
+    // Wide swing (y=70..430) covers most of the room; player can sneak
+    // around top or bottom when the block is at the opposite extreme, or
+    // brute-force through and take a knockback + health hit. First medium
+    // template — pure timing puzzle, no static-wall constraints.
+    id: 'pendulum',
+    label: 'Pendulum',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      {
+        baseRect: { x: 470, y: 250, width: 60, height: 100 },
+        amplitude: 180,
+        period: 2400,
+        phase: 0,
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Two oscillating blocks at x=350 / x=650, phase-offset by π so when
+    // one is at the top of its swing the other is at the bottom. Player
+    // weaves between them; an unhurried player can always find a clear
+    // window. Harder than `pendulum` because the second block punishes
+    // hesitation past the first.
+    id: 'shutters',
+    label: 'Shutters',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      {
+        baseRect: { x: 350, y: 250, width: 60, height: 100 },
+        amplitude: 180,
+        period: 2400,
+        phase: 0,
+      },
+      {
+        baseRect: { x: 650, y: 250, width: 60, height: 100 },
+        amplitude: 180,
+        period: 2400,
+        phase: Math.PI,
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
   },
 ];
 

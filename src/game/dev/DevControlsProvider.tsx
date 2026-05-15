@@ -1,9 +1,9 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { DevControlsContext, type DevControls, type EventMode } from './DevControlsContext';
 
-// Dev defaults: 4× speed for fast traversal during testing.
+// Dev defaults: 2× speed for fast traversal during testing.
 // Production stays at 1× because the DEV gate evaluates to false at build time.
-const DEFAULT_SPEED = import.meta.env.DEV ? 4 : 1;
+const DEFAULT_SPEED = import.meta.env.DEV ? 2 : 1;
 
 interface Props {
   children: ReactNode;

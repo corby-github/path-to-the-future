@@ -58,6 +58,25 @@ body {
   100% { opacity: 0; transform: translate(-50%, -28px); }
 }
 
+/* In-canvas damage floater above the player sprite (DecisionRoom moving-
+   obstacle hits, v2.0.18). SVG-native: horizontal centering is handled by
+   `text-anchor="middle"` on the <text>, so this only translates Y. Same
+   ~900ms envelope as `stat-delta-float`. */
+@keyframes damage-float {
+  0%   { opacity: 0; transform: translateY(6px); }
+  15%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-28px); }
+}
+
+/* "Stunned" twinkle for the stars above the player during the moving-
+   obstacle 1-sec lock (slide + stun). Opacity-only animation — sidesteps
+   transform-origin headaches on SVG <text>. Three stars share this loop
+   with staggered animation-delays for a wave-twinkle effect. */
+@keyframes stun-twinkle {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 1; }
+}
+
 /* Status-bar text crossfade. Used when the status bar's content swaps
    (e.g., normal instructional text → "...time passes" transition message
    on post-Continue). Re-keyed on the React side per text change so each

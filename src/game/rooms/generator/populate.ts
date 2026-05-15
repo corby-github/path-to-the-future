@@ -1,4 +1,4 @@
-import type { Rect, Vector2 } from '../../types/geometry';
+import type { MovingObstacle, Rect, Vector2 } from '../../types/geometry';
 import {
   LAYOUT_TEMPLATES,
   eligibleTemplates,
@@ -12,12 +12,15 @@ import { seededRandom, pickFrom } from './seedRng';
 export interface RoomLayout {
   templateId: string;
   // The complexity tier the generator picked. Surfaces in dev tooling and
-  // is available on the room layout for downstream room behaviors that
-  // care (e.g. moving-obstacle authoring lands here in follow-up PRs).
+  // drives downstream room behaviors (e.g. moving-obstacle collision +
+  // side-effects in medium-tier rooms — see DecisionRoom).
   complexity: ComplexityTier;
   spawn: Vector2;
   obstacles: Rect[];
   door: Rect;
+  // Vertically-oscillating obstacles for medium-tier rooms (v2.0.18, §4).
+  // Empty / undefined for simple + easy + replay-only viewing.
+  movingObstacles?: readonly MovingObstacle[];
 }
 
 function rectsIntersect(a: Rect, b: Rect): boolean {
@@ -52,6 +55,7 @@ function toLayout(template: LayoutTemplate): RoomLayout {
     spawn: template.spawn,
     obstacles: template.obstacles,
     door: template.door,
+    movingObstacles: template.movingObstacles,
   };
 }
 

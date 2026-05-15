@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from 'react-redux';
 import { Player } from '../entities/Player';
 import { usePlayerMovement } from '../engine/usePlayerMovement';
-import { ROOM_VIEWBOX, ROOM_BOUNDS } from '../coordinates';
+import { useMovingObstacles } from '../engine/useMovingObstacles';
+import { circleIntersectsRect } from '../engine/collision';
+import { ROOM_VIEWBOX, ROOM_BOUNDS, PLAYER_RADIUS } from '../coordinates';
 import { monthLabel } from '../calendar';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -12,7 +14,7 @@ import { selectDecision } from '../content/selectDecision';
 import { parseEffect } from '../content/applyEffects';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { recordDecision, recordEvent } from '../state/slices/historySlice';
-import { skipMonths, addXp, XP_PER_DECISION, enterReplay, exitReplay } from '../state/slices/progressSlice';
+import { skipMonths, addXp, XP_PER_DECISION, XP_TIER_BONUS_UNTOUCHED, enterReplay, exitReplay } from '../state/slices/progressSlice';
 import { rollEvents, findEventById } from '../content/rollEvents';
 import { applyEvent } from '../content/applyEvent';
 import { passesRequires } from '../content/evaluateRequires';
@@ -39,6 +41,38 @@ const BASE_SPEED = (180*2);
 const DEFAULT_EVENT_CHANCE = 0.4;
 const INTERACTABLE_HALF_W = 28;
 const INTERACTABLE_HALF_H = 36;
+
+// Medium-tier moving-obstacle tuning (v2.0.18, §4). Sized for the first
+// content drop; revisit after playtest. The cooldown is wide enough that
+// a single sustained overlap counts as one hit, not 60.
+const MOVING_OBSTACLE_COOLDOWN_MS = 600;
+const MOVING_OBSTACLE_KNOCKBACK_PX = 100;
+const MOVING_OBSTACLE_HEALTH_HIT = 4;
+const MOVING_OBSTACLE_BURNOUT_THRESHOLD = 8;
+const MOVING_OBSTACLE_BURNOUT_MAGNITUDE = 5;
+// Two-phase input lock after a hit:
+//   Phase 1 (SLIDE_MS): westward shove at `KNOCKBACK_PX / SLIDE_MS` px/sec.
+//   Phase 2 (TOTAL_LOCK_MS - SLIDE_MS): frozen-stunned, input ignored,
+//   no motion. Both phases derive from `lastMovingObstacleHitAtRef`, so a
+//   cascading hit during either phase restarts the full sequence.
+// On stun-end, usePlayerMovement's must-release gate kicks in: any
+// direction key held through the lock stays ignored until physically
+// released, then a re-press fires normally.
+// Cascading rule unchanged: per-obstacle dedupe (COOLDOWN_MS) lets a
+// different obstacle in the slide path re-hit even before 600ms elapses.
+const MOVING_OBSTACLE_SLIDE_MS = 200;
+const MOVING_OBSTACLE_TOTAL_LOCK_MS = 1000;
+// In-canvas damage floater (above the player) on each moving-obstacle
+// hit. Mirrors the HUD chip's "−N" so the impact reads at the player,
+// not just the HUD chip. Same envelope as StatChip's DELTA_DURATION_MS.
+const DAMAGE_FLOATER_DURATION_MS = 900;
+
+interface DamageFloater {
+  id: number;
+  x: number;
+  y: number;
+  magnitude: number;
+}
 
 // Issue #77 — when entering a room via the REWIND_DOOR (back-walk into
 // replay of the previous month), spawn the player just LEFT of the
@@ -470,6 +504,77 @@ export function DecisionRoom({ config, onExit }: Props) {
 
     if (triggered.current) return;
 
+    // Moving-obstacle collision (medium-tier, v2.0.18 + two-phase lock
+    // follow-up). Detected separately from static obstacles — the player
+    // walks through but takes a hit + a fast westward shove + a frozen
+    // stun. Suppressed in replay so revisited rooms don't redispatch
+    // side-effects. Per-obstacle dedupe: the same obstacle can't re-fire
+    // within COOLDOWN_MS, but a *different* obstacle in the slide path
+    // can — so a chain across the two `shutters` blocks (or any future
+    // multi-block layout) cascades naturally.
+    const movingRects = movingObstacleRectsRef.current;
+    const now = performance.now();
+    if (!isReplay && movingRects.length > 0) {
+      for (let i = 0; i < movingRects.length; i++) {
+        const rect = movingRects[i];
+        if (!circleIntersectsRect(state.position.x, state.position.y, PLAYER_RADIUS, rect)) continue;
+        const sinceLast = now - lastMovingObstacleHitAtRef.current;
+        const sameObstacleStillCoolingDown =
+          i === lastHitObstacleIndexRef.current && sinceLast < MOVING_OBSTACLE_COOLDOWN_MS;
+        if (sameObstacleStillCoolingDown) continue;
+
+        lastMovingObstacleHitAtRef.current = now;
+        lastHitObstacleIndexRef.current = i;
+        movingObstacleHitCountRef.current += 1;
+
+        // Phase 1 begins immediately: westward velocity until SLIDE_MS
+        // elapses. The slide→stun transition + total unlock are handled
+        // in the timing block below so a cascading mid-stun hit re-enters
+        // Phase 1 cleanly.
+        const slideSpeedPxPerSec =
+          MOVING_OBSTACLE_KNOCKBACK_PX / (MOVING_OBSTACLE_SLIDE_MS / 1000);
+        knockbackVelocityRef.current = { x: -slideSpeedPxPerSec, y: 0 };
+        setIsStunnedRef.current(true);
+
+        // Side-effects per §4: small health hit on each contact;
+        // burnout +5 once a per-room hit threshold is crossed (so
+        // brute-forcing through the obstacle stings).
+        dispatch(applyStatEffect({ stat: 'health', op: '-', magnitude: MOVING_OBSTACLE_HEALTH_HIT }));
+        if (movingObstacleHitCountRef.current === MOVING_OBSTACLE_BURNOUT_THRESHOLD) {
+          dispatch(applyStatEffect({ stat: 'burnout', op: '+', magnitude: MOVING_OBSTACLE_BURNOUT_MAGNITUDE }));
+        }
+        // Emit an in-canvas "−N" floater anchored at the impact point
+        // so the player reads damage at the player sprite, not just on
+        // the HUD chip. Auto-removes after the animation completes.
+        const floaterId = ++damageFloaterIdRef.current;
+        const floaterX = state.position.x;
+        const floaterY = state.position.y;
+        setDamageFloatersRef.current((d) => [
+          ...d,
+          { id: floaterId, x: floaterX, y: floaterY, magnitude: MOVING_OBSTACLE_HEALTH_HIT },
+        ]);
+        window.setTimeout(() => {
+          setDamageFloatersRef.current((d) => d.filter((f) => f.id !== floaterId));
+        }, DAMAGE_FLOATER_DURATION_MS);
+        break;
+      }
+    }
+    // Phase transitions, driven off the last-hit timestamp so a cascading
+    // hit naturally restarts at Phase 1. Phase 1 → Phase 2 zeroes the
+    // velocity (still input-locked, no motion). Phase 2 → unlock clears
+    // the ref so usePlayerMovement returns control; its must-release
+    // gate ignores any direction key that was held through the lock until
+    // it's physically released.
+    if (knockbackVelocityRef.current !== null) {
+      const sinceHit = now - lastMovingObstacleHitAtRef.current;
+      if (sinceHit >= MOVING_OBSTACLE_TOTAL_LOCK_MS) {
+        knockbackVelocityRef.current = null;
+        setIsStunnedRef.current(false);
+      } else if (sinceHit >= MOVING_OBSTACLE_SLIDE_MS && knockbackVelocityRef.current.x !== 0) {
+        knockbackVelocityRef.current = { x: 0, y: 0 };
+      }
+    }
+
     // Rewind door (#33). Walking in enters replay of the previous
     // (non-consequence) past month, or — if already in replay — goes
     // further back. Hidden / inert if no eligible past month exists.
@@ -491,6 +596,20 @@ export function DecisionRoom({ config, onExit }: Props) {
     if (!playerInsideDoor(forwardDoor, state.position.x, state.position.y)) return;
     triggered.current = true;
     setCommitted(true);
+
+    // Bonus XP for an untouched traversal of a room that had moving
+    // obstacles (v2.0.18, §4). Suppressed in replay (no rewards on
+    // revisit) and on the finale (no engine rewards land at month 70).
+    if (
+      !isReplay &&
+      !isFinale &&
+      (layout.movingObstacles?.length ?? 0) > 0 &&
+      movingObstacleHitCountRef.current === 0 &&
+      !untouchedBonusFiredRef.current
+    ) {
+      untouchedBonusFiredRef.current = true;
+      dispatch(addXp(XP_TIER_BONUS_UNTOUCHED));
+    }
 
     // Replay (#33): forward door is the "↩ Return" exit. No decision
     // fires, no event rolls, no state change — just dispatch exitReplay
@@ -520,26 +639,78 @@ export function DecisionRoom({ config, onExit }: Props) {
         onExit();
       }
     }, MODAL_POP_DELAY_MS);
-  }, [layout.door, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch]);
+  }, [layout.door, layout.movingObstacles, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch]);
 
   const initialSpawn = useMemo<Vector2>(
     () => (isReplay ? replaySpawnFor(layout.door) : layout.spawn),
     [isReplay, layout.door, layout.spawn],
   );
 
-  const playerState = usePlayerMovement({
+  const playerActive =
+    !committed &&
+    activeDecision === null &&
+    activeEvent === null &&
+    activeInteractable === null &&
+    !tutorialActive;
+
+  // Knockback velocity ref — declared above usePlayerMovement so it can
+  // be passed as `externalVelocityRef`. While `current` is non-null, the
+  // hook reads it instead of keyboard input. The two-phase timing
+  // (slide + stun + unlock) is driven from `lastMovingObstacleHitAtRef`
+  // inside handleTick; no separate "until" timestamp needed.
+  const knockbackVelocityRef = useRef<{ x: number; y: number } | null>(null);
+
+  const player = usePlayerMovement({
     initialPosition: initialSpawn,
     bounds: ROOM_BOUNDS,
     obstacles: layout.obstacles,
-    active:
-      !committed &&
-      activeDecision === null &&
-      activeEvent === null &&
-      activeInteractable === null &&
-      !tutorialActive,
+    active: playerActive,
     speed: BASE_SPEED * speedMultiplier,
     onTick: handleTick,
+    externalVelocityRef: knockbackVelocityRef,
   });
+  const playerState = player.state;
+
+  // Per-frame positions of any moving obstacles (medium-tier rooms,
+  // v2.0.18). Empty for simple/easy templates — the hook short-circuits
+  // and doesn't subscribe to rAF when there's no motion to drive.
+  const movingObstacleRects = useMovingObstacles(
+    layout.movingObstacles,
+    playerActive,
+  );
+  // Per-room moving-obstacle hit accounting (v2.0.18). Resets per mount
+  // because DecisionRoom is keyed by `monthId` in RoomRenderer.
+  const movingObstacleHitCountRef = useRef(0);
+  const lastMovingObstacleHitAtRef = useRef(0);
+  // Per-obstacle dedupe (v2.0.18 follow-up). A new obstacle can re-hit
+  // the player even if the global cooldown hasn't elapsed; same obstacle
+  // re-firing within the cooldown is suppressed.
+  const lastHitObstacleIndexRef = useRef<number>(-1);
+  const untouchedBonusFiredRef = useRef(false);
+  const [damageFloaters, setDamageFloaters] = useState<DamageFloater[]>([]);
+  const damageFloaterIdRef = useRef(0);
+  // Render-only flag: drives the "stunned" stars above the player for
+  // the 1-sec lock window. Mirrors the lifetime of knockbackVelocityRef
+  // (set on hit, cleared on unlock) but lives in state so React re-renders.
+  const [isStunned, setIsStunned] = useState(false);
+  const setIsStunnedRef = useRef(setIsStunned);
+  // eslint-disable-next-line react-hooks/immutability
+  useEffect(() => { setIsStunnedRef.current = setIsStunned; }, [setIsStunned]);
+  // Mirror the per-frame moving-obstacle rects + the player setter so
+  // handleTick (a stable useCallback declared above) can read fresh
+  // values without rebinding the game-loop subscription each frame.
+  // Same pattern as Pong.tsx's score/paddle refs; the react-hooks
+  // immutability rule is over-eager on the custom-hook-return path.
+  const movingObstacleRectsRef = useRef(movingObstacleRects);
+  // eslint-disable-next-line react-hooks/immutability
+  useEffect(() => { movingObstacleRectsRef.current = movingObstacleRects; }, [movingObstacleRects]);
+  // Mirror trick for setDamageFloaters: handleTick is declared earlier
+  // in the file as a stable useCallback, so reading the setter through
+  // a ref keeps the react-hooks/immutability lint rule happy without
+  // rebinding the loop. Same pattern as Pong.tsx's score/paddle refs.
+  const setDamageFloatersRef = useRef(setDamageFloaters);
+  // eslint-disable-next-line react-hooks/immutability
+  useEffect(() => { setDamageFloatersRef.current = setDamageFloaters; }, [setDamageFloaters]);
 
   // E-key opens the nearest interactable's modal when the player is adjacent
   // and no other modal is active. Picks a random eligible dialogue. The
@@ -1061,6 +1232,24 @@ export function DecisionRoom({ config, onExit }: Props) {
             />
           ))}
 
+          {/* Moving obstacles (medium-tier, v2.0.18). Same visual
+              register as static obstacles but tinted with `palette.accent`
+              + a thicker stroke so the player reads "this one moves." */}
+          {movingObstacleRects.map((rect, i) => (
+            <rect
+              key={`mo-${i}`}
+              data-region="moving-obstacle"
+              x={rect.x}
+              y={rect.y}
+              width={rect.width}
+              height={rect.height}
+              fill={palette.accent}
+              stroke={palette.ink}
+              strokeWidth={3}
+              rx={4}
+            />
+          ))}
+
           {/* Interactables. Real sprites land per the `art` token via
               <InteractableSprite> (Day 13b.2). NPCs render at their live
               wander position; objects at the fixed placed spawn. The
@@ -1127,6 +1316,69 @@ export function DecisionRoom({ config, onExit }: Props) {
           })}
 
           <Player state={playerState} />
+
+          {/* "Stunned" stars during the 1-sec moving-obstacle lock. Three
+              ★ characters in a small fan above the player's head, each
+              twinkling at a 200ms phase offset for a wave effect. Follow
+              the player position so they ride along with the slide and
+              then sit above the stationary stunned player. */}
+          {isStunned && (
+            <g data-region="stun-stars" pointerEvents="none">
+              <text
+                x={playerState.position.x - 16}
+                y={playerState.position.y - PLAYER_RADIUS - 14}
+                fontSize={16}
+                fill="#ffd54f"
+                textAnchor="middle"
+                style={{ animation: 'stun-twinkle 600ms ease-in-out infinite' }}
+              >
+                ★
+              </text>
+              <text
+                x={playerState.position.x}
+                y={playerState.position.y - PLAYER_RADIUS - 22}
+                fontSize={18}
+                fill="#ffd54f"
+                textAnchor="middle"
+                style={{ animation: 'stun-twinkle 600ms ease-in-out infinite 200ms' }}
+              >
+                ★
+              </text>
+              <text
+                x={playerState.position.x + 16}
+                y={playerState.position.y - PLAYER_RADIUS - 14}
+                fontSize={16}
+                fill="#ffd54f"
+                textAnchor="middle"
+                style={{ animation: 'stun-twinkle 600ms ease-in-out infinite 400ms' }}
+              >
+                ★
+              </text>
+            </g>
+          )}
+
+          {/* Moving-obstacle damage floaters (v2.0.18). Rendered after
+              the player so they layer on top. `text-anchor="middle"`
+              centers horizontally; the keyframe handles rise + fade. */}
+          {damageFloaters.map((f) => (
+            <text
+              key={f.id}
+              data-region="damage-floater"
+              x={f.x - 75}
+              y={f.y - PLAYER_RADIUS - 6}
+              textAnchor="middle"
+              fontSize={20}
+              fontWeight={700}
+              fill={palette.accent}
+              pointerEvents="none"
+              style={{
+                animation: `damage-float ${DAMAGE_FLOATER_DURATION_MS}ms ease-out forwards`,
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
+              −{f.magnitude}
+            </text>
+          ))}
         </svg>
         </div>
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import type { Vector2, Bounds, Rect } from '../types/geometry';
 import type { PlayerState } from '../types/player';
 import { useKeyboardInput } from './useKeyboardInput';
@@ -14,6 +14,23 @@ interface UsePlayerMovementOptions {
   speed?: number;       // pixels per second
   active?: boolean;     // pause movement during transitions, dialogues, etc.
   onTick?: (state: PlayerState) => void;  // fires inside the rAF loop each frame
+  // Optional override velocity. When `current` is non-null, the loop uses
+  // it as the per-frame velocity (px/sec) and ignores keyboard input. Used
+  // by DecisionRoom for moving-obstacle knockback slide — the caller sets
+  // a westward velocity for a cooloff window, which lets the existing
+  // bounds + static-obstacle resolution handle clamping/collision while
+  // the player slides. Clearing the ref returns control to the keyboard.
+  externalVelocityRef?: RefObject<Vector2 | null>;
+}
+
+// v2.0.18 — return shape widened so callers can imperatively reposition the
+// player (e.g. moving-obstacle knockback in DecisionRoom). `state` is the
+// per-frame render state; `setPosition` halts momentum and snaps the
+// internal ref to the new position so the next frame's collision math is
+// clean.
+export interface PlayerControl {
+  state: PlayerState;
+  setPosition: (pos: Vector2) => void;
 }
 
 const DEFAULT_SPEED = 180;
@@ -27,7 +44,8 @@ export function usePlayerMovement({
   speed = DEFAULT_SPEED,
   active = true,
   onTick,
-}: UsePlayerMovementOptions): PlayerState {
+  externalVelocityRef,
+}: UsePlayerMovementOptions): PlayerControl {
   const input = useKeyboardInput();
 
   // Internal mutable state — updated every frame, no re-renders here.
@@ -53,22 +71,80 @@ export function usePlayerMovement({
     onTickRef.current = onTick;
   });
 
+  // "Must-release" input gate. When externalVelocity transitions from
+  // non-null back to null (e.g. moving-obstacle stun ends), any direction
+  // key that was being held at that moment stays ignored until it's seen
+  // released — so a sustained "right hold" through the stun doesn't
+  // immediately resume motion. Each key clears independently on release,
+  // and a released-then-pressed key fires normally.
+  const wasExternalRef = useRef(false);
+  const blockedKeysRef = useRef({ up: false, down: false, left: false, right: false });
+
   useGameLoop((delta) => {
-    const { up, down, left, right } = input.current;
+    // External velocity (e.g. moving-obstacle knockback slide) takes
+    // precedence over keyboard input when set. Caller clears the ref to
+    // return control to the player.
+    const ext = externalVelocityRef?.current ?? null;
+    const wasExt = wasExternalRef.current;
+    wasExternalRef.current = ext !== null;
 
-    // Build the intent vector
-    let dx = (right ? 1 : 0) - (left ? 1 : 0);
-    let dy = (down ? 1 : 0) - (up ? 1 : 0);
+    let vx: number;
+    let vy: number;
+    let facing = stateRef.current.facing;
 
-    // Normalise diagonals so moving up-right isn't faster than moving right
-    if (dx !== 0 && dy !== 0) {
-      const inv = 1 / Math.sqrt(2);
-      dx *= inv;
-      dy *= inv;
+    if (ext) {
+      vx = ext.x;
+      vy = ext.y;
+      // Face the direction of forced motion so the sprite reads as
+      // "being shoved" rather than frozen-but-sliding.
+      if (ext.x < 0) facing = 'left';
+      else if (ext.x > 0) facing = 'right';
+      else if (ext.y < 0) facing = 'up';
+      else if (ext.y > 0) facing = 'down';
+    } else {
+      const raw = input.current;
+      const blocked = blockedKeysRef.current;
+
+      // Snapshot currently-held keys at the moment external control
+      // ends — those keys remain blocked until physically released.
+      if (wasExt) {
+        blocked.up = raw.up;
+        blocked.down = raw.down;
+        blocked.left = raw.left;
+        blocked.right = raw.right;
+      }
+      // Auto-clear: any blocked key the player has now released is
+      // un-armed. Next press will fire normally.
+      if (!raw.up) blocked.up = false;
+      if (!raw.down) blocked.down = false;
+      if (!raw.left) blocked.left = false;
+      if (!raw.right) blocked.right = false;
+
+      const up = raw.up && !blocked.up;
+      const down = raw.down && !blocked.down;
+      const left = raw.left && !blocked.left;
+      const right = raw.right && !blocked.right;
+
+      // Build the intent vector
+      let dx = (right ? 1 : 0) - (left ? 1 : 0);
+      let dy = (down ? 1 : 0) - (up ? 1 : 0);
+
+      // Normalise diagonals so moving up-right isn't faster than moving right
+      if (dx !== 0 && dy !== 0) {
+        const inv = 1 / Math.sqrt(2);
+        dx *= inv;
+        dy *= inv;
+      }
+
+      vx = dx * speed;
+      vy = dy * speed;
+
+      // Update facing direction (favour horizontal when both are pressed)
+      if (dx > 0) facing = 'right';
+      else if (dx < 0) facing = 'left';
+      else if (dy > 0) facing = 'down';
+      else if (dy < 0) facing = 'up';
     }
-
-    const vx = dx * speed;
-    const vy = dy * speed;
 
     const desired = {
       x: stateRef.current.position.x + vx * delta,
@@ -83,13 +159,6 @@ export function usePlayerMovement({
       bounds,
     );
 
-    // Update facing direction (favour horizontal when both are pressed)
-    let facing = stateRef.current.facing;
-    if (dx > 0) facing = 'right';
-    else if (dx < 0) facing = 'left';
-    else if (dy > 0) facing = 'down';
-    else if (dy < 0) facing = 'up';
-
     stateRef.current = {
       position: resolved,
       velocity: { x: vx, y: vy },
@@ -100,5 +169,14 @@ export function usePlayerMovement({
     onTickRef.current?.(stateRef.current);
   }, active);
 
-  return renderState;
+  const setPosition = useCallback((pos: Vector2) => {
+    stateRef.current = {
+      ...stateRef.current,
+      position: { ...pos },
+      velocity: { x: 0, y: 0 },
+    };
+    setRenderState(stateRef.current);
+  }, []);
+
+  return { state: renderState, setPosition };
 }
