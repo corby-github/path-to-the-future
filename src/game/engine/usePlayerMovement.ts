@@ -71,11 +71,22 @@ export function usePlayerMovement({
     onTickRef.current = onTick;
   });
 
+  // "Must-release" input gate. When externalVelocity transitions from
+  // non-null back to null (e.g. moving-obstacle stun ends), any direction
+  // key that was being held at that moment stays ignored until it's seen
+  // released — so a sustained "right hold" through the stun doesn't
+  // immediately resume motion. Each key clears independently on release,
+  // and a released-then-pressed key fires normally.
+  const wasExternalRef = useRef(false);
+  const blockedKeysRef = useRef({ up: false, down: false, left: false, right: false });
+
   useGameLoop((delta) => {
     // External velocity (e.g. moving-obstacle knockback slide) takes
     // precedence over keyboard input when set. Caller clears the ref to
     // return control to the player.
     const ext = externalVelocityRef?.current ?? null;
+    const wasExt = wasExternalRef.current;
+    wasExternalRef.current = ext !== null;
 
     let vx: number;
     let vy: number;
@@ -91,7 +102,28 @@ export function usePlayerMovement({
       else if (ext.y < 0) facing = 'up';
       else if (ext.y > 0) facing = 'down';
     } else {
-      const { up, down, left, right } = input.current;
+      const raw = input.current;
+      const blocked = blockedKeysRef.current;
+
+      // Snapshot currently-held keys at the moment external control
+      // ends — those keys remain blocked until physically released.
+      if (wasExt) {
+        blocked.up = raw.up;
+        blocked.down = raw.down;
+        blocked.left = raw.left;
+        blocked.right = raw.right;
+      }
+      // Auto-clear: any blocked key the player has now released is
+      // un-armed. Next press will fire normally.
+      if (!raw.up) blocked.up = false;
+      if (!raw.down) blocked.down = false;
+      if (!raw.left) blocked.left = false;
+      if (!raw.right) blocked.right = false;
+
+      const up = raw.up && !blocked.up;
+      const down = raw.down && !blocked.down;
+      const left = raw.left && !blocked.left;
+      const right = raw.right && !blocked.right;
 
       // Build the intent vector
       let dx = (right ? 1 : 0) - (left ? 1 : 0);

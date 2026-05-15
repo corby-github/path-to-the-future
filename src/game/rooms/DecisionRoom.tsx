@@ -50,14 +50,18 @@ const MOVING_OBSTACLE_KNOCKBACK_PX = 100;
 const MOVING_OBSTACLE_HEALTH_HIT = 4;
 const MOVING_OBSTACLE_BURNOUT_THRESHOLD = 8;
 const MOVING_OBSTACLE_BURNOUT_MAGNITUDE = 5;
-// Cooloff = duration of the smooth westward slide AND the input lock.
-// Player is shoved at `KNOCKBACK_PX / COOLOFF_MS` px/sec; cascading hits
-// from a different obstacle during the slide refresh the timer and push
-// further west until the player either reaches the left wall or no
-// obstacles remain in the slide path. The dedupe (COOLDOWN_MS) is now
-// per-obstacle so a slide through `shutters` block #2 after a hit from
-// block #1 can fire even before 600ms elapses.
-const MOVING_OBSTACLE_COOLOFF_MS = 350;
+// Two-phase input lock after a hit:
+//   Phase 1 (SLIDE_MS): westward shove at `KNOCKBACK_PX / SLIDE_MS` px/sec.
+//   Phase 2 (TOTAL_LOCK_MS - SLIDE_MS): frozen-stunned, input ignored,
+//   no motion. Both phases derive from `lastMovingObstacleHitAtRef`, so a
+//   cascading hit during either phase restarts the full sequence.
+// On stun-end, usePlayerMovement's must-release gate kicks in: any
+// direction key held through the lock stays ignored until physically
+// released, then a re-press fires normally.
+// Cascading rule unchanged: per-obstacle dedupe (COOLDOWN_MS) lets a
+// different obstacle in the slide path re-hit even before 600ms elapses.
+const MOVING_OBSTACLE_SLIDE_MS = 200;
+const MOVING_OBSTACLE_TOTAL_LOCK_MS = 1000;
 // In-canvas damage floater (above the player) on each moving-obstacle
 // hit. Mirrors the HUD chip's "−N" so the impact reads at the player,
 // not just the HUD chip. Same envelope as StatChip's DELTA_DURATION_MS.
@@ -500,14 +504,14 @@ export function DecisionRoom({ config, onExit }: Props) {
 
     if (triggered.current) return;
 
-    // Moving-obstacle collision (medium-tier, v2.0.18 + cooloff slide
+    // Moving-obstacle collision (medium-tier, v2.0.18 + two-phase lock
     // follow-up). Detected separately from static obstacles — the player
-    // walks through but takes a hit + a smooth westward shove during the
-    // cooloff window. Suppressed in replay so revisited rooms don't
-    // redispatch side-effects. Per-obstacle dedupe: the same obstacle
-    // can't re-fire within COOLDOWN_MS, but a *different* obstacle in
-    // the slide path can — so a chain across the two `shutters` blocks
-    // (or any future multi-block layout) cascades naturally.
+    // walks through but takes a hit + a fast westward shove + a frozen
+    // stun. Suppressed in replay so revisited rooms don't redispatch
+    // side-effects. Per-obstacle dedupe: the same obstacle can't re-fire
+    // within COOLDOWN_MS, but a *different* obstacle in the slide path
+    // can — so a chain across the two `shutters` blocks (or any future
+    // multi-block layout) cascades naturally.
     const movingRects = movingObstacleRectsRef.current;
     const now = performance.now();
     if (!isReplay && movingRects.length > 0) {
@@ -523,16 +527,13 @@ export function DecisionRoom({ config, onExit }: Props) {
         lastHitObstacleIndexRef.current = i;
         movingObstacleHitCountRef.current += 1;
 
-        // Smooth slide replaces the v1 imperative snap. usePlayerMovement
-        // reads `knockbackVelocityRef` in preference to keyboard input, so
-        // the player slides west at `KNOCKBACK_PX / COOLOFF_MS` px/sec
-        // for COOLOFF_MS. resolveMovement clamps at the left wall; if the
-        // slide passes through another obstacle, the loop above will fire
-        // again next frame (different index, dedupe doesn't suppress).
-        const knockbackSpeedPxPerSec =
-          MOVING_OBSTACLE_KNOCKBACK_PX / (MOVING_OBSTACLE_COOLOFF_MS / 1000);
-        knockbackVelocityRef.current = { x: -knockbackSpeedPxPerSec, y: 0 };
-        knockbackUntilRef.current = now + MOVING_OBSTACLE_COOLOFF_MS;
+        // Phase 1 begins immediately: westward velocity until SLIDE_MS
+        // elapses. The slide→stun transition + total unlock are handled
+        // in the timing block below so a cascading mid-stun hit re-enters
+        // Phase 1 cleanly.
+        const slideSpeedPxPerSec =
+          MOVING_OBSTACLE_KNOCKBACK_PX / (MOVING_OBSTACLE_SLIDE_MS / 1000);
+        knockbackVelocityRef.current = { x: -slideSpeedPxPerSec, y: 0 };
 
         // Side-effects per §4: small health hit on each contact;
         // burnout +5 once a per-room hit threshold is crossed (so
@@ -557,12 +558,19 @@ export function DecisionRoom({ config, onExit }: Props) {
         break;
       }
     }
-    // Cooloff expiry: clear the slide velocity once the window closes so
-    // keyboard control returns next frame. Cascading hits above refresh
-    // `knockbackUntilRef` first, so this only fires when no fresh hit
-    // landed this frame.
-    if (knockbackVelocityRef.current !== null && now >= knockbackUntilRef.current) {
-      knockbackVelocityRef.current = null;
+    // Phase transitions, driven off the last-hit timestamp so a cascading
+    // hit naturally restarts at Phase 1. Phase 1 → Phase 2 zeroes the
+    // velocity (still input-locked, no motion). Phase 2 → unlock clears
+    // the ref so usePlayerMovement returns control; its must-release
+    // gate ignores any direction key that was held through the lock until
+    // it's physically released.
+    if (knockbackVelocityRef.current !== null) {
+      const sinceHit = now - lastMovingObstacleHitAtRef.current;
+      if (sinceHit >= MOVING_OBSTACLE_TOTAL_LOCK_MS) {
+        knockbackVelocityRef.current = null;
+      } else if (sinceHit >= MOVING_OBSTACLE_SLIDE_MS && knockbackVelocityRef.current.x !== 0) {
+        knockbackVelocityRef.current = { x: 0, y: 0 };
+      }
     }
 
     // Rewind door (#33). Walking in enters replay of the previous
@@ -643,13 +651,12 @@ export function DecisionRoom({ config, onExit }: Props) {
     activeInteractable === null &&
     !tutorialActive;
 
-  // Knockback slide state — declared above usePlayerMovement so the ref
-  // can be passed as `externalVelocityRef`. While `current` is non-null,
-  // the hook reads it instead of keyboard input; slide continues until
-  // cooloff expires (cleared in handleTick) or the player hits the left
-  // wall (resolveMovement clamps in-place).
+  // Knockback velocity ref — declared above usePlayerMovement so it can
+  // be passed as `externalVelocityRef`. While `current` is non-null, the
+  // hook reads it instead of keyboard input. The two-phase timing
+  // (slide + stun + unlock) is driven from `lastMovingObstacleHitAtRef`
+  // inside handleTick; no separate "until" timestamp needed.
   const knockbackVelocityRef = useRef<{ x: number; y: number } | null>(null);
-  const knockbackUntilRef = useRef(0);
 
   const player = usePlayerMovement({
     initialPosition: initialSpawn,
@@ -1308,10 +1315,10 @@ export function DecisionRoom({ config, onExit }: Props) {
             <text
               key={f.id}
               data-region="damage-floater"
-              x={f.x}
+              x={f.x - 75}
               y={f.y - PLAYER_RADIUS - 6}
               textAnchor="middle"
-              fontSize={39}
+              fontSize={20}
               fontWeight={700}
               fill={palette.accent}
               pointerEvents="none"
