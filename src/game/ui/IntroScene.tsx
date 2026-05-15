@@ -54,7 +54,11 @@ export function IntroScene({ onComplete }: Props) {
     <div data-component="IntroScene" style={screenStyle}>
       <ScenePlayer
         scene={lines}
-        vars={{ playerName: profile.name }}
+        vars={{
+          playerName: profile.name,
+          kidA: profile.kidAName,
+          kidB: profile.kidBName,
+        }}
         onComplete={onComplete}
         lineMs={3500}
       />

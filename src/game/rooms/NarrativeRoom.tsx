@@ -2,8 +2,9 @@ import { useCallback, useEffect } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { monthLabel } from '../calendar';
 import { useCareerPack } from '../content/useCareerPack';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { exitReplay } from '../state/slices/progressSlice';
+import { interpolate } from '../content/interpolate';
 import type { NarrativeRoomConfig } from '../types/room';
 
 interface Props {
@@ -14,6 +15,19 @@ interface Props {
 export function NarrativeRoom({ config, onContinue }: Props) {
   const { palette, isReplay, liveMonth } = useCareerPack();
   const dispatch = useAppDispatch();
+  // Issue #76 — cinematic-January narratives (Jan 2020/2021/.../2029) and
+  // future packs' year-transition beats can reference player-supplied kid
+  // names (`{kidA}` / `{kidB}`) and player name (`{playerName}`).
+  // Interpolated against the live profile; defaults (`Hazel` / `Bram`)
+  // back-compat old saves.
+  const playerName = useAppSelector((s) => s.profile.name);
+  const kidAName = useAppSelector((s) => s.profile.kidAName);
+  const kidBName = useAppSelector((s) => s.profile.kidBName);
+  const vars: Record<string, string | undefined> = {
+    playerName: playerName || 'you',
+    kidA: kidAName,
+    kidB: kidBName,
+  };
 
   // In replay (#33), the continue button becomes a return-to-live exit.
   // No state advances — just dispatch exitReplay and the new (live) room
@@ -65,10 +79,10 @@ export function NarrativeRoom({ config, onContinue }: Props) {
         {monthLabel(config.monthId)}
       </p>
       <h2 style={{ fontSize: 32, fontWeight: 400, margin: 0, marginBottom: 24, textAlign: 'center', lineHeight: 1.2 }}>
-        {config.title}
+        {interpolate(config.title, vars)}
       </h2>
       <p style={{ fontSize: 16, lineHeight: 1.7, maxWidth: 640, textAlign: 'center', margin: 0, marginBottom: 56, opacity: 0.85 }}>
-        {config.body}
+        {interpolate(config.body, vars)}
       </p>
       <button
         data-action={isReplay ? 'return' : 'continue'}

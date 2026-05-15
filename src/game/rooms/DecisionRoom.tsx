@@ -264,6 +264,17 @@ export function DecisionRoom({ config, onExit }: Props) {
   const flags = useAppSelector((s) => s.flags);
   const { speedMultiplier, forcedLayout, eventMode, forceArcade } = useDevControls();
   const { setTemplate } = useCurrentRoom();
+  // Issue #76 — interactable labels in pack JSON may use `{kidA}` / `{kidB}` /
+  // `{playerName}` tokens (homeschool kid NPCs). Resolved against the live
+  // profile so sprite captions in the room reflect the player's chosen names.
+  const interpolationVars: Record<string, string | undefined> = useMemo(
+    () => ({
+      playerName: profile.name || 'you',
+      kidA: profile.kidAName,
+      kidB: profile.kidBName,
+    }),
+    [profile.name, profile.kidAName, profile.kidBName],
+  );
 
   const [layout] = useState(() => {
     const seed = computeRoomSeed({
@@ -1104,7 +1115,7 @@ export function DecisionRoom({ config, onExit }: Props) {
                       fill={palette.ink}
                       letterSpacing="0.04em"
                     >
-                      {labelFor(p.def)}
+                      {labelFor(p.def, interpolationVars)}
                     </text>
                   </>
                 )}

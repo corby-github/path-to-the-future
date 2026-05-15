@@ -72,6 +72,13 @@ export interface Manifest {
   // SWE pack omits this entirely (universal labels are already SWE-flavored).
   // Homeschool pack overrides all 8 tiers for the parenting register.
   classLabels?: Partial<Record<string, ClassLabel>>;
+  // Issue #76 — number of kid-name slots the pack expects the player to
+  // fill during init. Homeschool sets `2` (kidA = older, kidB = younger).
+  // When set, InitFlow inserts a kid-name phase after the career pick;
+  // content can interpolate `{kidA}` / `{kidB}` against `profile.kidAName`
+  // / `profile.kidBName`. Packs that don't reference kids omit the field
+  // entirely (SWE) and the init phase is skipped.
+  requiresKidNames?: number;
 }
 
 // Canonical stat keys eligible for relabeling. Mirrors §7 plus `xp`. Kept as

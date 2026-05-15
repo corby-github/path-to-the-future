@@ -13,10 +13,10 @@
           "scene": [
             "A laminated week-one sheet.",
             "A read-aloud you didn't pick.",
-            "Hazel finishes early."
+            "{kidA} finishes early."
           ],
           "effects": { "savings": "-180", "burnout": "-3", "technicalSkill": "+1", "network": "+1" },
-          "flavor": "The plan got you through the week. Some of the read-alouds you wouldn't have chosen. Hazel didn't mind. You did, quietly, while Hazel was laughing at the read-alouds."
+          "flavor": "The plan got you through the week. Some of the read-alouds you wouldn't have chosen. {kidA} didn't mind. You did, quietly, while {kidA} was laughing at the read-alouds."
         },
         {
           "label": "Write your own plan",
@@ -46,7 +46,7 @@
             "A schedule on the fridge."
           ],
           "effects": { "network": "+8", "reputation": "+3", "burnout": "+2", "health": "+1", "xp": "+150" },
-          "flavor": "Bram found a friend. Hazel found two. You found a parent you actually like. Tuesday mornings, gone — and you don't quite miss them."
+          "flavor": "{kidB} found a friend. {kidA} found two. You found a parent you actually like. Tuesday mornings, gone — and you don't quite miss them."
         },
         {
           "label": "Stay solo for now",
@@ -61,12 +61,12 @@
       "tags": ["teaching", "money", "accountability"],
       "weight": 1.0,
       "requires": { "month": ">=14" },
-      "prompt": "The state wants an end-of-year evaluation. You can put Hazel through a standardized test, or pay an evaluator to write a portfolio review instead.",
+      "prompt": "The state wants an end-of-year evaluation. You can put {kidA} through a standardized test, or pay an evaluator to write a portfolio review instead.",
       "options": [
         {
           "label": "Sit the test",
           "scene": [
-            "Hazel in a quiet room.",
+            "{kidA} in a quiet room.",
             "A No. 2 pencil.",
             "Three hours and a score sheet."
           ],
@@ -86,7 +86,7 @@
       "tags": ["career-movement", "identity", "money"],
       "weight": 0.9,
       "requires": { "month": ">=21" },
-      "prompt": "An old coworker has a remote contract that fits — twenty-five hours a week, decent rate. Bram is finally old enough to read in the other room. The work would not get done at the kitchen table.",
+      "prompt": "An old coworker has a remote contract that fits — twenty-five hours a week, decent rate. {kidB} is finally old enough to read in the other room. The work would not get done at the kitchen table.",
       "options": [
         {
           "label": "Take the contract",
@@ -96,7 +96,7 @@
             "A paycheck with your name on it."
           ],
           "effects": { "savings": "+4000", "reputation": "+4", "burnout": "+5", "technicalSkill": "-1", "health": "-1", "xp": "+300" },
-          "flavor": "The work was good. You were good at it. Hazel knocked on the door once and you said 'in a minute' and then forgot for forty. You didn't forget that you'd forgotten."
+          "flavor": "The work was good. You were good at it. {kidA} knocked on the door once and you said 'in a minute' and then forgot for forty. You didn't forget that you'd forgotten."
         },
         {
           "label": "Pass for now",
@@ -111,7 +111,7 @@
       "tags": ["family", "identity", "transition"],
       "weight": 1.0,
       "requires": { "month": ">=42" },
-      "prompt": "Hazel is twelve. She asks, calmly, if she can go to school in the fall. She has thought about it. She is not asking permission so much as telling you where she's heading.",
+      "prompt": "{kidA} is twelve. She asks, calmly, if she can go to school in the fall. She has thought about it. She is not asking permission so much as telling you where she's heading.",
       "options": [
         {
           "label": "Sign her up",
@@ -147,7 +147,7 @@
         {
           "label": "Let it go this week",
           "effects": { "burnout": "-3", "technicalSkill": "-1", "health": "-1" },
-          "flavor": "You let them watch the show twice through. You sat next to Bram for the second one. You both knew the dialogue. He recited it to you in the car the next day."
+          "flavor": "You let them watch the show twice through. You sat next to {kidB} for the second one. You both knew the dialogue. He recited it to you in the car the next day."
         },
         {
           "label": "Hold the line",
@@ -192,7 +192,7 @@
       "tags": ["family", "teaching", "humor"],
       "weight": 0.9,
       "requires": { "month": ">=4" },
-      "prompt": "Hazel has a fever Tuesday morning. The math test you scheduled is the math test you scheduled. The fever is real.",
+      "prompt": "{kidA} has a fever Tuesday morning. The math test you scheduled is the math test you scheduled. The fever is real.",
       "options": [
         {
           "label": "Push the test. Make soup.",
@@ -217,7 +217,7 @@
       "tags": ["community", "identity"],
       "weight": 0.8,
       "requires": { "month": ">=9" },
-      "prompt": "A dad at the park asks, with the careful politeness of someone winding up to disagree, what you do 'about socialization.' Hazel is right there, building something out of pinecones.",
+      "prompt": "A dad at the park asks, with the careful politeness of someone winding up to disagree, what you do 'about socialization.' {kidA} is right there, building something out of pinecones.",
       "options": [
         {
           "label": "Answer the real question",
@@ -227,7 +227,7 @@
         {
           "label": "Just smile and watch the kids",
           "effects": { "burnout": "+1", "reputation": "-2" },
-          "flavor": "You said 'oh, you know, plenty.' He nodded. You both watched the pinecone tower. It fell over. Hazel started a new one. The dad's question stayed in the air for ten minutes after he left — slightly longer than the pinecone tower."
+          "flavor": "You said 'oh, you know, plenty.' He nodded. You both watched the pinecone tower. It fell over. {kidA} started a new one. The dad's question stayed in the air for ten minutes after he left — slightly longer than the pinecone tower."
         }
       ]
     },
@@ -272,7 +272,7 @@
             "A presentation at the kitchen table."
           ],
           "effects": { "burnout": "+3", "technicalSkill": "+3", "reputation": "+1", "xp": "+150" },
-          "flavor": "They went deeper than you expected. Hazel asked questions that weren't on any worksheet. Bram learned the word 'symbiosis.' You went back to the textbook on Monday anyway. You weren't ready to give it up."
+          "flavor": "They went deeper than you expected. {kidA} asked questions that weren't on any worksheet. {kidB} learned the word 'symbiosis.' You went back to the textbook on Monday anyway. You weren't ready to give it up."
         },
         {
           "label": "Stick with the plan you have",
@@ -287,7 +287,7 @@
       "tags": ["family", "teaching"],
       "weight": 1.0,
       "requires": { "month": ">=9" },
-      "prompt": "Bram is six and the letters are still rearranging themselves on the page for him. The boxed curriculum says he should be reading by now. The boxed curriculum doesn't know him.",
+      "prompt": "{kidB} is six and the letters are still rearranging themselves on the page for him. The boxed curriculum says he should be reading by now. The boxed curriculum doesn't know him.",
       "options": [
         {
           "label": "Get him evaluated",
@@ -312,7 +312,7 @@
       "tags": ["community", "identity"],
       "weight": 0.9,
       "requires": { "month": ">=15" },
-      "prompt": "Three of your park-bench parents sent their kids back to school this fall. The group chat is quieter on weekdays. Hazel asks if she can go too.",
+      "prompt": "Three of your park-bench parents sent their kids back to school this fall. The group chat is quieter on weekdays. {kidA} asks if she can go too.",
       "options": [
         {
           "label": "Talk it through",
@@ -392,7 +392,7 @@
             "A new park with no familiar dogs."
           ],
           "effects": { "savings": "+8000", "network": "-15", "burnout": "+6", "reputation": "+2", "xp": "+300" },
-          "flavor": "The new house was bigger. The first month, Bram kept asking when you were going home. By the third, he stopped asking and started calling the new place 'home' without thinking about it. You took that one."
+          "flavor": "The new house was bigger. The first month, {kidB} kept asking when you were going home. By the third, he stopped asking and started calling the new place 'home' without thinking about it. You took that one."
         },
         {
           "label": "Stay. Spouse declines.",
@@ -412,7 +412,7 @@
       "tags": ["family", "teaching"],
       "weight": 0.9,
       "requires": { "month": ">=25" },
-      "prompt": "Hazel asks for a phone. The number she names is a year older than the number you were planning. Most of her co-op friends have them.",
+      "prompt": "{kidA} asks for a phone. The number she names is a year older than the number you were planning. Most of her co-op friends have them.",
       "options": [
         {
           "label": "Get one with rails",
@@ -447,7 +447,7 @@
             "A teacher with a kinder voice than yours."
           ],
           "effects": { "savings": "-240", "burnout": "-5", "technicalSkill": "-3", "reputation": "-1", "xp": "+150" },
-          "flavor": "Bram likes it. He learns. You sit in the other room and listen to him laugh at something the bot said. The bot is, you suspect, slightly funnier than you. You'll have to write better material."
+          "flavor": "{kidB} likes it. He learns. You sit in the other room and listen to him laugh at something the bot said. The bot is, you suspect, slightly funnier than you. You'll have to write better material."
         },
         {
           "label": "Keep teaching it yourself",
@@ -457,7 +457,7 @@
         {
           "label": "Let them use it sometimes",
           "effects": { "burnout": "-2", "technicalSkill": "+1", "reputation": "+1" },
-          "flavor": "You set it up as one tool among several. Hazel went to it when she was stuck. Bram preferred you. You weren't sure if that was about you or about the bot. You took the win."
+          "flavor": "You set it up as one tool among several. {kidA} went to it when she was stuck. {kidB} preferred you. You weren't sure if that was about you or about the bot. You took the win."
         }
       ]
     },
@@ -482,7 +482,7 @@
         {
           "label": "Hold for now",
           "effects": { "burnout": "-1", "reputation": "-2" },
-          "flavor": "You wrote a careful no. The friend understood. The role got filled by someone who'd been waiting for something like it. You'd been waiting for Bram to find his other shoe. Different kinds of waiting."
+          "flavor": "You wrote a careful no. The friend understood. The role got filled by someone who'd been waiting for something like it. You'd been waiting for {kidB} to find his other shoe. Different kinds of waiting."
         }
       ]
     },
@@ -492,7 +492,7 @@
       "tags": ["family", "teen"],
       "weight": 1.0,
       "requires": { "month": ">=49" },
-      "prompt": "Hazel comes in at 11:47. She said 11:00. She is not drunk and she is not crying and she is also not making eye contact. You can lead with the time or with the look.",
+      "prompt": "{kidA} comes in at 11:47. She said 11:00. She is not drunk and she is not crying and she is also not making eye contact. You can lead with the time or with the look.",
       "options": [
         {
           "label": "Lead with the look",
@@ -517,7 +517,7 @@
       "tags": ["family", "teen", "identity"],
       "weight": 0.8,
       "requires": { "month": ">=53" },
-      "prompt": "Hazel mentions, casually, that someone from the co-op is 'kind of' her boyfriend now. She has practiced this sentence. She is watching your face.",
+      "prompt": "{kidA} mentions, casually, that someone from the co-op is 'kind of' her boyfriend now. She has practiced this sentence. She is watching your face.",
       "options": [
         {
           "label": "Ask one good question",
@@ -542,7 +542,7 @@
       "tags": ["family", "stress"],
       "weight": 0.9,
       "requires": { "month": ">=42" },
-      "prompt": "Bram has been quieter for three weeks. Not bad quiet — flat quiet. You can ask, you can wait, or you can call the pediatrician.",
+      "prompt": "{kidB} has been quieter for three weeks. Not bad quiet — flat quiet. You can ask, you can wait, or you can call the pediatrician.",
       "options": [
         {
           "label": "Ask. Then listen.",
@@ -557,7 +557,7 @@
         {
           "label": "Call the pediatrician",
           "effects": { "savings": "-180", "burnout": "+3", "reputation": "+2", "health": "+2", "xp": "+150" },
-          "flavor": "She listened for forty minutes. She gave you the name of someone. The someone had a six-week wait. You took the appointment. You told Bram. He said 'okay.' He looked, very briefly, relieved."
+          "flavor": "She listened for forty minutes. She gave you the name of someone. The someone had a six-week wait. You took the appointment. You told {kidB}. He said 'okay.' He looked, very briefly, relieved."
         },
         {
           "label": "Give him another week",
@@ -602,7 +602,7 @@
       "tags": ["family", "teen", "transition"],
       "weight": 1.0,
       "requires": { "month": ">=56" },
-      "prompt": "Hazel is fourteen. The high-school decision is real now. Dual enrollment at the community college, a private school, or finishing at home — pick a frame for the next four years.",
+      "prompt": "{kidA} is fourteen. The high-school decision is real now. Dual enrollment at the community college, a private school, or finishing at home — pick a frame for the next four years.",
       "options": [
         {
           "label": "Dual enrollment",
@@ -632,7 +632,7 @@
       "tags": ["family", "teen", "accountability"],
       "weight": 0.9,
       "requires": { "month": ">=60" },
-      "prompt": "Hazel's applications need a record. You can register her for the standardized test, or build a portfolio narrative with an evaluator. Most schools take both. A few prefer one.",
+      "prompt": "{kidA}'s applications need a record. You can register her for the standardized test, or build a portfolio narrative with an evaluator. Most schools take both. A few prefer one.",
       "options": [
         {
           "label": "The test route",
@@ -657,7 +657,7 @@
       "tags": ["family", "teen", "identity"],
       "weight": 0.6,
       "requires": { "month": ">=56" },
-      "prompt": "Bram, eleven, says, casually, that he doesn't think he wants to go to college. He's been watching videos about welding. He wants you to know.",
+      "prompt": "{kidB}, eleven, says, casually, that he doesn't think he wants to go to college. He's been watching videos about welding. He wants you to know.",
       "options": [
         {
           "label": "Take it seriously, at eleven",
@@ -687,7 +687,7 @@
             "Three weeks of multi-generation breakfast."
           ],
           "effects": { "savings": "-700", "burnout": "+5", "reputation": "+3", "network": "+2", "health": "-1", "xp": "+150" },
-          "flavor": "The kids ran your father's house in a way he hadn't seen up close. He watched Hazel teach Bram a science thing one morning and said, later, 'huh.' That huh was worth the trip."
+          "flavor": "The kids ran your father's house in a way he hadn't seen up close. He watched {kidA} teach {kidB} a science thing one morning and said, later, 'huh.' That huh was worth the trip."
         },
         {
           "label": "Send help. Visit on weekends.",
@@ -707,7 +707,7 @@
       "tags": ["family", "humor"],
       "weight": 0.7,
       "requires": { "month": ">=12" },
-      "prompt": "Bram's piano recital is Saturday afternoon. So is your one friend's surprise fortieth. Both will notice if you skip.",
+      "prompt": "{kidB}'s piano recital is Saturday afternoon. So is your one friend's surprise fortieth. Both will notice if you skip.",
       "options": [
         {
           "label": "The recital",
@@ -722,7 +722,7 @@
         {
           "label": "Half of each",
           "effects": { "burnout": "+3", "reputation": "+1", "network": "+1", "health": "-1" },
-          "flavor": "You did the recital, then the party. You missed the cake. You caught the toast. Bram, asked later if you'd been there, said yes. He wasn't wrong, exactly. You'd been there for the parts he was paying attention to. Which were, in fairness, the parts that mattered."
+          "flavor": "You did the recital, then the party. You missed the cake. You caught the toast. {kidB}, asked later if you'd been there, said yes. He wasn't wrong, exactly. You'd been there for the parts he was paying attention to. Which were, in fairness, the parts that mattered."
         }
       ]
     },
@@ -732,7 +732,7 @@
       "tags": ["identity", "transition"],
       "weight": 0.8,
       "requires": { "month": ">=63" },
-      "prompt": "Hazel will be away three nights a week next semester for the early-college program. Her bedroom on Tuesdays will look the way it'll look in a few years all the time. You can plan for the Tuesdays or you can sit in them and see what happens.",
+      "prompt": "{kidA} will be away three nights a week next semester for the early-college program. Her bedroom on Tuesdays will look the way it'll look in a few years all the time. You can plan for the Tuesdays or you can sit in them and see what happens.",
       "options": [
         {
           "label": "Plan something for those Tuesdays",
@@ -752,7 +752,7 @@
       "tags": ["family", "transition"],
       "weight": 0.9,
       "requires": { "month": ">=65" },
-      "prompt": "The local homeschool collective puts on a graduation ceremony every June. Caps, gowns, the works. Hazel could walk in it. She is not sure she wants to.",
+      "prompt": "The local homeschool collective puts on a graduation ceremony every June. Caps, gowns, the works. {kidA} could walk in it. She is not sure she wants to.",
       "options": [
         {
           "label": "Throw something at home",
@@ -762,7 +762,7 @@
             "A speech you wrote on Wednesday."
           ],
           "effects": { "savings": "-600", "burnout": "+3", "reputation": "+3", "network": "+2", "xp": "+150" },
-          "flavor": "Your sister came. Your father came. Hazel cried a little during your speech. She told you afterward she'd been afraid the speech would be embarrassing. She said yours wasn't. The 'yours wasn't' was the line you'd remember."
+          "flavor": "Your sister came. Your father came. {kidA} cried a little during your speech. She told you afterward she'd been afraid the speech would be embarrassing. She said yours wasn't. The 'yours wasn't' was the line you'd remember."
         },
         {
           "label": "Walk in the ceremony",
@@ -791,12 +791,12 @@
         {
           "label": "Approve the snack",
           "effects": { "burnout": "+1", "savings": "-5", "reputation": "+1" },
-          "flavor": "Snacks were issued. Crumbs were issued shortly thereafter. Bram's shirt acquired a small topographical map of goldfish. You vacuumed twice. Nobody thanked the vacuum."
+          "flavor": "Snacks were issued. Crumbs were issued shortly thereafter. {kidB}'s shirt acquired a small topographical map of goldfish. You vacuumed twice. Nobody thanked the vacuum."
         },
         {
           "label": "Be temporarily unavailable",
           "effects": { "burnout": "-1", "reputation": "-1" },
-          "flavor": "You closed the office door, audibly. 'Mom is in a meeting,' Hazel announced to no one in particular. Bram believed it for almost ninety seconds. The granola bars stayed in the cabinet, briefly."
+          "flavor": "You closed the office door, audibly. 'Mom is in a meeting,' {kidA} announced to no one in particular. {kidB} believed it for almost ninety seconds. The granola bars stayed in the cabinet, briefly."
         }
       ]
     },

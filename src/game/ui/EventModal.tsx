@@ -26,9 +26,13 @@ interface Props {
 export function EventModal({ event, onContinue }: Props) {
   const { palette } = useCareerPack();
   const playerName = useAppSelector((s) => s.profile.name);
+  const kidAName = useAppSelector((s) => s.profile.kidAName);
+  const kidBName = useAppSelector((s) => s.profile.kidBName);
 
   const vars: Record<string, string | undefined> = {
     playerName: playerName || 'you',
+    kidA: kidAName,
+    kidB: kidBName,
   };
 
   const hasScene = !!event.scene && event.scene.length > 0;

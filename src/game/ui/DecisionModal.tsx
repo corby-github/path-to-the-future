@@ -35,6 +35,8 @@ interface Props {
 export function DecisionModal({ decision, onChoose, onContinue, finale = false }: Props) {
   const { palette } = useCareerPack();
   const playerName = useAppSelector((s) => s.profile.name);
+  const kidAName = useAppSelector((s) => s.profile.kidAName);
+  const kidBName = useAppSelector((s) => s.profile.kidBName);
 
   const [phase, setPhase] = useState<Phase>('options');
   const [highlighted, setHighlighted] = useState(0);
@@ -42,6 +44,8 @@ export function DecisionModal({ decision, onChoose, onContinue, finale = false }
 
   const vars: Record<string, string | undefined> = {
     playerName: playerName || 'you',
+    kidA: kidAName,
+    kidB: kidBName,
   };
 
   const chosen = chosenIndex !== null ? decision.options[chosenIndex] : null;

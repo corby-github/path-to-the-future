@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useCareerPack } from '../content/useCareerPack';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { parseEffect, type StatKey } from '../content/applyEffects';
 import { labelFor, speakerHeaderFor } from '../content/interactableLabel';
+import { interpolate } from '../content/interpolate';
 import { TypewriterText } from './TypewriterText';
 import { InteractableSprite } from '../rooms/sprites/InteractableSprite';
 import type { InteractableDef, InteractableDialogue } from '../types/careerPack';
@@ -28,6 +29,23 @@ type Phase = 'prompt' | 'options' | 'flavor';
 export function NPCModal({ interactable, dialogue, onClose }: Props) {
   const { palette, isReplay } = useCareerPack();
   const dispatch = useAppDispatch();
+  // Issue #76 — pack content may reference player-supplied names via
+  // `{playerName}` / `{kidA}` / `{kidB}`. Resolved against profile state
+  // at render time so a mid-game ProfileModal edit propagates immediately.
+  // Memoized so the React Compiler can preserve `useCallback`s below that
+  // don't depend on these — re-creating the object every render would
+  // invalidate downstream memoization unnecessarily.
+  const playerName = useAppSelector((s) => s.profile.name);
+  const kidAName = useAppSelector((s) => s.profile.kidAName);
+  const kidBName = useAppSelector((s) => s.profile.kidBName);
+  const vars = useMemo<Record<string, string | undefined>>(
+    () => ({
+      playerName: playerName || 'you',
+      kidA: kidAName,
+      kidB: kidBName,
+    }),
+    [playerName, kidAName, kidBName],
+  );
 
   const tier = dialogue.tier;
   const options = dialogue.options ?? [];
@@ -283,7 +301,7 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
         style={dialogBoxStyle}
         role="dialog"
         aria-modal="true"
-        aria-label={labelFor(interactable)}
+        aria-label={labelFor(interactable, vars)}
         tabIndex={-1}
       >
         {/* Icon-left sprite — same art as the interactable the player
@@ -307,11 +325,11 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
         {phase === 'prompt' && (
           <>
             <p data-region="speaker-header" style={speakerHeaderStyle}>
-              {speakerHeaderFor(interactable)}
+              {speakerHeaderFor(interactable, vars)}
             </p>
             <TypewriterText
               key={`prompt-${interactable.id}`}
-              text={dialogue.prompt}
+              text={interpolate(dialogue.prompt, vars)}
               onComplete={handlePromptComplete}
               onAdvance={handleAdvance}
             />
@@ -331,9 +349,9 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
         {phase === 'options' && (
           <>
             <p data-region="speaker-header" style={speakerHeaderStyle}>
-              {speakerHeaderFor(interactable)}
+              {speakerHeaderFor(interactable, vars)}
             </p>
-            <p style={{ margin: 0 }}>{dialogue.prompt}</p>
+            <p style={{ margin: 0 }}>{interpolate(dialogue.prompt, vars)}</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
               {options.map((opt, i) => {
                 const active = highlighted === i;
@@ -358,7 +376,7 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
                     }}
                   >
                     <span style={{ opacity: 0.6, marginRight: 10 }}>{i + 1}.</span>
-                    {opt.label}
+                    {interpolate(opt.label, vars)}
                   </button>
                 );
               })}
@@ -380,10 +398,10 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
             >
               You chose
             </p>
-            <p style={{ margin: 0, fontWeight: 500 }}>{chosen.label}</p>
+            <p style={{ margin: 0, fontWeight: 500 }}>{interpolate(chosen.label, vars)}</p>
             <TypewriterText
               key={`flavor-${chosenIdx}`}
-              text={chosen.flavor ?? ''}
+              text={interpolate(chosen.flavor ?? '', vars)}
               onAdvance={handleAdvance}
             />
             <p style={hintStyle}>Press to close</p>
