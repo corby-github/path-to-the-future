@@ -103,9 +103,10 @@ interface FinaleDecision {
 
 // Hardcoded FINALE_DECISION mirrors src/game/rooms/DecisionRoom.tsx so the
 // review includes the month-120 closer. If that ever changes upstream, this
-// must be updated in lockstep.
+// must be updated in lockstep. (id is `finale-month` since v2.0.8 — the
+// month-120 wording is a UI copy artifact, not the registry id.)
 const FINALE: FinaleDecision = {
-  id: 'finale-month-120',
+  id: 'finale-month',
   prompt: 'Ten years. Did any of that stick?',
   options: [
     { label: "Bits did. Most didn't.",                 flavor: 'Sounds about right.' },
@@ -566,11 +567,11 @@ function buildIconsHtml(pack: PackContent, packId: string): string {
 
   // 1. Collect every id we care about: from decisions.json, events.json, and
   //    the registries themselves (in case registry has entries the content
-  //    doesn't reference yet — e.g., finale-month-120 which lives in code).
+  //    doesn't reference yet — e.g., finale-month which lives in code).
   const contentIds = new Set<string>([
     ...decisions.map((d) => d.id),
     ...events.map((e) => e.id),
-    'finale-month-120',
+    'finale-month',
   ]);
   const registeredDecisionIds = new Set(Object.keys(DECISION_ICONS));
   const registeredEventIds = new Set(Object.keys(EVENT_ICONS));
@@ -697,8 +698,8 @@ function buildIconsHtml(pack: PackContent, packId: string): string {
     .map((e) => e.id)
     .filter((id) => !registeredEventIds.has(id))
     .sort();
-  const missingFinale = !registeredDecisionIds.has('finale-month-120') && contentIds.has('finale-month-120')
-    ? ['finale-month-120']
+  const missingFinale = !registeredDecisionIds.has('finale-month') && contentIds.has('finale-month')
+    ? ['finale-month']
     : [];
 
   const missingHtml = (missingDecisions.length + missingEvents.length + missingFinale.length) === 0
