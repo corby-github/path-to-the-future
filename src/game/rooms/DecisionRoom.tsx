@@ -1311,7 +1311,7 @@ export function DecisionRoom({ config, onExit }: Props) {
               x={f.x}
               y={f.y - PLAYER_RADIUS - 6}
               textAnchor="middle"
-              fontSize={14}
+              fontSize={39}
               fontWeight={700}
               fill={palette.accent}
               pointerEvents="none"
