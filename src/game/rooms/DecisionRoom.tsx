@@ -46,10 +46,29 @@ const INTERACTABLE_HALF_H = 36;
 // content drop; revisit after playtest. The cooldown is wide enough that
 // a single sustained overlap counts as one hit, not 60.
 const MOVING_OBSTACLE_COOLDOWN_MS = 600;
-const MOVING_OBSTACLE_KNOCKBACK_PX = 50;
-const MOVING_OBSTACLE_HEALTH_HIT = 2;
-const MOVING_OBSTACLE_BURNOUT_THRESHOLD = 4;
+const MOVING_OBSTACLE_KNOCKBACK_PX = 100;
+const MOVING_OBSTACLE_HEALTH_HIT = 4;
+const MOVING_OBSTACLE_BURNOUT_THRESHOLD = 8;
 const MOVING_OBSTACLE_BURNOUT_MAGNITUDE = 5;
+// Cooloff = duration of the smooth westward slide AND the input lock.
+// Player is shoved at `KNOCKBACK_PX / COOLOFF_MS` px/sec; cascading hits
+// from a different obstacle during the slide refresh the timer and push
+// further west until the player either reaches the left wall or no
+// obstacles remain in the slide path. The dedupe (COOLDOWN_MS) is now
+// per-obstacle so a slide through `shutters` block #2 after a hit from
+// block #1 can fire even before 600ms elapses.
+const MOVING_OBSTACLE_COOLOFF_MS = 350;
+// In-canvas damage floater (above the player) on each moving-obstacle
+// hit. Mirrors the HUD chip's "−N" so the impact reads at the player,
+// not just the HUD chip. Same envelope as StatChip's DELTA_DURATION_MS.
+const DAMAGE_FLOATER_DURATION_MS = 900;
+
+interface DamageFloater {
+  id: number;
+  x: number;
+  y: number;
+  magnitude: number;
+}
 
 // Issue #77 — when entering a room via the REWIND_DOOR (back-walk into
 // replay of the previous month), spawn the player just LEFT of the
@@ -481,37 +500,69 @@ export function DecisionRoom({ config, onExit }: Props) {
 
     if (triggered.current) return;
 
-    // Moving-obstacle collision (medium-tier, v2.0.18). Detected separately
-    // from static obstacles — the player walks through but takes a hit.
-    // Suppressed in replay so revisited rooms don't redispatch side-effects.
+    // Moving-obstacle collision (medium-tier, v2.0.18 + cooloff slide
+    // follow-up). Detected separately from static obstacles — the player
+    // walks through but takes a hit + a smooth westward shove during the
+    // cooloff window. Suppressed in replay so revisited rooms don't
+    // redispatch side-effects. Per-obstacle dedupe: the same obstacle
+    // can't re-fire within COOLDOWN_MS, but a *different* obstacle in
+    // the slide path can — so a chain across the two `shutters` blocks
+    // (or any future multi-block layout) cascades naturally.
     const movingRects = movingObstacleRectsRef.current;
+    const now = performance.now();
     if (!isReplay && movingRects.length > 0) {
-      const now = performance.now();
-      const sinceLast = now - lastMovingObstacleHitAtRef.current;
-      if (sinceLast >= MOVING_OBSTACLE_COOLDOWN_MS) {
-        for (const rect of movingRects) {
-          if (circleIntersectsRect(state.position.x, state.position.y, PLAYER_RADIUS, rect)) {
-            lastMovingObstacleHitAtRef.current = now;
-            movingObstacleHitCountRef.current += 1;
-            // Knockback: shove the player back toward spawn (west) so the
-            // collision feels like "the wall pushed me back the way I came."
-            // Clamped to the canvas left bound; the setter halts momentum.
-            const knockbackX = Math.max(
-              ROOM_BOUNDS.minX + PLAYER_RADIUS,
-              state.position.x - MOVING_OBSTACLE_KNOCKBACK_PX,
-            );
-            setPlayerPositionRef.current({ x: knockbackX, y: state.position.y });
-            // Side-effects per §4: small health hit on each contact;
-            // burnout +5 once a per-room hit threshold is crossed (so
-            // brute-forcing through the obstacle stings).
-            dispatch(applyStatEffect({ stat: 'health', op: '-', magnitude: MOVING_OBSTACLE_HEALTH_HIT }));
-            if (movingObstacleHitCountRef.current === MOVING_OBSTACLE_BURNOUT_THRESHOLD) {
-              dispatch(applyStatEffect({ stat: 'burnout', op: '+', magnitude: MOVING_OBSTACLE_BURNOUT_MAGNITUDE }));
-            }
-            break;
-          }
+      for (let i = 0; i < movingRects.length; i++) {
+        const rect = movingRects[i];
+        if (!circleIntersectsRect(state.position.x, state.position.y, PLAYER_RADIUS, rect)) continue;
+        const sinceLast = now - lastMovingObstacleHitAtRef.current;
+        const sameObstacleStillCoolingDown =
+          i === lastHitObstacleIndexRef.current && sinceLast < MOVING_OBSTACLE_COOLDOWN_MS;
+        if (sameObstacleStillCoolingDown) continue;
+
+        lastMovingObstacleHitAtRef.current = now;
+        lastHitObstacleIndexRef.current = i;
+        movingObstacleHitCountRef.current += 1;
+
+        // Smooth slide replaces the v1 imperative snap. usePlayerMovement
+        // reads `knockbackVelocityRef` in preference to keyboard input, so
+        // the player slides west at `KNOCKBACK_PX / COOLOFF_MS` px/sec
+        // for COOLOFF_MS. resolveMovement clamps at the left wall; if the
+        // slide passes through another obstacle, the loop above will fire
+        // again next frame (different index, dedupe doesn't suppress).
+        const knockbackSpeedPxPerSec =
+          MOVING_OBSTACLE_KNOCKBACK_PX / (MOVING_OBSTACLE_COOLOFF_MS / 1000);
+        knockbackVelocityRef.current = { x: -knockbackSpeedPxPerSec, y: 0 };
+        knockbackUntilRef.current = now + MOVING_OBSTACLE_COOLOFF_MS;
+
+        // Side-effects per §4: small health hit on each contact;
+        // burnout +5 once a per-room hit threshold is crossed (so
+        // brute-forcing through the obstacle stings).
+        dispatch(applyStatEffect({ stat: 'health', op: '-', magnitude: MOVING_OBSTACLE_HEALTH_HIT }));
+        if (movingObstacleHitCountRef.current === MOVING_OBSTACLE_BURNOUT_THRESHOLD) {
+          dispatch(applyStatEffect({ stat: 'burnout', op: '+', magnitude: MOVING_OBSTACLE_BURNOUT_MAGNITUDE }));
         }
+        // Emit an in-canvas "−N" floater anchored at the impact point
+        // so the player reads damage at the player sprite, not just on
+        // the HUD chip. Auto-removes after the animation completes.
+        const floaterId = ++damageFloaterIdRef.current;
+        const floaterX = state.position.x;
+        const floaterY = state.position.y;
+        setDamageFloatersRef.current((d) => [
+          ...d,
+          { id: floaterId, x: floaterX, y: floaterY, magnitude: MOVING_OBSTACLE_HEALTH_HIT },
+        ]);
+        window.setTimeout(() => {
+          setDamageFloatersRef.current((d) => d.filter((f) => f.id !== floaterId));
+        }, DAMAGE_FLOATER_DURATION_MS);
+        break;
       }
+    }
+    // Cooloff expiry: clear the slide velocity once the window closes so
+    // keyboard control returns next frame. Cascading hits above refresh
+    // `knockbackUntilRef` first, so this only fires when no fresh hit
+    // landed this frame.
+    if (knockbackVelocityRef.current !== null && now >= knockbackUntilRef.current) {
+      knockbackVelocityRef.current = null;
     }
 
     // Rewind door (#33). Walking in enters replay of the previous
@@ -592,6 +643,14 @@ export function DecisionRoom({ config, onExit }: Props) {
     activeInteractable === null &&
     !tutorialActive;
 
+  // Knockback slide state — declared above usePlayerMovement so the ref
+  // can be passed as `externalVelocityRef`. While `current` is non-null,
+  // the hook reads it instead of keyboard input; slide continues until
+  // cooloff expires (cleared in handleTick) or the player hits the left
+  // wall (resolveMovement clamps in-place).
+  const knockbackVelocityRef = useRef<{ x: number; y: number } | null>(null);
+  const knockbackUntilRef = useRef(0);
+
   const player = usePlayerMovement({
     initialPosition: initialSpawn,
     bounds: ROOM_BOUNDS,
@@ -599,6 +658,7 @@ export function DecisionRoom({ config, onExit }: Props) {
     active: playerActive,
     speed: BASE_SPEED * speedMultiplier,
     onTick: handleTick,
+    externalVelocityRef: knockbackVelocityRef,
   });
   const playerState = player.state;
 
@@ -613,7 +673,13 @@ export function DecisionRoom({ config, onExit }: Props) {
   // because DecisionRoom is keyed by `monthId` in RoomRenderer.
   const movingObstacleHitCountRef = useRef(0);
   const lastMovingObstacleHitAtRef = useRef(0);
+  // Per-obstacle dedupe (v2.0.18 follow-up). A new obstacle can re-hit
+  // the player even if the global cooldown hasn't elapsed; same obstacle
+  // re-firing within the cooldown is suppressed.
+  const lastHitObstacleIndexRef = useRef<number>(-1);
   const untouchedBonusFiredRef = useRef(false);
+  const [damageFloaters, setDamageFloaters] = useState<DamageFloater[]>([]);
+  const damageFloaterIdRef = useRef(0);
   // Mirror the per-frame moving-obstacle rects + the player setter so
   // handleTick (a stable useCallback declared above) can read fresh
   // values without rebinding the game-loop subscription each frame.
@@ -622,9 +688,13 @@ export function DecisionRoom({ config, onExit }: Props) {
   const movingObstacleRectsRef = useRef(movingObstacleRects);
   // eslint-disable-next-line react-hooks/immutability
   useEffect(() => { movingObstacleRectsRef.current = movingObstacleRects; }, [movingObstacleRects]);
-  const setPlayerPositionRef = useRef(player.setPosition);
+  // Mirror trick for setDamageFloaters: handleTick is declared earlier
+  // in the file as a stable useCallback, so reading the setter through
+  // a ref keeps the react-hooks/immutability lint rule happy without
+  // rebinding the loop. Same pattern as Pong.tsx's score/paddle refs.
+  const setDamageFloatersRef = useRef(setDamageFloaters);
   // eslint-disable-next-line react-hooks/immutability
-  useEffect(() => { setPlayerPositionRef.current = player.setPosition; }, [player.setPosition]);
+  useEffect(() => { setDamageFloatersRef.current = setDamageFloaters; }, [setDamageFloaters]);
 
   // E-key opens the nearest interactable's modal when the player is adjacent
   // and no other modal is active. Picks a random eligible dialogue. The
@@ -1230,6 +1300,29 @@ export function DecisionRoom({ config, onExit }: Props) {
           })}
 
           <Player state={playerState} />
+
+          {/* Moving-obstacle damage floaters (v2.0.18). Rendered after
+              the player so they layer on top. `text-anchor="middle"`
+              centers horizontally; the keyframe handles rise + fade. */}
+          {damageFloaters.map((f) => (
+            <text
+              key={f.id}
+              data-region="damage-floater"
+              x={f.x}
+              y={f.y - PLAYER_RADIUS - 6}
+              textAnchor="middle"
+              fontSize={14}
+              fontWeight={700}
+              fill={palette.accent}
+              pointerEvents="none"
+              style={{
+                animation: `damage-float ${DAMAGE_FLOATER_DURATION_MS}ms ease-out forwards`,
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
+              −{f.magnitude}
+            </text>
+          ))}
         </svg>
         </div>
 

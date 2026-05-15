@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import type { Vector2, Bounds, Rect } from '../types/geometry';
 import type { PlayerState } from '../types/player';
 import { useKeyboardInput } from './useKeyboardInput';
@@ -14,6 +14,13 @@ interface UsePlayerMovementOptions {
   speed?: number;       // pixels per second
   active?: boolean;     // pause movement during transitions, dialogues, etc.
   onTick?: (state: PlayerState) => void;  // fires inside the rAF loop each frame
+  // Optional override velocity. When `current` is non-null, the loop uses
+  // it as the per-frame velocity (px/sec) and ignores keyboard input. Used
+  // by DecisionRoom for moving-obstacle knockback slide — the caller sets
+  // a westward velocity for a cooloff window, which lets the existing
+  // bounds + static-obstacle resolution handle clamping/collision while
+  // the player slides. Clearing the ref returns control to the keyboard.
+  externalVelocityRef?: RefObject<Vector2 | null>;
 }
 
 // v2.0.18 — return shape widened so callers can imperatively reposition the
@@ -37,6 +44,7 @@ export function usePlayerMovement({
   speed = DEFAULT_SPEED,
   active = true,
   onTick,
+  externalVelocityRef,
 }: UsePlayerMovementOptions): PlayerControl {
   const input = useKeyboardInput();
 
@@ -64,21 +72,47 @@ export function usePlayerMovement({
   });
 
   useGameLoop((delta) => {
-    const { up, down, left, right } = input.current;
+    // External velocity (e.g. moving-obstacle knockback slide) takes
+    // precedence over keyboard input when set. Caller clears the ref to
+    // return control to the player.
+    const ext = externalVelocityRef?.current ?? null;
 
-    // Build the intent vector
-    let dx = (right ? 1 : 0) - (left ? 1 : 0);
-    let dy = (down ? 1 : 0) - (up ? 1 : 0);
+    let vx: number;
+    let vy: number;
+    let facing = stateRef.current.facing;
 
-    // Normalise diagonals so moving up-right isn't faster than moving right
-    if (dx !== 0 && dy !== 0) {
-      const inv = 1 / Math.sqrt(2);
-      dx *= inv;
-      dy *= inv;
+    if (ext) {
+      vx = ext.x;
+      vy = ext.y;
+      // Face the direction of forced motion so the sprite reads as
+      // "being shoved" rather than frozen-but-sliding.
+      if (ext.x < 0) facing = 'left';
+      else if (ext.x > 0) facing = 'right';
+      else if (ext.y < 0) facing = 'up';
+      else if (ext.y > 0) facing = 'down';
+    } else {
+      const { up, down, left, right } = input.current;
+
+      // Build the intent vector
+      let dx = (right ? 1 : 0) - (left ? 1 : 0);
+      let dy = (down ? 1 : 0) - (up ? 1 : 0);
+
+      // Normalise diagonals so moving up-right isn't faster than moving right
+      if (dx !== 0 && dy !== 0) {
+        const inv = 1 / Math.sqrt(2);
+        dx *= inv;
+        dy *= inv;
+      }
+
+      vx = dx * speed;
+      vy = dy * speed;
+
+      // Update facing direction (favour horizontal when both are pressed)
+      if (dx > 0) facing = 'right';
+      else if (dx < 0) facing = 'left';
+      else if (dy > 0) facing = 'down';
+      else if (dy < 0) facing = 'up';
     }
-
-    const vx = dx * speed;
-    const vy = dy * speed;
 
     const desired = {
       x: stateRef.current.position.x + vx * delta,
@@ -92,13 +126,6 @@ export function usePlayerMovement({
       obstacles,
       bounds,
     );
-
-    // Update facing direction (favour horizontal when both are pressed)
-    let facing = stateRef.current.facing;
-    if (dx > 0) facing = 'right';
-    else if (dx < 0) facing = 'left';
-    else if (dy > 0) facing = 'down';
-    else if (dy < 0) facing = 'up';
 
     stateRef.current = {
       position: resolved,
