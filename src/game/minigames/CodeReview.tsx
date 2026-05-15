@@ -6,6 +6,7 @@ import { useAppDispatch } from '../state/hooks';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { addXp, XP_MINIGAME_WIN, XP_MINIGAME_FAIL } from '../state/slices/progressSlice';
 import { recordMinigame } from '../state/slices/historySlice';
+import { trackEvent } from '../analytics/track';
 
 interface Props {
   monthId: number;
@@ -83,6 +84,10 @@ export function CodeReview({ monthId, onComplete, mode = 'scheduled', awardRewar
         detail: won ? 'Spotted the bug' : 'Picked the wrong line',
         timestamp: Date.now(),
       }));
+      trackEvent('minigame_completed', {
+        id: 'code-review',
+        result: won ? 'win' : 'fail',
+      });
     }
     onComplete();
   }, [selected, monthId, mode, awardRewards, dispatch, onComplete]);

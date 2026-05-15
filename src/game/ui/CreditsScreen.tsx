@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
+import { useTrackPageview } from '../analytics/track';
 
 interface Credit {
   role: string;
@@ -61,6 +62,10 @@ const REPLAY_CONFIRM_MESSAGES: readonly string[] = [
 ];
 
 export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
+  // §24: 'browse' mounts fire `/credits`; 'replay' mounts fire `/restart`
+  // (the begin-again confirm screen). The `restart_confirmed` event is
+  // dispatched separately when the user actually clicks "Yes, begin again".
+  useTrackPageview(mode === 'browse' ? '/credits' : '/restart');
   const { palette } = useCareerPack();
   const [data, setData] = useState<CreditsData | null>(null);
   const [duration, setDuration] = useState(45);

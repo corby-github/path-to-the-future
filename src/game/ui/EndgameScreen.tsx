@@ -17,6 +17,7 @@ import { CreditsScreen } from './CreditsScreen';
 import { StatIcon, type StatIconName } from './icons/StatIcon';
 import { DecisionIcon } from './icons/modalIcons';
 import { statLabelFor } from '../content/statLabels';
+import { trackEvent, useTrackPageview } from '../analytics/track';
 import type { Manifest, Palette } from '../types/careerPack';
 import type { StatsState } from '../state/slices/statsSlice';
 import type { DecisionRecord } from '../state/slices/historySlice';
@@ -539,6 +540,13 @@ function CareerTimelineScreen({
 }
 
 export function EndgameScreen() {
+  useTrackPageview('/endgame');
+  // §24: `game_completed` pairs with the `/endgame` pageview. Fires once
+  // on mount; the spec doesn't gate against resume-of-finished saves, so
+  // this can re-fire if the player closes + reopens a finished tab.
+  useEffect(() => {
+    trackEvent('game_completed');
+  }, []);
   const { palette, pack } = useCareerPack();
   const dispatch = useAppDispatch();
   const store = useStore<RootState>();
@@ -686,6 +694,7 @@ export function EndgameScreen() {
         mode={creditsMode}
         onClose={() => setCreditsMode(null)}
         onConfirmReplay={() => {
+          trackEvent('restart_confirmed');
           setCreditsMode(null);
           handleReplay();
         }}

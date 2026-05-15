@@ -5,6 +5,7 @@ import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch } from '../state/hooks';
 import { addXp, XP_MINIGAME_WIN, XP_MINIGAME_FAIL } from '../state/slices/progressSlice';
 import { recordMinigame } from '../state/slices/historySlice';
+import { trackEvent } from '../analytics/track';
 
 // "42" — the Hitchhiker's Guide callback minigame (issue #41). The smallest
 // minigame in the codebase: no rAF loop, no physics — just a question, four
@@ -101,6 +102,10 @@ export function FortyTwo({ monthId, onComplete, mode = 'scheduled', awardRewards
         detail: selected !== null ? `Answered ${displayed[selected].label}` : undefined,
         timestamp: Date.now(),
       }));
+      trackEvent('minigame_completed', {
+        id: 'forty-two',
+        result: won ? 'win' : 'fail',
+      });
     }
     onComplete();
   }, [won, selected, displayed, mode, awardRewards, monthId, dispatch, onComplete]);

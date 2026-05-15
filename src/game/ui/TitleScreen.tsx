@@ -3,6 +3,7 @@ import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
 import { statLabelFor } from '../content/statLabels';
 import { useAppSelector } from '../state/hooks';
+import { useTrackPageview } from '../analytics/track';
 import { InteractableSprite } from '../rooms/sprites/InteractableSprite';
 import { StatChip } from './StatChip';
 
@@ -142,6 +143,7 @@ interface NpcConfig {
 }
 
 export function TitleScreen({ onAcknowledge }: Props) {
+  useTrackPageview('/title');
   const { palette, pack } = useCareerPack();
   // Resumable-save read: when the player has a finished init AND the
   // run isn't over, the title acts as a "welcome back" beat — name +
