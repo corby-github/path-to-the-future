@@ -1,8 +1,8 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 2.0.16
-**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 — analytics wrapper + slug/event instrumentation wired (GoatCounter `pathtothefuture.goatcounter.com`); GitHub Pages deploy still pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 12 layout templates (all tier `simple` for now) · Room complexity tier framework wired (year-driven mix) · All 8 class tiers selectable · Finale trophy on the recap screen · Kid names player-controlled in Homeschool pack · NPC palette tokens split out from `accent` (adult vs child)
+**Document version:** 2.0.17
+**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 — analytics wrapper + slug/event instrumentation wired (GoatCounter `pathtothefuture.goatcounter.com`); GitHub Pages deploy still pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 14 layout templates (11 simple + 3 easy) · Room complexity tier ladder PR3/5 — easy templates authored · All 8 class tiers selectable · Finale trophy on the recap screen · Kid names player-controlled in Homeschool pack · NPC palette tokens split out from `accent` (adult vs child)
 **Last updated:** 2026-05-15
 
 ---
@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.17 | 2026-05-15 | Corby Hoback · Claude Code | **Easy-tier templates (PR3 of the §4 complexity-tier ladder).** First content drop on the v2.0.9 framework. `maze` is promoted from `simple` → `easy`, and two new universal easy templates ship: **`s-curve`** (two offset vertical walls forcing an S-shape detour: spawn → up → over → down → over → up to door, 3 direction changes, lower cognitive load than maze) and **`switchback`** (2-wall maze-lite with 200 px gaps, reads as a corridor twist). Pool sizes — SWE: simple 10 + easy 3 = 13 eligible; Homeschool: simple 8 + easy 3 = 11 eligible. 2020 (100% simple) drops by 1 (maze leaves the simple pool); 2021–2022 now pull `maze`/`s-curve`/`switchback` for the easy slice of the year mix. Medium / hard / expert rolls still fall through to the easy pool until follow-up PRs author them. §4 *Layout templates* table widens to a `Tier` column + reflects the new pool math; §4 *Complexity tiers* fallback paragraph updated. No `STATE_VERSION` bump, no schema change, no engine change — pure template authoring on the v2.0.9 seam. |
 | v2.0.16 | 2026-05-15 | Corby Hoback · Claude Code | **Day 15 — analytics wrapper + slug/event instrumentation (GoatCounter).** New `src/game/analytics/track.ts` exposes `initAnalytics()`, `trackPageview(path)`, `trackEvent(name, params?)`, and a `useTrackPageview(path)` React hook. All three guard layers from §24 enforced: no-op when `import.meta.env.PROD === false`, when `VITE_ANALYTICS_ENABLED !== 'true'`, when `navigator.doNotTrack === '1'`, or when `window.goatcounter` is undefined. Wrapper dynamically injects the GoatCounter script tag from `VITE_GOATCOUNTER_ENDPOINT` so dev builds never load it. Custom event params encode as a query string on the event name (e.g. `game_started?career=software-engineering&class=skilled`). New `.env.production` with `VITE_ANALYTICS_ENABLED=true` + `VITE_GOATCOUNTER_ENDPOINT=https://pathtothefuture.goatcounter.com/count`. New `src/vite-env.d.ts` types both env vars. **11 pageview slugs wired:** `/title` (TitleScreen), `/init/career` (CareerPicker), `/init/name` (NameEntry), **`/init/kid-names`** (KidNamesEntry — added to the §24 list to match the v2.0.14 init phase), `/init/class` (ClassPicker), `/init/intro` (IntroScene), `/month/{01..70}` (RoomRenderer per `key={monthId}` remount), `/minigame/{variant}` (MinigameRoom — replay mounts skip the slug so it reads as "actually played"), `/endgame` (EndgameScreen), `/credits` (CreditsScreen mode='browse'), `/restart` (CreditsScreen mode='replay'). **4 events wired:** `game_started` (career, class) at `InitFlow.handleIntroComplete` + the dev-skip path so it doesn't fire on resume; `game_completed` from `EndgameScreen` mount; `restart_confirmed` from `EndgameScreen.onConfirmReplay`; `minigame_completed` (id, result) from each minigame's `handleContinue` next to the existing `recordMinigame` dispatch (gated on `mode === 'scheduled'` to mirror the history-record gate; arcade plays don't fire). Blackjack normalizes its `'win'|'lose'|'push'` vocab to the spec's `'win'|'partial'|'fail'`. §24 *Tracked slugs* gets the `/init/kid-names` row. **Out of scope of this PR (per user direction):** GitHub Pages deploy + the matching `package.json` `homepage` field — Day 15's deploy half remains ⏳. No `STATE_VERSION` bump. |
 | v2.0.15 | 2026-05-15 | Corby Hoback · Claude Code | **NPC palette tokens split out from `accent`.** `Palette` widens with `npcAdult` / `npcAdultInk` / `npcChild` / `npcChildInk` (mirrors the `player` / `playerInk` pattern). Both pack manifests gain the four hex values (yellow `#ffc91c` + olive ink for adults; green `#1aff5e` + dark-green ink for kids). `InteractableSprite.tsx` rewires 6 NPC body sites — `NPCBase` body+head, `NPCKidBase` body+head, the redrawn head in `NPCCoopParent`, and the waving hand in `NPCNeighbor`. Accessory strokes (cup, glasses, clipboard, tie, watch, backpack) stay on `palette.ink` so they remain readable against the new body colors. Seven hair sites (designer tuft, Bram tuft, mother-in-law crown + bun, spouse long-hair frame, co-op-parent ponytail, neighbor bob) move from `palette.ink` to `palette.accent` — the warm brown reads as hair where the near-black ink was too harsh against the new body colors. The other 33 `palette.accent` references (objects, doors, UI selection, EffectChips negative, EndgameScreen trophy, minigame flourishes) are unchanged — splitting those is a separate design conversation. `CareerPackProvider` runs the new tokens through `applyEraMood` like the rest of the palette, so NPCs drain in the pandemic era and saturate in the ai-shift era like everything else. New §15 *NPC palette tokens (v2.0.15)* subsection. No `STATE_VERSION` bump — palette lives in the pack manifest, not in saves. |
 | v2.0.14 | 2026-05-14 | Corby Hoback · Claude Code | **Kid-name interpolation sprint shipped ([closes #76](https://github.com/corby-github/path-to-the-future/issues/76)).** `profileSlice` gains `kidAName` / `kidBName` (defaults `Hazel` / `Bram`) + `kidNamesSet` flag. New `KidNamesEntry` init-flow phase between Name and Class, mounted only when `manifest.requiresKidNames` is set (Homeschool: `2`; SWE omits and skips the phase). New optional `requiresKidNames` field on `Manifest`. `interpolate.ts` context expanded with `kidA` / `kidB`; wired into `DecisionModal` / `EventModal` / `IntroScene` / `NPCModal` / `NarrativeRoom` (the last two previously bypassed interpolation entirely). `labelFor` / `speakerHeaderFor` take an optional `vars` arg so kid-NPC labels resolve `{kidA}` / `{kidB}` at render time. **74 `Hazel` / `Bram` occurrences** across 5 homeschool JSON files (`decisions` / `events` / `interactables` / `months` / `endgame-taglines`) retemplated to `{kidA}` / `{kidB}` via a one-shot perl pass. ProfileModal Children rows are now inline-editable (Save dispatches `setProfile({ kidAName | kidBName })`); the `[Edit]` buttons' "Coming soon" tooltip retired. §13 ProfileModal section + §26 Homeschool *Deferred follow-ups* updated to reflect the shipped state. No `STATE_VERSION` bump — defaults back-compat old saves. |
@@ -182,9 +183,12 @@ Tier picks come from `YEAR_TO_COMPLEXITY_MIX` in `layouts.ts`:
 **Fallback chain.** If a year picks a tier that has no authored templates
 yet, `eligibleTemplates(packId, complexity)` walks DOWN the difficulty
 ladder (expert → hard → medium → easy → simple) until it finds a match.
-v2.0.9 ships with every template tagged `simple`, so every roll today
-falls through to that pool — the player experience is unchanged. The
-framework is the seam; harder tier templates ship in follow-up PRs.
+As of v2.0.17 the **simple** and **easy** pools are populated (11 + 3
+templates respectively); medium / hard / expert rolls all fall through to
+easy until their authored templates land in subsequent PRs. So 2021–2022
+rooms feel different (easy mixes in per the year weights), and 2023+
+rooms still resolve to easy until medium ships — better than the
+v2.0.9-era "everything was simple."
 
 **NPC + interactable placement** in harder tiers follows two rules per
 the original spec:
@@ -252,27 +256,30 @@ parents don't typically walk into a cubicle farm. The tag is for
 *exclusion of the obviously-wrong*, not for fine-grained per-pack
 curation — most templates are universal.
 
-**Current pool (12 templates):**
+**Current pool (14 templates — 11 simple + 3 easy as of v2.0.17):**
 
-| Template id | Label | Pack filter | Notes |
-|---|---|---|---|
-| `open-office` | Open office | `software-engineering` | 1 mid-canvas blob (smallest template) |
-| `shared-desks` | Shared desks | `software-engineering` | Desk + 2 shelves + table |
-| `cubicles` | Cubicles | `software-engineering` | 4 small blocks in 2×2 grid |
-| `classroom` | Classroom | `homeschool-parent` | 4 student desks + teacher's desk |
-| `library` | Library | universal | Long shelves top + bottom |
-| `divided` | Divided | universal | Center wall with gap |
-| `park` | Park | universal | Bench + tree-blob, asymmetric |
-| `grocery-store` | Grocery store | universal | 3 vertical aisles, gaps mid-aisle |
-| `kitchen` | Kitchen | universal | Top counter + right counter + center island |
-| `living-room` | Living room | universal | Couch + coffee table + TV stand |
-| `church` | Church | universal | 2 rows of 3 pews + 2 plants |
-| `maze` | Maze | universal | 4-wall zigzag (center → top → bottom → center gaps); navigation-heavy |
+| Template id | Label | Pack filter | Tier | Notes |
+|---|---|---|---|---|
+| `open-office` | Open office | `software-engineering` | simple | 1 mid-canvas blob (smallest template) |
+| `shared-desks` | Shared desks | `software-engineering` | simple | Desk + 2 shelves + table |
+| `cubicles` | Cubicles | `software-engineering` | simple | 4 small blocks in 2×2 grid |
+| `classroom` | Classroom | `homeschool-parent` | simple | 4 student desks + teacher's desk |
+| `library` | Library | universal | simple | Long shelves top + bottom |
+| `divided` | Divided | universal | simple | Center wall with gap |
+| `park` | Park | universal | simple | Bench + tree-blob, asymmetric |
+| `grocery-store` | Grocery store | universal | simple | 3 vertical aisles, gaps mid-aisle |
+| `kitchen` | Kitchen | universal | simple | Top counter + right counter + center island |
+| `living-room` | Living room | universal | simple | Couch + coffee table + TV stand |
+| `church` | Church | universal | simple | 2 rows of 3 pews + 2 plants |
+| `maze` | Maze | universal | easy | 4-wall zigzag (center → top → bottom → center gaps); promoted simple → easy in v2.0.17 |
+| `s-curve` | S-curve | universal | easy | 2 offset vertical walls; player snakes UP → over → DOWN → over → up to door (3 direction changes, lower cognitive load than maze) |
+| `switchback` | Switchback | universal | easy | 2-wall maze-lite with 200-px gaps; reads as a corridor twist rather than a zigzag puzzle |
 
-**Pool sizes per pack:** SWE = 11 (universal 8 + swe 3). Homeschool = 9
-(universal 8 + homeschool 1). Across ~110 DecisionRooms this gives ~10
-repeats / template on SWE runs and ~12 on homeschool runs — down from
-the original 4-template / ~27-repeat baseline.
+**Pool sizes per pack (v2.0.17):**
+- SWE simple = 10 (universal 7 + swe 3); SWE easy = 3 (universal); SWE total eligible = 13.
+- Homeschool simple = 8 (universal 7 + homeschool 1); Homeschool easy = 3 (universal); Homeschool total eligible = 11.
+
+In 2020 (100% simple) SWE picks from 10 / Homeschool from 8. From 2021 onwards the easy pool engages at the v2.0.9 mix weights — `maze` now joins `s-curve` + `switchback` in the easy rotation rather than appearing as a generic 2020 template.
 
 **Visual variety comes from three layers**, not template count alone:
 the obstacle pattern (this section), the interactables placed on top
