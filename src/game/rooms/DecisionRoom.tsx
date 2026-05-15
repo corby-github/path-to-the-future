@@ -35,7 +35,7 @@ import type { PlayerState } from '../types/player';
 import type { Rect, Vector2 } from '../types/geometry';
 import type { RootState } from '../state/store';
 
-const BASE_SPEED = 180;
+const BASE_SPEED = (180*2);
 const DEFAULT_EVENT_CHANCE = 0.4;
 const INTERACTABLE_HALF_W = 28;
 const INTERACTABLE_HALF_H = 36;
