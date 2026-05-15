@@ -78,6 +78,8 @@ const REPLAY_STATUS_MESSAGES: ReadonlyArray<string> = [
   'Looking back... it looks the same.',
   'Hindsight is 20/20.',
   'Be kind. Rewind',
+  'Roads? Where we’re going, we don’t need roads.',
+  'Flashback!',
   "Haven't I been here before?",
   'The past is in the past. Why am I here again?',
   'Something about a key.',
