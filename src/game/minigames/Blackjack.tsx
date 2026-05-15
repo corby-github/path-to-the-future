@@ -11,6 +11,7 @@ import {
   XP_MINIGAME_FAIL,
 } from '../state/slices/progressSlice';
 import { recordMinigame } from '../state/slices/historySlice';
+import { trackEvent } from '../analytics/track';
 import type { Palette } from '../types/careerPack';
 
 interface Props {
@@ -211,6 +212,11 @@ export function Blackjack({ monthId, onComplete, mode = 'scheduled', awardReward
         detail: `Player ${pt} · Dealer ${dt}`,
         timestamp: Date.now(),
       }));
+      // §24: blackjack uses 'win'|'lose'|'push'; map to the spec's
+      // 'win'|'partial'|'fail' for the analytics event.
+      const normalized =
+        result === 'win' ? 'win' : result === 'lose' ? 'fail' : 'partial';
+      trackEvent('minigame_completed', { id: 'blackjack', result: normalized });
     }
     onComplete();
   }, [result, deal.player, deal.dealer, monthId, mode, awardRewards, dispatch, onComplete]);

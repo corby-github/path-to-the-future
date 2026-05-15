@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
+import { useTrackPageview } from '../analytics/track';
 import { CAREERS } from '../content/careers';
 
 // Career picker per §16 step 1. Lists all five v1 careers; only `playable: true`
@@ -33,6 +34,7 @@ function adjacentPlayableIndex(current: number, dir: 1 | -1): number {
 }
 
 export function CareerPicker({ onSelect }: Props) {
+  useTrackPageview('/init/career');
   const { palette } = useCareerPack();
   const [pickedId, setPickedId] = useState<string | null>(() => {
     const idx = firstPlayableIndex();

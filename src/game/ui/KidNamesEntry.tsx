@@ -1,6 +1,7 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
+import { useTrackPageview } from '../analytics/track';
 import { MAX_NAME_LENGTH, sanitizeName } from '../content/nameSanitize';
 
 // Kid-names entry (issue #76). Mounted only when the active pack manifest
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function KidNamesEntry({ initialKidAName, initialKidBName, onSubmit }: Props) {
+  useTrackPageview('/init/kid-names');
   const { palette } = useCareerPack();
   const [rawA, setRawA] = useState(initialKidAName);
   const [rawB, setRawB] = useState(initialKidBName);

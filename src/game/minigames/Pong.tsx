@@ -10,6 +10,7 @@ import {
   XP_MINIGAME_FAIL,
 } from '../state/slices/progressSlice';
 import { recordMinigame } from '../state/slices/historySlice';
+import { trackEvent } from '../analytics/track';
 
 interface Props {
   monthId: number;
@@ -385,6 +386,7 @@ export function Pong({ monthId, onComplete, mode = 'scheduled', awardRewards = t
         detail: `${score.player}-${score.ai}`,
         timestamp: Date.now(),
       }));
+      trackEvent('minigame_completed', { id: 'pong', result: outcome });
     }
     onComplete();
   }, [outcome, mode, awardRewards, score.player, score.ai, monthId, dispatch, onComplete]);

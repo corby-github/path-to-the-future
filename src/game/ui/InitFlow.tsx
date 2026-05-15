@@ -4,6 +4,7 @@ import { useCareerPack } from '../content/useCareerPack';
 import { setProfile } from '../state/slices/profileSlice';
 import { setStats } from '../state/slices/statsSlice';
 import { addXp, setClassTier } from '../state/slices/progressSlice';
+import { trackEvent } from '../analytics/track';
 import { CareerPicker } from './CareerPicker';
 import { NameEntry } from './NameEntry';
 import { KidNamesEntry } from './KidNamesEntry';
@@ -70,9 +71,13 @@ export function InitFlow({ onComplete }: Props) {
   );
 
   const handleIntroComplete = useCallback(() => {
+    trackEvent('game_started', {
+      career: profile.careerPack,
+      class: profile.entryClass,
+    });
     dispatch(setProfile({ initComplete: true }));
     onComplete();
-  }, [dispatch, onComplete]);
+  }, [dispatch, onComplete, profile.careerPack, profile.entryClass]);
 
   return (
     <div data-component="InitFlow" data-phase={phase}>
@@ -104,6 +109,10 @@ export function InitFlow({ onComplete }: Props) {
                 kidNamesSet: true,
               }),
             );
+            trackEvent('game_started', {
+              career: 'software-engineering',
+              class: 'novice',
+            });
             onComplete();
           }}
         />

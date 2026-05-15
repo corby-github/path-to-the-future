@@ -2,6 +2,7 @@ import { type CSSProperties } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppSelector } from '../state/hooks';
+import { useTrackPageview } from '../analytics/track';
 import { ScenePlayer } from './ScenePlayer';
 
 // Pre-game narrative per §16 step 4. Reads `manifest.intro` from the loaded
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function IntroScene({ onComplete }: Props) {
+  useTrackPageview('/init/intro');
   const { pack, palette } = useCareerPack();
   const profile = useAppSelector((s) => s.profile);
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
+import { useTrackPageview } from '../analytics/track';
 import { CLASSES } from '../content/classes';
 
 // Class picker per §14 / §16 step 3. Lists all eight class tiers; selectability
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function ClassPicker({ onSelect }: Props) {
+  useTrackPageview('/init/class');
   const { pack, palette } = useCareerPack();
 
   // Which class ids are playable for this career pack (from manifest).

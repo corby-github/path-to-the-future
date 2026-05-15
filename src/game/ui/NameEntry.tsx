@@ -1,6 +1,7 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import { ROOM_VIEWBOX } from '../coordinates';
 import { useCareerPack } from '../content/useCareerPack';
+import { useTrackPageview } from '../analytics/track';
 import { MAX_NAME_LENGTH, sanitizeName } from '../content/nameSanitize';
 
 // Name entry per §13. Strips HTML and caps at 24 chars. The submitted name is
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function NameEntry({ onSubmit }: Props) {
+  useTrackPageview('/init/name');
   const { palette } = useCareerPack();
   const [raw, setRaw] = useState('');
 

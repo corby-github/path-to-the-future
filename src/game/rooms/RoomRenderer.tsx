@@ -1,4 +1,5 @@
 import { useRoomTransition } from '../engine/useRoomTransition';
+import { useTrackPageview } from '../analytics/track';
 import { DecisionRoom } from './DecisionRoom';
 import { NarrativeRoom } from './NarrativeRoom';
 import { MinigameRoom } from './MinigameRoom';
@@ -11,6 +12,10 @@ interface Props {
 
 export function RoomRenderer({ config }: Props) {
   const { fading, fadeMs, exitRoom } = useRoomTransition();
+  // Per §24: every room mount fires `/month/{nn}` (zero-padded 2-digit
+  // monthId, 1–70 under v2.0.8). MinigameRoom additionally fires its
+  // own `/minigame/{variant}` slug from inside the component.
+  useTrackPageview(`/month/${String(config.monthId).padStart(2, '0')}`);
 
   // key on monthId forces an unmount/remount on every month change so
   // per-room state (triggered refs, player position) doesn't leak between

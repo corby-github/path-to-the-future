@@ -11,6 +11,7 @@ import {
   XP_MINIGAME_FAIL,
 } from '../state/slices/progressSlice';
 import { recordMinigame } from '../state/slices/historySlice';
+import { trackEvent } from '../analytics/track';
 
 interface Props {
   monthId: number;
@@ -196,6 +197,7 @@ export function Stacker({ monthId, onComplete, mode = 'scheduled', awardRewards 
         detail: `${stacks} of ${TOTAL_BLOCKS}`,
         timestamp: Date.now(),
       }));
+      trackEvent('minigame_completed', { id: 'reaction-sprint', result });
     }
     onComplete();
   }, [stacks, monthId, mode, awardRewards, dispatch, onComplete]);
