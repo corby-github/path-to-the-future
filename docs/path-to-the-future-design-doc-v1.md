@@ -1,8 +1,8 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 2.0.17
-**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 — analytics wrapper + slug/event instrumentation wired (GoatCounter `pathtothefuture.goatcounter.com`); GitHub Pages deploy still pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 14 layout templates (11 simple + 3 easy) · Room complexity tier ladder PR3/5 — easy templates authored · All 8 class tiers selectable · Finale trophy on the recap screen · Kid names player-controlled in Homeschool pack · NPC palette tokens split out from `accent` (adult vs child)
+**Document version:** 2.0.18
+**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 — analytics wrapper + slug/event instrumentation wired (GoatCounter `pathtothefuture.goatcounter.com`); GitHub Pages deploy still pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 16 layout templates (11 simple + 3 easy + 2 medium) · Room complexity tier ladder PR4/5 — first moving-obstacle physics + medium templates authored · All 8 class tiers selectable · Finale trophy on the recap screen · Kid names player-controlled in Homeschool pack · NPC palette tokens split out from `accent` (adult vs child)
 **Last updated:** 2026-05-15
 
 ---
@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.18 | 2026-05-15 | Corby Hoback · Claude Code | **Medium-tier templates + moving-obstacle physics (PR4 of the §4 ladder).** First non-trivial engine work on the v2.0.9 framework. New `MovingObstacle` type in `types/geometry.ts` (sine-wave vertical oscillation: `baseRect` + `amplitude` + `period` + `phase`), new optional `movingObstacles?: readonly MovingObstacle[]` field on `LayoutTemplate` + carried through `RoomLayout`. New `useMovingObstacles(list, active)` hook + `currentRectFor(mo, t)` pure helper drive per-frame position updates via the existing `useGameLoop` rAF; the hook short-circuits and never subscribes when the list is empty so simple/easy rooms are zero-cost. `usePlayerMovement` widens its return shape to `{ state, setPosition }` so callers can imperatively reposition the player; `circleIntersectsRect` exported from `engine/collision`. **DecisionRoom** wires the collision callback inside `handleTick`: each frame, if the player overlaps any moving-obstacle rect (cooldown-debounced 600 ms, suppressed in replay), we (a) knock the player back 50 px west via `player.setPosition`, (b) dispatch `applyStatEffect(health -2)`, (c) increment a per-room hit counter, (d) dispatch `applyStatEffect(burnout +5)` once the counter hits 4. On forward-door commit, if the room had moving obstacles AND the hit counter is 0, dispatch `addXp(XP_TIER_BONUS_UNTOUCHED = 100)` — a clean traversal of a hazard room reads as a meaningful reward (sized between minigame partial and minigame win). New rendered group: `<rect data-region="moving-obstacle">` painted with `palette.accent` + thicker stroke so the moving block reads visually distinct from static furniture. **Two new universal medium templates:** `pendulum` (single oscillating block at canvas center, amplitude 180 / period 2400 ms) and `shutters` (two blocks at x=350 / x=650, π-phase-offset so they cross). Pool sizes: SWE = 15 (10 simple + 3 easy + 2 medium); Homeschool = 13 (8 simple + 3 easy + 2 medium). 2023+ years now actually roll medium (was falling through to easy). Hard / expert rolls still cascade down to medium → easy → simple until follow-up PRs land. §4 *Layout templates* table widens with the two new rows; §4 *Complexity tiers* fallback paragraph updated. No `STATE_VERSION` bump (additive on layout templates + new XP constant; saves carry no template state). |
 | v2.0.17 | 2026-05-15 | Corby Hoback · Claude Code | **Easy-tier templates (PR3 of the §4 complexity-tier ladder).** First content drop on the v2.0.9 framework. `maze` is promoted from `simple` → `easy`, and two new universal easy templates ship: **`s-curve`** (two offset vertical walls forcing an S-shape detour: spawn → up → over → down → over → up to door, 3 direction changes, lower cognitive load than maze) and **`switchback`** (2-wall maze-lite with 200 px gaps, reads as a corridor twist). Pool sizes — SWE: simple 10 + easy 3 = 13 eligible; Homeschool: simple 8 + easy 3 = 11 eligible. 2020 (100% simple) drops by 1 (maze leaves the simple pool); 2021–2022 now pull `maze`/`s-curve`/`switchback` for the easy slice of the year mix. Medium / hard / expert rolls still fall through to the easy pool until follow-up PRs author them. §4 *Layout templates* table widens to a `Tier` column + reflects the new pool math; §4 *Complexity tiers* fallback paragraph updated. No `STATE_VERSION` bump, no schema change, no engine change — pure template authoring on the v2.0.9 seam. |
 | v2.0.16 | 2026-05-15 | Corby Hoback · Claude Code | **Day 15 — analytics wrapper + slug/event instrumentation (GoatCounter).** New `src/game/analytics/track.ts` exposes `initAnalytics()`, `trackPageview(path)`, `trackEvent(name, params?)`, and a `useTrackPageview(path)` React hook. All three guard layers from §24 enforced: no-op when `import.meta.env.PROD === false`, when `VITE_ANALYTICS_ENABLED !== 'true'`, when `navigator.doNotTrack === '1'`, or when `window.goatcounter` is undefined. Wrapper dynamically injects the GoatCounter script tag from `VITE_GOATCOUNTER_ENDPOINT` so dev builds never load it. Custom event params encode as a query string on the event name (e.g. `game_started?career=software-engineering&class=skilled`). New `.env.production` with `VITE_ANALYTICS_ENABLED=true` + `VITE_GOATCOUNTER_ENDPOINT=https://pathtothefuture.goatcounter.com/count`. New `src/vite-env.d.ts` types both env vars. **11 pageview slugs wired:** `/title` (TitleScreen), `/init/career` (CareerPicker), `/init/name` (NameEntry), **`/init/kid-names`** (KidNamesEntry — added to the §24 list to match the v2.0.14 init phase), `/init/class` (ClassPicker), `/init/intro` (IntroScene), `/month/{01..70}` (RoomRenderer per `key={monthId}` remount), `/minigame/{variant}` (MinigameRoom — replay mounts skip the slug so it reads as "actually played"), `/endgame` (EndgameScreen), `/credits` (CreditsScreen mode='browse'), `/restart` (CreditsScreen mode='replay'). **4 events wired:** `game_started` (career, class) at `InitFlow.handleIntroComplete` + the dev-skip path so it doesn't fire on resume; `game_completed` from `EndgameScreen` mount; `restart_confirmed` from `EndgameScreen.onConfirmReplay`; `minigame_completed` (id, result) from each minigame's `handleContinue` next to the existing `recordMinigame` dispatch (gated on `mode === 'scheduled'` to mirror the history-record gate; arcade plays don't fire). Blackjack normalizes its `'win'|'lose'|'push'` vocab to the spec's `'win'|'partial'|'fail'`. §24 *Tracked slugs* gets the `/init/kid-names` row. **Out of scope of this PR (per user direction):** GitHub Pages deploy + the matching `package.json` `homepage` field — Day 15's deploy half remains ⏳. No `STATE_VERSION` bump. |
 | v2.0.15 | 2026-05-15 | Corby Hoback · Claude Code | **NPC palette tokens split out from `accent`.** `Palette` widens with `npcAdult` / `npcAdultInk` / `npcChild` / `npcChildInk` (mirrors the `player` / `playerInk` pattern). Both pack manifests gain the four hex values (yellow `#ffc91c` + olive ink for adults; green `#1aff5e` + dark-green ink for kids). `InteractableSprite.tsx` rewires 6 NPC body sites — `NPCBase` body+head, `NPCKidBase` body+head, the redrawn head in `NPCCoopParent`, and the waving hand in `NPCNeighbor`. Accessory strokes (cup, glasses, clipboard, tie, watch, backpack) stay on `palette.ink` so they remain readable against the new body colors. Seven hair sites (designer tuft, Bram tuft, mother-in-law crown + bun, spouse long-hair frame, co-op-parent ponytail, neighbor bob) move from `palette.ink` to `palette.accent` — the warm brown reads as hair where the near-black ink was too harsh against the new body colors. The other 33 `palette.accent` references (objects, doors, UI selection, EffectChips negative, EndgameScreen trophy, minigame flourishes) are unchanged — splitting those is a separate design conversation. `CareerPackProvider` runs the new tokens through `applyEraMood` like the rest of the palette, so NPCs drain in the pandemic era and saturate in the ai-shift era like everything else. New §15 *NPC palette tokens (v2.0.15)* subsection. No `STATE_VERSION` bump — palette lives in the pack manifest, not in saves. |
@@ -183,12 +184,11 @@ Tier picks come from `YEAR_TO_COMPLEXITY_MIX` in `layouts.ts`:
 **Fallback chain.** If a year picks a tier that has no authored templates
 yet, `eligibleTemplates(packId, complexity)` walks DOWN the difficulty
 ladder (expert → hard → medium → easy → simple) until it finds a match.
-As of v2.0.17 the **simple** and **easy** pools are populated (11 + 3
-templates respectively); medium / hard / expert rolls all fall through to
-easy until their authored templates land in subsequent PRs. So 2021–2022
-rooms feel different (easy mixes in per the year weights), and 2023+
-rooms still resolve to easy until medium ships — better than the
-v2.0.9-era "everything was simple."
+As of v2.0.18 the **simple**, **easy**, and **medium** pools are populated
+(11 + 3 + 2 templates respectively); hard / expert rolls fall through to
+medium until their authored templates land in PR5/PR6. So 2023–2026 rooms
+now genuinely include moving-obstacle hazard rooms at the year-mix
+weights, and 2027+ years still resolve to medium until hard ships.
 
 **NPC + interactable placement** in harder tiers follows two rules per
 the original spec:
@@ -256,7 +256,7 @@ parents don't typically walk into a cubicle farm. The tag is for
 *exclusion of the obviously-wrong*, not for fine-grained per-pack
 curation — most templates are universal.
 
-**Current pool (14 templates — 11 simple + 3 easy as of v2.0.17):**
+**Current pool (16 templates — 11 simple + 3 easy + 2 medium as of v2.0.18):**
 
 | Template id | Label | Pack filter | Tier | Notes |
 |---|---|---|---|---|
@@ -274,12 +274,16 @@ curation — most templates are universal.
 | `maze` | Maze | universal | easy | 4-wall zigzag (center → top → bottom → center gaps); promoted simple → easy in v2.0.17 |
 | `s-curve` | S-curve | universal | easy | 2 offset vertical walls; player snakes UP → over → DOWN → over → up to door (3 direction changes, lower cognitive load than maze) |
 | `switchback` | Switchback | universal | easy | 2-wall maze-lite with 200-px gaps; reads as a corridor twist rather than a zigzag puzzle |
+| `pendulum` | Pendulum | universal | medium | Single 60×100 block at canvas center, oscillates y=70..430 (amplitude 180, period 2.4 s); pure timing puzzle, no static walls |
+| `shutters` | Shutters | universal | medium | Two oscillating blocks at x=350 / x=650, π-phase-offset (one up while the other is down); player weaves between them |
 
-**Pool sizes per pack (v2.0.17):**
-- SWE simple = 10 (universal 7 + swe 3); SWE easy = 3 (universal); SWE total eligible = 13.
-- Homeschool simple = 8 (universal 7 + homeschool 1); Homeschool easy = 3 (universal); Homeschool total eligible = 11.
+**Pool sizes per pack (v2.0.18):**
+- SWE simple = 10 (universal 7 + swe 3); SWE easy = 3 (universal); SWE medium = 2 (universal); SWE total eligible = 15.
+- Homeschool simple = 8 (universal 7 + homeschool 1); Homeschool easy = 3 (universal); Homeschool medium = 2 (universal); Homeschool total eligible = 13.
 
-In 2020 (100% simple) SWE picks from 10 / Homeschool from 8. From 2021 onwards the easy pool engages at the v2.0.9 mix weights — `maze` now joins `s-curve` + `switchback` in the easy rotation rather than appearing as a generic 2020 template.
+In 2020 (100% simple) SWE picks from 10 / Homeschool from 8. From 2021 onwards the easy pool engages at the v2.0.9 mix weights. From 2023 onwards medium rolls actually pull the new oscillating templates rather than falling through to easy.
+
+**Moving obstacles** — declared via the optional `movingObstacles?: MovingObstacle[]` field on a template (currently used only by medium-tier templates). Each obstacle has a `baseRect` (rest position), `amplitude` (px), `period` (ms), `phase` (rad). Detected separately from static `obstacles` — the player can walk through but takes a knockback (50 px west) + health hit (-2) + adds burnout (+5 once the per-room hit counter reaches 4). A clean traversal (zero hits on door entry) of a room that had any moving obstacles awards `XP_TIER_BONUS_UNTOUCHED` (+100 XP). All side-effects suppressed in replay mode. Tuning lives as named constants at the top of `DecisionRoom.tsx` — revisit after playtest.
 
 **Visual variety comes from three layers**, not template count alone:
 the obstacle pattern (this section), the interactables placed on top

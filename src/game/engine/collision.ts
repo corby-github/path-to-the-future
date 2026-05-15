@@ -4,7 +4,7 @@ function clamp(v: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, v));
 }
 
-function circleIntersectsRect(cx: number, cy: number, radius: number, rect: Rect): boolean {
+export function circleIntersectsRect(cx: number, cy: number, radius: number, rect: Rect): boolean {
   const closestX = clamp(cx, rect.x, rect.x + rect.width);
   const closestY = clamp(cy, rect.y, rect.y + rect.height);
   const dx = cx - closestX;

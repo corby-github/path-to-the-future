@@ -12,6 +12,10 @@ export const XP_PER_DECISION = 50;
 export const XP_MINIGAME_WIN = 250;
 export const XP_MINIGAME_PARTIAL = 100;
 export const XP_MINIGAME_FAIL = 25;
+// Bonus XP for traversing a medium-tier room without a single moving-obstacle
+// hit (v2.0.18, §4). Sized between MINIGAME_PARTIAL and MINIGAME_WIN so a
+// clean run of a hazard room reads as a meaningful reward.
+export const XP_TIER_BONUS_UNTOUCHED = 100;
 
 export interface ProgressState {
   currentMonth: number;

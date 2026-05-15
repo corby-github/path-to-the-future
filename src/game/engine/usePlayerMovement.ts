@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Vector2, Bounds, Rect } from '../types/geometry';
 import type { PlayerState } from '../types/player';
 import { useKeyboardInput } from './useKeyboardInput';
@@ -16,6 +16,16 @@ interface UsePlayerMovementOptions {
   onTick?: (state: PlayerState) => void;  // fires inside the rAF loop each frame
 }
 
+// v2.0.18 — return shape widened so callers can imperatively reposition the
+// player (e.g. moving-obstacle knockback in DecisionRoom). `state` is the
+// per-frame render state; `setPosition` halts momentum and snaps the
+// internal ref to the new position so the next frame's collision math is
+// clean.
+export interface PlayerControl {
+  state: PlayerState;
+  setPosition: (pos: Vector2) => void;
+}
+
 const DEFAULT_SPEED = 180;
 const EMPTY_OBSTACLES: Rect[] = [];
 
@@ -27,7 +37,7 @@ export function usePlayerMovement({
   speed = DEFAULT_SPEED,
   active = true,
   onTick,
-}: UsePlayerMovementOptions): PlayerState {
+}: UsePlayerMovementOptions): PlayerControl {
   const input = useKeyboardInput();
 
   // Internal mutable state — updated every frame, no re-renders here.
@@ -100,5 +110,14 @@ export function usePlayerMovement({
     onTickRef.current?.(stateRef.current);
   }, active);
 
-  return renderState;
+  const setPosition = useCallback((pos: Vector2) => {
+    stateRef.current = {
+      ...stateRef.current,
+      position: { ...pos },
+      velocity: { x: 0, y: 0 },
+    };
+    setRenderState(stateRef.current);
+  }, []);
+
+  return { state: renderState, setPosition };
 }

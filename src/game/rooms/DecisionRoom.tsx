@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from 'react-redux';
 import { Player } from '../entities/Player';
 import { usePlayerMovement } from '../engine/usePlayerMovement';
-import { ROOM_VIEWBOX, ROOM_BOUNDS } from '../coordinates';
+import { useMovingObstacles } from '../engine/useMovingObstacles';
+import { circleIntersectsRect } from '../engine/collision';
+import { ROOM_VIEWBOX, ROOM_BOUNDS, PLAYER_RADIUS } from '../coordinates';
 import { monthLabel } from '../calendar';
 import { useCareerPack } from '../content/useCareerPack';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -12,7 +14,7 @@ import { selectDecision } from '../content/selectDecision';
 import { parseEffect } from '../content/applyEffects';
 import { applyStatEffect } from '../state/slices/statsSlice';
 import { recordDecision, recordEvent } from '../state/slices/historySlice';
-import { skipMonths, addXp, XP_PER_DECISION, enterReplay, exitReplay } from '../state/slices/progressSlice';
+import { skipMonths, addXp, XP_PER_DECISION, XP_TIER_BONUS_UNTOUCHED, enterReplay, exitReplay } from '../state/slices/progressSlice';
 import { rollEvents, findEventById } from '../content/rollEvents';
 import { applyEvent } from '../content/applyEvent';
 import { passesRequires } from '../content/evaluateRequires';
@@ -39,6 +41,15 @@ const BASE_SPEED = (180*2);
 const DEFAULT_EVENT_CHANCE = 0.4;
 const INTERACTABLE_HALF_W = 28;
 const INTERACTABLE_HALF_H = 36;
+
+// Medium-tier moving-obstacle tuning (v2.0.18, §4). Sized for the first
+// content drop; revisit after playtest. The cooldown is wide enough that
+// a single sustained overlap counts as one hit, not 60.
+const MOVING_OBSTACLE_COOLDOWN_MS = 600;
+const MOVING_OBSTACLE_KNOCKBACK_PX = 50;
+const MOVING_OBSTACLE_HEALTH_HIT = 2;
+const MOVING_OBSTACLE_BURNOUT_THRESHOLD = 4;
+const MOVING_OBSTACLE_BURNOUT_MAGNITUDE = 5;
 
 // Issue #77 — when entering a room via the REWIND_DOOR (back-walk into
 // replay of the previous month), spawn the player just LEFT of the
@@ -470,6 +481,39 @@ export function DecisionRoom({ config, onExit }: Props) {
 
     if (triggered.current) return;
 
+    // Moving-obstacle collision (medium-tier, v2.0.18). Detected separately
+    // from static obstacles — the player walks through but takes a hit.
+    // Suppressed in replay so revisited rooms don't redispatch side-effects.
+    const movingRects = movingObstacleRectsRef.current;
+    if (!isReplay && movingRects.length > 0) {
+      const now = performance.now();
+      const sinceLast = now - lastMovingObstacleHitAtRef.current;
+      if (sinceLast >= MOVING_OBSTACLE_COOLDOWN_MS) {
+        for (const rect of movingRects) {
+          if (circleIntersectsRect(state.position.x, state.position.y, PLAYER_RADIUS, rect)) {
+            lastMovingObstacleHitAtRef.current = now;
+            movingObstacleHitCountRef.current += 1;
+            // Knockback: shove the player back toward spawn (west) so the
+            // collision feels like "the wall pushed me back the way I came."
+            // Clamped to the canvas left bound; the setter halts momentum.
+            const knockbackX = Math.max(
+              ROOM_BOUNDS.minX + PLAYER_RADIUS,
+              state.position.x - MOVING_OBSTACLE_KNOCKBACK_PX,
+            );
+            setPlayerPositionRef.current({ x: knockbackX, y: state.position.y });
+            // Side-effects per §4: small health hit on each contact;
+            // burnout +5 once a per-room hit threshold is crossed (so
+            // brute-forcing through the obstacle stings).
+            dispatch(applyStatEffect({ stat: 'health', op: '-', magnitude: MOVING_OBSTACLE_HEALTH_HIT }));
+            if (movingObstacleHitCountRef.current === MOVING_OBSTACLE_BURNOUT_THRESHOLD) {
+              dispatch(applyStatEffect({ stat: 'burnout', op: '+', magnitude: MOVING_OBSTACLE_BURNOUT_MAGNITUDE }));
+            }
+            break;
+          }
+        }
+      }
+    }
+
     // Rewind door (#33). Walking in enters replay of the previous
     // (non-consequence) past month, or — if already in replay — goes
     // further back. Hidden / inert if no eligible past month exists.
@@ -491,6 +535,20 @@ export function DecisionRoom({ config, onExit }: Props) {
     if (!playerInsideDoor(forwardDoor, state.position.x, state.position.y)) return;
     triggered.current = true;
     setCommitted(true);
+
+    // Bonus XP for an untouched traversal of a room that had moving
+    // obstacles (v2.0.18, §4). Suppressed in replay (no rewards on
+    // revisit) and on the finale (no engine rewards land at month 70).
+    if (
+      !isReplay &&
+      !isFinale &&
+      (layout.movingObstacles?.length ?? 0) > 0 &&
+      movingObstacleHitCountRef.current === 0 &&
+      !untouchedBonusFiredRef.current
+    ) {
+      untouchedBonusFiredRef.current = true;
+      dispatch(addXp(XP_TIER_BONUS_UNTOUCHED));
+    }
 
     // Replay (#33): forward door is the "↩ Return" exit. No decision
     // fires, no event rolls, no state change — just dispatch exitReplay
@@ -520,26 +578,53 @@ export function DecisionRoom({ config, onExit }: Props) {
         onExit();
       }
     }, MODAL_POP_DELAY_MS);
-  }, [layout.door, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch]);
+  }, [layout.door, layout.movingObstacles, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch]);
 
   const initialSpawn = useMemo<Vector2>(
     () => (isReplay ? replaySpawnFor(layout.door) : layout.spawn),
     [isReplay, layout.door, layout.spawn],
   );
 
-  const playerState = usePlayerMovement({
+  const playerActive =
+    !committed &&
+    activeDecision === null &&
+    activeEvent === null &&
+    activeInteractable === null &&
+    !tutorialActive;
+
+  const player = usePlayerMovement({
     initialPosition: initialSpawn,
     bounds: ROOM_BOUNDS,
     obstacles: layout.obstacles,
-    active:
-      !committed &&
-      activeDecision === null &&
-      activeEvent === null &&
-      activeInteractable === null &&
-      !tutorialActive,
+    active: playerActive,
     speed: BASE_SPEED * speedMultiplier,
     onTick: handleTick,
   });
+  const playerState = player.state;
+
+  // Per-frame positions of any moving obstacles (medium-tier rooms,
+  // v2.0.18). Empty for simple/easy templates — the hook short-circuits
+  // and doesn't subscribe to rAF when there's no motion to drive.
+  const movingObstacleRects = useMovingObstacles(
+    layout.movingObstacles,
+    playerActive,
+  );
+  // Per-room moving-obstacle hit accounting (v2.0.18). Resets per mount
+  // because DecisionRoom is keyed by `monthId` in RoomRenderer.
+  const movingObstacleHitCountRef = useRef(0);
+  const lastMovingObstacleHitAtRef = useRef(0);
+  const untouchedBonusFiredRef = useRef(false);
+  // Mirror the per-frame moving-obstacle rects + the player setter so
+  // handleTick (a stable useCallback declared above) can read fresh
+  // values without rebinding the game-loop subscription each frame.
+  // Same pattern as Pong.tsx's score/paddle refs; the react-hooks
+  // immutability rule is over-eager on the custom-hook-return path.
+  const movingObstacleRectsRef = useRef(movingObstacleRects);
+  // eslint-disable-next-line react-hooks/immutability
+  useEffect(() => { movingObstacleRectsRef.current = movingObstacleRects; }, [movingObstacleRects]);
+  const setPlayerPositionRef = useRef(player.setPosition);
+  // eslint-disable-next-line react-hooks/immutability
+  useEffect(() => { setPlayerPositionRef.current = player.setPosition; }, [player.setPosition]);
 
   // E-key opens the nearest interactable's modal when the player is adjacent
   // and no other modal is active. Picks a random eligible dialogue. The
@@ -1057,6 +1142,24 @@ export function DecisionRoom({ config, onExit }: Props) {
               fill={palette.surface}
               stroke={palette.ink}
               strokeWidth={2}
+              rx={4}
+            />
+          ))}
+
+          {/* Moving obstacles (medium-tier, v2.0.18). Same visual
+              register as static obstacles but tinted with `palette.accent`
+              + a thicker stroke so the player reads "this one moves." */}
+          {movingObstacleRects.map((rect, i) => (
+            <rect
+              key={`mo-${i}`}
+              data-region="moving-obstacle"
+              x={rect.x}
+              y={rect.y}
+              width={rect.width}
+              height={rect.height}
+              fill={palette.accent}
+              stroke={palette.ink}
+              strokeWidth={3}
               rx={4}
             />
           ))}
