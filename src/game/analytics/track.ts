@@ -30,6 +30,11 @@ declare global {
 
 const ENABLED = import.meta.env.VITE_ANALYTICS_ENABLED === 'true';
 const ENDPOINT = import.meta.env.VITE_GOATCOUNTER_ENDPOINT ?? '';
+// Local-test escape hatch — see vite-env.d.ts. When true the injected
+// script tag carries `data-goatcounter-settings='{"allow_local":true}'`
+// so a local `npm run preview` actually counts. Default off; never
+// committed to `.env.production`.
+const ALLOW_LOCAL = import.meta.env.VITE_ANALYTICS_ALLOW_LOCAL === 'true';
 
 function shouldNoop(): boolean {
   if (!import.meta.env.PROD) return true;
@@ -53,6 +58,9 @@ export function initAnalytics(): void {
     const script = document.createElement('script');
     script.async = true;
     script.dataset.goatcounter = ENDPOINT;
+    if (ALLOW_LOCAL) {
+      script.dataset.goatcounterSettings = JSON.stringify({ allow_local: true });
+    }
     script.src = '//gc.zgo.at/count.js';
     document.head.appendChild(script);
   } catch {
