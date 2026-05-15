@@ -209,6 +209,8 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     // Path:  spawn(80,300) → east → wall-1 center gap (y=300) → up to
     //        y~110 → wall-2 top gap → down to y~490 → wall-3 bottom gap →
     //        up to y~300 → wall-4 center gap → east → door(950,300).
+    //
+    // Promoted simple → easy in v2.0.17 (PR3 of the §4 tier-ladder).
     id: 'maze',
     label: 'Maze',
     spawn: DEFAULT_SPAWN,
@@ -227,7 +229,47 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { x: 800, y: 330, width: 60, height: 270 },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'simple',
+    complexity: 'easy',
+  },
+  {
+    // Two offset vertical walls in an S-pattern. First wall (x=300) extends
+    // from y=200 to bottom, forcing the player up and over (gap: y=0..200).
+    // Second wall (x=600) extends from top to y=400, forcing the player
+    // down and under (gap: y=400..600). Player snakes UP → over → DOWN →
+    // over → up to the door — three direction changes, no busy zigzag.
+    // Lower cognitive load than `maze`; same family.
+    //
+    // Path:  spawn(80,300) → east, blocked by wall-1 → up to y<200 → east
+    //        across y<200, blocked by wall-2 → down to y>400 → east across
+    //        y>400 → past wall-2 (x>680) → north to door y=300.
+    id: 's-curve',
+    label: 'S-curve',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 300, y: 200, width: 80, height: 400 },  // wall 1: top gap (y=0..200)
+      { x: 600, y: 0,   width: 80, height: 400 },  // wall 2: bottom gap (y=400..600)
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'easy',
+  },
+  {
+    // Two-wall maze-lite. Same family as `maze` but half the wall count and
+    // larger gaps (200 px instead of 60), so it reads as a corridor twist
+    // rather than a zigzag puzzle. Easy-tier sibling: gives the player
+    // navigation work without filling the canvas.
+    //
+    // Path:  spawn(80,300) → east, blocked by wall-1 → south through bottom
+    //        gap (y>400) → east, blocked by wall-2 → north through top gap
+    //        (y<200) → east → south to door y=300.
+    id: 'switchback',
+    label: 'Switchback',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 350, y: 0,   width: 60, height: 400 },  // wall 1: bottom gap (y=400..600)
+      { x: 650, y: 200, width: 60, height: 400 },  // wall 2: top gap (y=0..200)
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'easy',
   },
 ];
 
