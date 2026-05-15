@@ -10,6 +10,13 @@ export interface Palette {
   positive: string;
   player: string;
   playerInk: string;
+  // NPC body fills + outline strokes (v2.0.15) — split out from `accent` so
+  // people stop reading the same color as doors / furniture / arcade cabinet.
+  // Adult/child split mirrors the player/playerInk pattern.
+  npcAdult: string;
+  npcAdultInk: string;
+  npcChild: string;
+  npcChildInk: string;
 }
 
 export interface EraMood {

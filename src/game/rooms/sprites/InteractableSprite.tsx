@@ -77,16 +77,16 @@ function NPCBase({ x, y, palette, bodyHeight = 48, headRadius = 14 }: SpriteProp
         width={36}
         height={bodyHeight}
         rx={6}
-        fill={palette.accent}
-        stroke={palette.ink}
+        fill={palette.npcAdult}
+        stroke={palette.npcAdultInk}
         strokeWidth={2}
       />
       <circle
         cx={x}
         cy={y - 22}
         r={headRadius}
-        fill={palette.accent}
-        stroke={palette.ink}
+        fill={palette.npcAdult}
+        stroke={palette.npcAdultInk}
         strokeWidth={2}
       />
     </>
@@ -166,10 +166,10 @@ function NPCDesigner({ x, y, palette }: SpriteProps) {
   return (
     <g>
       <NPCBase x={x} y={y} palette={palette} />
-      {/* Hair tuft — small filled ink shape on top-left of head */}
+      {/* Hair tuft — small filled shape on top-left of head */}
       <path
         d={`M ${x - 11} ${y - 30} q 3 -8 13 -6 q 8 2 6 6 q -2 4 -10 4 z`}
-        fill={palette.ink}
+        fill={palette.accent}
       />
     </g>
   );
@@ -611,16 +611,16 @@ function NPCKidBase({ x, y, palette }: SpriteProps) {
         width={24}
         height={36}
         rx={5}
-        fill={palette.accent}
-        stroke={palette.ink}
+        fill={palette.npcChild}
+        stroke={palette.npcChildInk}
         strokeWidth={2}
       />
       <circle
         cx={x}
         cy={y - 14}
         r={10}
-        fill={palette.accent}
-        stroke={palette.ink}
+        fill={palette.npcChild}
+        stroke={palette.npcChildInk}
         strokeWidth={2}
       />
     </>
@@ -674,7 +674,7 @@ function NPCKidBram({ x, y, palette }: SpriteProps) {
       {/* Hair tuft — small filled shape on top of head */}
       <path
         d={`M ${x - 7} ${y - 22} q 2 -5 8 -4 q 5 1 4 4 q -1 3 -6 3 z`}
-        fill={palette.ink}
+        fill={palette.accent}
       />
     </g>
   );
@@ -699,11 +699,11 @@ function NPCMotherInLaw({ x, y, palette }: SpriteProps) {
       <path
         d={`M ${x - 14} ${y - 26} Q ${x - 8} ${y - 37} ${x} ${y - 38} Q ${x + 8} ${y - 37} ${x + 14} ${y - 26}`}
         fill="none"
-        stroke={palette.ink}
+        stroke={palette.accent}
         strokeWidth={3}
       />
       {/* Hair bun on top of head */}
-      <circle cx={x} cy={y - 42} r={5} fill={palette.ink} />
+      <circle cx={x} cy={y - 42} r={5} fill={palette.accent} />
       {/* Glasses (smaller, perched lower than NPCSenior) */}
       <circle cx={x - 5} cy={y - 22} r={3} fill="none" stroke={palette.ink} strokeWidth={1.5} />
       <circle cx={x + 5} cy={y - 22} r={3} fill="none" stroke={palette.ink} strokeWidth={1.5} />
@@ -742,7 +742,7 @@ function NPCSpouse({ x, y, palette }: SpriteProps) {
         width={48}
         height={62}
         rx={20}
-        fill={palette.ink}
+        fill={palette.accent}
       />
       <NPCBase x={x} y={y} palette={palette} />
       {/* Coffee mug at chest */}
@@ -782,9 +782,9 @@ function NPCCoopParent({ x, y, palette }: SpriteProps) {
     <g>
       <NPCBase x={x} y={y} palette={palette} />
       {/* Ponytail — small filled oval offset behind the head's right edge */}
-      <ellipse cx={x + 13} cy={y - 18} rx={6} ry={11} fill={palette.ink} />
+      <ellipse cx={x + 13} cy={y - 18} rx={6} ry={11} fill={palette.accent} />
       {/* Re-draw the head so the ponytail sits behind it */}
-      <circle cx={x} cy={y - 22} r={14} fill={palette.accent} stroke={palette.ink} strokeWidth={2} />
+      <circle cx={x} cy={y - 22} r={14} fill={palette.npcAdult} stroke={palette.npcAdultInk} strokeWidth={2} />
       {/* Tote bag strap diagonally across body */}
       <line x1={x - 14} y1={y - 4} x2={x - 22} y2={y + 14} stroke={palette.ink} strokeWidth={2} />
       <line x1={x + 6} y1={y - 8} x2={x - 18} y2={y + 16} stroke={palette.ink} strokeWidth={2} />
@@ -811,12 +811,12 @@ function NPCNeighbor({ x, y, palette }: SpriteProps) {
       {/* Short bob hair — cap-shape on top of head, slight hairline at forehead */}
       <path
         d={`M ${x - 14} ${y - 22} Q ${x - 14} ${y - 38} ${x} ${y - 38} Q ${x + 14} ${y - 38} ${x + 14} ${y - 22} Q ${x + 11} ${y - 24} ${x + 7} ${y - 22} L ${x - 7} ${y - 22} Q ${x - 11} ${y - 24} ${x - 14} ${y - 22} Z`}
-        fill={palette.ink}
+        fill={palette.accent}
       />
       {/* Waving arm */}
       <line x1={x + 14} y1={y - 4} x2={x + 24} y2={y - 14} stroke={palette.ink} strokeWidth={3} strokeLinecap="round" />
       {/* Hand */}
-      <circle cx={x + 24} cy={y - 14} r={3.5} fill={palette.accent} stroke={palette.ink} strokeWidth={1.5} />
+      <circle cx={x + 24} cy={y - 14} r={3.5} fill={palette.npcAdult} stroke={palette.npcAdultInk} strokeWidth={1.5} />
     </g>
   );
 }
