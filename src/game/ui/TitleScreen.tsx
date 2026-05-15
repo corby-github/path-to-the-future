@@ -309,7 +309,8 @@ export function TitleScreen({ onAcknowledge }: Props) {
     // accent color, no blur. Reads as a print artifact rather than a UI
     // drop-shadow. KRZ-coded — confident, slightly off-register, not
     // glossy.
-    textShadow: `4px 4px 0 ${palette.accent}`,
+    // textShadow: `4px 4px 0 ${palette.accent}`,
+    textShadow: `rgb(147 180 222) 4px 4px 0px`,
   };
 
   // HUD preview row (resumable runs only). A condensed echo of the

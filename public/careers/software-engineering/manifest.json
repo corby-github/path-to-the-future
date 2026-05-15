@@ -13,10 +13,10 @@
     "positive": "#7a8f5c",
     "player": "#4a90e2",
     "playerInk": "#1f3a5f",
-    "npcAdult": "#ffc91c",
+    "npcAdult": "#f7c98b",
     "npcAdultInk": "#a2810f",
-    "npcChild": "#1aff5e",
-    "npcChildInk": "#13a83f"
+    "npcChild": "#4cc500",
+    "npcChildInk": "#276501"
   },
 
   "eras": {
