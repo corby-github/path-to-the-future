@@ -77,16 +77,16 @@ function NPCBase({ x, y, palette, bodyHeight = 48, headRadius = 14 }: SpriteProp
         width={36}
         height={bodyHeight}
         rx={6}
-        fill={palette.accent}
-        stroke={palette.ink}
+        fill={palette.npcAdult}
+        stroke={palette.npcAdultInk}
         strokeWidth={2}
       />
       <circle
         cx={x}
         cy={y - 22}
         r={headRadius}
-        fill={palette.accent}
-        stroke={palette.ink}
+        fill={palette.npcAdult}
+        stroke={palette.npcAdultInk}
         strokeWidth={2}
       />
     </>
@@ -611,16 +611,16 @@ function NPCKidBase({ x, y, palette }: SpriteProps) {
         width={24}
         height={36}
         rx={5}
-        fill={palette.accent}
-        stroke={palette.ink}
+        fill={palette.npcChild}
+        stroke={palette.npcChildInk}
         strokeWidth={2}
       />
       <circle
         cx={x}
         cy={y - 14}
         r={10}
-        fill={palette.accent}
-        stroke={palette.ink}
+        fill={palette.npcChild}
+        stroke={palette.npcChildInk}
         strokeWidth={2}
       />
     </>
@@ -784,7 +784,7 @@ function NPCCoopParent({ x, y, palette }: SpriteProps) {
       {/* Ponytail — small filled oval offset behind the head's right edge */}
       <ellipse cx={x + 13} cy={y - 18} rx={6} ry={11} fill={palette.ink} />
       {/* Re-draw the head so the ponytail sits behind it */}
-      <circle cx={x} cy={y - 22} r={14} fill={palette.accent} stroke={palette.ink} strokeWidth={2} />
+      <circle cx={x} cy={y - 22} r={14} fill={palette.npcAdult} stroke={palette.npcAdultInk} strokeWidth={2} />
       {/* Tote bag strap diagonally across body */}
       <line x1={x - 14} y1={y - 4} x2={x - 22} y2={y + 14} stroke={palette.ink} strokeWidth={2} />
       <line x1={x + 6} y1={y - 8} x2={x - 18} y2={y + 16} stroke={palette.ink} strokeWidth={2} />
@@ -816,7 +816,7 @@ function NPCNeighbor({ x, y, palette }: SpriteProps) {
       {/* Waving arm */}
       <line x1={x + 14} y1={y - 4} x2={x + 24} y2={y - 14} stroke={palette.ink} strokeWidth={3} strokeLinecap="round" />
       {/* Hand */}
-      <circle cx={x + 24} cy={y - 14} r={3.5} fill={palette.accent} stroke={palette.ink} strokeWidth={1.5} />
+      <circle cx={x + 24} cy={y - 14} r={3.5} fill={palette.npcAdult} stroke={palette.npcAdultInk} strokeWidth={1.5} />
     </g>
   );
 }

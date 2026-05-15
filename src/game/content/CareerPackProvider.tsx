@@ -97,6 +97,10 @@ export function CareerPackProvider({ children }: Props) {
       positive: applyEraMood(base.positive, mood),
       player: applyEraMood(base.player, mood),
       playerInk: applyEraMood(base.playerInk, mood),
+      npcAdult: applyEraMood(base.npcAdult, mood),
+      npcAdultInk: applyEraMood(base.npcAdultInk, mood),
+      npcChild: applyEraMood(base.npcChild, mood),
+      npcChildInk: applyEraMood(base.npcChildInk, mood),
     };
 
     const isReplay = viewingMonthId !== null;

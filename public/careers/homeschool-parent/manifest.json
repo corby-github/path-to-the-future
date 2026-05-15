@@ -19,7 +19,11 @@
     "accent": "#8b6240",
     "positive": "#7a8f5c",
     "player": "#4a90e2",
-    "playerInk": "#1f3a5f"
+    "playerInk": "#1f3a5f",
+    "npcAdult": "#ffc91c",
+    "npcAdultInk": "#a2810f",
+    "npcChild": "#1aff5e",
+    "npcChildInk": "#13a83f"
   },
 
   "eras": {

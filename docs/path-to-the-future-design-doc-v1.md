@@ -1,9 +1,9 @@
 # Path to the Future: Design Document
 
 **Project:** Path to the Future — A Career of Choices
-**Document version:** 2.0.14
-**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 12 layout templates (all tier `simple` for now) · Room complexity tier framework wired (year-driven mix) · All 8 class tiers selectable · Finale trophy on the recap screen · Kid names player-controlled in Homeschool pack
-**Last updated:** 2026-05-14
+**Document version:** 2.0.15
+**Status:** Living spec · Days 1–14 (title screen) merged · Day 15 (analytics + Pages deploy) pending · Two packs playable (SWE + Homeschool Parent) · Half-length playthrough (1 cinematic + 6 playable months/year, 70 monthIds total) · 12 layout templates (all tier `simple` for now) · Room complexity tier framework wired (year-driven mix) · All 8 class tiers selectable · Finale trophy on the recap screen · Kid names player-controlled in Homeschool pack · NPC palette tokens split out from `accent` (adult vs child)
+**Last updated:** 2026-05-15
 
 ---
 
@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.15 | 2026-05-15 | Corby Hoback · Claude Code | **NPC palette tokens split out from `accent`.** `Palette` widens with `npcAdult` / `npcAdultInk` / `npcChild` / `npcChildInk` (mirrors the `player` / `playerInk` pattern). Both pack manifests gain the four hex values (yellow `#ffc91c` + olive ink for adults; green `#1aff5e` + dark-green ink for kids). `InteractableSprite.tsx` rewires 6 NPC body sites — `NPCBase` body+head, `NPCKidBase` body+head, the redrawn head in `NPCCoopParent`, and the waving hand in `NPCNeighbor`. Accessory strokes (cup, glasses, clipboard, tie, watch, backpack, ponytail) stay on `palette.ink` so they remain readable against the new body colors. The other 33 `palette.accent` references (objects, doors, UI selection, EffectChips negative, EndgameScreen trophy, minigame flourishes) are unchanged — splitting those is a separate design conversation. `CareerPackProvider` runs the new tokens through `applyEraMood` like the rest of the palette, so NPCs drain in the pandemic era and saturate in the ai-shift era like everything else. New §15 *NPC palette tokens (v2.0.15)* subsection. No `STATE_VERSION` bump — palette lives in the pack manifest, not in saves. |
 | v2.0.14 | 2026-05-14 | Corby Hoback · Claude Code | **Kid-name interpolation sprint shipped ([closes #76](https://github.com/corby-github/path-to-the-future/issues/76)).** `profileSlice` gains `kidAName` / `kidBName` (defaults `Hazel` / `Bram`) + `kidNamesSet` flag. New `KidNamesEntry` init-flow phase between Name and Class, mounted only when `manifest.requiresKidNames` is set (Homeschool: `2`; SWE omits and skips the phase). New optional `requiresKidNames` field on `Manifest`. `interpolate.ts` context expanded with `kidA` / `kidB`; wired into `DecisionModal` / `EventModal` / `IntroScene` / `NPCModal` / `NarrativeRoom` (the last two previously bypassed interpolation entirely). `labelFor` / `speakerHeaderFor` take an optional `vars` arg so kid-NPC labels resolve `{kidA}` / `{kidB}` at render time. **74 `Hazel` / `Bram` occurrences** across 5 homeschool JSON files (`decisions` / `events` / `interactables` / `months` / `endgame-taglines`) retemplated to `{kidA}` / `{kidB}` via a one-shot perl pass. ProfileModal Children rows are now inline-editable (Save dispatches `setProfile({ kidAName | kidBName })`); the `[Edit]` buttons' "Coming soon" tooltip retired. §13 ProfileModal section + §26 Homeschool *Deferred follow-ups* updated to reflect the shipped state. No `STATE_VERSION` bump — defaults back-compat old saves. |
 | v2.0.13 | 2026-05-14 | Corby Hoback · Claude Code | **Finale trophy on the recap screen.** New inline `TrophyCrown` component in `EndgameScreen.tsx` — Treatment-A flat-color SVG (cup + handles + stem + tiered base, `palette.accent` fill + `palette.ink` strokes + a small ink-dot insignia), 88 px tall, rendered as a centered crown above the *"Ten years done."* header. No emoji (cross-platform render consistency). Also fixes two stale narrative comments left over from the v2.0.8 half-length playthrough: `EndgameScreen.tsx` "full 120-decision list" → "~60 rows under v2.0.8"; `progressSlice.ts` XP economy comment updated to acknowledge the 60-playable-month arc + flagged for a future tuning pass. **No `STATE_VERSION` bump, no schema change.** §21 *Endgame & Recap* gains a v2.0.13 trophy note. |
 | v2.0.12 | 2026-05-14 | Corby Hoback · Claude Code | **Replay back-door spawn position + rewind narrative-skip ([issue #77](https://github.com/corby-github/path-to-the-future/issues/77) + follow-up).** (1) **Spawn position.** Entering a previous month via the rewind door now spawns the player just LEFT of the forward door (`{ x: door.x - 30, y: door.y + door.height / 2 }`) instead of at the layout's default left-edge spawn. Reads as "you stepped out of the door you originally exited." Live forward-entry + `exitReplay` still use the standard left spawn. New `replaySpawnFor(door)` helper; `isReplay ? replaySpawnFor(layout.door) : layout.spawn`. (2) **Rewind narrative skip.** `previousReplayableMonth()` now skips both `consequence` AND `narrative` rooms — walking back from Feb 2021 (id 9) lands on Dec 2020 (id 7), not Jan 2021 narrative (id 8). Per v2.0.8 the cinematic Januaries are forward-only year-transition beats; the back-door target should be the previous *decision* room. §11.1 *Backward replay* updated with the new spawn rule + the narrative-skip rule. |
@@ -1071,6 +1072,48 @@ sanctioned second use. The legibility constraint that scoped it out of body
 UI doesn't apply at display size (≥100px) — the letters are bigger than
 your thumb. Keep the rest of §15 honest regardless: no pixel font in HUD,
 picker labels, or body copy.
+
+### NPC palette tokens (v2.0.15)
+
+Through v2.0.14, NPC bodies fell back to `palette.accent` — the same warm-brown
+that paints doors, the arcade cabinet, the bench, the textbook stack, and most
+of the furniture. People read as just another piece of the room. v2.0.15 splits
+NPC color out of `accent` so adults and kids each get their own dedicated
+fill + outline pair, mirroring the existing `player` / `playerInk` precedent.
+
+**The four new tokens** (required on `Palette`, set in each pack's
+`manifest.json` palette block):
+
+| Token | Default hex | Used for |
+|---|---|---|
+| `npcAdult` | `#ffc91c` (warm yellow) | Adult NPC body + head fill (`NPCBase`) plus the redrawn head in `NPCCoopParent` and the waving hand in `NPCNeighbor`. |
+| `npcAdultInk` | `#a2810f` (olive) | The matching outline stroke on the same shapes. |
+| `npcChild` | `#1aff5e` (bright green) | Kid NPC body + head fill (`NPCKidBase`, used by `NPCKidHazel` + `NPCKidBram`). |
+| `npcChildInk` | `#13a83f` (dark green) | The matching outline stroke. |
+
+**What stays on `palette.accent`.** Object bodies (plant, calendar, stress-ball,
+arcade cabinet, textbook stack, art-bin, kitchen table, couch+blanket, coop-signup),
+doors (`DecisionRoom.tsx`), UI accent (Career/Class picker selection, EffectChips
+negative, EndgameScreen trophy, Hud + StatChip negative-delta, TitleScreen
+wordmark text-shadow), and minigame flourishes (Blackjack red suits, Pong
+ball/paddle, Stacker blocks). Once NPCs move to yellow/green, the visual
+collision the user flagged ("NPCs the same color as the door") is gone — no
+need to also split door color or UI accent in this pass. If a future PR
+wants to give doors their own `doorAccent` token, that's a separate design
+call worth its own conversation.
+
+**Accessory strokes stay on `palette.ink`.** Cups, glasses, clipboards, ties,
+watches, backpacks, ponytails, hair tufts — all the held items and details
+that sit on top of the NPC body — still use the universal ink. They're not
+body parts; keeping them on neutral ink preserves silhouette contrast against
+the new yellow/green body fills.
+
+**Era-mood treatment.** `CareerPackProvider` runs the four new tokens through
+`applyEraMood` exactly like the rest of the palette, so NPCs drain in the
+pandemic era and saturate in the ai-shift era alongside the rest of the room.
+
+**No `STATE_VERSION` bump** — palette lives in the pack manifest, not in saves.
+Old saves load against the new palette transparently.
 
 ---
 
