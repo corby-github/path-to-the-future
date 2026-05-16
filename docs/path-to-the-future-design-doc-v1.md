@@ -264,7 +264,7 @@ parents don't typically walk into a cubicle farm. The tag is for
 *exclusion of the obviously-wrong*, not for fine-grained per-pack
 curation — most templates are universal.
 
-**Current pool (28 templates — 11 simple + 3 easy + 8 medium + 4 hard + 2 expert as of v2.0.23):**
+**Current pool (28 templates — 11 simple + 4 easy + 7 medium + 4 hard + 2 expert as of v2.0.23):**
 
 | Template id | Label | Pack filter | Tier | Notes |
 |---|---|---|---|---|
@@ -285,11 +285,11 @@ curation — most templates are universal.
 | `pendulum` | Pendulum | universal | medium | Single 60×100 block at canvas center, oscillates y=70..430 (amplitude 180, period 2.4 s); pure timing puzzle, no static walls |
 | `shutters` | Shutters | universal | medium | Two oscillating blocks at x=350 / x=650, π-phase-offset (one up while the other is down); player weaves between them |
 | `gate-paddle` | Gate and paddle | universal | medium | Two static walls form a single vertical gate (x=440..520, gap y=200..400); a 60×80 paddle sweeps most of the gap (period 3 s, amplitude 90). Clean pass only at the paddle's extremes. v2.0.23. |
-| `s-curve-patrol` | S-curve patrol | universal | medium | Reuses the easy-tier `s-curve` walls + TWO counter-direction patrols (upper corridor y≈90 and lower corridor y≈480), period 2.8 s each. v2.0.23. |
+| `s-curve-patrol` | S-curve patrol | universal | easy | Reuses the easy-tier `s-curve` walls + TWO counter-direction patrols (upper corridor y≈90 and lower corridor y≈480), period 2.8 s each. v2.0.23 — initially shipped as medium; reclassified to easy after playtest (s-curve's 200-px corridor gaps allow route-around above/below the patrols). Helps fill the +8 easy gap. |
 | `switchback-paddle` | Switchback paddle | universal | medium | Reuses the easy-tier `switchback` walls + TWO wide bar-paddles (240×40) spanning the full climb corridor, π-phase-offset so they anti-correlate. Period 2.4 s each, amplitude 50. v2.0.23. |
 | `slow-orbit` | Corralled orbit | universal | medium | Sentinel on a 4-corner rectangular orbit, FRAMED by top + bottom blocker walls that compress the player into the corridor (y=150..450) where the orbit lives — no route-around. Period 4 s (1 s per segment). v2.0.23. |
 | `twin-patrols` | Twin patrols | universal | medium | Top + bottom frame walls compress the player into a center corridor + a center wall (x=470..530, y=220..380) splits the safe middle. Two counter-direction patrols at y=190 and y=385, period 2.8 s. v2.0.23. |
-| `maze-gauntlet` | Maze gauntlet | universal | medium | "Half maze" (walls 1 + 4 from `maze`, both center-gap) + TWO motions in the wide middle: a vertical paddle (period 2.8 s, amplitude 120) AND a horizontal patrol crossing the upper band (period 3.5 s, non-aligned with paddle so the combined hazard pattern doesn't repeat). v2.0.23. |
+| `maze-gauntlet` | Maze gauntlet | universal | medium | "Half maze" (walls 1 + 4 from `maze`, both center-gap) + a WIDE 540×40 bar-paddle spanning the entire middle (x=260..800), amp 90, period 2.8 s. v2.0.23 — initial narrow-paddle drop read as weak (player routed around at x≈300 or x≈700); replaced with the switchback-paddle wide-bar pattern that landed correctly at medium. |
 | `fast-pendulum` | Fast pendulum | universal | hard | Single 60×100 block at canvas center, oscillates y=50..450 (amplitude 200, period 1.5 s — ~60% faster than `pendulum`) |
 | `paddle-gate` | Paddle gate | universal | hard | Pong-style: 20×120 thin tall paddle at x=880 (60 px in front of door), sweeps y=20..460 with period 1.5 s. At each extreme the paddle clears the door's vertical range (y=250..350) for ~250 ms — player must time approach. Reuses PR4 collision (mistime → knockback + stun). |
 | `pickets` | Pickets | universal | hard | 5 narrow vertical oscillators across the room (mixed widths 10–30 px, 72° phase stagger so the wave rolls L→R). Showcases the v2.0.21 variable-width support — every wall-to-wall gap stays > player diameter (28 px) so denser hazard rooms become authorable. |
@@ -298,8 +298,8 @@ curation — most templates are universal.
 | `patrol-and-paddle` | Patrol & paddle | universal | expert | Mixes motion modes per the §4 expert spec ("medium/hard, plus a deterministic block"): 80×25 horizontal patrol on a path (x=500..880 at y=280, period 4 s) + a 20×80 sine paddle near the door (y=80..440, period 1.8 s). Non-integer-ratio periods so the combined pattern doesn't repeat. |
 
 **Pool sizes per pack (v2.0.23):**
-- SWE simple = 10 (universal 7 + swe 3); SWE easy = 3 (universal); SWE medium = 8 (universal); SWE hard = 4 (universal); SWE expert = 2 (universal); SWE total eligible = 27.
-- Homeschool simple = 8 (universal 7 + homeschool 1); Homeschool easy = 3 (universal); Homeschool medium = 8 (universal); Homeschool hard = 4 (universal); Homeschool expert = 2 (universal); Homeschool total eligible = 25.
+- SWE simple = 10 (universal 7 + swe 3); SWE easy = 4 (universal); SWE medium = 7 (universal); SWE hard = 4 (universal); SWE expert = 2 (universal); SWE total eligible = 27.
+- Homeschool simple = 8 (universal 7 + homeschool 1); Homeschool easy = 4 (universal); Homeschool medium = 7 (universal); Homeschool hard = 4 (universal); Homeschool expert = 2 (universal); Homeschool total eligible = 25.
 
 In 2020 (100% simple) SWE picks from 10 / Homeschool from 8. From 2021 onwards the easy pool engages at the v2.0.9 mix weights. From 2023 onwards medium rolls actually pull the new oscillating templates rather than falling through to easy. From 2027 onwards hard rolls actually pull the four hard templates. From 2029 onwards expert rolls actually pull `zigzag-sentinel` / `patrol-and-paddle` rather than falling through to hard.
 
