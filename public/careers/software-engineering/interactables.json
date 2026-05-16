@@ -183,6 +183,61 @@
               "flavor": "You say later. You both know later sometimes means never."
             }
           ]
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "An intern catches the name on your screen. \"Stack Overflow — that's the one where they're all kinda mean to you, right? My professor showed us a screenshot once.\""
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "An intern watches you scroll. \"Wait — you used to read the whole documentation? Before asking? Like, all of it??\""
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "An intern peers over your shoulder. \"Hold on. You fixed merge conflicts by hand? You looked at the <<<<<<< thing and just… picked one? With your eyes??\""
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "An intern hears you say \"PR review.\" Their eyes get wide. \"Oh my god — another human read your code? And left comments? And you had to respond to them? Like a whole conversation?\""
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "You mention googling something. The intern stares. \"Wait, you used to Google it? Like type the question, get blue links, open six tabs, compare?\""
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "The intern, mid-coffee: \"My dad said his first job interview had a whiteboard. A real one. With a marker. While people watched. That's not an interview, that's a hazing ritual.\""
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "An intern watches you in a shell. \"Sometimes my dad still types into the black window. He says it makes him feel powerful. I just ask the model.\""
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "An intern, squinting at your terminal: \"What's a README? Oh — that's the thing the model reads for me, right?\""
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "The intern survives their first standup. After: \"You'd all stop work and stand up and say things? For how long? Couldn't the model just summarize?\""
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "An intern watches you write a component. \"You used to type out the whole thing? Every time? Even the boilerplate? With your hands?\""
+        },
+        {
+          "tier": 1,
+          "requires": { "month": ">=44" },
+          "prompt": "The intern leans over your shoulder. You're typing. They watch for a long beat. \"You mean you have to use your hands? … That's like a baby's toy.\""
         }
       ]
     },
