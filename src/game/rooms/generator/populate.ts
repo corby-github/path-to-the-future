@@ -1,6 +1,7 @@
 import type { MovingObstacle, Rect, Vector2 } from '../../types/geometry';
 import {
   LAYOUT_TEMPLATES,
+  MONTH_SLOT_OVERRIDES,
   eligibleTemplates,
   getLayoutById,
   pickComplexityTier,
@@ -65,10 +66,17 @@ function toLayout(template: LayoutTemplate): RoomLayout {
 // `simple`, late years toward `hard`/`expert`. A `forcedTemplateId`
 // (DevPanel) is honored regardless of pack or tier — devs may want to
 // preview any template in any run.
+//
+// `monthId` (v2.0.27) consults `MONTH_SLOT_OVERRIDES` for per-month
+// anchor slots (currently: monthId=2 → `library` for the Feb 2020 calm
+// intro). DevPanel's `forcedTemplateId` still wins over the override.
+// Pack incompatibility (override names a template restricted to a
+// different pack) falls back to the random pool with a dev warning.
 export function generateRoom(
   seed: number,
   packId: string,
   year: number,
+  monthId: number,
   forcedTemplateId?: string | null,
 ): RoomLayout {
   let layout: RoomLayout;
@@ -77,6 +85,29 @@ export function generateRoom(
     layout = forced
       ? toLayout(forced)
       : toLayout(pickFrom(seededRandom(seed), eligibleTemplates(packId)));
+  } else if (MONTH_SLOT_OVERRIDES[monthId]) {
+    const slotId = MONTH_SLOT_OVERRIDES[monthId];
+    const slotted = getLayoutById(slotId);
+    const slotPackOk =
+      slotted !== undefined &&
+      (slotted.packs === undefined || slotted.packs.includes(packId));
+    if (slotted && slotPackOk) {
+      layout = toLayout(slotted);
+    } else {
+      if (import.meta.env.DEV) {
+        console.warn(
+          `[room-generator] MONTH_SLOT_OVERRIDES[${monthId}] = "${slotId}" ` +
+          (slotted
+            ? `restricts to packs ${JSON.stringify(slotted.packs)} (active: "${packId}")`
+            : `does not match any template id`) +
+          `; falling back to the random pool.`,
+        );
+      }
+      const rng = seededRandom(seed);
+      const complexity = pickComplexityTier(year, rng);
+      const pool = eligibleTemplates(packId, complexity);
+      layout = toLayout(pool.length > 0 ? pickFrom(rng, pool) : pickFrom(rng, LAYOUT_TEMPLATES));
+    }
   } else {
     const rng = seededRandom(seed);
     // Roll the complexity tier first (year-driven), then narrow the pool

@@ -16,8 +16,9 @@ sessions (or contributors) can read the spec at any version cleanly.
 |---------|------------|---------------------------|---------|
 | v2.0.31 | 2026-05-16 | Corby Hoback · Claude Code | **HUD tier label — at-a-glance playtest aid.** `CurrentRoomContext` widens with `tier: string \| null` alongside `template`; `setTemplate(id)` replaced with `setRoomInfo({ template, tier })`. DecisionRoom publishes `layout.complexity` on mount, clears on unmount. HUD's location column renders the tier as a small uppercase tag after the template name (e.g. `open-office · SIMPLE`). 1 px `palette.surface` border + `palette.ink` text → readable across era-mood palette shifts. Non-decision rooms (Narrative / Minigame / Consequence) don't publish, so the tag is absent there. No engine / state-shape changes. |
 | v2.0.30 | 2026-05-16 | Corby Hoback · Claude Code | **Keyboard tutorial widget + double-tap-to-sprint (issues #89, #92).** The game is keyboard-only but no surface taught that — a player who clicks the canvas got no feedback. This PR teaches keyboard movement in two surfaces and adds a sprint upgrade. (1) New `KeysWidget` component (`src/game/ui/KeysWidget.tsx`) — stateless SVG with two cross/diamond clusters (arrows + WASD). (2) First-run tutorial gains a "Move with the keyboard" step at index 1 (4-step coachmark, was 3). (3) New `SprintTutorialOverlay` fires after the main coachmark dismisses AND the player accumulates ~5 s of baseline movement — single step, pulses the player's most-used direction in the widget. (4) New `useMisclickPrompt` hook surfaces the keys widget centered on the canvas whenever the player clicks it (auto-dismisses 3 s OR on next movement keypress; suppressed during modals / tutorial / keys-widget step). (5) Double-tap-to-sprint: `useKeyboardInput` detects a second keydown within 280 ms of the prior keyup as `sprintAxis`; OS key-repeat is filtered (`lastKeyDownAt > lastKeyUpAt` means held, not tapped). `usePlayerMovement` applies `SPRINT_MULTIPLIER = 2.0` to the matching axis post-normalization. (6) Motion lines render behind the player while `sprintingAxis` is set (3 short stroke segments at 40 % `palette.ink` opacity, anchored to player, trailing opposite the travel direction). (7) Knockback suppresses sprint by virtue of the `if (ext)` branch never touching the sprint path. (8) Minigames isolated — each uses its own `window.addEventListener('keydown')` and doesn't import `useKeyboardInput`, so sprint never activates inside them. (9) New `meta.sprintTutorialDismissed` flag (back-compat: `?? false` on read; `resetTutorial` clears both). No `STATE_VERSION` bump. |
-| v2.0.28 | 2026-05-16 | Corby Hoback · Claude Code | **Expert tier recast — crossfire is the only true expert.** Per playtest direction: 4 templates at expert was over-supplied; only `crossfire` (8 motions, mixed-axis density, non-aligned periods, no permanent safe zone) was reading as expert. (1) Demoted `tight-pickets`, `zigzag-sentinel`, `patrol-and-paddle` expert → hard with rationale comments in `layouts.ts`. (2) New `tempest` expert template — 7 motions in the right half (2H path-sweeps at top + bottom limiting cruise lanes, 4V pendulums spaced 100 px apart phase-staggered π/2 with periods 1600/1800/2000/2200, 1 door-front paddle period 1500). All periods distinct (1500/1600/1800/2000/2200/2400/2700). Differs from crossfire by denser-vertical / lighter-horizontal motion mix and tighter pendulum spacing. (3) Net tier shifts: −3 expert, +3 hard, +1 expert new = hard pool 6 → 9, expert pool 4 → 2. No engine change. See §4 *Layout templates*. |
 | v2.0.29 | 2026-05-16 | Corby Hoback · Claude Code | **Medium playtest pass on PR #97 batch (geometric read).** Three of the six v2.0.25 medium templates had cruise lanes that bypassed their motion — same failure mode as PR #95's `s-curve-patrol` and PR #96's `counter-patrols`/`channel-paddle` ("open geometry + thin motion = plays easier than intended"). Fixes: (1) `east-corridor` — corridor narrowed from 140 px (y=230..370) to 80 px (y=260..340) via thicker top + bottom frames; the wider corridor allowed `dy²>radius²` clearance from patrol body at y=244..261 and y=329..356. (2) `triangle-sentinel` — period 4500 → 3000 ms (1000 ms/segment, was 1500) to close the ~3.7 s window when the single sentinel was at a corner away from the natural y=300 cruise line. (3) `sync-patrols` — added top + bottom frame walls (y=0..170, y=430..600) to close the cruise zones above/below the patrol bands; player now MUST traverse through one of the two patrol bands (center wall pushes them in either way). The other three (`triple-paddle-slow`, `asymmetric-block`, `mini-orbits`) verified solid — no changes. Geometric analysis only — physical playtest still recommended to confirm the fixes land. See §4 *Layout templates*. |
+| v2.0.28 | 2026-05-16 | Corby Hoback · Claude Code | **Expert tier recast — crossfire is the only true expert.** Per playtest direction: 4 templates at expert was over-supplied; only `crossfire` (8 motions, mixed-axis density, non-aligned periods, no permanent safe zone) was reading as expert. (1) Demoted `tight-pickets`, `zigzag-sentinel`, `patrol-and-paddle` expert → hard with rationale comments in `layouts.ts`. (2) New `tempest` expert template — 7 motions in the right half (2H path-sweeps at top + bottom limiting cruise lanes, 4V pendulums spaced 100 px apart phase-staggered π/2 with periods 1600/1800/2000/2200, 1 door-front paddle period 1500). All periods distinct (1500/1600/1800/2000/2200/2400/2700). Differs from crossfire by denser-vertical / lighter-horizontal motion mix and tighter pendulum spacing. (3) Net tier shifts: −3 expert, +3 hard, +1 expert new = hard pool 6 → 9, expert pool 4 → 2. No engine change. See §4 *Layout templates*. |
+| v2.0.27 | 2026-05-16 | Corby Hoback · Claude Code | **Simple-tier curation — motion escalation from Feb 2020.** Per playtest direction: Feb 2020 should be the only no-motion room; every subsequent playable month introduces motion that slowly escalates. (1) New `excludeFromRandom?: boolean` on `LayoutTemplate` — tagged templates are skipped by `eligibleTemplates` but remain reachable via DevPanel + the new slot override. The 11 no-motion simple templates (`library`, `divided`, `park`, `grocery-store`, `kitchen`, `living-room`, `church`, `open-office`, `shared-desks`, `cubicles`, `classroom`) all carry the flag now. (2) New `MONTH_SLOT_OVERRIDES: Record<number, string>` in `layouts.ts`; `generateRoom(seed, packId, year, monthId, forcedTemplateId?)` widened with `monthId` so it can honor anchor slots. Currently: `monthId=2 → 'library'` (Feb 2020 anchor). DevPanel `forcedTemplateId` still wins. Pack-incompat falls back to the random pool with a dev warning. (3) New simple-tier template `slow-pendulum` — single block, amp 100 / period 4500 ms (vs medium `pendulum` at amp 180 / period 2400 ms). Lightest motion option in the simple-with-motion trio (`counter-patrols`, `channel-paddle`, `slow-pendulum`). (4) Pool effects: 2020 plays Feb=library → Apr/Jun/Aug/Oct/Dec rotate through the 3-template simple-motion pool. 2021–2022 blend it with easy. Older years unchanged. No `STATE_VERSION` bump. See §4 *Layout templates*. |
 | v2.0.26 | 2026-05-16 | Corby Hoback · Claude Code | **Replay spawn obstacle-aware — gauntlet wall-stuck fix.** `replaySpawnFor` now searches westward from the ideal door-adjacent x in 30-px steps until clear of static obstacles. Fixes a wall-stuck-on-re-entry in the `gauntlet` template (hard-tier wall 3 extends to x=920 — exactly the ideal replay-spawn x — putting the player center inside the wall and freezing movement). Falls back to layout's left-edge spawn if no clear column exists. No content change. See `DecisionRoom.replaySpawnFor`. |
 | v2.0.25 | 2026-05-16 | Corby Hoback · Claude Code | **Medium-tier expansion batch 2 (issue #94).** Six new medium templates extending the composition grammar with patterns not yet covered at medium tempo: `triple-paddle-slow` (3-paddle wave at medium tempo), `east-corridor` (horizontal frame + corridor patrol), `asymmetric-block` (big block + east paddle), `triangle-sentinel` (corridor + triangular path), `sync-patrols` (center wall + sync patrol-pair), `mini-orbits` (corridor + 2 small sentinel orbits). All periods 2800–4500 ms; forcing geometry (frame walls / center walls) on every template that would otherwise allow route-around. Medium pool 7 → 13, narrowing the issue #94 gap by 6 of the remaining ~11. See §4 *Layout templates*. |
 | v2.0.24 | 2026-05-16 | Corby Hoback · Claude Code | **Hard-tier expansion — 7 composed templates (issue #94 batch 2) + playtest pass.** Initial drop added 7 templates as hard: `paddle-pair-phase`, `counter-patrols`, `channel-paddle`, `tight-pickets`, `triple-paddle`, `crossfire`, `gauntlet`. Playtest reshuffled tiers: `paddle-pair-phase` → medium, `counter-patrols` + `channel-paddle` → simple (open enough that they played easier than intended), `tight-pickets` → expert (geometry tightened: amp 180 → 210 so pickets touch top + bottom playable edges), `gauntlet` redesigned (snake gaps tightened 310 → 200 px + 3 phase-offset paddles instead of 1 weak central paddle), `triple-paddle` amp 220 → 230, `crossfire` amped 3 → 8 motions (4H sweepers + 3V pendulums + 1 door paddle, all non-aligned periods) then reclassified hard → expert after playtest confirmed expert feel. Net tier shifts: +2 simple, +1 medium, +2 expert, -5 hard. No engine change. See §4 *Layout templates*. |
@@ -253,16 +254,38 @@ interface LayoutTemplate {
   spawn: Vector2;
   obstacles: Rect[];
   door: Rect;
-  packs?: readonly string[];  // undefined = universal
+  complexity: ComplexityTier;
+  packs?: readonly string[];        // undefined = universal
+  movingObstacles?: readonly MovingObstacle[];  // medium / hard / expert
+  excludeFromRandom?: boolean;      // v2.0.27 — skipped by eligibleTemplates
 }
 ```
 
-**Pack filtering.** `generateRoom(seed, packId, forced?)` calls
+**Pack filtering.** `generateRoom(seed, packId, year, monthId, forced?)` calls
 `eligibleTemplates(packId)`, which keeps entries where
 `packs === undefined` (universal) **or** `packs.includes(packId)`
-(pack-specific). The active pack is `profile.careerPack`. A
-`forcedTemplateId` from the DevPanel bypasses the filter — devs may want
-to preview a homeschool-only template inside an SWE run.
+(pack-specific), AND where `excludeFromRandom` is not set. The active
+pack is `profile.careerPack`. A `forcedTemplateId` from the DevPanel
+bypasses the filter — devs may want to preview a homeschool-only
+template (or an excluded one) inside an SWE run.
+
+**Anchor slots (v2.0.27).** `MONTH_SLOT_OVERRIDES: Record<number, string>`
+in `layouts.ts` lets a specific monthId be pinned to a specific
+template, bypassing the seed-driven tier roll. Currently the only entry
+is `2 → 'library'` — Feb 2020 plays as the no-motion calm intro
+("the world is about to change"). Every subsequent playable month
+escalates through the simple-with-motion random pool and onward up the
+tier ladder. DevPanel still wins over the anchor for previewing.
+
+**Random-pool exclusion (v2.0.27).** Templates tagged
+`excludeFromRandom: true` never appear in random rolls but remain
+reachable via DevPanel + anchor slots. Used to retire the 11 no-motion
+simple templates (`library`, `divided`, `park`, `grocery-store`,
+`kitchen`, `living-room`, `church`, `open-office`, `shared-desks`,
+`cubicles`, `classroom`) so 2020's progression reads as "Feb calm →
+light motion that escalates" rather than scattering static-furniture
+rooms across the early-game pool. The retired templates stay authored —
+they may return with motion overlays added in a future re-tier pass.
 
 **Spirit: spaces both packs visit are universal; spaces only one pack
 visits get tagged.** SWE-ers spend time in offices, but also go to
@@ -271,21 +294,22 @@ parents don't typically walk into a cubicle farm. The tag is for
 *exclusion of the obviously-wrong*, not for fine-grained per-pack
 curation — most templates are universal.
 
-**Current pool (35 templates — 13 simple + 4 easy + 8 medium + 6 hard + 4 expert as of v2.0.24):**
+**Current pool (36 templates authored — random rolls draw from 25 (3 simple + 4 easy + 8 medium + 6 hard + 4 expert); 11 simple-no-motion entries tagged `excludeFromRandom` after v2.0.27 + reachable via DevPanel / anchor slots).** Rows marked **exc** are excluded from random rolls.
 
 | Template id | Label | Pack filter | Tier | Notes |
 |---|---|---|---|---|
-| `open-office` | Open office | `software-engineering` | simple | 1 mid-canvas blob (smallest template) |
-| `shared-desks` | Shared desks | `software-engineering` | simple | Desk + 2 shelves + table |
-| `cubicles` | Cubicles | `software-engineering` | simple | 4 small blocks in 2×2 grid |
-| `classroom` | Classroom | `homeschool-parent` | simple | 4 student desks + teacher's desk |
-| `library` | Library | universal | simple | Long shelves top + bottom |
-| `divided` | Divided | universal | simple | Center wall with gap |
-| `park` | Park | universal | simple | Bench + tree-blob, asymmetric |
-| `grocery-store` | Grocery store | universal | simple | 3 vertical aisles, gaps mid-aisle |
-| `kitchen` | Kitchen | universal | simple | Top counter + right counter + center island |
-| `living-room` | Living room | universal | simple | Couch + coffee table + TV stand |
-| `church` | Church | universal | simple | 2 rows of 3 pews + 2 plants |
+| `open-office` | Open office | `software-engineering` | simple (**exc**) | 1 mid-canvas blob (smallest template). Retired from random in v2.0.27. |
+| `shared-desks` | Shared desks | `software-engineering` | simple (**exc**) | Desk + 2 shelves + table. Retired from random in v2.0.27. |
+| `cubicles` | Cubicles | `software-engineering` | simple (**exc**) | 4 small blocks in 2×2 grid. Retired from random in v2.0.27. |
+| `classroom` | Classroom | `homeschool-parent` | simple (**exc**) | 4 student desks + teacher's desk. Retired from random in v2.0.27. |
+| `library` | Library | universal | simple (**exc**) | Long shelves top + bottom; clear straight shot at y=300. **Anchor slot for Feb 2020 via `MONTH_SLOT_OVERRIDES[2]` (v2.0.27)** — only entry point into the game uses this template; not in random pool. |
+| `divided` | Divided | universal | simple (**exc**) | Center wall with gap. Retired from random in v2.0.27. |
+| `park` | Park | universal | simple (**exc**) | Bench + tree-blob, asymmetric. Retired from random in v2.0.27. |
+| `grocery-store` | Grocery store | universal | simple (**exc**) | 3 vertical aisles, gaps mid-aisle. Retired from random in v2.0.27. |
+| `kitchen` | Kitchen | universal | simple (**exc**) | Top counter + right counter + center island. Retired from random in v2.0.27. |
+| `living-room` | Living room | universal | simple (**exc**) | Couch + coffee table + TV stand. Retired from random in v2.0.27. |
+| `church` | Church | universal | simple (**exc**) | 2 rows of 3 pews + 2 plants. Retired from random in v2.0.27. |
+| `slow-pendulum` | Slow pendulum | universal | simple | v2.0.27 — lightest motion entry in the simple-with-motion trio. Single 60×100 block, amp 100 / period 4500 ms (sweeps y=200..400 — 200 px range, vs medium `pendulum` at amp 180 / period 2400 ms sweeping y=70..430). Pure intro to moving obstacles; player can walk above (y<200) or below (y>400) when block is at the opposite extreme. |
 | `maze` | Maze | universal | easy | 4-wall zigzag (center → top → bottom → center gaps); promoted simple → easy in v2.0.17 |
 | `s-curve` | S-curve | universal | easy | 2 offset vertical walls; player snakes UP → over → DOWN → over → up to door (3 direction changes, lower cognitive load than maze) |
 | `switchback` | Switchback | universal | easy | 2-wall maze-lite with 200-px gaps; reads as a corridor twist rather than a zigzag puzzle |
@@ -318,11 +342,29 @@ curation — most templates are universal.
 | `patrol-and-paddle` | Patrol & paddle | universal | hard | Mixes motion modes ("medium/hard, plus a deterministic block"): 80×25 horizontal patrol on a path (x=500..880 at y=280, period 4 s) + a 20×80 sine paddle near the door (y=80..440, period 1.8 s). Non-integer-ratio periods so the combined pattern doesn't repeat. v2.0.28 — demoted expert → hard: two-motion density is standard hard, not expert. |
 | `tempest` | Tempest | universal | expert | v2.0.28 — second expert template, matching crossfire's character recipe (mixed-axis density + non-aligned periods + no permanent safe zone) with a different motion mix: 2 horizontal sweepers at top + bottom (path-based, opposite directions, periods 2.4 / 2.7 s) + 4 vertical pendulums spaced 100 px apart in the right half (x=540/640/740/840, π/2 phase-staggered, periods 1.6 / 1.8 / 2.0 / 2.2 s, amp 180) + 1 door-front paddle (x=910, period 1.5 s). 7 motions, all-distinct periods (1500/1600/1800/2000/2200/2400/2700) so the combined hazard never visibly repeats. Player must time entry into each of the 4 pendulum columns then the door paddle. |
 
-**Pool sizes per pack (v2.0.24):**
-- SWE simple = 12 (universal 9 + swe 3); SWE easy = 4 (universal); SWE medium = 8 (universal); SWE hard = 6 (universal); SWE expert = 4 (universal); SWE total eligible = 34.
-- Homeschool simple = 10 (universal 9 + homeschool 1); Homeschool easy = 4 (universal); Homeschool medium = 8 (universal); Homeschool hard = 6 (universal); Homeschool expert = 4 (universal); Homeschool total eligible = 32.
+**Pool sizes per pack (v2.0.27, random rolls only — `excludeFromRandom` entries omitted from these counts):**
+- SWE simple = 3 (universal — `counter-patrols`, `channel-paddle`, `slow-pendulum`); SWE easy = 4 (universal); SWE medium = 8 (universal); SWE hard = 6 (universal); SWE expert = 4 (universal); SWE total random-eligible = 25.
+- Homeschool simple = 3 (same universal trio); Homeschool easy = 4 (universal); Homeschool medium = 8 (universal); Homeschool hard = 6 (universal); Homeschool expert = 4 (universal); Homeschool total random-eligible = 25.
 
-In 2020 (100% simple) SWE picks from 12 / Homeschool from 10. From 2021 onwards the easy pool engages at the v2.0.9 mix weights. From 2023 onwards medium rolls pull from the eight medium templates rather than falling through to easy. From 2027 onwards hard rolls pull from the six hard templates. From 2029 onwards expert rolls pull from the four expert templates rather than falling through to hard.
+**Anchor-slot reach (not counted in random pools):** 11 no-motion simple
+templates (`library`, `divided`, `park`, `grocery-store`, `kitchen`,
+`living-room`, `church`, `open-office`, `shared-desks`, `cubicles`,
+`classroom`) — reachable via DevPanel for preview, and via
+`MONTH_SLOT_OVERRIDES` for explicit per-month anchoring. Currently only
+`library` is anchored (Feb 2020). The remaining 10 are preserved for
+future re-tier work (motion overlays + promotion back to the random
+pool, OR per-month anchoring on future calm beats).
+
+In 2020 (100% simple) Feb is anchored to `library`; Apr/Jun/Aug/Oct/Dec
+each roll from the 3-template simple-with-motion pool. From 2021 the
+easy pool engages at the v2.0.9 mix weights. From 2023 medium rolls
+pull from the eight medium templates rather than falling through to
+easy. From 2027 hard rolls pull from the six hard templates. From 2029
+expert rolls pull from the four expert templates rather than falling
+through to hard. The progression now reads as "Feb 2020 calm →
+escalating simple motion → easy navigation → medium hazards → hard →
+expert" without any year still bottoming out at static-furniture
+rooms.
 
 **Moving obstacles** — declared via the optional `movingObstacles?: MovingObstacle[]` field on a template (used by medium / hard / expert tiers). Each obstacle has a `baseRect` (rest position + width/height), `amplitude` (px), `period` (ms), `phase` (rad), an optional `axis?: 'horizontal' | 'vertical'` (defaults to vertical for back-compat), and an optional `path?: Vector2[]` (v2.0.22 — when set, the rect cycles through the waypoints with `period` as the total cycle time, linear interpolation between adjacent points, loops back to `path[0]`; the sine fields are ignored). Widths are author-controlled — narrow blocks (10–30 px) let denser hazard rooms pack more obstacles in while keeping every gap > player diameter (28 px). Detected separately from static `obstacles` — see the medium-tier row in *Complexity tiers* for the full collision behavior (two-phase slide+stun, per-obstacle dedupe, visual feedback). Hard / expert templates reuse the exact same collision pipeline; the difficulty comes from template authoring (faster periods, mixed axes, paddle-shaped obstacles, deterministic patrol paths, dense narrow-block patterns). Tuning lives as named constants at the top of `DecisionRoom.tsx` — revisit after playtest.
 

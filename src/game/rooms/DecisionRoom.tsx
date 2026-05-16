@@ -342,7 +342,15 @@ export function DecisionRoom({ config, onExit }: Props) {
     });
     // Pass the room's calendar year so the generator can roll a
     // year-appropriate complexity tier (v2.0.9 — `YEAR_TO_COMPLEXITY_MIX`).
-    return generateRoom(seed, profile.careerPack, monthEntry.year, forcedLayout);
+    // `monthId` (v2.0.27) lets the generator honor per-month anchor slots
+    // from `MONTH_SLOT_OVERRIDES` (e.g., Feb 2020 = `library`).
+    return generateRoom(
+      seed,
+      profile.careerPack,
+      monthEntry.year,
+      config.monthId,
+      forcedLayout,
+    );
   });
 
   // Interactables placed in this room (1-3, seeded, non-overlapping with
