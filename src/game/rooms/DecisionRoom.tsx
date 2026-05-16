@@ -258,7 +258,7 @@ const FINALE_DECISION: DecisionDef = {
       flavor: 'Sounds about right. Ten years of elite idling is nothing to sneeze at.',
     },
     {
-      label: "Ten years of story, and I couldn't explain the plot with a gun to my head.",
+      label: "Ten years of story and I still couldn’t explain the plot even if the narrator showed up with a PowerPoint.",
       effects: {},
       flavor: "Fair. You played the whole saga like it was background noise.",
     },
