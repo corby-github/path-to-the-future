@@ -898,7 +898,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { baseRect: { x: 910, y: 260, width: 20, height: 80 },  amplitude: 180, period: 1500, phase: Math.PI / 2 },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'hard',
+    complexity: 'expert',
   },
   {
     // v2.0.24 — full redesign after playtest read v1 as "WAY too easy".
