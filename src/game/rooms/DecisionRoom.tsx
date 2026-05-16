@@ -23,8 +23,10 @@ import { DecisionModal } from '../ui/DecisionModal';
 import { EventModal } from '../ui/EventModal';
 import { NPCModal } from '../ui/NPCModal';
 import { ArcadeModal } from '../ui/ArcadeModal';
-import { TutorialOverlay } from '../ui/TutorialOverlay';
+import { TutorialOverlay, TUTORIAL_KEYS_STEP_INDEX } from '../ui/TutorialOverlay';
 import { SprintTutorialOverlay } from '../ui/SprintTutorialOverlay';
+import { KeysWidget } from '../ui/KeysWidget';
+import { useMisclickPrompt } from '../engine/useMisclickPrompt';
 import { dismissTutorial, dismissSprintTutorial } from '../state/slices/metaSlice';
 import { persistState } from '../state/persistence';
 import { computeRoomSeed } from './generator/seedRng';
@@ -435,6 +437,25 @@ export function DecisionRoom({ config, onExit }: Props) {
     setShowSprintTutorial(false);
     persistState(store.getState());
   }, [dispatch, store]);
+
+  // Issue #89 — misclick prompt. Bound to the canvas wrapper below.
+  // Suppressed during modals + during the keys-widget tutorial step
+  // (no point stacking another keys widget on top of the bubble) +
+  // during the sprint tutorial overlay.
+  const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
+  const onKeysWidgetTutorialStep =
+    tutorialActive && tutorialStepIndex === TUTORIAL_KEYS_STEP_INDEX;
+  const misclickSuppressed =
+    tutorialActive ||
+    showSprintTutorial ||
+    onKeysWidgetTutorialStep ||
+    activeDecision !== null ||
+    activeEvent !== null ||
+    activeInteractable !== null;
+  const misclickPrompt = useMisclickPrompt({
+    containerRef: canvasWrapperRef,
+    suppressed: misclickSuppressed,
+  });
 
   // Index into placements of the nearest interactable within proximity, or
   // null when none. Drives the halo / [E] hint and gates the E-key.
@@ -1127,12 +1148,14 @@ export function DecisionRoom({ config, onExit }: Props) {
 
         {/* Canvas wrapper — wireframe border survives the door-commit fade. */}
         <div
+          ref={canvasWrapperRef}
           data-region="canvas"
           style={{
             border: `1px solid ${palette.surface}`,
             borderRadius: 6,
             overflow: 'hidden',
             lineHeight: 0,
+            position: 'relative',
           }}
         >
         <svg
@@ -1535,6 +1558,44 @@ export function DecisionRoom({ config, onExit }: Props) {
             </text>
           ))}
         </svg>
+        {/* Issue #89 — misclick prompt. Surfaces the keys widget when
+            the player clicks the canvas (the game is keyboard-only).
+            zIndex 70 sits above gameplay (SVG) but below modals
+            (zIndex 100+) and below the tutorial overlay (zIndex 80).
+            Re-keyed by `version` so each fresh pop replays the
+            pop-in animation. */}
+        {misclickPrompt.visible && (
+          <div
+            key={misclickPrompt.version}
+            data-component="MisclickPrompt"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+              zIndex: 70,
+              animation: 'decision-modal-dialog-pop 200ms ease-out',
+            }}
+          >
+            <div
+              data-region="bubble"
+              style={{
+                pointerEvents: 'auto',
+                background: palette.background,
+                color: palette.ink,
+                border: `2px solid ${palette.ink}`,
+                borderRadius: 6,
+                padding: '18px 26px',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
+                fontFamily: 'inherit',
+              }}
+            >
+              <KeysWidget palette={palette} size={42} caption="Use the keyboard" />
+            </div>
+          </div>
+        )}
         </div>
 
         {tutorialActive && (
