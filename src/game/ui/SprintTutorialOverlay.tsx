@@ -1,13 +1,20 @@
 import { useEffect, type CSSProperties } from 'react';
 import { useCareerPack } from '../content/useCareerPack';
-import { KeysWidget, type SprintPulseDirection } from './KeysWidget';
+import type { Palette } from '../types/careerPack';
+import type { SprintPulseDirection } from './KeysWidget';
 
 // Issue #92 — second tutorial step, fires AFTER the main 4-step
 // coachmark dismisses AND after the player has accumulated ~5 s of
-// baseline movement. Single-step overlay: shows the keys widget with
-// a pulse on the player's most-used direction + a "tap twice and hold
-// to run" caption. Dismisses on any keypress or click; never reappears
-// after first dismissal (persisted via `meta.sprintTutorialDismissed`).
+// baseline movement. Single-step overlay; teaches the double-tap
+// sprint with explicit "press 2 times" copy + a literal worked
+// example showing one direction glyph tapped twice. Dismisses on any
+// keypress or click; never reappears after first dismissal (persisted
+// via `meta.sprintTutorialDismissed`).
+//
+// Copy revised post-playtest: original "Tap twice and hold to run" +
+// "Double-tap any direction to sprint" didn't read as "press 2x" to
+// the player. The example row (`→ + → Go fast right`) is the
+// load-bearing teach.
 //
 // Why separate from TutorialOverlay: the trigger condition is
 // time-based, not user-paced — separating the components keeps each
@@ -16,12 +23,26 @@ import { KeysWidget, type SprintPulseDirection } from './KeysWidget';
 
 interface Props {
   onDismiss: () => void;
-  // Direction to pulse in the keys widget. Picked by DecisionRoom based
-  // on the most-recently-used direction at trigger time; falls back to
-  // 'right' (the most natural "I want to get there" direction given the
-  // door is east).
+  // Direction to use in the example row + pulse the example glyph.
+  // Picked by DecisionRoom based on the most-recently-used direction
+  // at trigger time; falls back to 'right' (the most natural "I want
+  // to get there" direction given the door is east).
   pulseDirection?: SprintPulseDirection;
 }
+
+const GLYPH_FOR: Record<NonNullable<SprintPulseDirection>, string> = {
+  up: '↑',
+  down: '↓',
+  left: '←',
+  right: '→',
+};
+
+const LABEL_FOR: Record<NonNullable<SprintPulseDirection>, string> = {
+  up: 'Go fast up',
+  down: 'Go fast down',
+  left: 'Go fast left',
+  right: 'Go fast right',
+};
 
 export function SprintTutorialOverlay({
   onDismiss,
@@ -87,6 +108,14 @@ export function SprintTutorialOverlay({
     color: palette.ink,
   };
 
+  const exampleLabelStyle: CSSProperties = {
+    margin: '12px 0 6px 0',
+    fontSize: 11,
+    color: palette.inkMuted,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+  };
+
   const hintStyle: CSSProperties = {
     margin: '10px 0 0 0',
     fontSize: 11,
@@ -95,6 +124,10 @@ export function SprintTutorialOverlay({
     textTransform: 'uppercase',
     opacity: 0.7,
   };
+
+  const dir = pulseDirection ?? 'right';
+  const glyph = GLYPH_FOR[dir];
+  const label = LABEL_FOR[dir];
 
   return (
     <div
@@ -105,15 +138,78 @@ export function SprintTutorialOverlay({
       aria-modal="false"
     >
       <div data-region="bubble" style={bubbleStyle}>
-        <p style={titleStyle}>Tap twice and hold to run</p>
+        <p style={titleStyle}>Press 2× to sprint</p>
         <p style={bodyStyle}>
-          Double-tap any direction to sprint. Release to slow back down.
+          Press the direction key 2 times to go faster.
         </p>
-        <div style={{ marginTop: 14, display: 'flex', justifyContent: 'center' }}>
-          <KeysWidget palette={palette} size={36} pulseDirection={pulseDirection} />
-        </div>
+        <p style={exampleLabelStyle}>Example</p>
+        <ExampleRow palette={palette} glyph={glyph} label={label} />
         <p style={hintStyle}>Press any key to dismiss</p>
       </div>
+    </div>
+  );
+}
+
+interface ExampleRowProps {
+  palette: Palette;
+  glyph: string;
+  label: string;
+}
+
+// Literal "→ + → goes fast right" example row. Renders two bordered
+// glyph cells with a "+" between them, then the human-readable label.
+// The second glyph cell pulses ("keys-widget-pulse" keyframe in
+// global.css) so the eye reads the rhythm of "press twice."
+function ExampleRow({ palette, glyph, label }: ExampleRowProps) {
+  const cellSize = 36;
+  const cellStyle: CSSProperties = {
+    width: cellSize,
+    height: cellSize,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: palette.background,
+    color: palette.ink,
+    border: `2px solid ${palette.ink}`,
+    borderRadius: 4,
+    fontFamily: 'inherit',
+    fontWeight: 600,
+    fontSize: Math.round(cellSize * 0.45),
+    lineHeight: 1,
+  };
+  const plusStyle: CSSProperties = {
+    fontSize: 18,
+    color: palette.ink,
+    fontWeight: 600,
+  };
+  const labelStyle: CSSProperties = {
+    margin: 0,
+    fontSize: 14,
+    color: palette.ink,
+    fontWeight: 500,
+  };
+
+  return (
+    <div
+      data-region="example-row"
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+      }}
+    >
+      <span style={cellStyle}>{glyph}</span>
+      <span style={plusStyle}>+</span>
+      <span
+        style={{
+          ...cellStyle,
+          animation: 'keys-widget-pulse 900ms ease-in-out infinite',
+        }}
+      >
+        {glyph}
+      </span>
+      <p style={labelStyle}>{label}</p>
     </div>
   );
 }
