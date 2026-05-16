@@ -3,13 +3,13 @@
     "title": "Path to the Future",
     "tagline": "A career of choices.",
     "version": "v1.0",
-    "copyright": "© 2026 Corby Hoback",
-    "timeSpent": "TBD hours of focused work",
+    "copyright": "© 2026 Corby Hoback · Founding Way Research, LLC",
+    "timeSpent": "35h hours of focused work",
     "builtWith": "Claude Code · Opus 4.7 · 1M context"
   },
   "links": [
     { "label": "Source on GitHub", "url": "https://github.com/corby-github/path-to-the-future" },
-    { "label": "Corby on LinkedIn", "url": "TBD" }
+    { "label": "Corby on LinkedIn", "url": "https://www.linkedin.com/in/corby-linked-in/" }
   ],
   "credits": [
     { "role": "Owner & Producer", "names": ["Corby Hoback"] },
