@@ -81,12 +81,29 @@ interface DamageFloater {
 // symmetric to the right→left door trip the player just took. The
 // standard left spawn is still used for live room entry + exitReplay
 // (return to live).
+//
+// Door-guarded templates (e.g., gauntlet at hard tier — wall 3 extends to
+// x=920, exactly the ideal replay-spawn x) can place obstacles right at
+// the ideal spawn point. To prevent the player spawning inside a wall
+// and freezing, search westward from the ideal x in fixed steps until a
+// position clear of all static obstacles is found; final fallback is the
+// layout's left-edge spawn.
 const REPLAY_SPAWN_DOOR_GAP = 30;
-function replaySpawnFor(door: Rect): Vector2 {
-  return {
-    x: door.x - REPLAY_SPAWN_DOOR_GAP,
-    y: door.y + door.height / 2,
-  };
+const REPLAY_SPAWN_SEARCH_STEP = 30;
+function replaySpawnFor(
+  door: Rect,
+  obstacles: readonly Rect[],
+  leftSpawn: Vector2,
+): Vector2 {
+  const y = door.y + door.height / 2;
+  const idealX = door.x - REPLAY_SPAWN_DOOR_GAP;
+  for (let x = idealX; x >= leftSpawn.x; x -= REPLAY_SPAWN_SEARCH_STEP) {
+    const blocked = obstacles.some((r) =>
+      circleIntersectsRect(x, y, PLAYER_RADIUS, r),
+    );
+    if (!blocked) return { x, y };
+  }
+  return leftSpawn;
 }
 
 // Rewind door for backward replay (#33). Bottom-left of the canvas, away
@@ -643,8 +660,11 @@ export function DecisionRoom({ config, onExit }: Props) {
   }, [layout.door, layout.movingObstacles, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch]);
 
   const initialSpawn = useMemo<Vector2>(
-    () => (isReplay ? replaySpawnFor(layout.door) : layout.spawn),
-    [isReplay, layout.door, layout.spawn],
+    () =>
+      isReplay
+        ? replaySpawnFor(layout.door, layout.obstacles, layout.spawn)
+        : layout.spawn,
+    [isReplay, layout.door, layout.obstacles, layout.spawn],
   );
 
   const playerActive =
