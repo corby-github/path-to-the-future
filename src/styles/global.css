@@ -95,6 +95,16 @@ body {
   40%           { opacity: 1; }
 }
 
+/* Sprint tutorial pulse (issue #92). Highlights one arrow + the matching
+   WASD glyph in the keys widget to read as "double-tap." Brief scale up
+   with a translateY beat — feels like two presses without a literal
+   double-flash that would compete with the surrounding tutorial copy. */
+@keyframes keys-widget-pulse {
+  0%, 70%, 100% { transform: translateY(0)    scale(1);    opacity: 1;   }
+  20%           { transform: translateY(-2px) scale(1.06); opacity: 0.95; }
+  45%           { transform: translateY(-2px) scale(1.06); opacity: 0.95; }
+}
+
 /* Credits-screen scroll. Inner content starts at the top of the band (the
    first line is already in view) and rises until it's fully past above the
    top (-100% of its own height). A brief animation-delay before the first

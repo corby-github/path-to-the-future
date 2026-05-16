@@ -556,19 +556,24 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 2, v2.0.25): top + bottom frame
-    // walls compress the player into a narrow 140-px east-west corridor
-    // (y=230..370) that contains the spawn (y=300) and the door (y=
-    // 250..350). A horizontal patrol sweeps the corridor at y=275..315,
-    // leaving 45-px safe band above and 55-px safe band below. Player
-    // commits to a lane, times the patrol's x position, then crosses.
+    // Medium-tier (issue #94, batch 2, v2.0.25, re-tightened v2.0.29):
+    // top + bottom frame walls compress the player into an 80-px
+    // east-west corridor (y=260..340) that contains the spawn (y=300)
+    // and the door (y=250..350 — partly behind the frames, accessible
+    // through the corridor at door height). A horizontal patrol sweeps
+    // the corridor at y=275..315. v2.0.29 — corridor narrowed from
+    // 140 px (y=230..370) to 80 px after the geometric read showed
+    // the wider corridor allowed cruise lanes outside the patrol's
+    // vertical range (dy²>radius² at y=244..261 above and y=329..356
+    // below). The narrow corridor forces the player INTO the patrol
+    // band, restoring the intended medium timing demand.
     // Composition: horizontal-corridor + horizontal-patrol.
     id: 'east-corridor',
     label: 'East corridor',
     spawn: DEFAULT_SPAWN,
     obstacles: [
-      { x: 100, y: 0,   width: 800, height: 230 },  // top frame
-      { x: 100, y: 370, width: 800, height: 230 },  // bottom frame
+      { x: 100, y: 0,   width: 800, height: 260 },  // top frame (v2.0.29 — height 230 → 260)
+      { x: 100, y: 340, width: 800, height: 260 },  // bottom frame (v2.0.29 — y 370 → 340, height 230 → 260)
     ],
     movingObstacles: [
       {
@@ -610,13 +615,17 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 2, v2.0.25): top + bottom frame
-    // walls compress the player into the y=130..470 corridor, where a
-    // single sentinel traces a triangular path (top-left → top-right →
-    // bottom-center → loop). Period 4500 ms = 1500 ms per segment.
-    // Three corners means three safe zones the sentinel is NOT at any
-    // given moment; player must read the orbit and pick a moment when
-    // the sentinel is in a corner far from the player's intended line.
+    // Medium-tier (issue #94, batch 2, v2.0.25, retuned v2.0.29): top +
+    // bottom frame walls compress the player into the y=130..470
+    // corridor, where a single sentinel traces a triangular path
+    // (top-left → top-right → bottom-center → loop). v2.0.29 — period
+    // shortened 4500 → 3000 ms (1000 ms per segment, was 1500) after
+    // the geometric read showed the slow tempo created a permanent
+    // y=300 cruise line: the sentinel body only crosses y=300 twice
+    // per cycle (at x≈600 going down, x≈400 going up), and at 4500 ms
+    // each crossing had ~3.7 s of clear window — too generous for
+    // medium. The shorter period tightens both windows to ~2.5 s,
+    // restoring real timing demand without changing geometry.
     // Composition: corridor-frame + triangular-path-sentinel.
     id: 'triangle-sentinel',
     label: 'Triangle sentinel',
@@ -630,7 +639,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
         baseRect: { x: 300, y: 160, width: 40, height: 40 },
         amplitude: 0,
         phase: 0,
-        period: 4500,
+        period: 3000,
         path: [
           { x: 300, y: 160 },
           { x: 700, y: 160 },
@@ -642,19 +651,26 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 2, v2.0.25): center wall + two
-    // SYNCHRONIZED horizontal patrols (same phase, same direction,
-    // moving as a rolling wave). Differs from twin-patrols (counter-
-    // direction, harder to time) — here the pattern is more readable
-    // because both patrols move together, but the center wall still
-    // forces the player to commit to either the upper (y≈200) or lower
-    // (y≈400) patrol band to cross. Period 2800 ms each. Composition:
-    // center-wall + patrol-pair-sync.
+    // Medium-tier (issue #94, batch 2, v2.0.25, framed v2.0.29): center
+    // wall + two SYNCHRONIZED horizontal patrols (same phase, same
+    // direction, moving as a rolling wave). Differs from twin-patrols
+    // (counter-direction, harder to time) — here the pattern is more
+    // readable because both patrols move together. v2.0.29 — added top
+    // + bottom frame walls (y=0..170, y=430..600) after the geometric
+    // read showed cruise lanes above (y=170..186) and below (y=440..
+    // 595) the patrols' y bands let the player route AROUND the
+    // motion entirely. The frames compress the player into the
+    // y=170..430 zone where the center wall forces a detour into one
+    // of the two patrol bands (upper y=170..240, lower y=360..430) —
+    // patrol body now sits squarely in the only available crossing
+    // zones. Composition: center-wall + outer-frames + patrol-pair-sync.
     id: 'sync-patrols',
     label: 'Sync patrols',
     spawn: DEFAULT_SPAWN,
     obstacles: [
-      { x: 470, y: 240, width: 60, height: 120 },  // center wall — forces detour into a patrol band
+      { x: 100, y: 0,   width: 800, height: 170 },  // top frame (v2.0.29)
+      { x: 100, y: 430, width: 800, height: 170 },  // bottom frame (v2.0.29)
+      { x: 470, y: 240, width: 60, height: 120 },   // center wall — forces detour into a patrol band
     ],
     movingObstacles: [
       {
