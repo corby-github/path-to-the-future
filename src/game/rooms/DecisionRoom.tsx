@@ -23,8 +23,11 @@ import { DecisionModal } from '../ui/DecisionModal';
 import { EventModal } from '../ui/EventModal';
 import { NPCModal } from '../ui/NPCModal';
 import { ArcadeModal } from '../ui/ArcadeModal';
-import { TutorialOverlay } from '../ui/TutorialOverlay';
-import { dismissTutorial } from '../state/slices/metaSlice';
+import { TutorialOverlay, TUTORIAL_KEYS_STEP_INDEX } from '../ui/TutorialOverlay';
+import { SprintTutorialOverlay } from '../ui/SprintTutorialOverlay';
+import { KeysWidget } from '../ui/KeysWidget';
+import { useMisclickPrompt } from '../engine/useMisclickPrompt';
+import { dismissTutorial, dismissSprintTutorial } from '../state/slices/metaSlice';
 import { persistState } from '../state/persistence';
 import { computeRoomSeed } from './generator/seedRng';
 import { generateRoom } from './generator/populate';
@@ -81,12 +84,29 @@ interface DamageFloater {
 // symmetric to the right→left door trip the player just took. The
 // standard left spawn is still used for live room entry + exitReplay
 // (return to live).
+//
+// Door-guarded templates (e.g., gauntlet at hard tier — wall 3 extends to
+// x=920, exactly the ideal replay-spawn x) can place obstacles right at
+// the ideal spawn point. To prevent the player spawning inside a wall
+// and freezing, search westward from the ideal x in fixed steps until a
+// position clear of all static obstacles is found; final fallback is the
+// layout's left-edge spawn.
 const REPLAY_SPAWN_DOOR_GAP = 30;
-function replaySpawnFor(door: Rect): Vector2 {
-  return {
-    x: door.x - REPLAY_SPAWN_DOOR_GAP,
-    y: door.y + door.height / 2,
-  };
+const REPLAY_SPAWN_SEARCH_STEP = 30;
+function replaySpawnFor(
+  door: Rect,
+  obstacles: readonly Rect[],
+  leftSpawn: Vector2,
+): Vector2 {
+  const y = door.y + door.height / 2;
+  const idealX = door.x - REPLAY_SPAWN_DOOR_GAP;
+  for (let x = idealX; x >= leftSpawn.x; x -= REPLAY_SPAWN_SEARCH_STEP) {
+    const blocked = obstacles.some((r) =>
+      circleIntersectsRect(x, y, PLAYER_RADIUS, r),
+    );
+    if (!blocked) return { x, y };
+  }
+  return leftSpawn;
 }
 
 // Rewind door for backward replay (#33). Bottom-left of the canvas, away
@@ -300,7 +320,7 @@ export function DecisionRoom({ config, onExit }: Props) {
   const stats = useAppSelector((s) => s.stats);
   const flags = useAppSelector((s) => s.flags);
   const { speedMultiplier, forcedLayout, eventMode, forceArcade } = useDevControls();
-  const { setTemplate } = useCurrentRoom();
+  const { setRoomInfo } = useCurrentRoom();
   // Issue #76 — interactable labels in pack JSON may use `{kidA}` / `{kidB}` /
   // `{playerName}` tokens (homeschool kid NPCs). Resolved against the live
   // profile so sprite captions in the room reflect the player's chosen names.
@@ -407,6 +427,44 @@ export function DecisionRoom({ config, onExit }: Props) {
     persistState(store.getState());
   }, [dispatch, store]);
 
+  // Issue #92 — sprint tutorial step. Fires AFTER the main coachmark
+  // dismisses + the player has accumulated ~5 s of baseline movement.
+  // `tutorialStepIndex` tracks the current main-tutorial step so the
+  // misclick prompt (below) can suppress while the keys-widget step
+  // is showing.
+  const sprintTutorialDismissed = useAppSelector(
+    (s) => s.meta.sprintTutorialDismissed ?? false,
+  );
+  const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
+  const [showSprintTutorial, setShowSprintTutorial] = useState(false);
+  const [sprintPulseDirection, setSprintPulseDirection] = useState<
+    'up' | 'down' | 'left' | 'right'
+  >('right');
+  const handleSprintTutorialDismiss = useCallback(() => {
+    dispatch(dismissSprintTutorial());
+    setShowSprintTutorial(false);
+    persistState(store.getState());
+  }, [dispatch, store]);
+
+  // Issue #89 — misclick prompt. Bound to the canvas wrapper below.
+  // Suppressed during modals + during the keys-widget tutorial step
+  // (no point stacking another keys widget on top of the bubble) +
+  // during the sprint tutorial overlay.
+  const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
+  const onKeysWidgetTutorialStep =
+    tutorialActive && tutorialStepIndex === TUTORIAL_KEYS_STEP_INDEX;
+  const misclickSuppressed =
+    tutorialActive ||
+    showSprintTutorial ||
+    onKeysWidgetTutorialStep ||
+    activeDecision !== null ||
+    activeEvent !== null ||
+    activeInteractable !== null;
+  const misclickPrompt = useMisclickPrompt({
+    containerRef: canvasWrapperRef,
+    suppressed: misclickSuppressed,
+  });
+
   // Index into placements of the nearest interactable within proximity, or
   // null when none. Drives the halo / [E] hint and gates the E-key.
   const [adjacentIndex, setAdjacentIndex] = useState<number | null>(null);
@@ -423,14 +481,14 @@ export function DecisionRoom({ config, onExit }: Props) {
     return lines[Math.floor(Math.random() * lines.length)];
   }, [pack.manifest.monthTransitions]);
 
-  // Publish this room's layout id to the HUD via CurrentRoomContext so the
-  // identity column can show "Aug 2020 · open-office". Clears on unmount so
-  // a non-decision room (Narrative / Consequence) doesn't show a stale
-  // template.
+  // Publish this room's layout id + complexity tier to the HUD via
+  // CurrentRoomContext so the location column can show "Aug 2020 ·
+  // open-office · SIMPLE". Clears on unmount so a non-decision room
+  // (Narrative / Consequence) doesn't show stale info.
   useEffect(() => {
-    setTemplate(layout.templateId);
-    return () => setTemplate(null);
-  }, [layout.templateId, setTemplate]);
+    setRoomInfo({ template: layout.templateId, tier: layout.complexity });
+    return () => setRoomInfo({ template: null, tier: null });
+  }, [layout.templateId, layout.complexity, setRoomInfo]);
 
   const ctx = useMemo(() => ({
     stats,
@@ -482,7 +540,53 @@ export function DecisionRoom({ config, onExit }: Props) {
     activeInteractableIdRef.current = activeInteractable?.id ?? null;
   }, [activeInteractable]);
 
+  // Issue #92 — cumulative-baseline-movement timer for the sprint
+  // tutorial step. Accumulates milliseconds with non-zero velocity AND
+  // sprint inactive (baseline movement only); fires the sprint overlay
+  // once the threshold is reached. Refs over state so the ticker
+  // (60 Hz) doesn't thrash React renders.
+  const SPRINT_TUTORIAL_THRESHOLD_MS = 5000;
+  const cumulativeBaselineMoveMsRef = useRef(0);
+  const lastTickAtRef = useRef<number | null>(null);
+  const sprintTutorialFiredRef = useRef(false);
+
   const handleTick = useCallback((state: PlayerState) => {
+    // Issue #92 — accumulate baseline-movement time for the sprint
+    // tutorial step trigger. Only count BASELINE motion (sprint
+    // inactive) so the player can't trigger the sprint teach by
+    // already sprinting — the teach is meant to reward "I've been
+    // walking for a while" with the upgrade reveal.
+    const tickAt = performance.now();
+    if (
+      tutorialDismissed &&
+      !sprintTutorialDismissed &&
+      !isReplay &&
+      !sprintTutorialFiredRef.current
+    ) {
+      const lastAt = lastTickAtRef.current;
+      lastTickAtRef.current = tickAt;
+      if (lastAt !== null) {
+        const dt = tickAt - lastAt;
+        const moving = state.velocity.x !== 0 || state.velocity.y !== 0;
+        const sprintActive = state.sprintingAxis !== undefined && state.sprintingAxis !== null;
+        if (moving && !sprintActive) {
+          cumulativeBaselineMoveMsRef.current += dt;
+          // Track the latest baseline-movement direction for the pulse.
+          const ax = Math.abs(state.velocity.x);
+          const ay = Math.abs(state.velocity.y);
+          if (ax >= ay) {
+            setSprintPulseDirection(state.velocity.x >= 0 ? 'right' : 'left');
+          } else {
+            setSprintPulseDirection(state.velocity.y >= 0 ? 'down' : 'up');
+          }
+          if (cumulativeBaselineMoveMsRef.current >= SPRINT_TUTORIAL_THRESHOLD_MS) {
+            sprintTutorialFiredRef.current = true;
+            setShowSprintTutorial(true);
+          }
+        }
+      }
+    }
+
     // Find the nearest interactable within proximity. NPCs use their live
     // wander position; objects use their fixed spawn.
     let nearest: number | null = null;
@@ -648,11 +752,14 @@ export function DecisionRoom({ config, onExit }: Props) {
         onExit();
       }
     }, MODAL_POP_DELAY_MS);
-  }, [layout.door, layout.movingObstacles, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch]);
+  }, [layout.door, layout.movingObstacles, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch, tutorialDismissed, sprintTutorialDismissed]);
 
   const initialSpawn = useMemo<Vector2>(
-    () => (isReplay ? replaySpawnFor(layout.door) : layout.spawn),
-    [isReplay, layout.door, layout.spawn],
+    () =>
+      isReplay
+        ? replaySpawnFor(layout.door, layout.obstacles, layout.spawn)
+        : layout.spawn,
+    [isReplay, layout.door, layout.obstacles, layout.spawn],
   );
 
   const playerActive =
@@ -1004,6 +1111,7 @@ export function DecisionRoom({ config, onExit }: Props) {
       <div
         data-component="DecisionRoom"
         data-month-id={config.monthId}
+        data-tutorial-step={tutorialActive ? tutorialStepIndex : -1}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -1048,12 +1156,14 @@ export function DecisionRoom({ config, onExit }: Props) {
 
         {/* Canvas wrapper — wireframe border survives the door-commit fade. */}
         <div
+          ref={canvasWrapperRef}
           data-region="canvas"
           style={{
             border: `1px solid ${palette.surface}`,
             borderRadius: 6,
             overflow: 'hidden',
             lineHeight: 0,
+            position: 'relative',
           }}
         >
         <svg
@@ -1324,6 +1434,73 @@ export function DecisionRoom({ config, onExit }: Props) {
             );
           })}
 
+          {/* Issue #92 — motion lines render BEHIND the player while
+              sprint is genuinely active (sprintingAxis set in
+              usePlayerMovement only when multiplier was applied this
+              frame; null during knockback). 3 short stroke segments
+              trailing in the opposite direction of travel. */}
+          {playerState.sprintingAxis && (
+            <g data-region="motion-lines" pointerEvents="none">
+              {(() => {
+                const cx = playerState.position.x;
+                const cy = playerState.position.y;
+                const r = PLAYER_RADIUS;
+                const lineLen = 14;
+                const gap = 4;
+                // Trailing direction is OPPOSITE of sprintingAxis.
+                let segments: ReadonlyArray<{ x1: number; y1: number; x2: number; y2: number }>;
+                if (playerState.sprintingAxis === 'right') {
+                  // Trail left of the player; 3 horizontal segments at varying y.
+                  const x2 = cx - r - gap;
+                  const x1 = x2 - lineLen;
+                  segments = [
+                    { x1, y1: cy - 6, x2, y2: cy - 6 },
+                    { x1, y1: cy,     x2, y2: cy     },
+                    { x1, y1: cy + 6, x2, y2: cy + 6 },
+                  ];
+                } else if (playerState.sprintingAxis === 'left') {
+                  const x1 = cx + r + gap;
+                  const x2 = x1 + lineLen;
+                  segments = [
+                    { x1, y1: cy - 6, x2, y2: cy - 6 },
+                    { x1, y1: cy,     x2, y2: cy     },
+                    { x1, y1: cy + 6, x2, y2: cy + 6 },
+                  ];
+                } else if (playerState.sprintingAxis === 'down') {
+                  const y2 = cy - r - gap;
+                  const y1 = y2 - lineLen;
+                  segments = [
+                    { x1: cx - 6, y1, x2: cx - 6, y2 },
+                    { x1: cx,     y1, x2: cx,     y2 },
+                    { x1: cx + 6, y1, x2: cx + 6, y2 },
+                  ];
+                } else {
+                  // up
+                  const y1 = cy + r + gap;
+                  const y2 = y1 + lineLen;
+                  segments = [
+                    { x1: cx - 6, y1, x2: cx - 6, y2 },
+                    { x1: cx,     y1, x2: cx,     y2 },
+                    { x1: cx + 6, y1, x2: cx + 6, y2 },
+                  ];
+                }
+                return segments.map((s, i) => (
+                  <line
+                    key={i}
+                    x1={s.x1}
+                    y1={s.y1}
+                    x2={s.x2}
+                    y2={s.y2}
+                    stroke={palette.ink}
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    opacity={0.4}
+                  />
+                ));
+              })()}
+            </g>
+          )}
+
           <Player state={playerState} />
 
           {/* "Stunned" stars during the 1-sec moving-obstacle lock. Three
@@ -1389,9 +1566,58 @@ export function DecisionRoom({ config, onExit }: Props) {
             </text>
           ))}
         </svg>
+        {/* Issue #89 — misclick prompt. Surfaces the keys widget when
+            the player clicks the canvas (the game is keyboard-only).
+            zIndex 70 sits above gameplay (SVG) but below modals
+            (zIndex 100+) and below the tutorial overlay (zIndex 80).
+            Re-keyed by `version` so each fresh pop replays the
+            pop-in animation. */}
+        {misclickPrompt.visible && (
+          <div
+            key={misclickPrompt.version}
+            data-component="MisclickPrompt"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+              zIndex: 70,
+              animation: 'decision-modal-dialog-pop 200ms ease-out',
+            }}
+          >
+            <div
+              data-region="bubble"
+              style={{
+                pointerEvents: 'auto',
+                background: palette.background,
+                color: palette.ink,
+                border: `2px solid ${palette.ink}`,
+                borderRadius: 6,
+                padding: '18px 26px',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
+                fontFamily: 'inherit',
+              }}
+            >
+              <KeysWidget palette={palette} size={42} caption="Use the keyboard" />
+            </div>
+          </div>
+        )}
         </div>
 
-        {tutorialActive && <TutorialOverlay onDismiss={handleTutorialDismiss} />}
+        {tutorialActive && (
+          <TutorialOverlay
+            onDismiss={handleTutorialDismiss}
+            onStepChange={setTutorialStepIndex}
+          />
+        )}
+        {showSprintTutorial && !tutorialActive && (
+          <SprintTutorialOverlay
+            onDismiss={handleSprintTutorialDismiss}
+            pulseDirection={sprintPulseDirection}
+          />
+        )}
       </div>
 
       {activeDecision && (

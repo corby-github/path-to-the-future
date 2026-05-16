@@ -605,19 +605,24 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 2, v2.0.25): top + bottom frame
-    // walls compress the player into a narrow 140-px east-west corridor
-    // (y=230..370) that contains the spawn (y=300) and the door (y=
-    // 250..350). A horizontal patrol sweeps the corridor at y=275..315,
-    // leaving 45-px safe band above and 55-px safe band below. Player
-    // commits to a lane, times the patrol's x position, then crosses.
+    // Medium-tier (issue #94, batch 2, v2.0.25, re-tightened v2.0.29):
+    // top + bottom frame walls compress the player into an 80-px
+    // east-west corridor (y=260..340) that contains the spawn (y=300)
+    // and the door (y=250..350 — partly behind the frames, accessible
+    // through the corridor at door height). A horizontal patrol sweeps
+    // the corridor at y=275..315. v2.0.29 — corridor narrowed from
+    // 140 px (y=230..370) to 80 px after the geometric read showed
+    // the wider corridor allowed cruise lanes outside the patrol's
+    // vertical range (dy²>radius² at y=244..261 above and y=329..356
+    // below). The narrow corridor forces the player INTO the patrol
+    // band, restoring the intended medium timing demand.
     // Composition: horizontal-corridor + horizontal-patrol.
     id: 'east-corridor',
     label: 'East corridor',
     spawn: DEFAULT_SPAWN,
     obstacles: [
-      { x: 100, y: 0,   width: 800, height: 230 },  // top frame
-      { x: 100, y: 370, width: 800, height: 230 },  // bottom frame
+      { x: 100, y: 0,   width: 800, height: 260 },  // top frame (v2.0.29 — height 230 → 260)
+      { x: 100, y: 340, width: 800, height: 260 },  // bottom frame (v2.0.29 — y 370 → 340, height 230 → 260)
     ],
     movingObstacles: [
       {
@@ -659,13 +664,17 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 2, v2.0.25): top + bottom frame
-    // walls compress the player into the y=130..470 corridor, where a
-    // single sentinel traces a triangular path (top-left → top-right →
-    // bottom-center → loop). Period 4500 ms = 1500 ms per segment.
-    // Three corners means three safe zones the sentinel is NOT at any
-    // given moment; player must read the orbit and pick a moment when
-    // the sentinel is in a corner far from the player's intended line.
+    // Medium-tier (issue #94, batch 2, v2.0.25, retuned v2.0.29): top +
+    // bottom frame walls compress the player into the y=130..470
+    // corridor, where a single sentinel traces a triangular path
+    // (top-left → top-right → bottom-center → loop). v2.0.29 — period
+    // shortened 4500 → 3000 ms (1000 ms per segment, was 1500) after
+    // the geometric read showed the slow tempo created a permanent
+    // y=300 cruise line: the sentinel body only crosses y=300 twice
+    // per cycle (at x≈600 going down, x≈400 going up), and at 4500 ms
+    // each crossing had ~3.7 s of clear window — too generous for
+    // medium. The shorter period tightens both windows to ~2.5 s,
+    // restoring real timing demand without changing geometry.
     // Composition: corridor-frame + triangular-path-sentinel.
     id: 'triangle-sentinel',
     label: 'Triangle sentinel',
@@ -679,7 +688,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
         baseRect: { x: 300, y: 160, width: 40, height: 40 },
         amplitude: 0,
         phase: 0,
-        period: 4500,
+        period: 3000,
         path: [
           { x: 300, y: 160 },
           { x: 700, y: 160 },
@@ -691,19 +700,26 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 2, v2.0.25): center wall + two
-    // SYNCHRONIZED horizontal patrols (same phase, same direction,
-    // moving as a rolling wave). Differs from twin-patrols (counter-
-    // direction, harder to time) — here the pattern is more readable
-    // because both patrols move together, but the center wall still
-    // forces the player to commit to either the upper (y≈200) or lower
-    // (y≈400) patrol band to cross. Period 2800 ms each. Composition:
-    // center-wall + patrol-pair-sync.
+    // Medium-tier (issue #94, batch 2, v2.0.25, framed v2.0.29): center
+    // wall + two SYNCHRONIZED horizontal patrols (same phase, same
+    // direction, moving as a rolling wave). Differs from twin-patrols
+    // (counter-direction, harder to time) — here the pattern is more
+    // readable because both patrols move together. v2.0.29 — added top
+    // + bottom frame walls (y=0..170, y=430..600) after the geometric
+    // read showed cruise lanes above (y=170..186) and below (y=440..
+    // 595) the patrols' y bands let the player route AROUND the
+    // motion entirely. The frames compress the player into the
+    // y=170..430 zone where the center wall forces a detour into one
+    // of the two patrol bands (upper y=170..240, lower y=360..430) —
+    // patrol body now sits squarely in the only available crossing
+    // zones. Composition: center-wall + outer-frames + patrol-pair-sync.
     id: 'sync-patrols',
     label: 'Sync patrols',
     spawn: DEFAULT_SPAWN,
     obstacles: [
-      { x: 470, y: 240, width: 60, height: 120 },  // center wall — forces detour into a patrol band
+      { x: 100, y: 0,   width: 800, height: 170 },  // top frame (v2.0.29)
+      { x: 100, y: 430, width: 800, height: 170 },  // bottom frame (v2.0.29)
+      { x: 470, y: 240, width: 60, height: 120 },   // center wall — forces detour into a patrol band
     ],
     movingObstacles: [
       {
@@ -903,7 +919,14 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'expert',
+    // v2.0.28 — demoted expert → hard. Single deterministic 40×40 sentinel
+    // on a slow 8 s bowtie loop is readable + has obvious dead-air zones
+    // (middle y-band x=500..900 is permanently safe). That's a hard
+    // template's character (well-defined challenge with a learnable
+    // pattern), not expert. Crossfire's expert read is the OPPOSITE:
+    // no permanent safe zone in the right half because 8 motions blanket
+    // the area.
+    complexity: 'hard',
   },
   {
     // Expert-tier (PR6, v2.0.22): mixes motion modes per the §4 expert
@@ -938,7 +961,13 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'expert',
+    // v2.0.28 — demoted expert → hard. Two motions (patrol + paddle) is
+    // standard hard density. The non-integer-ratio periods (4000:1800)
+    // make the combined pattern non-repeating but the player still has
+    // clear safe zones (above y=300 when patrol is at right + paddle is
+    // at extreme). Hard tier fits better than expert; reserves expert
+    // for crossfire-style 6+ motion density.
+    complexity: 'hard',
   },
   // ─── Hard-tier expansion (issue #94 batch 2, v2.0.24) ─────────────────
   // Per user "amp it up" feedback on PR #95 medium batch — hard tier
@@ -1049,7 +1078,14 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { baseRect: { x: 870, y: 240, width: 15, height: 120 }, amplitude: 210, period: 1500, phase: (8 * Math.PI) / 5 },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'expert',
+    // v2.0.28 — demoted expert → hard per playtest direction "crossfire is
+    // the only true expert; shift the others." Tight-pickets is dense and
+    // demanding but is single-axis (5 vertical sine pickets, uniform
+    // period 1500 ms, deterministic phase wave). Crossfire's expert read
+    // comes from mixed-axis density + non-aligned periods + decision-
+    // dense traversal — pickets is more "tempo wall" than "puzzle storm."
+    // Fits the hard tier alongside `triple-paddle` and `pickets`.
+    complexity: 'hard',
   },
   {
     // Three paddles in a row across the right half, 120° phase-staggered
@@ -1138,6 +1174,69 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { baseRect: { x: 810, y: 300, width: 25, height: 100 }, amplitude: 150, period: 1700, phase: Math.PI },
       // Door paddle — sine sweep directly in front of door.
       { baseRect: { x: 910, y: 260, width: 20, height: 80 },  amplitude: 180, period: 1500, phase: Math.PI / 2 },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'expert',
+  },
+  {
+    // v2.0.28 — second expert template, matching crossfire's character
+    // recipe (mixed-axis density + non-aligned periods + no permanent
+    // safe zone in the right half) with a different motion mix:
+    //
+    // - 2 horizontal sweepers at top + bottom (path-based, opposite
+    //   directions) — limit cruise-along-edge routes
+    // - 4 vertical pendulums spaced 100 px apart across the right half
+    //   (x=540/640/740/840), phase-staggered π/2 quarter-turns, period
+    //   1600/1800/2000/2200 — the main timing demand
+    // - 1 door-front paddle at x=910, period 1500 — final gate
+    //
+    // 7 motions in the right half. All periods distinct (1500, 1600,
+    // 1800, 2000, 2200, 2400, 2700) so the combined hazard pattern
+    // never visibly repeats. NPC zoning respected (all motion x ≥ 500;
+    // baseRect.x for pendulums = 540 with width 25 → leftmost x at
+    // 540, body never crosses x=500). Differs from crossfire by:
+    // (a) only 4V vs 3V (denser vertical density),
+    // (b) 2H vs 4H (less horizontal density),
+    // (c) tighter pendulum spacing (100 px vs crossfire's 120-150 px).
+    //
+    // Player journey: spawn → walk east safely to x=500 → encounter
+    // the 4-pendulum gauntlet (each pendulum sweeps y=80..440) → time
+    // each column's gap → reach x=900 → time door paddle. Top + bottom
+    // sweepers add timing pressure on the entry/exit y-bands.
+    id: 'tempest',
+    label: 'Tempest',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      // Top horizontal sweep (path-based, R→L) — limits top cruise lane.
+      {
+        baseRect: { x: 880, y: 80, width: 60, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2400,
+        path: [
+          { x: 880, y: 80 },
+          { x: 520, y: 80 },
+        ],
+      },
+      // Bottom horizontal sweep (path-based, L→R) — limits bottom cruise lane.
+      {
+        baseRect: { x: 520, y: 510, width: 60, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2700,
+        path: [
+          { x: 520, y: 510 },
+          { x: 880, y: 510 },
+        ],
+      },
+      // 4 vertical pendulums — main timing demand.
+      { baseRect: { x: 540, y: 260, width: 25, height: 80 }, amplitude: 180, period: 1600, phase: 0 },
+      { baseRect: { x: 640, y: 260, width: 25, height: 80 }, amplitude: 180, period: 1800, phase: Math.PI / 2 },
+      { baseRect: { x: 740, y: 260, width: 25, height: 80 }, amplitude: 180, period: 2000, phase: Math.PI },
+      { baseRect: { x: 840, y: 260, width: 25, height: 80 }, amplitude: 180, period: 2200, phase: (3 * Math.PI) / 2 },
+      // Door paddle — final timing gate.
+      { baseRect: { x: 910, y: 260, width: 20, height: 80 }, amplitude: 180, period: 1500, phase: 0 },
     ],
     door: DEFAULT_DOOR,
     complexity: 'expert',

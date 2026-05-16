@@ -63,7 +63,7 @@ export function Hud() {
   const progress = useAppSelector((s) => s.progress);
   const stats = useAppSelector((s) => s.stats);
   const cueNonce = useAppSelector((s) => s.progress.monthAdvanceCueNonce);
-  const { template } = useCurrentRoom();
+  const { template, tier } = useCurrentRoom();
 
   // Profile card (v2.0.7). Opened by clicking the identity chip; closed
   // via the modal's own Close button, backdrop click, or Esc.
@@ -236,6 +236,25 @@ export function Hud() {
     textAlign: 'right',
   };
 
+  // Tier tag rendered inline after the template name (e.g. "open-office ·
+  // SIMPLE"). Uppercase + tighter letter-spacing so it reads as a tag,
+  // not part of the template name. v2.0.31 — adds at-a-glance tier
+  // identification during playtest. Uses `palette.ink` over the surface
+  // border for readability across era-mood palette shifts.
+  const locationTierTagStyle: CSSProperties = {
+    display: 'inline-block',
+    marginLeft: 6,
+    padding: '0 5px',
+    border: `1px solid ${palette.surface}`,
+    borderRadius: 3,
+    fontSize: 9,
+    fontWeight: 600,
+    letterSpacing: '0.12em',
+    textTransform: 'uppercase',
+    color: palette.ink,
+    verticalAlign: 'middle',
+  };
+
   return (
     <div
       data-component="Hud"
@@ -335,7 +354,14 @@ export function Hud() {
         >
           {isReplay ? `← ${monthLabel}` : monthLabel}
         </span>
-        {template && <span style={locationMetaStyle}>{template}</span>}
+        {template && (
+          <span style={locationMetaStyle}>
+            {template}
+            {tier && (
+              <span data-region="tier-tag" style={locationTierTagStyle}>{tier}</span>
+            )}
+          </span>
+        )}
         {monthDeltas.map((d) => {
           const tier = tierForMagnitude(d.magnitude);
           return (

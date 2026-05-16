@@ -34,6 +34,12 @@ export interface PlayerControl {
 }
 
 const DEFAULT_SPEED = 180;
+// Issue #92 — double-tap-to-sprint multiplier. Detection lives in
+// useKeyboardInput (sets input.current.sprintAxis); this hook applies
+// the multiplier to the matching axis component of the velocity vector.
+// 2.0× gives a clear "I know where I'm going" gear without feeling
+// twitchy. Tune in playtest.
+const SPRINT_MULTIPLIER = 2.0;
 const EMPTY_OBSTACLES: Rect[] = [];
 
 export function usePlayerMovement({
@@ -53,6 +59,7 @@ export function usePlayerMovement({
     position: { ...initialPosition },
     velocity: { x: 0, y: 0 },
     facing: 'down',
+    sprintingAxis: null,
   });
 
   // Render-state — updated each frame for React to redraw the SVG.
@@ -62,6 +69,7 @@ export function usePlayerMovement({
     position: { ...initialPosition },
     velocity: { x: 0, y: 0 },
     facing: 'down',
+    sprintingAxis: null,
   }));
 
   // Keep the latest onTick pointer accessible from the game loop without
@@ -91,6 +99,11 @@ export function usePlayerMovement({
     let vx: number;
     let vy: number;
     let facing = stateRef.current.facing;
+    // Issue #92 — true when the sprint multiplier was APPLIED this frame
+    // (sprintAxis set AND matching key held AND not under external
+    // velocity). DecisionRoom reads stateRef.sprintingAxis to render
+    // motion lines only when sprint is genuinely active.
+    let sprintingAxis: PlayerState['sprintingAxis'] = null;
 
     if (ext) {
       vx = ext.x;
@@ -139,6 +152,28 @@ export function usePlayerMovement({
       vx = dx * speed;
       vy = dy * speed;
 
+      // Issue #92 — apply sprint multiplier to the matching axis
+      // component AFTER diagonal normalization. The player double-taps
+      // a single direction; if they're also holding a perpendicular,
+      // only the sprint axis gets the 2× boost (the perpendicular axis
+      // stays baseline). External velocity (knockback) is handled by
+      // the `if (ext)` branch above and never reaches this block —
+      // sprint is suppressed during knockback by virtue of that.
+      const sprintAxis = raw.sprintAxis;
+      if (sprintAxis === 'right' && right) {
+        vx *= SPRINT_MULTIPLIER;
+        sprintingAxis = 'right';
+      } else if (sprintAxis === 'left' && left) {
+        vx *= SPRINT_MULTIPLIER;
+        sprintingAxis = 'left';
+      } else if (sprintAxis === 'down' && down) {
+        vy *= SPRINT_MULTIPLIER;
+        sprintingAxis = 'down';
+      } else if (sprintAxis === 'up' && up) {
+        vy *= SPRINT_MULTIPLIER;
+        sprintingAxis = 'up';
+      }
+
       // Update facing direction (favour horizontal when both are pressed)
       if (dx > 0) facing = 'right';
       else if (dx < 0) facing = 'left';
@@ -163,6 +198,7 @@ export function usePlayerMovement({
       position: resolved,
       velocity: { x: vx, y: vy },
       facing,
+      sprintingAxis,
     };
 
     setRenderState(stateRef.current);
@@ -174,6 +210,7 @@ export function usePlayerMovement({
       ...stateRef.current,
       position: { ...pos },
       velocity: { x: 0, y: 0 },
+      sprintingAxis: null,
     };
     setRenderState(stateRef.current);
   }, []);
