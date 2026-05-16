@@ -370,6 +370,57 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     door: DEFAULT_DOOR,
     complexity: 'hard',
   },
+  {
+    // Hard-tier (PR5, v2.0.21): five narrow vertical oscillators across
+    // the room with mixed widths (10–30 px) and a 72° phase stagger so
+    // the wave rolls L→R. Showcases the variable-width support — wider
+    // blocks weren't *needed*, narrower blocks pack the room with more
+    // moving hazards while keeping every gap > player diameter (28 px).
+    // Spacing math: every wall-to-wall gap clears at least 100 px.
+    id: 'pickets',
+    label: 'Pickets',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      { baseRect: { x: 200, y: 240, width: 15, height: 120 }, amplitude: 180, period: 2200, phase: 0 },
+      { baseRect: { x: 350, y: 240, width: 25, height: 120 }, amplitude: 180, period: 2200, phase: (2 * Math.PI) / 5 },
+      { baseRect: { x: 500, y: 240, width: 10, height: 120 }, amplitude: 180, period: 2200, phase: (4 * Math.PI) / 5 },
+      { baseRect: { x: 650, y: 240, width: 30, height: 120 }, amplitude: 180, period: 2200, phase: (6 * Math.PI) / 5 },
+      { baseRect: { x: 800, y: 240, width: 20, height: 120 }, amplitude: 180, period: 2200, phase: (8 * Math.PI) / 5 },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
+  {
+    // Hard-tier (PR5, v2.0.21): mixes the new horizontal axis with a
+    // classic vertical pendulum so motion crosses the room on two
+    // perpendicular axes — first hard template using axis: 'horizontal'.
+    // Top sweeper: 80×30 bar travelling x=220..780 along y=200..230.
+    // Middle pendulum: 25×100 oscillator y=150..450 at x=470. The two
+    // hazard zones overlap spatially around the room center; player has
+    // to time both passes.
+    id: 'cross-traffic',
+    label: 'Cross traffic',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      {
+        baseRect: { x: 500, y: 200, width: 80, height: 30 },
+        amplitude: 280,
+        period: 2500,
+        phase: 0,
+        axis: 'horizontal',
+      },
+      {
+        baseRect: { x: 470, y: 300, width: 25, height: 100 },
+        amplitude: 150,
+        period: 1800,
+        phase: Math.PI,
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
 ];
 
 export function getLayoutById(id: string): LayoutTemplate | undefined {
