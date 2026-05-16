@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.22 | 2026-05-15 | Corby Hoback · Claude Code | **Expert-tier templates (PR6 of the §4 ladder).** `MovingObstacle` gains optional `path?: Vector2[]` for deterministic linear-interp paths; `placeInteractables` narrows to the left half for hard/expert tiers (NPC zoning rule). Two new expert templates: `zigzag-sentinel` (pure deterministic bowtie path) and `patrol-and-paddle` (deterministic patrol + sine paddle). See §4 *Layout templates* + *Complexity tiers* (expert row + placement note). |
 | v2.0.21 | 2026-05-15 | Corby Hoback · Claude Code | **Hard-tier expansion — variable obstacle widths + horizontal axis.** `MovingObstacle` gains optional `axis?: 'horizontal' \| 'vertical'`; widths are author-controlled (10–60 px). Two new hard templates: `pickets` (narrow mixed-width oscillators) and `cross-traffic` (horizontal sweeper + vertical pendulum). See §4 *Layout templates* (hard rows). |
 | v2.0.20 | 2026-05-15 | Corby Hoback · Claude Code | **Hard-tier templates (PR5 of the §4 ladder).** Two new universal hard templates: `fast-pendulum` (faster `pendulum`) and `paddle-gate` (pong-style paddle in front of the door). Pure template authoring on the v2.0.18 engine — no new collision code. See §4 *Layout templates* + *Complexity tiers* (hard row). |
 | v2.0.19 | 2026-05-15 | Corby Hoback · Claude Code | **PR4 follow-up — moving-obstacle feel pass.** Tuning + smooth two-phase slide (200 ms shove + 800 ms stun) replacing the snap; per-obstacle dedupe enables cascading shoves; damage floater + stun stars + must-release input gate. See §4 *Complexity tiers* (medium row). |
@@ -202,9 +203,12 @@ the original spec:
   the right half hosts the movement challenge. NPCs stay clear of the
   pong-paddle's swept area and the deterministic block's path.
 
-The placer in `src/game/rooms/generator/placeInteractables.ts` will gain
-tier-aware zone rules in the follow-up PRs; v2.0.9 doesn't change
-placement since no harder tiers ship yet.
+The placer in `src/game/rooms/generator/placeInteractables.ts` honors
+this as of **v2.0.22**: when `complexity` is `'hard'` or `'expert'`, the
+placement area narrows from x=150..850 → x=150..480 (left half only),
+so NPCs / objects compress out of the moving-obstacle corridors that
+those templates concentrate on the right. Simple / easy / medium use
+the full area unchanged.
 
 ### Generator
 
@@ -259,7 +263,7 @@ parents don't typically walk into a cubicle farm. The tag is for
 *exclusion of the obviously-wrong*, not for fine-grained per-pack
 curation — most templates are universal.
 
-**Current pool (20 templates — 11 simple + 3 easy + 2 medium + 4 hard as of v2.0.21):**
+**Current pool (22 templates — 11 simple + 3 easy + 2 medium + 4 hard + 2 expert as of v2.0.22):**
 
 | Template id | Label | Pack filter | Tier | Notes |
 |---|---|---|---|---|
@@ -283,14 +287,16 @@ curation — most templates are universal.
 | `paddle-gate` | Paddle gate | universal | hard | Pong-style: 20×120 thin tall paddle at x=880 (60 px in front of door), sweeps y=20..460 with period 1.5 s. At each extreme the paddle clears the door's vertical range (y=250..350) for ~250 ms — player must time approach. Reuses PR4 collision (mistime → knockback + stun). |
 | `pickets` | Pickets | universal | hard | 5 narrow vertical oscillators across the room (mixed widths 10–30 px, 72° phase stagger so the wave rolls L→R). Showcases the v2.0.21 variable-width support — every wall-to-wall gap stays > player diameter (28 px) so denser hazard rooms become authorable. |
 | `cross-traffic` | Cross traffic | universal | hard | First template using the v2.0.21 horizontal axis: 80×30 horizontal sweeper across y=200..230 (x range 220..780) + a vertical 25×100 pendulum at x=470. Two perpendicular hazards crossing at the room center. |
+| `zigzag-sentinel` | Zigzag sentinel | universal | expert | First template using the v2.0.22 deterministic-path motion: 40×40 sentinel traces a bowtie loop through the 4 corners of the right half (period 8 s, ~2 s per segment). Slow + readable; the middle y-band is dead-air safe zone per the §4 expert spec. |
+| `patrol-and-paddle` | Patrol & paddle | universal | expert | Mixes motion modes per the §4 expert spec ("medium/hard, plus a deterministic block"): 80×25 horizontal patrol on a path (x=500..880 at y=280, period 4 s) + a 20×80 sine paddle near the door (y=80..440, period 1.8 s). Non-integer-ratio periods so the combined pattern doesn't repeat. |
 
-**Pool sizes per pack (v2.0.21):**
-- SWE simple = 10 (universal 7 + swe 3); SWE easy = 3 (universal); SWE medium = 2 (universal); SWE hard = 4 (universal); SWE total eligible = 19.
-- Homeschool simple = 8 (universal 7 + homeschool 1); Homeschool easy = 3 (universal); Homeschool medium = 2 (universal); Homeschool hard = 4 (universal); Homeschool total eligible = 17.
+**Pool sizes per pack (v2.0.22):**
+- SWE simple = 10 (universal 7 + swe 3); SWE easy = 3 (universal); SWE medium = 2 (universal); SWE hard = 4 (universal); SWE expert = 2 (universal); SWE total eligible = 21.
+- Homeschool simple = 8 (universal 7 + homeschool 1); Homeschool easy = 3 (universal); Homeschool medium = 2 (universal); Homeschool hard = 4 (universal); Homeschool expert = 2 (universal); Homeschool total eligible = 19.
 
-In 2020 (100% simple) SWE picks from 10 / Homeschool from 8. From 2021 onwards the easy pool engages at the v2.0.9 mix weights. From 2023 onwards medium rolls actually pull the new oscillating templates rather than falling through to easy. From 2027 onwards hard rolls actually pull the four hard templates rather than falling through to medium. Expert rolls still cascade down to hard until PR6 ships.
+In 2020 (100% simple) SWE picks from 10 / Homeschool from 8. From 2021 onwards the easy pool engages at the v2.0.9 mix weights. From 2023 onwards medium rolls actually pull the new oscillating templates rather than falling through to easy. From 2027 onwards hard rolls actually pull the four hard templates. From 2029 onwards expert rolls actually pull `zigzag-sentinel` / `patrol-and-paddle` rather than falling through to hard.
 
-**Moving obstacles** — declared via the optional `movingObstacles?: MovingObstacle[]` field on a template (used by medium + hard tiers). Each obstacle has a `baseRect` (rest position), `amplitude` (px), `period` (ms), `phase` (rad), and an optional `axis?: 'horizontal' | 'vertical'` (defaults to vertical for back-compat with v2.0.18 templates). Widths are author-controlled — narrow blocks (10–30 px) let denser hazard rooms pack more obstacles in while keeping every gap > player diameter (28 px). Detected separately from static `obstacles` — see the medium-tier row in *Complexity tiers* for the full collision behavior (two-phase slide+stun, per-obstacle dedupe, visual feedback). Hard-tier templates reuse the exact same collision pipeline; the difficulty comes from the templates themselves (faster periods, mixed axes, paddle-shaped obstacles, denser narrow-block patterns). Tuning lives as named constants at the top of `DecisionRoom.tsx` — revisit after playtest.
+**Moving obstacles** — declared via the optional `movingObstacles?: MovingObstacle[]` field on a template (used by medium / hard / expert tiers). Each obstacle has a `baseRect` (rest position + width/height), `amplitude` (px), `period` (ms), `phase` (rad), an optional `axis?: 'horizontal' | 'vertical'` (defaults to vertical for back-compat), and an optional `path?: Vector2[]` (v2.0.22 — when set, the rect cycles through the waypoints with `period` as the total cycle time, linear interpolation between adjacent points, loops back to `path[0]`; the sine fields are ignored). Widths are author-controlled — narrow blocks (10–30 px) let denser hazard rooms pack more obstacles in while keeping every gap > player diameter (28 px). Detected separately from static `obstacles` — see the medium-tier row in *Complexity tiers* for the full collision behavior (two-phase slide+stun, per-obstacle dedupe, visual feedback). Hard / expert templates reuse the exact same collision pipeline; the difficulty comes from template authoring (faster periods, mixed axes, paddle-shaped obstacles, deterministic patrol paths, dense narrow-block patterns). Tuning lives as named constants at the top of `DecisionRoom.tsx` — revisit after playtest.
 
 **Visual variety comes from three layers**, not template count alone:
 the obstacle pattern (this section), the interactables placed on top

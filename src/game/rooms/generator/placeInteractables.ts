@@ -1,6 +1,7 @@
 import type { InteractableDef } from '../../types/careerPack';
 import type { Vector2, Rect } from '../../types/geometry';
 import type { RequiresContext } from '../../content/evaluateRequires';
+import type { ComplexityTier } from './layouts';
 import { passesRequires } from '../../content/evaluateRequires';
 import { seededRandom } from './seedRng';
 
@@ -18,6 +19,13 @@ export interface PlacedInteractable {
 // Logical area where interactables can land. Tighter than ROOM_BOUNDS so
 // they don't hug the room edges.
 const PLACEMENT_AREA = { minX: 150, maxX: 850, minY: 100, maxY: 500 };
+// Hard / expert tiers: the right half hosts the movement challenge
+// (paddle-gate / pickets / patrol blocks) so NPCs + objects compress into
+// the left half (x ≤ 480) per the §4 *Complexity tiers* placement rule.
+// Picks `480` instead of a clean `500` so a centered NPC (half-width 40)
+// still has ~480-150 = 330 px of x-range to spawn in — enough variety,
+// stays clear of mid-room hazards.
+const PLACEMENT_AREA_LEFT_HALF = { minX: 150, maxX: 480, minY: 100, maxY: 500 };
 
 // Approximate per-interactable bounding box used for non-overlap checks.
 const HALF_W = 40;
@@ -77,6 +85,10 @@ export interface PlaceArgs {
   // weighted selection. Used by the DevPanel "force arcade" toggle so
   // testers can land in a room with the arcade cabinet without wandering.
   forceIds?: readonly string[];
+  // Tier-aware placement (v2.0.22, §4). For 'hard' / 'expert' rooms the
+  // right half hosts the movement challenge — NPCs / objects compress
+  // into the left half. simple / easy / medium use the full PLACEMENT_AREA.
+  complexity?: ComplexityTier;
 }
 
 export function placeInteractables({
@@ -87,7 +99,12 @@ export function placeInteractables({
   door,
   obstacles,
   forceIds,
+  complexity,
 }: PlaceArgs): PlacedInteractable[] {
+  const area =
+    complexity === 'hard' || complexity === 'expert'
+      ? PLACEMENT_AREA_LEFT_HALF
+      : PLACEMENT_AREA;
   const eligible = pool.filter((i) => passesRequires(i.requires, ctx));
   if (eligible.length === 0) return [];
 
@@ -131,8 +148,8 @@ export function placeInteractables({
     // canvas with 1-3 items; we just skip the entry if it can't fit.
     let pos: Vector2 | null = null;
     for (let attempt = 0; attempt < 40; attempt++) {
-      const x = PLACEMENT_AREA.minX + rng() * (PLACEMENT_AREA.maxX - PLACEMENT_AREA.minX);
-      const y = PLACEMENT_AREA.minY + rng() * (PLACEMENT_AREA.maxY - PLACEMENT_AREA.minY);
+      const x = area.minX + rng() * (area.maxX - area.minX);
+      const y = area.minY + rng() * (area.maxY - area.minY);
       if (distance(x, y, spawn.x, spawn.y) < SPAWN_AVOID_RADIUS) continue;
       if (distance(x, y, doorCx, doorCy) < DOOR_AVOID_RADIUS) continue;
       if (obstacles.some((o) => rectOverlaps(x, y, o))) continue;
