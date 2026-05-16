@@ -325,6 +325,222 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): two static
+    // walls form a single vertical gate at x=440..520 with a 200-px gap
+    // (y=200..400). A larger paddle (h=80, amplitude 90) sweeps most of
+    // the gap at period 3000 ms — matches the established medium tempo
+    // (`pendulum` / `shutters` at 2400 ms). Clean pass exists only at
+    // the paddle's extremes; player must commit to timing. v1 ship
+    // (paddle h=40, amp 60, period 5000) read as easy. Composition:
+    // static-gate + paddle.
+    id: 'gate-paddle',
+    label: 'Gate and paddle',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 440, y: 0,   width: 80, height: 200 },  // top wall
+      { x: 440, y: 400, width: 80, height: 200 },  // bottom wall
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 450, y: 260, width: 60, height: 80 },
+        amplitude: 90,
+        period: 3000,
+        phase: 0,
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): reuses
+    // the easy-tier `s-curve` wall geometry and adds TWO patrols — one
+    // in the upper corridor (y≈90) and one in the lower corridor
+    // (y≈480), counter-direction (second patrol's path reversed) so the
+    // player can't time both with the same rhythm. Period 2800 ms each,
+    // matching medium tempo. v1 ship (single patrol, period 5000) read
+    // as easy; doubling motion + speeding up brings it into medium feel.
+    // Composition: s-curve + patrol-pair-counter.
+    id: 's-curve-patrol',
+    label: 'S-curve patrol',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 300, y: 200, width: 80, height: 400 },  // wall 1: top gap (y=0..200)
+      { x: 600, y: 0,   width: 80, height: 400 },  // wall 2: bottom gap (y=400..600)
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 380, y: 90, width: 80, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2800,
+        path: [
+          { x: 380, y: 90 },
+          { x: 600, y: 90 },
+        ],
+      },
+      {
+        baseRect: { x: 680, y: 480, width: 80, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2800,
+        path: [
+          { x: 680, y: 480 },
+          { x: 380, y: 480 },
+        ],
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): reuses
+    // the easy-tier `switchback` walls and adds TWO wide bar-paddles
+    // spanning the full climb corridor (x=410..650) — one in the bottom
+    // corridor and one in the top corridor, π-phase-offset so they
+    // move in anti-correlation. Width 240 px prevents the v1 "route
+    // around the narrow paddle" cheat. Period 2400 ms matches the
+    // established medium tempo. v1 ship (single 20×80 paddle, period
+    // 4500) read as simple-tier slow. Composition: switchback +
+    // wide-bar-paddle-pair.
+    id: 'switchback-paddle',
+    label: 'Switchback paddle',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 350, y: 0,   width: 60, height: 400 },  // wall 1: bottom gap (y=400..600)
+      { x: 650, y: 200, width: 60, height: 400 },  // wall 2: top gap (y=0..200)
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 410, y: 460, width: 240, height: 40 },
+        amplitude: 50,
+        period: 2400,
+        phase: 0,
+      },
+      {
+        baseRect: { x: 410, y: 100, width: 240, height: 40 },
+        amplitude: 50,
+        period: 2400,
+        phase: Math.PI,
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): sentinel
+    // tracing a rectangular orbit, FRAMED by top and bottom blocker
+    // walls that force the player through the corridor (y=150..450)
+    // where the orbit lives. Without the framing walls (v1 ship) the
+    // player could route above or below the orbit and never engage with
+    // it. Period 4000 ms = 1000 ms per segment — faster than v1's 6000
+    // ms to match medium tempo. Composition: corridor-frame +
+    // path-sentinel.
+    id: 'slow-orbit',
+    label: 'Corralled orbit',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 200, y: 0,   width: 600, height: 150 },  // top frame
+      { x: 200, y: 450, width: 600, height: 150 },  // bottom frame
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 320, y: 200, width: 40, height: 40 },
+        amplitude: 0,
+        phase: 0,
+        period: 4000,
+        path: [
+          { x: 320, y: 200 },
+          { x: 680, y: 200 },
+          { x: 680, y: 400 },
+          { x: 320, y: 400 },
+        ],
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): top + bottom
+    // frame walls compress the player into a center corridor (y=150..450),
+    // then a center wall (x=470..530, y=220..380) splits the safe middle
+    // and forces detour through one of the patrol bands. Two counter-
+    // direction patrols at y=190 (top of corridor) and y=385 (bottom of
+    // corridor) sweep x=280..720 at period 2800 ms. v1 ship (open room,
+    // wide safe middle, period 5000) was a direct walk-through. Composition:
+    // corridor-frame + center-wall + patrol-pair-counter.
+    id: 'twin-patrols',
+    label: 'Twin patrols',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 200, y: 0,   width: 600, height: 150 },  // top frame
+      { x: 200, y: 450, width: 600, height: 150 },  // bottom frame
+      { x: 470, y: 220, width: 60,  height: 160 },  // center wall splits safe middle
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 280, y: 190, width: 80, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2800,
+        path: [
+          { x: 280, y: 190 },
+          { x: 720, y: 190 },
+        ],
+      },
+      {
+        baseRect: { x: 720, y: 385, width: 80, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2800,
+        path: [
+          { x: 720, y: 385 },
+          { x: 280, y: 385 },
+        ],
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): "half
+    // maze" (walls 1 + 4 from the easy-tier `maze`, both center-gap) +
+    // TWO motions in the wide middle — a vertical paddle (period 2800
+    // ms, amplitude 120) AND a horizontal patrol crossing the upper
+    // band (period 3500 ms, non-aligned with paddle period so the
+    // combined hazard pattern doesn't repeat). v1 ship (single paddle,
+    // period 4500) read as too simple. Composition: partial-maze +
+    // paddle + crossing-patrol.
+    id: 'maze-gauntlet',
+    label: 'Maze gauntlet',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 200, y: 0,   width: 60, height: 270 },  // wall 1 top half
+      { x: 200, y: 330, width: 60, height: 270 },  // wall 1 bottom half
+      { x: 800, y: 0,   width: 60, height: 270 },  // wall 4 top half
+      { x: 800, y: 330, width: 60, height: 270 },  // wall 4 bottom half
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 490, y: 260, width: 20, height: 80 },
+        amplitude: 120,
+        period: 2800,
+        phase: 0,
+      },
+      {
+        baseRect: { x: 300, y: 160, width: 80, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 3500,
+        path: [
+          { x: 300, y: 160 },
+          { x: 700, y: 160 },
+        ],
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
     // Hard-tier (PR5): same shape as `pendulum` but ~60% faster (period
     // 1500 vs 2400) and a slightly wider swing (amplitude 200 vs 180) so
     // both top + bottom passages compress. Showcases the "faster moving

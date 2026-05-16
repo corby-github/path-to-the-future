@@ -14,6 +14,7 @@ sessions (or contributors) can read the spec at any version cleanly.
 
 | Version | Date       | Author                    | Summary |
 |---------|------------|---------------------------|---------|
+| v2.0.23 | 2026-05-15 | Corby Hoback · Claude Code | **Medium-tier expansion (issue #94, batch 1) + tuning pass.** Six new medium templates composing existing patterns (maze geometry + motion): `gate-paddle`, `s-curve-patrol`, `switchback-paddle`, `slow-orbit` (renamed *Corralled orbit*), `twin-patrols`, `maze-gauntlet`. Initial drop read as easy; tuning pass lifted periods to medium tempo (2400–3500 ms range vs `pendulum` / `shutters` at 2400) and added forcing geometry (corridor frames, center walls, paddle pairs) so each template demands timing instead of allowing route-around. Pure content authoring on the v2.0.22 engine. Medium pool 2→8 closes most of the 2023–2026 repetition gap. See §4 *Layout templates* (six new medium rows) + pool-size update. |
 | v2.0.22 | 2026-05-15 | Corby Hoback · Claude Code | **Expert-tier templates (PR6 of the §4 ladder).** `MovingObstacle` gains optional `path?: Vector2[]` for deterministic linear-interp paths; `placeInteractables` narrows to the left half for hard/expert tiers (NPC zoning rule). Two new expert templates: `zigzag-sentinel` (pure deterministic bowtie path) and `patrol-and-paddle` (deterministic patrol + sine paddle). See §4 *Layout templates* + *Complexity tiers* (expert row + placement note). |
 | v2.0.21 | 2026-05-15 | Corby Hoback · Claude Code | **Hard-tier expansion — variable obstacle widths + horizontal axis.** `MovingObstacle` gains optional `axis?: 'horizontal' \| 'vertical'`; widths are author-controlled (10–60 px). Two new hard templates: `pickets` (narrow mixed-width oscillators) and `cross-traffic` (horizontal sweeper + vertical pendulum). See §4 *Layout templates* (hard rows). |
 | v2.0.20 | 2026-05-15 | Corby Hoback · Claude Code | **Hard-tier templates (PR5 of the §4 ladder).** Two new universal hard templates: `fast-pendulum` (faster `pendulum`) and `paddle-gate` (pong-style paddle in front of the door). Pure template authoring on the v2.0.18 engine — no new collision code. See §4 *Layout templates* + *Complexity tiers* (hard row). |
@@ -263,7 +264,7 @@ parents don't typically walk into a cubicle farm. The tag is for
 *exclusion of the obviously-wrong*, not for fine-grained per-pack
 curation — most templates are universal.
 
-**Current pool (22 templates — 11 simple + 3 easy + 2 medium + 4 hard + 2 expert as of v2.0.22):**
+**Current pool (28 templates — 11 simple + 3 easy + 8 medium + 4 hard + 2 expert as of v2.0.23):**
 
 | Template id | Label | Pack filter | Tier | Notes |
 |---|---|---|---|---|
@@ -283,6 +284,12 @@ curation — most templates are universal.
 | `switchback` | Switchback | universal | easy | 2-wall maze-lite with 200-px gaps; reads as a corridor twist rather than a zigzag puzzle |
 | `pendulum` | Pendulum | universal | medium | Single 60×100 block at canvas center, oscillates y=70..430 (amplitude 180, period 2.4 s); pure timing puzzle, no static walls |
 | `shutters` | Shutters | universal | medium | Two oscillating blocks at x=350 / x=650, π-phase-offset (one up while the other is down); player weaves between them |
+| `gate-paddle` | Gate and paddle | universal | medium | Two static walls form a single vertical gate (x=440..520, gap y=200..400); a 60×80 paddle sweeps most of the gap (period 3 s, amplitude 90). Clean pass only at the paddle's extremes. v2.0.23. |
+| `s-curve-patrol` | S-curve patrol | universal | medium | Reuses the easy-tier `s-curve` walls + TWO counter-direction patrols (upper corridor y≈90 and lower corridor y≈480), period 2.8 s each. v2.0.23. |
+| `switchback-paddle` | Switchback paddle | universal | medium | Reuses the easy-tier `switchback` walls + TWO wide bar-paddles (240×40) spanning the full climb corridor, π-phase-offset so they anti-correlate. Period 2.4 s each, amplitude 50. v2.0.23. |
+| `slow-orbit` | Corralled orbit | universal | medium | Sentinel on a 4-corner rectangular orbit, FRAMED by top + bottom blocker walls that compress the player into the corridor (y=150..450) where the orbit lives — no route-around. Period 4 s (1 s per segment). v2.0.23. |
+| `twin-patrols` | Twin patrols | universal | medium | Top + bottom frame walls compress the player into a center corridor + a center wall (x=470..530, y=220..380) splits the safe middle. Two counter-direction patrols at y=190 and y=385, period 2.8 s. v2.0.23. |
+| `maze-gauntlet` | Maze gauntlet | universal | medium | "Half maze" (walls 1 + 4 from `maze`, both center-gap) + TWO motions in the wide middle: a vertical paddle (period 2.8 s, amplitude 120) AND a horizontal patrol crossing the upper band (period 3.5 s, non-aligned with paddle so the combined hazard pattern doesn't repeat). v2.0.23. |
 | `fast-pendulum` | Fast pendulum | universal | hard | Single 60×100 block at canvas center, oscillates y=50..450 (amplitude 200, period 1.5 s — ~60% faster than `pendulum`) |
 | `paddle-gate` | Paddle gate | universal | hard | Pong-style: 20×120 thin tall paddle at x=880 (60 px in front of door), sweeps y=20..460 with period 1.5 s. At each extreme the paddle clears the door's vertical range (y=250..350) for ~250 ms — player must time approach. Reuses PR4 collision (mistime → knockback + stun). |
 | `pickets` | Pickets | universal | hard | 5 narrow vertical oscillators across the room (mixed widths 10–30 px, 72° phase stagger so the wave rolls L→R). Showcases the v2.0.21 variable-width support — every wall-to-wall gap stays > player diameter (28 px) so denser hazard rooms become authorable. |
@@ -290,9 +297,9 @@ curation — most templates are universal.
 | `zigzag-sentinel` | Zigzag sentinel | universal | expert | First template using the v2.0.22 deterministic-path motion: 40×40 sentinel traces a bowtie loop through the 4 corners of the right half (period 8 s, ~2 s per segment). Slow + readable; the middle y-band is dead-air safe zone per the §4 expert spec. |
 | `patrol-and-paddle` | Patrol & paddle | universal | expert | Mixes motion modes per the §4 expert spec ("medium/hard, plus a deterministic block"): 80×25 horizontal patrol on a path (x=500..880 at y=280, period 4 s) + a 20×80 sine paddle near the door (y=80..440, period 1.8 s). Non-integer-ratio periods so the combined pattern doesn't repeat. |
 
-**Pool sizes per pack (v2.0.22):**
-- SWE simple = 10 (universal 7 + swe 3); SWE easy = 3 (universal); SWE medium = 2 (universal); SWE hard = 4 (universal); SWE expert = 2 (universal); SWE total eligible = 21.
-- Homeschool simple = 8 (universal 7 + homeschool 1); Homeschool easy = 3 (universal); Homeschool medium = 2 (universal); Homeschool hard = 4 (universal); Homeschool expert = 2 (universal); Homeschool total eligible = 19.
+**Pool sizes per pack (v2.0.23):**
+- SWE simple = 10 (universal 7 + swe 3); SWE easy = 3 (universal); SWE medium = 8 (universal); SWE hard = 4 (universal); SWE expert = 2 (universal); SWE total eligible = 27.
+- Homeschool simple = 8 (universal 7 + homeschool 1); Homeschool easy = 3 (universal); Homeschool medium = 8 (universal); Homeschool hard = 4 (universal); Homeschool expert = 2 (universal); Homeschool total eligible = 25.
 
 In 2020 (100% simple) SWE picks from 10 / Homeschool from 8. From 2021 onwards the easy pool engages at the v2.0.9 mix weights. From 2023 onwards medium rolls actually pull the new oscillating templates rather than falling through to easy. From 2027 onwards hard rolls actually pull the four hard templates. From 2029 onwards expert rolls actually pull `zigzag-sentinel` / `patrol-and-paddle` rather than falling through to hard.
 
