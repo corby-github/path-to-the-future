@@ -1116,8 +1116,9 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     // - 4 horizontal sweepers across the right half at y=100/180/380/460
     //   (different periods 2500–2800 + alternating start directions so
     //   no two sweepers align in x at the same instant)
-    // - 3 vertical pendulums at x=560/680/810 (amp 150, periods 1700–
-    //   1900, phase-staggered)
+    // - 3 vertical pendulums at x=560/680/810 (v2.0.33: amp 250 +
+    //   baseRect.y 250 so body touches top + bottom playable edges;
+    //   periods 1700–1900, phase-staggered)
     // - 1 sine paddle directly in front of door at x=910 (period 1500)
     // Non-aligned periods (1500/1700/1800/1900/2500/2600/2700/2800) so
     // the combined hazard pattern doesn't visibly repeat. Tier: keeping
@@ -1169,11 +1170,18 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
         ],
       },
       // Vertical pendulums — 3 across the right half, phase-staggered.
-      { baseRect: { x: 560, y: 300, width: 25, height: 100 }, amplitude: 150, period: 1900, phase: Math.PI / 2 },
-      { baseRect: { x: 680, y: 320, width: 25, height: 100 }, amplitude: 150, period: 1800, phase: 0 },
-      { baseRect: { x: 810, y: 300, width: 25, height: 100 }, amplitude: 150, period: 1700, phase: Math.PI },
-      // Door paddle — sine sweep directly in front of door.
-      { baseRect: { x: 910, y: 260, width: 20, height: 80 },  amplitude: 180, period: 1500, phase: Math.PI / 2 },
+      // v2.0.33 — pendulums tuned to TOUCH top + bottom playable edges
+      // at extremes (body height 100, baseRect.y=250, amp=250 → body
+      // y=0..100 at top extreme, y=500..600 at bottom). Closes the
+      // cruise lanes above/below that prior amp 150 left open (player
+      // could route at y<150 or y>450 to bypass the timing puzzle).
+      { baseRect: { x: 560, y: 250, width: 25, height: 100 }, amplitude: 250, period: 1900, phase: Math.PI / 2 },
+      { baseRect: { x: 680, y: 250, width: 25, height: 100 }, amplitude: 250, period: 1800, phase: 0 },
+      { baseRect: { x: 810, y: 250, width: 25, height: 100 }, amplitude: 250, period: 1700, phase: Math.PI },
+      // Door paddle — sine sweep directly in front of door. v2.0.33 —
+      // baseRect.y + amp tuned so body touches top + bottom playable
+      // edges (h=80 → baseRect.y=260, amp=260).
+      { baseRect: { x: 910, y: 260, width: 20, height: 80 },  amplitude: 260, period: 1500, phase: Math.PI / 2 },
     ],
     door: DEFAULT_DOOR,
     complexity: 'expert',
@@ -1187,7 +1195,9 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     //   directions) — limit cruise-along-edge routes
     // - 4 vertical pendulums spaced 100 px apart across the right half
     //   (x=540/640/740/840), phase-staggered π/2 quarter-turns, period
-    //   1600/1800/2000/2200 — the main timing demand
+    //   1600/1800/2000/2200, body h=80 with amp=260 + baseRect.y=260
+    //   (v2.0.33 — sweeps full canvas y=0..600 so body touches both
+    //   playable edges) — the main timing demand
     // - 1 door-front paddle at x=910, period 1500 — final gate
     //
     // 7 motions in the right half. All periods distinct (1500, 1600,
@@ -1200,9 +1210,11 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     // (c) tighter pendulum spacing (100 px vs crossfire's 120-150 px).
     //
     // Player journey: spawn → walk east safely to x=500 → encounter
-    // the 4-pendulum gauntlet (each pendulum sweeps y=80..440) → time
-    // each column's gap → reach x=900 → time door paddle. Top + bottom
-    // sweepers add timing pressure on the entry/exit y-bands.
+    // the 4-pendulum gauntlet (each pendulum sweeps the FULL playable
+    // y range from 0 to 600 — body touches top + bottom edges at
+    // extremes, v2.0.33) → time each column's gap → reach x=900 →
+    // time door paddle. Top + bottom horizontal sweepers add timing
+    // pressure on the entry/exit y-bands.
     id: 'tempest',
     label: 'Tempest',
     spawn: DEFAULT_SPAWN,
@@ -1230,13 +1242,19 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
           { x: 880, y: 510 },
         ],
       },
-      // 4 vertical pendulums — main timing demand.
-      { baseRect: { x: 540, y: 260, width: 25, height: 80 }, amplitude: 180, period: 1600, phase: 0 },
-      { baseRect: { x: 640, y: 260, width: 25, height: 80 }, amplitude: 180, period: 1800, phase: Math.PI / 2 },
-      { baseRect: { x: 740, y: 260, width: 25, height: 80 }, amplitude: 180, period: 2000, phase: Math.PI },
-      { baseRect: { x: 840, y: 260, width: 25, height: 80 }, amplitude: 180, period: 2200, phase: (3 * Math.PI) / 2 },
-      // Door paddle — final timing gate.
-      { baseRect: { x: 910, y: 260, width: 20, height: 80 }, amplitude: 180, period: 1500, phase: 0 },
+      // 4 vertical pendulums — main timing demand. v2.0.33 — tuned to
+      // TOUCH top + bottom playable edges at extremes (body height 80,
+      // baseRect.y=260, amp=260 → body y=0..80 at top extreme,
+      // y=520..600 at bottom). Closes the cruise lanes above/below that
+      // prior amp 180 left open (player could route at y<80 or y>520
+      // to bypass the timing puzzle).
+      { baseRect: { x: 540, y: 260, width: 25, height: 80 }, amplitude: 260, period: 1600, phase: 0 },
+      { baseRect: { x: 640, y: 260, width: 25, height: 80 }, amplitude: 260, period: 1800, phase: Math.PI / 2 },
+      { baseRect: { x: 740, y: 260, width: 25, height: 80 }, amplitude: 260, period: 2000, phase: Math.PI },
+      { baseRect: { x: 840, y: 260, width: 25, height: 80 }, amplitude: 260, period: 2200, phase: (3 * Math.PI) / 2 },
+      // Door paddle — final timing gate. v2.0.33 — amp 180 → 260 to
+      // match the pendulum sweep range (closes door-zone cruise).
+      { baseRect: { x: 910, y: 260, width: 20, height: 80 }, amplitude: 260, period: 1500, phase: 0 },
     ],
     door: DEFAULT_DOOR,
     complexity: 'expert',
