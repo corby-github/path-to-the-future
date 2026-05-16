@@ -2,22 +2,25 @@ import { useEffect, useRef, useState } from 'react';
 import type { MovingObstacle, Rect } from '../types/geometry';
 import { useGameLoop } from './useGameLoop';
 
-// Moving-obstacle motion + animation for medium-tier rooms (v2.0.18, §4).
+// Moving-obstacle motion + animation for medium / hard-tier rooms
+// (v2.0.18, §4; horizontal axis added v2.0.21).
 //
-// Each obstacle oscillates vertically around `baseRect.y`. At elapsed time
-// `t` ms since the room mounted, the current y is:
+// Each obstacle oscillates along its declared axis (default vertical)
+// around `baseRect`. At elapsed time `t` ms since the room mounted, the
+// active coordinate is:
 //
-//   baseRect.y + amplitude * sin((t / period) * 2π + phase)
+//   baseRect.{axis} + amplitude * sin((t / period) * 2π + phase)
 //
 // `currentRectFor` is pure (testable). `useMovingObstacles` is a thin React
 // wrapper that drives per-frame re-renders so the SVG follows the motion.
 
 export function currentRectFor(mo: MovingObstacle, tMs: number): Rect {
   const omega = (tMs / mo.period) * Math.PI * 2 + mo.phase;
-  const dy = Math.sin(omega) * mo.amplitude;
+  const offset = Math.sin(omega) * mo.amplitude;
+  const horizontal = mo.axis === 'horizontal';
   return {
-    x: mo.baseRect.x,
-    y: mo.baseRect.y + dy,
+    x: mo.baseRect.x + (horizontal ? offset : 0),
+    y: mo.baseRect.y + (horizontal ? 0 : offset),
     width: mo.baseRect.width,
     height: mo.baseRect.height,
   };
