@@ -34,6 +34,12 @@ export interface PlayerControl {
 }
 
 const DEFAULT_SPEED = 180;
+// Issue #92 — double-tap-to-sprint multiplier. Detection lives in
+// useKeyboardInput (sets input.current.sprintAxis); this hook applies
+// the multiplier to the matching axis component of the velocity vector.
+// 2.0× gives a clear "I know where I'm going" gear without feeling
+// twitchy. Tune in playtest.
+const SPRINT_MULTIPLIER = 2.0;
 const EMPTY_OBSTACLES: Rect[] = [];
 
 export function usePlayerMovement({
@@ -138,6 +144,19 @@ export function usePlayerMovement({
 
       vx = dx * speed;
       vy = dy * speed;
+
+      // Issue #92 — apply sprint multiplier to the matching axis
+      // component AFTER diagonal normalization. The player double-taps
+      // a single direction; if they're also holding a perpendicular,
+      // only the sprint axis gets the 2× boost (the perpendicular axis
+      // stays baseline). External velocity (knockback) is handled by
+      // the `if (ext)` branch above and never reaches this block —
+      // sprint is suppressed during knockback by virtue of that.
+      const sprintAxis = raw.sprintAxis;
+      if (sprintAxis === 'right' && right) vx *= SPRINT_MULTIPLIER;
+      else if (sprintAxis === 'left' && left) vx *= SPRINT_MULTIPLIER;
+      else if (sprintAxis === 'down' && down) vy *= SPRINT_MULTIPLIER;
+      else if (sprintAxis === 'up' && up) vy *= SPRINT_MULTIPLIER;
 
       // Update facing direction (favour horizontal when both are pressed)
       if (dx > 0) facing = 'right';
