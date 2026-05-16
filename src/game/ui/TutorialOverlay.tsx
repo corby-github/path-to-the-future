@@ -1,12 +1,14 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { useCareerPack } from '../content/useCareerPack';
+import { KeysWidget } from './KeysWidget';
 
-// First-run coachmark (Day 13c). Three sequential tip bubbles shown ONCE
-// on the player's first DecisionRoom — points at the status bar, the
-// interactables, and the door. Dismissed via Space / Enter / → (advance),
-// Esc (skip), or ← (back a step). After the last step, `onDismiss` fires
-// and the meta.tutorialDismissed flag is flipped so it never reappears
-// until the player hits Begin Again (which resets meta).
+// First-run coachmark (Day 13c). Four sequential tip bubbles shown ONCE
+// on the player's first DecisionRoom — points at the status bar, teaches
+// keyboard movement (issue #89), then highlights interactables and the
+// door. Dismissed via Space / Enter / → (advance), Esc (skip), or ←
+// (back a step). After the last step, `onDismiss` fires and the
+// meta.tutorialDismissed flag is flipped so it never reappears until
+// the player hits Begin Again (which resets meta).
 //
 // Visual register matches the game's cream/ink dialog idiom — bubble
 // at the bottom of the viewport, no full backdrop dim (the player needs
@@ -17,12 +19,21 @@ import { useCareerPack } from '../content/useCareerPack';
 interface Step {
   title: string;
   body: string;
+  // Issue #89 — when set, render the keys-widget illustration below the
+  // body copy. Identifies the "movement" step for downstream coordination
+  // (e.g., misclick prompt suppresses while this step is showing).
+  widget?: 'keys';
 }
 
 const STEPS: readonly Step[] = [
   {
     title: 'Status bar ↑',
     body: 'This is what you need to do.',
+  },
+  {
+    title: 'Move with the keyboard',
+    body: 'Arrow keys or WASD. Clicking won’t do anything — the game is keyboard-only.',
+    widget: 'keys',
   },
   {
     title: 'Objects & people',
@@ -34,15 +45,29 @@ const STEPS: readonly Step[] = [
   },
 ];
 
+// Index of the keys-widget step. Exported so DecisionRoom can suppress
+// the misclick prompt while this step is showing (avoids a redundant
+// keys-widget overlay on top of the keys-widget tutorial bubble).
+export const TUTORIAL_KEYS_STEP_INDEX = 1;
+
 interface Props {
   onDismiss: () => void;
+  // Issue #89 — DecisionRoom passes the current step index back to the
+  // parent on every change so the misclick prompt can suppress while
+  // the keys-widget step is showing. Optional: callers that don't care
+  // about cross-component coordination can omit.
+  onStepChange?: (stepIndex: number) => void;
 }
 
-export function TutorialOverlay({ onDismiss }: Props) {
+export function TutorialOverlay({ onDismiss, onStepChange }: Props) {
   const { palette } = useCareerPack();
   const [step, setStep] = useState(0);
   const isLast = step === STEPS.length - 1;
   const current = STEPS[step];
+
+  useEffect(() => {
+    onStepChange?.(step);
+  }, [step, onStepChange]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -68,9 +93,10 @@ export function TutorialOverlay({ onDismiss }: Props) {
   // var(--canvas-display-width)` and `position: relative`), so the bubble
   // anchors to the canvas frame instead of the viewport — flex alignment
   // here positions it relative to the room itself:
-  //   0: status bar    → top-center, just below the status row
-  //   1: objects/people→ middle-center (the room itself)
-  //   2: the door      → middle-right (anchored to canvas right edge)
+  //   0: status bar         → top-center, just below the status row
+  //   1: move with keyboard → middle-center (the widest bubble)
+  //   2: objects & people   → middle-center (the room itself)
+  //   3: the door           → middle-right (anchored to canvas right edge)
   // Bubble remounts on step change (see `key={step}` below) so the pop
   // keyframe replays as a "fresh arrival" cue between positions.
   const STEP_LAYOUTS: ReadonlyArray<{
@@ -83,6 +109,9 @@ export function TutorialOverlay({ onDismiss }: Props) {
     // the bubble sits at the top of the canvas, with the ↑ arrow in
     // the title pointing up at the status bar that's visible just above.
     { alignItems: 'flex-start', justifyContent: 'center', padding: '22px 18px 0 16px' },
+    // Move-with-keyboard: middle-center so the keys widget reads as
+    // "this is how YOU move," with breathing room around the clusters.
+    { alignItems: 'center', justifyContent: 'center', padding: '0 16px' },
     { alignItems: 'center', justifyContent: 'center', padding: '0 16px' },
     // Right: small inset from the canvas border so the bubble sits just
     // inside the right edge, near the door rather than overlapping it.
@@ -154,6 +183,11 @@ export function TutorialOverlay({ onDismiss }: Props) {
       <div key={step} data-region="bubble" style={bubbleStyle}>
         <p style={titleStyle}>{current.title}</p>
         <p style={bodyStyle}>{current.body}</p>
+        {current.widget === 'keys' && (
+          <div style={{ marginTop: 14, display: 'flex', justifyContent: 'center' }}>
+            <KeysWidget palette={palette} size={36} />
+          </div>
+        )}
         <p style={hintStyle}>
           {isLast ? 'Press Space to start' : 'Press Space to continue'}
           {' · '}
