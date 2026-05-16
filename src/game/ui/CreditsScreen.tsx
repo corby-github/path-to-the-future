@@ -300,7 +300,7 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
           letterSpacing: '0.02em',
         }}
       >
-        {data.timeStatement}
+        {data.timeStatement} (<a style={{color:'#3e4d87',fontWeight: 100}} target="_blank" href="https://github.com/corby-github/path-to-the-future/blob/main/docs/logs/time-log.md">time-log.md</a>)
       </p>
       <p
         style={{
