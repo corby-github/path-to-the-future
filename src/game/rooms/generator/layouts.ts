@@ -830,16 +830,36 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'hard',
   },
   {
-    // Three motions converging in the right half on three different axes:
-    // (1) horizontal patrol upper band, (2) vertical sine pendulum mid,
-    // (3) sine paddle in front of door. Non-aligned periods (2500/1800/
-    // 1500 — no common multiple < 90 s) so the combined hazard pattern
-    // doesn't visibly repeat across a single attempt. "Crossfire" feel.
+    // Originally 3 motions (hard); v2.0.24 playtest pass left at hard
+    // ("not expert unless you added more pickets"). v2.0.24 follow-up:
+    // amped to 8 motions per user feedback ("3 more horizontal, 2 more
+    // vertical") — testing whether the denser pattern reads as expert.
+    // Current motion inventory (all in right half per NPC zoning):
+    // - 4 horizontal sweepers across the right half at y=100/180/380/460
+    //   (different periods 2500–2800 + alternating start directions so
+    //   no two sweepers align in x at the same instant)
+    // - 3 vertical pendulums at x=560/680/810 (amp 150, periods 1700–
+    //   1900, phase-staggered)
+    // - 1 sine paddle directly in front of door at x=910 (period 1500)
+    // Non-aligned periods (1500/1700/1800/1900/2500/2600/2700/2800) so
+    // the combined hazard pattern doesn't visibly repeat. Tier: keeping
+    // `hard` for now — flip to `expert` after playtest confirms the feel.
     id: 'crossfire',
     label: 'Crossfire',
     spawn: DEFAULT_SPAWN,
     obstacles: [],
     movingObstacles: [
+      // Horizontal sweepers — 4 across the right half at varied y-bands.
+      {
+        baseRect: { x: 500, y: 100, width: 70, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2700,
+        path: [
+          { x: 900, y: 100 },
+          { x: 500, y: 100 },
+        ],
+      },
       {
         baseRect: { x: 500, y: 180, width: 70, height: 25 },
         amplitude: 0,
@@ -850,7 +870,31 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
           { x: 900, y: 180 },
         ],
       },
+      {
+        baseRect: { x: 500, y: 380, width: 70, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2600,
+        path: [
+          { x: 500, y: 380 },
+          { x: 900, y: 380 },
+        ],
+      },
+      {
+        baseRect: { x: 500, y: 460, width: 70, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2800,
+        path: [
+          { x: 900, y: 460 },
+          { x: 500, y: 460 },
+        ],
+      },
+      // Vertical pendulums — 3 across the right half, phase-staggered.
+      { baseRect: { x: 560, y: 300, width: 25, height: 100 }, amplitude: 150, period: 1900, phase: Math.PI / 2 },
       { baseRect: { x: 680, y: 320, width: 25, height: 100 }, amplitude: 150, period: 1800, phase: 0 },
+      { baseRect: { x: 810, y: 300, width: 25, height: 100 }, amplitude: 150, period: 1700, phase: Math.PI },
+      // Door paddle — sine sweep directly in front of door.
       { baseRect: { x: 910, y: 260, width: 20, height: 80 },  amplitude: 180, period: 1500, phase: Math.PI / 2 },
     ],
     door: DEFAULT_DOOR,
