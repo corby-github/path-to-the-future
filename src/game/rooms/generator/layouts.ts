@@ -35,6 +35,12 @@ export interface LayoutTemplate {
   // through but takes a knockback + health hit. See DecisionRoom's
   // moving-obstacle collision callback.
   movingObstacles?: readonly MovingObstacle[];
+  // v2.0.27 — excludes the template from random `eligibleTemplates` rolls.
+  // Reachable only via DevPanel's `forcedTemplateId` or via the per-month
+  // slot override (`MONTH_SLOT_OVERRIDES`). Used to retire no-motion
+  // simple templates from the random pool while preserving them for the
+  // Feb 2020 anchor slot and for future re-tiering. See §4.
+  excludeFromRandom?: boolean;
 }
 
 const DEFAULT_DOOR: Rect = {
@@ -68,6 +74,9 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     door: DEFAULT_DOOR,
     complexity: 'simple',
     packs: ['software-engineering'],
+    // v2.0.27 — no-motion simple templates retired from random rolls.
+    // Reachable via DevPanel + future re-tier work.
+    excludeFromRandom: true,
   },
   {
     id: 'shared-desks',
@@ -82,6 +91,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     door: DEFAULT_DOOR,
     complexity: 'simple',
     packs: ['software-engineering'],
+    excludeFromRandom: true,
   },
   {
     id: 'cubicles',
@@ -96,8 +106,14 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     door: DEFAULT_DOOR,
     complexity: 'simple',
     packs: ['software-engineering'],
+    excludeFromRandom: true,
   },
   {
+    // v2.0.27 — `library` is the Feb 2020 anchor slot via
+    // `MONTH_SLOT_OVERRIDES[2]`. Excluded from random rolls so it ONLY
+    // appears as the "the world is about to change" opening room: clear
+    // straight shot at y=300 (shelves at y=100..160 + y=440..500), no
+    // moving obstacles, no timing — the calm before escalation begins.
     id: 'library',
     label: 'Library',
     spawn: DEFAULT_SPAWN,
@@ -107,6 +123,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     ],
     door: DEFAULT_DOOR,
     complexity: 'simple',
+    excludeFromRandom: true,
   },
   {
     id: 'divided',
@@ -118,6 +135,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     ],
     door: DEFAULT_DOOR,
     complexity: 'simple',
+    excludeFromRandom: true,
   },
   {
     id: 'park',
@@ -129,6 +147,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     ],
     door: DEFAULT_DOOR,
     complexity: 'simple',
+    excludeFromRandom: true,
   },
   {
     id: 'grocery-store',
@@ -144,6 +163,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     ],
     door: DEFAULT_DOOR,
     complexity: 'simple',
+    excludeFromRandom: true,
   },
   {
     id: 'kitchen',
@@ -156,6 +176,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     ],
     door: DEFAULT_DOOR,
     complexity: 'simple',
+    excludeFromRandom: true,
   },
   {
     id: 'living-room',
@@ -168,6 +189,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     ],
     door: DEFAULT_DOOR,
     complexity: 'simple',
+    excludeFromRandom: true,
   },
   {
     id: 'church',
@@ -188,6 +210,7 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     ],
     door: DEFAULT_DOOR,
     complexity: 'simple',
+    excludeFromRandom: true,
   },
   {
     id: 'classroom',
@@ -203,6 +226,32 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     door: DEFAULT_DOOR,
     complexity: 'simple',
     packs: ['homeschool-parent'],
+    excludeFromRandom: true,
+  },
+  {
+    // v2.0.27 — lightest motion option for the simple-tier random pool.
+    // Single block oscillating slowly (amp 100, period 4500 ms): sweeps
+    // y=200..400 (200 px range, centered) — much gentler than medium
+    // `pendulum` (amp 180, period 2400 ms, sweeps y=70..430). Player can
+    // walk around top (y<200) or bottom (y>400), or pass through the
+    // gap when the block is at an extreme. Pure introduction to moving
+    // obstacles — pairs with `counter-patrols` and `channel-paddle` as
+    // the simple-with-motion trio that 2020 Apr/Jun/Aug/Oct/Dec rotate
+    // through after the Feb 2020 `library` anchor.
+    id: 'slow-pendulum',
+    label: 'Slow pendulum',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      {
+        baseRect: { x: 470, y: 250, width: 60, height: 100 },
+        amplitude: 100,
+        period: 4500,
+        phase: 0,
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'simple',
   },
   {
     // Four vertical walls in a zigzag, each with a 60-px gap (PLAYER_RADIUS=14
@@ -1199,12 +1248,18 @@ export function pickComplexityTier(year: number, rng: () => number): ComplexityT
 // (expert → hard → medium → easy → simple). Stops at 'simple' which always
 // has templates today. This keeps the game playable while harder tiers are
 // being authored.
+//
+// v2.0.27 — `excludeFromRandom: true` templates are NEVER returned here.
+// They are reachable only via `getLayoutById` (DevPanel forced layout)
+// or via `MONTH_SLOT_OVERRIDES` (per-month anchor slot).
 export function eligibleTemplates(
   packId: string,
   complexity?: ComplexityTier,
 ): readonly LayoutTemplate[] {
   const byPack = LAYOUT_TEMPLATES.filter(
-    (t) => t.packs === undefined || t.packs.includes(packId),
+    (t) =>
+      !t.excludeFromRandom &&
+      (t.packs === undefined || t.packs.includes(packId)),
   );
   if (!complexity) return byPack;
   // Try requested tier; if empty, walk down the ladder.
@@ -1218,3 +1273,26 @@ export function eligibleTemplates(
   // pack pool so the caller still has something to render.
   return byPack;
 }
+
+// Per-monthId slot overrides (v2.0.27). When a room is generated for a
+// monthId in this map, the named template is used regardless of seed,
+// tier, or pack — provided the template exists in LAYOUT_TEMPLATES and
+// is pack-compatible (universal or matches the active pack).
+//
+// Anchors the opening beat: Feb 2020 (monthId=2) plays `library` — a
+// no-motion straight shot establishing the calm baseline that subsequent
+// months escalate from. The remaining playable months of 2020 roll from
+// the simple-tier random pool (now motion-only after the no-motion
+// templates were tagged `excludeFromRandom`), so the player experiences
+// "calm intro → light motion that slowly escalates" without explicit
+// per-month authoring beyond this one anchor.
+//
+// DevPanel `forcedTemplateId` takes precedence over this map — devs may
+// still preview any template in any month.
+//
+// Extending: add monthId → templateId entries for additional anchor
+// slots. Keys are monthIds from the canonical months.json schema (same
+// number across packs that share calendar shape).
+export const MONTH_SLOT_OVERRIDES: Record<number, string> = {
+  2: 'library',
+};
