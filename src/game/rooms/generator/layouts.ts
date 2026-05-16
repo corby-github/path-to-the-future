@@ -536,6 +536,199 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
+    // Medium-tier (issue #94, batch 2, v2.0.25): medium-tempo cousin of
+    // the hard-tier `triple-paddle`. Three paddles in a row across the
+    // room, 120° phase-staggered, amplitude 220 so pickets touch close
+    // to top + bottom playable edges (closing the cruise-along-edge
+    // lane per the v2.0.24 tight-pickets lesson). Period 2800 ms (vs
+    // hard's 1800 ms) gives the player real time to read the wave and
+    // commit to each window. Composition: open + paddle-trio-phase.
+    id: 'triple-paddle-slow',
+    label: 'Triple paddle (slow)',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      { baseRect: { x: 400, y: 240, width: 20, height: 100 }, amplitude: 220, period: 2800, phase: 0 },
+      { baseRect: { x: 600, y: 240, width: 20, height: 100 }, amplitude: 220, period: 2800, phase: (2 * Math.PI) / 3 },
+      { baseRect: { x: 800, y: 240, width: 20, height: 100 }, amplitude: 220, period: 2800, phase: (4 * Math.PI) / 3 },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Medium-tier (issue #94, batch 2, v2.0.25): top + bottom frame
+    // walls compress the player into a narrow 140-px east-west corridor
+    // (y=230..370) that contains the spawn (y=300) and the door (y=
+    // 250..350). A horizontal patrol sweeps the corridor at y=275..315,
+    // leaving 45-px safe band above and 55-px safe band below. Player
+    // commits to a lane, times the patrol's x position, then crosses.
+    // Composition: horizontal-corridor + horizontal-patrol.
+    id: 'east-corridor',
+    label: 'East corridor',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 100, y: 0,   width: 800, height: 230 },  // top frame
+      { x: 100, y: 370, width: 800, height: 230 },  // bottom frame
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 120, y: 275, width: 80, height: 40 },
+        amplitude: 0,
+        phase: 0,
+        period: 2800,
+        path: [
+          { x: 120, y: 275 },
+          { x: 780, y: 275 },
+        ],
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Medium-tier (issue #94, batch 2, v2.0.25): asymmetric static
+    // block on the left half forces the player to route either above
+    // (y<150) or below (y>450) past the obstacle, then a vertical
+    // paddle on the east approach (x=750) sweeps a 240-px range so the
+    // player has to time the door approach regardless of which route
+    // they took. Composition: asymmetric-block + east-approach-paddle.
+    id: 'asymmetric-block',
+    label: 'Asymmetric block',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 300, y: 150, width: 180, height: 300 },  // big block, center-left
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 750, y: 240, width: 20, height: 120 },
+        amplitude: 150,
+        period: 2800,
+        phase: 0,
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Medium-tier (issue #94, batch 2, v2.0.25): top + bottom frame
+    // walls compress the player into the y=130..470 corridor, where a
+    // single sentinel traces a triangular path (top-left → top-right →
+    // bottom-center → loop). Period 4500 ms = 1500 ms per segment.
+    // Three corners means three safe zones the sentinel is NOT at any
+    // given moment; player must read the orbit and pick a moment when
+    // the sentinel is in a corner far from the player's intended line.
+    // Composition: corridor-frame + triangular-path-sentinel.
+    id: 'triangle-sentinel',
+    label: 'Triangle sentinel',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 100, y: 0,   width: 800, height: 130 },  // top frame
+      { x: 100, y: 470, width: 800, height: 130 },  // bottom frame
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 300, y: 160, width: 40, height: 40 },
+        amplitude: 0,
+        phase: 0,
+        period: 4500,
+        path: [
+          { x: 300, y: 160 },
+          { x: 700, y: 160 },
+          { x: 500, y: 440 },
+        ],
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Medium-tier (issue #94, batch 2, v2.0.25): center wall + two
+    // SYNCHRONIZED horizontal patrols (same phase, same direction,
+    // moving as a rolling wave). Differs from twin-patrols (counter-
+    // direction, harder to time) — here the pattern is more readable
+    // because both patrols move together, but the center wall still
+    // forces the player to commit to either the upper (y≈200) or lower
+    // (y≈400) patrol band to cross. Period 2800 ms each. Composition:
+    // center-wall + patrol-pair-sync.
+    id: 'sync-patrols',
+    label: 'Sync patrols',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 470, y: 240, width: 60, height: 120 },  // center wall — forces detour into a patrol band
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 200, y: 200, width: 80, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2800,
+        path: [
+          { x: 200, y: 200 },
+          { x: 700, y: 200 },
+        ],
+      },
+      {
+        baseRect: { x: 200, y: 400, width: 80, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2800,
+        path: [
+          { x: 200, y: 400 },
+          { x: 700, y: 400 },
+        ],
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
+    // Medium-tier (issue #94, batch 2, v2.0.25): top + bottom frame
+    // walls compress the player into the y=130..470 corridor, where
+    // TWO small sentinel orbits sit at offset x-ranges and offset
+    // y-bands: orbit 1 in upper-middle (x=280..520, y=180..280), orbit
+    // 2 in lower-middle (x=440..680, y=320..420). The orbits overlap
+    // in x (x=440..520) but not in y, so the player must thread
+    // between them in the x-overlap region or skirt around. Period
+    // 3500 ms each (different from each other would risk non-repeating
+    // pattern, but for medium tempo synced periods are readable).
+    // Composition: corridor-frame + sentinel-cluster.
+    id: 'mini-orbits',
+    label: 'Mini orbits',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 200, y: 0,   width: 600, height: 130 },  // top frame
+      { x: 200, y: 470, width: 600, height: 130 },  // bottom frame
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 280, y: 180, width: 40, height: 40 },
+        amplitude: 0,
+        phase: 0,
+        period: 3500,
+        path: [
+          { x: 280, y: 180 },
+          { x: 520, y: 180 },
+          { x: 520, y: 280 },
+          { x: 280, y: 280 },
+        ],
+      },
+      {
+        baseRect: { x: 440, y: 320, width: 40, height: 40 },
+        amplitude: 0,
+        phase: 0,
+        period: 3500,
+        path: [
+          { x: 440, y: 320 },
+          { x: 680, y: 320 },
+          { x: 680, y: 420 },
+          { x: 440, y: 420 },
+        ],
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'medium',
+  },
+  {
     // Hard-tier (PR5): same shape as `pendulum` but ~60% faster (period
     // 1500 vs 2400) and a slightly wider swing (amplitude 200 vs 180) so
     // both top + bottom passages compress. Showcases the "faster moving
