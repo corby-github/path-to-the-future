@@ -12,6 +12,7 @@ import { KeysWidget } from './KeysWidget';
 //   3: sprint      — "Press 2× to sprint" + ExampleRow (center)
 //   4: people/obj  — "Objects & people" (center)
 //   5: door        — "The door →" (right)
+//   6: autosave    — "Auto save" (right)
 //
 // Dismissed via Space / Enter / → (advance), Esc (skip), or ← (back a
 // step). After the last step, `onDismiss` fires and the
@@ -42,7 +43,7 @@ interface Step {
 const STEPS: readonly Step[] = [
   {
     title: 'Quick tutorial',
-    body: 'I’ll show you how to play. Any key to continue.',
+    body: 'I’ll show you how to play. Any key to continue. ',
   },
   {
     title: 'Status bar ↑',
@@ -66,6 +67,10 @@ const STEPS: readonly Step[] = [
     title: 'The door →',
     body: 'When you’re done, head to the door.',
   },
+  {
+    title: 'Auto Save',
+    body: 'Your progress is automatically saved as you move through the game. Close and come back anytime. Have fun!',
+  }
 ];
 
 // Index of the keys-widget step. Exported so DecisionRoom can suppress
@@ -146,6 +151,8 @@ export function TutorialOverlay({ onDismiss, onStepChange }: Props) {
     { alignItems: 'center', justifyContent: 'center', padding: '0 16px' },
     // 5: door — middle-right, small inset from canvas border.
     { alignItems: 'center', justifyContent: 'flex-end', padding: '40px 40px 0px' },
+    // 6: save — middle-center, full focus.
+    { alignItems: 'center', justifyContent: 'center', padding: '0 16px' },
   ];
   const layout = STEP_LAYOUTS[step] ?? STEP_LAYOUTS[0];
 

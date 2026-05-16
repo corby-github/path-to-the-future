@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "verify": "npm run typecheck && npm run lint && npm run build",
+    "deploy": "gh-pages -d dist",
     "gen:previews": "tsx --tsconfig scripts/tsconfig.json scripts/generate-previews.tsx"
   },
   "dependencies": {
@@ -27,6 +28,7 @@
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "gh-pages": "^6.3.0",
     "globals": "^17.5.0",
     "tsx": "^4.21.0",
     "typescript": "~6.0.2",
