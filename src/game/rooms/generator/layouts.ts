@@ -707,11 +707,11 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
   // NPC zoning rule (x ≥ 500, right-half only — NPCs live left half).
   {
     // Two paddles in front of the door, phase-offset π so when one is at
-    // the top the other is at the bottom. Door (y=250..350) is clear at
-    // paddle1's column when paddle1 is at top extreme; player must dash
-    // through and immediately face paddle2 which is now at bottom. Tight
-    // window — no "wait for both to clear" cheat. Period 2000 ms is fast
-    // enough that hesitation costs.
+    // the top the other is at the bottom. v2.0.24 — reclassified hard →
+    // medium after playtest read it as simple: with no static walls the
+    // player can approach the door from above or below the paddle
+    // columns and threading two phase-offset paddles in 200 px of
+    // amplitude reads as a medium timing puzzle, not a hard demand.
     id: 'paddle-pair-phase',
     label: 'Paddle pair (phase)',
     spawn: DEFAULT_SPAWN,
@@ -721,14 +721,17 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { baseRect: { x: 870, y: 240, width: 25, height: 100 }, amplitude: 200, period: 2000, phase: Math.PI },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'hard',
+    complexity: 'medium',
   },
   {
     // Two horizontal patrols in the right half on opposite y-bands,
     // moving in opposite directions (path arrays start on opposite ends).
-    // Walls at the top and bottom of the right half compress the player
-    // into a center corridor where the patrols converge. Period 2400 ms.
-    // Walls force the player THROUGH the motion — no go-around.
+    // Walls at top and bottom compress the player into a center corridor
+    // where the patrols converge. v2.0.24 — reclassified hard → simple
+    // after playtest: the center corridor is wide enough (y=130..470,
+    // 340 px) that the two patrols at y=200 and y=380 leave a generous
+    // safe middle (y=225..380, 155 px) that the player can cruise
+    // through without timing.
     id: 'counter-patrols',
     label: 'Counter patrols',
     spawn: DEFAULT_SPAWN,
@@ -759,14 +762,15 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'hard',
+    complexity: 'simple',
   },
   {
-    // Two static walls form a narrow vertical channel (y=220..380, 160 px
-    // tall) on the right half of the room. A paddle inside sweeps most
-    // of the channel height (amplitude 80 around baseRect.y=260, so
-    // sweeps y=180..340 with height 80 — covers most of the channel).
-    // Player must commit to the channel + time the paddle. No way around.
+    // Two static walls form a narrow vertical channel (y=220..380) on
+    // the right half. A paddle inside sweeps part of the channel.
+    // v2.0.24 — reclassified hard → simple after playtest: the channel
+    // (160 px tall) gives the paddle (amp 80, height 80) plenty of room
+    // to leave clearance at the extremes, and the single-paddle timing
+    // is a casual beat, not a hard demand.
     id: 'channel-paddle',
     label: 'Channel paddle',
     spawn: DEFAULT_SPAWN,
@@ -778,42 +782,49 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { baseRect: { x: 700, y: 260, width: 20, height: 80 }, amplitude: 80, period: 1700, phase: 0 },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'hard',
+    complexity: 'simple',
   },
   {
-    // Hard-tier upgrade of medium `pickets`: 5 narrow oscillators packed
-    // tighter (x=510..870 with ~90 px center-to-center spacing — all in
-    // the right half per NPC zoning) and ~50% faster (period 1500 vs
-    // 2200). Same 5-step phase wave. Gaps between pickets stay ~70 px so
-    // a 28 px player still fits, but the constantly-shifting wave gives
-    // far fewer "clear lane" windows than medium pickets.
+    // v2.0.24 — reclassified hard → expert after playtest ("probably the
+    // first expert one i have seen if you play through the middle").
+    // Picket amplitude bumped 180 → 210 so the pickets reach close to
+    // the top and bottom playable edges at their extremes — previously
+    // the player could "just cruise through" the top or bottom cruise
+    // lanes (with amp 180 the picket top reached y=60, leaving 40 px
+    // clear above; amp 210 brings the top to y=30, leaving only 10 px
+    // above — player diameter 28 px doesn't fit). 5 narrow oscillators
+    // packed tight at x=510..870 (~90 px center-to-center), period 1500
+    // ms, 72° phase stagger so the wave rolls L→R.
     id: 'tight-pickets',
     label: 'Tight pickets',
     spawn: DEFAULT_SPAWN,
     obstacles: [],
     movingObstacles: [
-      { baseRect: { x: 510, y: 240, width: 15, height: 120 }, amplitude: 180, period: 1500, phase: 0 },
-      { baseRect: { x: 600, y: 240, width: 15, height: 120 }, amplitude: 180, period: 1500, phase: (2 * Math.PI) / 5 },
-      { baseRect: { x: 690, y: 240, width: 15, height: 120 }, amplitude: 180, period: 1500, phase: (4 * Math.PI) / 5 },
-      { baseRect: { x: 780, y: 240, width: 15, height: 120 }, amplitude: 180, period: 1500, phase: (6 * Math.PI) / 5 },
-      { baseRect: { x: 870, y: 240, width: 15, height: 120 }, amplitude: 180, period: 1500, phase: (8 * Math.PI) / 5 },
+      { baseRect: { x: 510, y: 240, width: 15, height: 120 }, amplitude: 210, period: 1500, phase: 0 },
+      { baseRect: { x: 600, y: 240, width: 15, height: 120 }, amplitude: 210, period: 1500, phase: (2 * Math.PI) / 5 },
+      { baseRect: { x: 690, y: 240, width: 15, height: 120 }, amplitude: 210, period: 1500, phase: (4 * Math.PI) / 5 },
+      { baseRect: { x: 780, y: 240, width: 15, height: 120 }, amplitude: 210, period: 1500, phase: (6 * Math.PI) / 5 },
+      { baseRect: { x: 870, y: 240, width: 15, height: 120 }, amplitude: 210, period: 1500, phase: (8 * Math.PI) / 5 },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'hard',
+    complexity: 'expert',
   },
   {
     // Three paddles in a row across the right half, 120° phase-staggered
     // so the openings move like a rolling wave. Player must time three
     // consecutive windows. Open geometry (no walls) — difficulty comes
-    // from the count + phase rhythm, not constraint.
+    // from the count + phase rhythm, not constraint. v2.0.24 — amplitude
+    // bumped 220 → 230 per playtest "make sure the pickets go close to
+    // the top and bottom" — the paddles now extend a few extra px past
+    // the playable edges at extremes so cruise-along-edge is blocked.
     id: 'triple-paddle',
     label: 'Triple paddle',
     spawn: DEFAULT_SPAWN,
     obstacles: [],
     movingObstacles: [
-      { baseRect: { x: 600, y: 240, width: 20, height: 100 }, amplitude: 220, period: 1800, phase: 0 },
-      { baseRect: { x: 730, y: 240, width: 20, height: 100 }, amplitude: 220, period: 1800, phase: (2 * Math.PI) / 3 },
-      { baseRect: { x: 860, y: 240, width: 20, height: 100 }, amplitude: 220, period: 1800, phase: (4 * Math.PI) / 3 },
+      { baseRect: { x: 600, y: 240, width: 20, height: 100 }, amplitude: 230, period: 1800, phase: 0 },
+      { baseRect: { x: 730, y: 240, width: 20, height: 100 }, amplitude: 230, period: 1800, phase: (2 * Math.PI) / 3 },
+      { baseRect: { x: 860, y: 240, width: 20, height: 100 }, amplitude: 230, period: 1800, phase: (4 * Math.PI) / 3 },
     ],
     door: DEFAULT_DOOR,
     complexity: 'hard',
@@ -846,22 +857,38 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'hard',
   },
   {
-    // Snake walls (3 in the right half, alternating top/bottom anchored)
-    // force the player to wind through 3 narrow gaps. A paddle sits
-    // inside the middle gap, oscillating across most of it (amplitude
-    // 60 around baseRect.y=260, h=80 → sweeps y=200..340). Player is
-    // already constrained to a tight path; the paddle makes the middle
-    // beat a hard timing call. Period 1500 ms.
+    // v2.0.24 — full redesign after playtest read v1 as "WAY too easy".
+    // Original (gap height 310 px below wall 1 + single weak paddle with
+    // amp 60) gave the player a wide-open route with one easy timing
+    // beat. New design: three snake walls extending full height into
+    // their respective halves so each gap is exactly 200 px tall (much
+    // tighter), AND three phase-offset paddles — one per corridor the
+    // player must cross — so the gauntlet becomes three sequential
+    // timing windows, not one. Period 1500 ms across all three with
+    // 120° phase stagger so the openings cascade L→R as the player
+    // moves east. Paddle widths cover the corridor mouths so route-
+    // around is impossible.
     id: 'gauntlet',
     label: 'Gauntlet',
     spawn: DEFAULT_SPAWN,
     obstacles: [
-      { x: 540, y: 50,  width: 60, height: 220 }, // wall 1: top, gap below
-      { x: 700, y: 330, width: 60, height: 220 }, // wall 2: bottom, gap above
-      { x: 860, y: 50,  width: 60, height: 220 }, // wall 3: top, gap below
+      { x: 540, y: 0,   width: 60, height: 400 },  // wall 1: top wall, gap y=400..600 (200 px)
+      { x: 700, y: 200, width: 60, height: 400 },  // wall 2: bottom wall, gap y=0..200 (200 px)
+      { x: 860, y: 0,   width: 60, height: 400 },  // wall 3: top wall, gap y=400..600 (200 px)
     ],
     movingObstacles: [
-      { baseRect: { x: 630, y: 260, width: 20, height: 80 }, amplitude: 60, period: 1500, phase: 0 },
+      // Paddle 1: bottom corridor between wall 1 and wall 2 (player goes
+      // east here after diving south past wall 1). Width 100 covers the
+      // 100-px gap between walls, baseRect.y=470 + amp 65 keeps paddle
+      // inside the 200-px gap (y=400..600) at both extremes.
+      { baseRect: { x: 600, y: 470, width: 100, height: 60 }, amplitude: 65, period: 1500, phase: 0 },
+      // Paddle 2: top corridor between wall 2 and wall 3 (player goes
+      // east here after climbing north past wall 2).
+      { baseRect: { x: 760, y: 70,  width: 100, height: 60 }, amplitude: 65, period: 1500, phase: (2 * Math.PI) / 3 },
+      // Paddle 3: bottom corridor between wall 3 and door approach
+      // (player goes east here after diving south past wall 3, then
+      // turns north to reach the door at y=300).
+      { baseRect: { x: 860, y: 470, width: 60,  height: 60 }, amplitude: 65, period: 1500, phase: (4 * Math.PI) / 3 },
     ],
     door: DEFAULT_DOOR,
     complexity: 'hard',
