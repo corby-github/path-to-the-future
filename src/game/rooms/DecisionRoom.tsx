@@ -320,7 +320,7 @@ export function DecisionRoom({ config, onExit }: Props) {
   const stats = useAppSelector((s) => s.stats);
   const flags = useAppSelector((s) => s.flags);
   const { speedMultiplier, forcedLayout, eventMode, forceArcade } = useDevControls();
-  const { setTemplate } = useCurrentRoom();
+  const { setRoomInfo } = useCurrentRoom();
   // Issue #76 — interactable labels in pack JSON may use `{kidA}` / `{kidB}` /
   // `{playerName}` tokens (homeschool kid NPCs). Resolved against the live
   // profile so sprite captions in the room reflect the player's chosen names.
@@ -473,14 +473,14 @@ export function DecisionRoom({ config, onExit }: Props) {
     return lines[Math.floor(Math.random() * lines.length)];
   }, [pack.manifest.monthTransitions]);
 
-  // Publish this room's layout id to the HUD via CurrentRoomContext so the
-  // identity column can show "Aug 2020 · open-office". Clears on unmount so
-  // a non-decision room (Narrative / Consequence) doesn't show a stale
-  // template.
+  // Publish this room's layout id + complexity tier to the HUD via
+  // CurrentRoomContext so the location column can show "Aug 2020 ·
+  // open-office · SIMPLE". Clears on unmount so a non-decision room
+  // (Narrative / Consequence) doesn't show stale info.
   useEffect(() => {
-    setTemplate(layout.templateId);
-    return () => setTemplate(null);
-  }, [layout.templateId, setTemplate]);
+    setRoomInfo({ template: layout.templateId, tier: layout.complexity });
+    return () => setRoomInfo({ template: null, tier: null });
+  }, [layout.templateId, layout.complexity, setRoomInfo]);
 
   const ctx = useMemo(() => ({
     stats,
