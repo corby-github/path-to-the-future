@@ -201,14 +201,7 @@ function ExampleRow({ palette, glyph, label }: ExampleRowProps) {
     >
       <span style={cellStyle}>{glyph}</span>
       <span style={plusStyle}>+</span>
-      <span
-        style={{
-          ...cellStyle,
-          animation: 'keys-widget-pulse 900ms ease-in-out infinite',
-        }}
-      >
-        {glyph}
-      </span>
+      <span style={cellStyle}>{glyph}</span>
       <p style={labelStyle}>{label}</p>
     </div>
   );
