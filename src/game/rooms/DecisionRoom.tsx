@@ -24,10 +24,9 @@ import { EventModal } from '../ui/EventModal';
 import { NPCModal } from '../ui/NPCModal';
 import { ArcadeModal } from '../ui/ArcadeModal';
 import { TutorialOverlay, TUTORIAL_KEYS_STEP_INDEX } from '../ui/TutorialOverlay';
-import { SprintTutorialOverlay } from '../ui/SprintTutorialOverlay';
 import { KeysWidget } from '../ui/KeysWidget';
 import { useMisclickPrompt } from '../engine/useMisclickPrompt';
-import { dismissTutorial, dismissSprintTutorial } from '../state/slices/metaSlice';
+import { dismissTutorial } from '../state/slices/metaSlice';
 import { persistState } from '../state/persistence';
 import { computeRoomSeed } from './generator/seedRng';
 import { generateRoom } from './generator/populate';
@@ -427,35 +426,21 @@ export function DecisionRoom({ config, onExit }: Props) {
     persistState(store.getState());
   }, [dispatch, store]);
 
-  // Issue #92 — sprint tutorial step. Fires AFTER the main coachmark
-  // dismisses + the player has accumulated ~5 s of baseline movement.
   // `tutorialStepIndex` tracks the current main-tutorial step so the
   // misclick prompt (below) can suppress while the keys-widget step
-  // is showing.
-  const sprintTutorialDismissed = useAppSelector(
-    (s) => s.meta.sprintTutorialDismissed ?? false,
-  );
+  // is showing. v2.0.32 — the sprint tutorial is now an inline step
+  // of the main coachmark (was a separate time-triggered overlay),
+  // so no separate state machinery is needed here.
   const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
-  const [showSprintTutorial, setShowSprintTutorial] = useState(false);
-  const [sprintPulseDirection, setSprintPulseDirection] = useState<
-    'up' | 'down' | 'left' | 'right'
-  >('right');
-  const handleSprintTutorialDismiss = useCallback(() => {
-    dispatch(dismissSprintTutorial());
-    setShowSprintTutorial(false);
-    persistState(store.getState());
-  }, [dispatch, store]);
 
   // Issue #89 — misclick prompt. Bound to the canvas wrapper below.
   // Suppressed during modals + during the keys-widget tutorial step
-  // (no point stacking another keys widget on top of the bubble) +
-  // during the sprint tutorial overlay.
+  // (no point stacking another keys widget on top of the bubble).
   const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
   const onKeysWidgetTutorialStep =
     tutorialActive && tutorialStepIndex === TUTORIAL_KEYS_STEP_INDEX;
   const misclickSuppressed =
     tutorialActive ||
-    showSprintTutorial ||
     onKeysWidgetTutorialStep ||
     activeDecision !== null ||
     activeEvent !== null ||
@@ -540,53 +525,7 @@ export function DecisionRoom({ config, onExit }: Props) {
     activeInteractableIdRef.current = activeInteractable?.id ?? null;
   }, [activeInteractable]);
 
-  // Issue #92 — cumulative-baseline-movement timer for the sprint
-  // tutorial step. Accumulates milliseconds with non-zero velocity AND
-  // sprint inactive (baseline movement only); fires the sprint overlay
-  // once the threshold is reached. Refs over state so the ticker
-  // (60 Hz) doesn't thrash React renders.
-  const SPRINT_TUTORIAL_THRESHOLD_MS = 5000;
-  const cumulativeBaselineMoveMsRef = useRef(0);
-  const lastTickAtRef = useRef<number | null>(null);
-  const sprintTutorialFiredRef = useRef(false);
-
   const handleTick = useCallback((state: PlayerState) => {
-    // Issue #92 — accumulate baseline-movement time for the sprint
-    // tutorial step trigger. Only count BASELINE motion (sprint
-    // inactive) so the player can't trigger the sprint teach by
-    // already sprinting — the teach is meant to reward "I've been
-    // walking for a while" with the upgrade reveal.
-    const tickAt = performance.now();
-    if (
-      tutorialDismissed &&
-      !sprintTutorialDismissed &&
-      !isReplay &&
-      !sprintTutorialFiredRef.current
-    ) {
-      const lastAt = lastTickAtRef.current;
-      lastTickAtRef.current = tickAt;
-      if (lastAt !== null) {
-        const dt = tickAt - lastAt;
-        const moving = state.velocity.x !== 0 || state.velocity.y !== 0;
-        const sprintActive = state.sprintingAxis !== undefined && state.sprintingAxis !== null;
-        if (moving && !sprintActive) {
-          cumulativeBaselineMoveMsRef.current += dt;
-          // Track the latest baseline-movement direction for the pulse.
-          const ax = Math.abs(state.velocity.x);
-          const ay = Math.abs(state.velocity.y);
-          if (ax >= ay) {
-            setSprintPulseDirection(state.velocity.x >= 0 ? 'right' : 'left');
-          } else {
-            setSprintPulseDirection(state.velocity.y >= 0 ? 'down' : 'up');
-          }
-          if (cumulativeBaselineMoveMsRef.current >= SPRINT_TUTORIAL_THRESHOLD_MS) {
-            sprintTutorialFiredRef.current = true;
-            setShowSprintTutorial(true);
-          }
-        }
-      }
-    }
-
     // Find the nearest interactable within proximity. NPCs use their live
     // wander position; objects use their fixed spawn.
     let nearest: number | null = null;
@@ -752,7 +691,7 @@ export function DecisionRoom({ config, onExit }: Props) {
         onExit();
       }
     }, MODAL_POP_DELAY_MS);
-  }, [layout.door, layout.movingObstacles, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch, tutorialDismissed, sprintTutorialDismissed]);
+  }, [layout.door, layout.movingObstacles, pack.decisions, pack.months, ctx, config.monthId, onExit, placements, store, isReplay, isFinale, dispatch]);
 
   const initialSpawn = useMemo<Vector2>(
     () =>
@@ -1610,12 +1549,6 @@ export function DecisionRoom({ config, onExit }: Props) {
           <TutorialOverlay
             onDismiss={handleTutorialDismiss}
             onStepChange={setTutorialStepIndex}
-          />
-        )}
-        {showSprintTutorial && !tutorialActive && (
-          <SprintTutorialOverlay
-            onDismiss={handleSprintTutorialDismiss}
-            pulseDirection={sprintPulseDirection}
           />
         )}
       </div>
