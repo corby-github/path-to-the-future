@@ -81,7 +81,12 @@ export function CreditsScreen({ mode, onClose, onConfirmReplay }: Props) {
   const innerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch('/credits.json')
+    // Prefix with `import.meta.env.BASE_URL` so the path resolves correctly
+    // under the Vite `base` (`/path-to-the-future/` for GitHub Pages prod,
+    // `/` for default dev). A bare `/credits.json` 404s whenever a non-root
+    // base is set, including the dev server when running with `--base`.
+    // Same pattern as `loader.ts` + the taglines fetch in EndgameScreen.
+    fetch(`${import.meta.env.BASE_URL}credits.json`)
       .then((r) => r.json())
       .then((d: CreditsData) => setData(d))
       .catch(() => setData(null));
