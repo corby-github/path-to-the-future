@@ -698,6 +698,174 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     door: DEFAULT_DOOR,
     complexity: 'expert',
   },
+  // ─── Hard-tier expansion (issue #94 batch 2, v2.0.24) ─────────────────
+  // Per user "amp it up" feedback on PR #95 medium batch — hard tier
+  // should genuinely demand. Every template here either (a) forces the
+  // player INTO motion via static walls (no go-around), (b) stacks 2+
+  // motions with non-aligned periods, or (c) packs the right half with
+  // dense fast motion. All static + moving obstacles respect the §4
+  // NPC zoning rule (x ≥ 500, right-half only — NPCs live left half).
+  {
+    // Two paddles in front of the door, phase-offset π so when one is at
+    // the top the other is at the bottom. Door (y=250..350) is clear at
+    // paddle1's column when paddle1 is at top extreme; player must dash
+    // through and immediately face paddle2 which is now at bottom. Tight
+    // window — no "wait for both to clear" cheat. Period 2000 ms is fast
+    // enough that hesitation costs.
+    id: 'paddle-pair-phase',
+    label: 'Paddle pair (phase)',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      { baseRect: { x: 730, y: 240, width: 25, height: 100 }, amplitude: 200, period: 2000, phase: 0 },
+      { baseRect: { x: 870, y: 240, width: 25, height: 100 }, amplitude: 200, period: 2000, phase: Math.PI },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
+  {
+    // Two horizontal patrols in the right half on opposite y-bands,
+    // moving in opposite directions (path arrays start on opposite ends).
+    // Walls at the top and bottom of the right half compress the player
+    // into a center corridor where the patrols converge. Period 2400 ms.
+    // Walls force the player THROUGH the motion — no go-around.
+    id: 'counter-patrols',
+    label: 'Counter patrols',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 500, y: 50, width: 460, height: 80 },   // top wall (right half)
+      { x: 500, y: 470, width: 460, height: 80 },  // bottom wall (right half)
+    ],
+    movingObstacles: [
+      {
+        baseRect: { x: 500, y: 200, width: 60, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2400,
+        path: [
+          { x: 500, y: 200 },
+          { x: 900, y: 200 },
+        ],
+      },
+      {
+        baseRect: { x: 900, y: 380, width: 60, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2400,
+        path: [
+          { x: 900, y: 380 },
+          { x: 500, y: 380 },
+        ],
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
+  {
+    // Two static walls form a narrow vertical channel (y=220..380, 160 px
+    // tall) on the right half of the room. A paddle inside sweeps most
+    // of the channel height (amplitude 80 around baseRect.y=260, so
+    // sweeps y=180..340 with height 80 — covers most of the channel).
+    // Player must commit to the channel + time the paddle. No way around.
+    id: 'channel-paddle',
+    label: 'Channel paddle',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 500, y: 50,  width: 350, height: 170 }, // top wall blocks upper right
+      { x: 500, y: 380, width: 350, height: 170 }, // bottom wall blocks lower right
+    ],
+    movingObstacles: [
+      { baseRect: { x: 700, y: 260, width: 20, height: 80 }, amplitude: 80, period: 1700, phase: 0 },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
+  {
+    // Hard-tier upgrade of medium `pickets`: 5 narrow oscillators packed
+    // tighter (x=510..870 with ~90 px center-to-center spacing — all in
+    // the right half per NPC zoning) and ~50% faster (period 1500 vs
+    // 2200). Same 5-step phase wave. Gaps between pickets stay ~70 px so
+    // a 28 px player still fits, but the constantly-shifting wave gives
+    // far fewer "clear lane" windows than medium pickets.
+    id: 'tight-pickets',
+    label: 'Tight pickets',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      { baseRect: { x: 510, y: 240, width: 15, height: 120 }, amplitude: 180, period: 1500, phase: 0 },
+      { baseRect: { x: 600, y: 240, width: 15, height: 120 }, amplitude: 180, period: 1500, phase: (2 * Math.PI) / 5 },
+      { baseRect: { x: 690, y: 240, width: 15, height: 120 }, amplitude: 180, period: 1500, phase: (4 * Math.PI) / 5 },
+      { baseRect: { x: 780, y: 240, width: 15, height: 120 }, amplitude: 180, period: 1500, phase: (6 * Math.PI) / 5 },
+      { baseRect: { x: 870, y: 240, width: 15, height: 120 }, amplitude: 180, period: 1500, phase: (8 * Math.PI) / 5 },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
+  {
+    // Three paddles in a row across the right half, 120° phase-staggered
+    // so the openings move like a rolling wave. Player must time three
+    // consecutive windows. Open geometry (no walls) — difficulty comes
+    // from the count + phase rhythm, not constraint.
+    id: 'triple-paddle',
+    label: 'Triple paddle',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      { baseRect: { x: 600, y: 240, width: 20, height: 100 }, amplitude: 220, period: 1800, phase: 0 },
+      { baseRect: { x: 730, y: 240, width: 20, height: 100 }, amplitude: 220, period: 1800, phase: (2 * Math.PI) / 3 },
+      { baseRect: { x: 860, y: 240, width: 20, height: 100 }, amplitude: 220, period: 1800, phase: (4 * Math.PI) / 3 },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
+  {
+    // Three motions converging in the right half on three different axes:
+    // (1) horizontal patrol upper band, (2) vertical sine pendulum mid,
+    // (3) sine paddle in front of door. Non-aligned periods (2500/1800/
+    // 1500 — no common multiple < 90 s) so the combined hazard pattern
+    // doesn't visibly repeat across a single attempt. "Crossfire" feel.
+    id: 'crossfire',
+    label: 'Crossfire',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      {
+        baseRect: { x: 500, y: 180, width: 70, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2500,
+        path: [
+          { x: 500, y: 180 },
+          { x: 900, y: 180 },
+        ],
+      },
+      { baseRect: { x: 680, y: 320, width: 25, height: 100 }, amplitude: 150, period: 1800, phase: 0 },
+      { baseRect: { x: 910, y: 260, width: 20, height: 80 },  amplitude: 180, period: 1500, phase: Math.PI / 2 },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
+  {
+    // Snake walls (3 in the right half, alternating top/bottom anchored)
+    // force the player to wind through 3 narrow gaps. A paddle sits
+    // inside the middle gap, oscillating across most of it (amplitude
+    // 60 around baseRect.y=260, h=80 → sweeps y=200..340). Player is
+    // already constrained to a tight path; the paddle makes the middle
+    // beat a hard timing call. Period 1500 ms.
+    id: 'gauntlet',
+    label: 'Gauntlet',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [
+      { x: 540, y: 50,  width: 60, height: 220 }, // wall 1: top, gap below
+      { x: 700, y: 330, width: 60, height: 220 }, // wall 2: bottom, gap above
+      { x: 860, y: 50,  width: 60, height: 220 }, // wall 3: top, gap below
+    ],
+    movingObstacles: [
+      { baseRect: { x: 630, y: 260, width: 20, height: 80 }, amplitude: 60, period: 1500, phase: 0 },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
 ];
 
 export function getLayoutById(id: string): LayoutTemplate | undefined {
