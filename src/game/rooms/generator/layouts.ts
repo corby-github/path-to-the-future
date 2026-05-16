@@ -324,6 +324,52 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     door: DEFAULT_DOOR,
     complexity: 'medium',
   },
+  {
+    // Hard-tier (PR5): same shape as `pendulum` but ~60% faster (period
+    // 1500 vs 2400) and a slightly wider swing (amplitude 200 vs 180) so
+    // both top + bottom passages compress. Showcases the "faster moving
+    // obstacles" half of the §4 hard-tier spec.
+    id: 'fast-pendulum',
+    label: 'Fast pendulum',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      {
+        baseRect: { x: 470, y: 250, width: 60, height: 100 },
+        amplitude: 200,
+        period: 1500,
+        phase: 0,
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
+  {
+    // Hard-tier (PR5): pong-style paddle directly in front of the door.
+    // 20×120 thin tall rect at x=880 (60 px gap from the door at x=950),
+    // baseRect.y=240 + amplitude=220 sweeps y=20..460 — at the top extreme
+    // (paddle bottom = 140) and bottom extreme (paddle top = 460) the
+    // paddle is fully clear of the door's vertical range (y=250..350), so
+    // the player must time their door approach to one of those windows.
+    // Period 1500 ms gives ~250 ms of clear window at each extreme — wide
+    // enough to slip through, tight enough to punish hesitation. Reuses
+    // PR4's MovingObstacle machinery: mistimed approach reads as
+    // collision → 200 ms slide + 800 ms stun → retry.
+    id: 'paddle-gate',
+    label: 'Paddle gate',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      {
+        baseRect: { x: 880, y: 240, width: 20, height: 120 },
+        amplitude: 220,
+        period: 1500,
+        phase: 0,
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'hard',
+  },
 ];
 
 export function getLayoutById(id: string): LayoutTemplate | undefined {
