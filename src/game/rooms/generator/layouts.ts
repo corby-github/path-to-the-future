@@ -421,6 +421,72 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     door: DEFAULT_DOOR,
     complexity: 'hard',
   },
+  {
+    // Expert-tier (PR6, v2.0.22): single deterministic 40×40 sentinel
+    // tracing a bowtie loop through the 4 corners of the right half. All
+    // 4 segments are meaningful traversals (2 horizontals + 2 diagonals)
+    // so the loop never "teleports back" visibly. Period 8000 ms = 2 s
+    // per segment — slow + readable per the §4 expert spec ("natural
+    // safe zones exist"). Anywhere off the path (notably the middle
+    // y-band x=500..900) is dead-air the player can pause in. NPCs
+    // placed by the v2.0.22 left-half rule stay clear of the path.
+    id: 'zigzag-sentinel',
+    label: 'Zigzag sentinel',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      {
+        baseRect: { x: 500, y: 100, width: 40, height: 40 },
+        // unused when path is set — kept non-zero to satisfy the required-field shape.
+        amplitude: 0,
+        phase: 0,
+        period: 8000,
+        path: [
+          { x: 500, y: 100 },
+          { x: 900, y: 100 },
+          { x: 500, y: 460 },
+          { x: 900, y: 460 },
+        ],
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'expert',
+  },
+  {
+    // Expert-tier (PR6, v2.0.22): mixes motion modes per the §4 expert
+    // spec ("medium/hard, plus a slow-moving deterministic block"). One
+    // deterministic horizontal patrol (80×25 sliding x=500..880 at
+    // y=280, period 4000 ms) + one sine paddle near the door (20×80,
+    // baseRect.y=260, amplitude 180, period 1800 — sweeps y=80..440 so
+    // at top/bottom extremes the paddle is fully clear of the door
+    // range y=250..350). Periods are intentionally non-integer-ratio
+    // (4000:1800 ≈ 2.22:1) so the combined hazard pattern doesn't
+    // repeat — expert-tier demand on timing.
+    id: 'patrol-and-paddle',
+    label: 'Patrol & paddle',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      {
+        baseRect: { x: 500, y: 280, width: 80, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 4000,
+        path: [
+          { x: 500, y: 280 },
+          { x: 880, y: 280 },
+        ],
+      },
+      {
+        baseRect: { x: 910, y: 260, width: 20, height: 80 },
+        amplitude: 180,
+        period: 1800,
+        phase: 0,
+      },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'expert',
+  },
 ];
 
 export function getLayoutById(id: string): LayoutTemplate | undefined {

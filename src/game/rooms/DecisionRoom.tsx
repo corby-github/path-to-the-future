@@ -340,6 +340,7 @@ export function DecisionRoom({ config, onExit }: Props) {
       door: layout.door,
       obstacles: layout.obstacles,
       forceIds: forceArcade ? ['obj-arcade-game'] : undefined,
+      complexity: layout.complexity,
     });
     // Placement is deterministic for the room's lifetime — useState's lazy
     // initializer runs once on mount and never re-evaluates.
