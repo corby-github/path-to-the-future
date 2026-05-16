@@ -1,0 +1,172 @@
+{
+  "id": "homeschool-parent",
+  "name": "Homeschool Parent",
+  "tagline": "Two kids, ten years, one kitchen table.",
+  "eventChance": 0.4,
+  "requiresKidNames": 2,
+
+  "statLabels": {
+    "technicalSkill": "Teaching",
+    "network": "Community",
+    "reputation": "Standing"
+  },
+
+  "palette": {
+    "background": "#f5f1e8",
+    "ink": "#2c2c2c",
+    "inkMuted": "#888888",
+    "surface": "#cfc8b6",
+    "accent": "#8b6240",
+    "positive": "#7a8f5c",
+    "player": "#4a90e2",
+    "playerInk": "#1f3a5f",
+    "npcAdult": "#f7c98b",
+    "npcAdultInk": "#4b3d0c",
+    "npcChild": "#7aa5b8",
+    "npcChildInk": "#044d62"
+  },
+
+  "eras": {
+    "default":          { "saturation": 1.0,  "lightness": 1.0,  "hueShift":   0 },
+    "pandemic":         { "saturation": 0.55, "lightness": 1.05, "hueShift": -14 },
+    "rebound":          { "saturation": 0.95, "lightness": 1.0,  "hueShift":   0 },
+    "ai-shift":         { "saturation": 1.18, "lightness": 1.02, "hueShift":  10 },
+    "uncertain-future": { "saturation": 0.85, "lightness": 0.95, "hueShift":  -3 }
+  },
+
+  "entryClasses": {
+    "novice": {
+      "label": "Homeschooler Newbie",
+      "startingXp": 0,
+      "startingStats": {
+        "burnout": 15,
+        "savings": 2000,
+        "network": 10,
+        "health": 85,
+        "technicalSkill": 20,
+        "reputation": 0
+      }
+    },
+    "junior": {
+      "label": "Settled Routine",
+      "startingXp": 1000,
+      "startingStats": {
+        "burnout": 22,
+        "savings": 8000,
+        "network": 28,
+        "health": 82,
+        "technicalSkill": 38,
+        "reputation": 5
+      }
+    },
+    "skilled": {
+      "label": "Experienced Veteran",
+      "startingXp": 5000,
+      "startingStats": {
+        "burnout": 25,
+        "savings": 18000,
+        "network": 45,
+        "health": 80,
+        "technicalSkill": 55,
+        "reputation": 10
+      }
+    },
+    "vanguard": {
+      "label": "Curriculum Sage",
+      "startingXp": 15000,
+      "startingStats": {
+        "burnout": 28,
+        "savings": 35000,
+        "network": 60,
+        "health": 75,
+        "technicalSkill": 70,
+        "reputation": 22
+      }
+    },
+    "commander": {
+      "label": "Co-op Lead",
+      "startingXp": 60000,
+      "startingStats": {
+        "burnout": 30,
+        "savings": 70000,
+        "network": 78,
+        "health": 72,
+        "technicalSkill": 82,
+        "reputation": 40
+      }
+    },
+    "legendary": {
+      "label": "Mentor Parent",
+      "startingXp": 130000,
+      "startingStats": {
+        "burnout": 28,
+        "savings": 120000,
+        "network": 88,
+        "health": 68,
+        "technicalSkill": 90,
+        "reputation": 60
+      }
+    },
+    "mythic": {
+      "label": "Elder",
+      "startingXp": 200000,
+      "startingStats": {
+        "burnout": 25,
+        "savings": 220000,
+        "network": 94,
+        "health": 62,
+        "technicalSkill": 95,
+        "reputation": 78
+      }
+    },
+    "oracle": {
+      "label": "The Oracle",
+      "startingXp": 300000,
+      "startingStats": {
+        "burnout": 22,
+        "savings": 500000,
+        "network": 98,
+        "health": 58,
+        "technicalSkill": 99,
+        "reputation": 92
+      }
+    }
+  },
+
+  "classLabels": {
+    "novice":    { "label": "Homeschooler Newbie",     "role": "Year One, Surviving" },
+    "junior":    { "label": "Settled Routine",       "role": "Year Two or Three" },
+    "skilled":   { "label": "Experienced Veteran",        "role": "Five Years Deep" },
+    "vanguard":  { "label": "Curriculum Sage",       "role": "The One With The Spreadsheet" },
+    "commander": { "label": "Co-op Lead",            "role": "They Call You First" },
+    "legendary": { "label": "Mentor Parent",         "role": "Other Parents Take Notes" },
+    "mythic":    { "label": "Elder",                 "role": "Has Done This Twice" },
+    "oracle":    { "label": "The Oracle",            "role": "Decades In" }
+  },
+
+   "intro": [
+    "It's January 2020.",
+    "{playerName}, there are rumors of a virus.",
+    "A pandemic?",
+    "Each month brings a new problem… and somehow, another step forward."
+  ],
+
+  "monthTransitions": [
+    "... and the lunches still need packing",
+    "... another week, another spelling list",
+    "... you press on",
+    "... the laundry rotates",
+    "... onward",
+    "... the calendar turns",
+    "... time moves forward",
+    "... the kettle goes on",
+    "... someone needs help with long division",
+    "... the kitchen table sees another lesson",
+    "... a permission slip, somewhere",
+    "... another read-aloud, another chapter",
+    "... the dishes can wait until tomorrow",
+    "... someone lost a shoe, again",
+    "... the library books are due Friday",
+    "... the day starts at the table"
+  ]
+}
