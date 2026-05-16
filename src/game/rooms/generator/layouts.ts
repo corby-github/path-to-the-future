@@ -870,7 +870,14 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'expert',
+    // v2.0.28 — demoted expert → hard. Single deterministic 40×40 sentinel
+    // on a slow 8 s bowtie loop is readable + has obvious dead-air zones
+    // (middle y-band x=500..900 is permanently safe). That's a hard
+    // template's character (well-defined challenge with a learnable
+    // pattern), not expert. Crossfire's expert read is the OPPOSITE:
+    // no permanent safe zone in the right half because 8 motions blanket
+    // the area.
+    complexity: 'hard',
   },
   {
     // Expert-tier (PR6, v2.0.22): mixes motion modes per the §4 expert
@@ -905,7 +912,13 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'expert',
+    // v2.0.28 — demoted expert → hard. Two motions (patrol + paddle) is
+    // standard hard density. The non-integer-ratio periods (4000:1800)
+    // make the combined pattern non-repeating but the player still has
+    // clear safe zones (above y=300 when patrol is at right + paddle is
+    // at extreme). Hard tier fits better than expert; reserves expert
+    // for crossfire-style 6+ motion density.
+    complexity: 'hard',
   },
   // ─── Hard-tier expansion (issue #94 batch 2, v2.0.24) ─────────────────
   // Per user "amp it up" feedback on PR #95 medium batch — hard tier
@@ -1016,7 +1029,14 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { baseRect: { x: 870, y: 240, width: 15, height: 120 }, amplitude: 210, period: 1500, phase: (8 * Math.PI) / 5 },
     ],
     door: DEFAULT_DOOR,
-    complexity: 'expert',
+    // v2.0.28 — demoted expert → hard per playtest direction "crossfire is
+    // the only true expert; shift the others." Tight-pickets is dense and
+    // demanding but is single-axis (5 vertical sine pickets, uniform
+    // period 1500 ms, deterministic phase wave). Crossfire's expert read
+    // comes from mixed-axis density + non-aligned periods + decision-
+    // dense traversal — pickets is more "tempo wall" than "puzzle storm."
+    // Fits the hard tier alongside `triple-paddle` and `pickets`.
+    complexity: 'hard',
   },
   {
     // Three paddles in a row across the right half, 120° phase-staggered
@@ -1105,6 +1125,69 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       { baseRect: { x: 810, y: 300, width: 25, height: 100 }, amplitude: 150, period: 1700, phase: Math.PI },
       // Door paddle — sine sweep directly in front of door.
       { baseRect: { x: 910, y: 260, width: 20, height: 80 },  amplitude: 180, period: 1500, phase: Math.PI / 2 },
+    ],
+    door: DEFAULT_DOOR,
+    complexity: 'expert',
+  },
+  {
+    // v2.0.28 — second expert template, matching crossfire's character
+    // recipe (mixed-axis density + non-aligned periods + no permanent
+    // safe zone in the right half) with a different motion mix:
+    //
+    // - 2 horizontal sweepers at top + bottom (path-based, opposite
+    //   directions) — limit cruise-along-edge routes
+    // - 4 vertical pendulums spaced 100 px apart across the right half
+    //   (x=540/640/740/840), phase-staggered π/2 quarter-turns, period
+    //   1600/1800/2000/2200 — the main timing demand
+    // - 1 door-front paddle at x=910, period 1500 — final gate
+    //
+    // 7 motions in the right half. All periods distinct (1500, 1600,
+    // 1800, 2000, 2200, 2400, 2700) so the combined hazard pattern
+    // never visibly repeats. NPC zoning respected (all motion x ≥ 500;
+    // baseRect.x for pendulums = 540 with width 25 → leftmost x at
+    // 540, body never crosses x=500). Differs from crossfire by:
+    // (a) only 4V vs 3V (denser vertical density),
+    // (b) 2H vs 4H (less horizontal density),
+    // (c) tighter pendulum spacing (100 px vs crossfire's 120-150 px).
+    //
+    // Player journey: spawn → walk east safely to x=500 → encounter
+    // the 4-pendulum gauntlet (each pendulum sweeps y=80..440) → time
+    // each column's gap → reach x=900 → time door paddle. Top + bottom
+    // sweepers add timing pressure on the entry/exit y-bands.
+    id: 'tempest',
+    label: 'Tempest',
+    spawn: DEFAULT_SPAWN,
+    obstacles: [],
+    movingObstacles: [
+      // Top horizontal sweep (path-based, R→L) — limits top cruise lane.
+      {
+        baseRect: { x: 880, y: 80, width: 60, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2400,
+        path: [
+          { x: 880, y: 80 },
+          { x: 520, y: 80 },
+        ],
+      },
+      // Bottom horizontal sweep (path-based, L→R) — limits bottom cruise lane.
+      {
+        baseRect: { x: 520, y: 510, width: 60, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2700,
+        path: [
+          { x: 520, y: 510 },
+          { x: 880, y: 510 },
+        ],
+      },
+      // 4 vertical pendulums — main timing demand.
+      { baseRect: { x: 540, y: 260, width: 25, height: 80 }, amplitude: 180, period: 1600, phase: 0 },
+      { baseRect: { x: 640, y: 260, width: 25, height: 80 }, amplitude: 180, period: 1800, phase: Math.PI / 2 },
+      { baseRect: { x: 740, y: 260, width: 25, height: 80 }, amplitude: 180, period: 2000, phase: Math.PI },
+      { baseRect: { x: 840, y: 260, width: 25, height: 80 }, amplitude: 180, period: 2200, phase: (3 * Math.PI) / 2 },
+      // Door paddle — final timing gate.
+      { baseRect: { x: 910, y: 260, width: 20, height: 80 }, amplitude: 180, period: 1500, phase: 0 },
     ],
     door: DEFAULT_DOOR,
     complexity: 'expert',
