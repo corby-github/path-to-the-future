@@ -325,14 +325,14 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 1): two static walls form a single
-    // vertical gate at x=440..520 with a 200-px gap (y=200..400). A small
-    // paddle oscillates inside the gap on a slow sine (period 5000 ms,
-    // amplitude 60). The paddle never fully closes the gap — at either
-    // extreme the player has ~80 px of clearance on the opposite side —
-    // so a patient player can always time a clean pass. Composition:
-    // static-gate + slow-paddle. The first "maze geometry + motion"
-    // template in the medium pool.
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): two static
+    // walls form a single vertical gate at x=440..520 with a 200-px gap
+    // (y=200..400). A larger paddle (h=80, amplitude 90) sweeps most of
+    // the gap at period 3000 ms — matches the established medium tempo
+    // (`pendulum` / `shutters` at 2400 ms). Clean pass exists only at
+    // the paddle's extremes; player must commit to timing. v1 ship
+    // (paddle h=40, amp 60, period 5000) read as easy. Composition:
+    // static-gate + paddle.
     id: 'gate-paddle',
     label: 'Gate and paddle',
     spawn: DEFAULT_SPAWN,
@@ -342,9 +342,9 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     ],
     movingObstacles: [
       {
-        baseRect: { x: 455, y: 280, width: 50, height: 40 },
-        amplitude: 60,
-        period: 5000,
+        baseRect: { x: 450, y: 260, width: 60, height: 80 },
+        amplitude: 90,
+        period: 3000,
         phase: 0,
       },
     ],
@@ -352,13 +352,14 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 1): reuses the easy-tier `s-curve`
-    // wall geometry (two offset walls forcing UP→over→DOWN→over→up) and
-    // adds a slow horizontal patrol along the upper corridor (y≈90, the
-    // band the player must traverse east through after navigating up
-    // past wall 1). Patrol period 5000 ms across a 220-px x-range so it
-    // crosses the corridor in ~2.5 s; player can wait at either edge for
-    // a clear window. Composition: s-curve + horizontal-patrol.
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): reuses
+    // the easy-tier `s-curve` wall geometry and adds TWO patrols — one
+    // in the upper corridor (y≈90) and one in the lower corridor
+    // (y≈480), counter-direction (second patrol's path reversed) so the
+    // player can't time both with the same rhythm. Period 2800 ms each,
+    // matching medium tempo. v1 ship (single patrol, period 5000) read
+    // as easy; doubling motion + speeding up brings it into medium feel.
+    // Composition: s-curve + patrol-pair-counter.
     id: 's-curve-patrol',
     label: 'S-curve patrol',
     spawn: DEFAULT_SPAWN,
@@ -371,10 +372,20 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
         baseRect: { x: 380, y: 90, width: 80, height: 25 },
         amplitude: 0,
         phase: 0,
-        period: 5000,
+        period: 2800,
         path: [
           { x: 380, y: 90 },
           { x: 600, y: 90 },
+        ],
+      },
+      {
+        baseRect: { x: 680, y: 480, width: 80, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 2800,
+        path: [
+          { x: 680, y: 480 },
+          { x: 380, y: 480 },
         ],
       },
     ],
@@ -382,13 +393,15 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 1): reuses the easy-tier `switchback`
-    // wall geometry and adds a slow vertical paddle in the bottom corridor
-    // (the y>400 band the player must traverse east through between walls
-    // 1 and 2). Paddle period 4500 ms, amplitude 50 — keeps the paddle
-    // inside the corridor at both extremes. Composition: switchback +
-    // vertical-paddle. Pairs with `s-curve-patrol` to give the player
-    // both axes of motion in the same tier.
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): reuses
+    // the easy-tier `switchback` walls and adds TWO wide bar-paddles
+    // spanning the full climb corridor (x=410..650) — one in the bottom
+    // corridor and one in the top corridor, π-phase-offset so they
+    // move in anti-correlation. Width 240 px prevents the v1 "route
+    // around the narrow paddle" cheat. Period 2400 ms matches the
+    // established medium tempo. v1 ship (single 20×80 paddle, period
+    // 4500) read as simple-tier slow. Composition: switchback +
+    // wide-bar-paddle-pair.
     id: 'switchback-paddle',
     label: 'Switchback paddle',
     spawn: DEFAULT_SPAWN,
@@ -398,40 +411,48 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     ],
     movingObstacles: [
       {
-        baseRect: { x: 510, y: 460, width: 20, height: 80 },
+        baseRect: { x: 410, y: 460, width: 240, height: 40 },
         amplitude: 50,
-        period: 4500,
+        period: 2400,
         phase: 0,
+      },
+      {
+        baseRect: { x: 410, y: 100, width: 240, height: 40 },
+        amplitude: 50,
+        period: 2400,
+        phase: Math.PI,
       },
     ],
     door: DEFAULT_DOOR,
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 1): single sentinel tracing a slow
-    // rectangular orbit (4 corners of an inner box). Period 6000 ms =
-    // 1500 ms per segment — slower and simpler than the expert-tier
-    // `zigzag-sentinel` (which traces a 4-corner bowtie at period 8000
-    // ms but with diagonal segments). Player can pause anywhere outside
-    // the orbit box (x<350, x>690, or y<180 / y>460 inside the box are
-    // dead-air). Composition: open + path-sentinel. Demonstrates that
-    // the deterministic-path motion mode shipped in PR6 reads as medium
-    // when the path geometry is rectangular rather than crossing.
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): sentinel
+    // tracing a rectangular orbit, FRAMED by top and bottom blocker
+    // walls that force the player through the corridor (y=150..450)
+    // where the orbit lives. Without the framing walls (v1 ship) the
+    // player could route above or below the orbit and never engage with
+    // it. Period 4000 ms = 1000 ms per segment — faster than v1's 6000
+    // ms to match medium tempo. Composition: corridor-frame +
+    // path-sentinel.
     id: 'slow-orbit',
-    label: 'Slow orbit',
+    label: 'Corralled orbit',
     spawn: DEFAULT_SPAWN,
-    obstacles: [],
+    obstacles: [
+      { x: 200, y: 0,   width: 600, height: 150 },  // top frame
+      { x: 200, y: 450, width: 600, height: 150 },  // bottom frame
+    ],
     movingObstacles: [
       {
-        baseRect: { x: 350, y: 180, width: 40, height: 40 },
+        baseRect: { x: 320, y: 200, width: 40, height: 40 },
         amplitude: 0,
         phase: 0,
-        period: 6000,
+        period: 4000,
         path: [
-          { x: 350, y: 180 },
-          { x: 650, y: 180 },
-          { x: 650, y: 420 },
-          { x: 350, y: 420 },
+          { x: 320, y: 200 },
+          { x: 680, y: 200 },
+          { x: 680, y: 400 },
+          { x: 320, y: 400 },
         ],
       },
     ],
@@ -439,36 +460,41 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 1): two slow horizontal patrols on
-    // opposite y-bands (y=180 and y=420), traveling counter-direction so
-    // their gap pattern through the middle band (y=205..420) varies as
-    // they cycle. Period 5000 ms each across the same x-range 300..700.
-    // Player can travel east through the middle band almost always
-    // safely — the challenge is committing to a y-lane before crossing.
-    // Composition: open + patrol-pair-counter. No static walls.
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): top + bottom
+    // frame walls compress the player into a center corridor (y=150..450),
+    // then a center wall (x=470..530, y=220..380) splits the safe middle
+    // and forces detour through one of the patrol bands. Two counter-
+    // direction patrols at y=190 (top of corridor) and y=385 (bottom of
+    // corridor) sweep x=280..720 at period 2800 ms. v1 ship (open room,
+    // wide safe middle, period 5000) was a direct walk-through. Composition:
+    // corridor-frame + center-wall + patrol-pair-counter.
     id: 'twin-patrols',
     label: 'Twin patrols',
     spawn: DEFAULT_SPAWN,
-    obstacles: [],
+    obstacles: [
+      { x: 200, y: 0,   width: 600, height: 150 },  // top frame
+      { x: 200, y: 450, width: 600, height: 150 },  // bottom frame
+      { x: 470, y: 220, width: 60,  height: 160 },  // center wall splits safe middle
+    ],
     movingObstacles: [
       {
-        baseRect: { x: 300, y: 180, width: 80, height: 25 },
+        baseRect: { x: 280, y: 190, width: 80, height: 25 },
         amplitude: 0,
         phase: 0,
-        period: 5000,
+        period: 2800,
         path: [
-          { x: 300, y: 180 },
-          { x: 700, y: 180 },
+          { x: 280, y: 190 },
+          { x: 720, y: 190 },
         ],
       },
       {
-        baseRect: { x: 700, y: 420, width: 80, height: 25 },
+        baseRect: { x: 720, y: 385, width: 80, height: 25 },
         amplitude: 0,
         phase: 0,
-        period: 5000,
+        period: 2800,
         path: [
-          { x: 700, y: 420 },
-          { x: 300, y: 420 },
+          { x: 720, y: 385 },
+          { x: 280, y: 385 },
         ],
       },
     ],
@@ -476,15 +502,14 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
     complexity: 'medium',
   },
   {
-    // Medium-tier (issue #94, batch 1): "half maze" — uses only walls 1
-    // and 4 from the easy-tier `maze` template (both center-gap), which
-    // leaves a wide open middle (x=260..800) where a slow vertical
-    // paddle oscillates across most of the y-range. Period 4500 ms,
-    // amplitude 120 → paddle y range 140..380. Player threads the maze
-    // gaps then squeezes past the paddle at one of its extremes.
-    // Composition: partial-maze + wide-paddle. Demonstrates that taking
-    // a SUBSET of an existing maze pattern and adding motion produces a
-    // distinct template without re-authoring geometry.
+    // Medium-tier (issue #94, batch 1 — v2.0.23 tuning pass): "half
+    // maze" (walls 1 + 4 from the easy-tier `maze`, both center-gap) +
+    // TWO motions in the wide middle — a vertical paddle (period 2800
+    // ms, amplitude 120) AND a horizontal patrol crossing the upper
+    // band (period 3500 ms, non-aligned with paddle period so the
+    // combined hazard pattern doesn't repeat). v1 ship (single paddle,
+    // period 4500) read as too simple. Composition: partial-maze +
+    // paddle + crossing-patrol.
     id: 'maze-gauntlet',
     label: 'Maze gauntlet',
     spawn: DEFAULT_SPAWN,
@@ -498,8 +523,18 @@ export const LAYOUT_TEMPLATES: ReadonlyArray<LayoutTemplate> = [
       {
         baseRect: { x: 490, y: 260, width: 20, height: 80 },
         amplitude: 120,
-        period: 4500,
+        period: 2800,
         phase: 0,
+      },
+      {
+        baseRect: { x: 300, y: 160, width: 80, height: 25 },
+        amplitude: 0,
+        phase: 0,
+        period: 3500,
+        path: [
+          { x: 300, y: 160 },
+          { x: 700, y: 160 },
+        ],
       },
     ],
     door: DEFAULT_DOOR,
