@@ -246,6 +246,14 @@ export function ArcadeModal({ interactable, onClose }: Props) {
       data-interactable-id={interactable.id}
       data-phase={phase}
       style={backdropStyle}
+      onPointerDown={(e) => {
+        // Backdrop dismiss (mobile parity). Pointerdown rather than
+        // click to dodge the "opening tap also closes" race — see
+        // NPCModal for the full rationale. `e.target === currentTarget`
+        // gates to the backdrop itself; clicks inside the dialog stay
+        // internal.
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       {phase === 'menu' ? (
         <div
@@ -286,7 +294,7 @@ export function ArcadeModal({ interactable, onClose }: Props) {
                     data-variant={v.id}
                     data-ready={v.ready || undefined}
                     data-active={active || undefined}
-                    onClick={() => handlePick(i)}
+                    onPointerDown={() => handlePick(i)}
                     onMouseEnter={() => setHighlighted(i)}
                     style={{
                       textAlign: 'left',

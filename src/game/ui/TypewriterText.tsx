@@ -161,6 +161,19 @@ export function TypewriterText({
     return () => window.removeEventListener('keydown', handler);
   }, [handleInteract]);
 
+  // Tap-anywhere skip/advance (mobile parity with the keyboard listener
+  // above). Window-scoped so a tap on the dialog body — not just on the
+  // small text span itself — counts. NPCModal is the only consumer and
+  // there's no UI behind it to misfire on. The modal's backdrop already
+  // has its own pointerdown handler (dismiss); when the user taps the
+  // backdrop both fire, but the modal-close path wins because it
+  // unmounts the typewriter on the same frame.
+  useEffect(() => {
+    const handler = () => handleInteract();
+    window.addEventListener('pointerdown', handler);
+    return () => window.removeEventListener('pointerdown', handler);
+  }, [handleInteract]);
+
   // Render the visible-prefix of the source text. Reconstructed from the
   // visible char count over the tokens list (pause tokens don't emit chars).
   let display = '';
