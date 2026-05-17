@@ -200,12 +200,28 @@ export function Hud() {
     marginTop: 2,
   };
 
+  // Stats column. Holds an inner `stats-track` that fits all 8-9 chips on
+  // one line (`width: max-content`). `safe center` auto-falls back to
+  // flex-start when the track overflows the column, so narrow widths
+  // get left-aligned chips instead of centered-with-both-edges-clipped.
+  // `overflow: hidden` clips chips that don't fit so they can be scrolled
+  // into view by the marquee animation (see `stats-marquee` in
+  // global.css, gated by a container query at <430px column width).
   const statsWrapStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    gap: 14,
-    flexWrap: 'wrap',
+    justifyContent: 'safe center',
     flex: 1,
+    overflow: 'hidden',
+    containerType: 'inline-size',
+  };
+
+  const statsTrackStyle: CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 14,
+    flexWrap: 'nowrap',
+    width: 'max-content',
   };
 
   // Location column on the far right, mirroring the identity column's
@@ -279,64 +295,66 @@ export function Hud() {
       </div>
 
       <div data-region="stats" style={statsWrapStyle}>
-        <StatChip
-          name="xp"
-          numericValue={progress.xp}
-          displayValue={formatXp(progress.xp)}
-          palette={palette}
-          ariaLabel={statLabelFor(pack.manifest, 'xp')}
-        />
-        <StatChip
-          name="burnout"
-          numericValue={stats.burnout}
-          displayValue={stats.burnout}
-          palette={palette}
-          ariaLabel={statLabelFor(pack.manifest, 'burnout')}
-        />
-        <StatChip
-          name="savings"
-          numericValue={stats.savings}
-          displayValue={formatMoney(stats.savings)}
-          palette={palette}
-          ariaLabel={statLabelFor(pack.manifest, 'savings')}
-        />
-        <StatChip
-          name="health"
-          numericValue={stats.health}
-          displayValue={stats.health}
-          palette={palette}
-          ariaLabel={statLabelFor(pack.manifest, 'health')}
-        />
-        <StatChip
-          name="network"
-          numericValue={stats.network}
-          displayValue={stats.network}
-          palette={palette}
-          ariaLabel={statLabelFor(pack.manifest, 'network')}
-        />
-        {stats.relationship !== null && (
+        <div data-region="stats-track" style={statsTrackStyle}>
           <StatChip
-            name="relationship"
-            numericValue={stats.relationship}
-            displayValue={stats.relationship}
+            name="xp"
+            numericValue={progress.xp}
+            displayValue={formatXp(progress.xp)}
             palette={palette}
-            ariaLabel={statLabelFor(pack.manifest, 'relationship')}
+            ariaLabel={statLabelFor(pack.manifest, 'xp')}
           />
-        )}
-        <StatChip
-          name="technicalSkill"
-          numericValue={stats.technicalSkill}
-          displayValue={stats.technicalSkill}
-          palette={palette}
-          ariaLabel={statLabelFor(pack.manifest, 'technicalSkill')}
-        />
-        <StatChip
-          name="reputation"
-          numericValue={stats.reputation}
-          displayValue={formatReputation(stats.reputation)}
-          palette={palette}
-          ariaLabel={statLabelFor(pack.manifest, 'reputation')}
-        />
+          <StatChip
+            name="burnout"
+            numericValue={stats.burnout}
+            displayValue={stats.burnout}
+            palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'burnout')}
+          />
+          <StatChip
+            name="savings"
+            numericValue={stats.savings}
+            displayValue={formatMoney(stats.savings)}
+            palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'savings')}
+          />
+          <StatChip
+            name="health"
+            numericValue={stats.health}
+            displayValue={stats.health}
+            palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'health')}
+          />
+          <StatChip
+            name="network"
+            numericValue={stats.network}
+            displayValue={stats.network}
+            palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'network')}
+          />
+          {stats.relationship !== null && (
+            <StatChip
+              name="relationship"
+              numericValue={stats.relationship}
+              displayValue={stats.relationship}
+              palette={palette}
+              ariaLabel={statLabelFor(pack.manifest, 'relationship')}
+            />
+          )}
+          <StatChip
+            name="technicalSkill"
+            numericValue={stats.technicalSkill}
+            displayValue={stats.technicalSkill}
+            palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'technicalSkill')}
+          />
+          <StatChip
+            name="reputation"
+            numericValue={stats.reputation}
+            displayValue={formatReputation(stats.reputation)}
+            palette={palette}
+            ariaLabel={statLabelFor(pack.manifest, 'reputation')}
+          />
+        </div>
       </div>
 
       <div data-region="location" style={{ ...locationStyle, position: 'relative' }}>

@@ -26,7 +26,7 @@ No installation. No account. Browser only.
 
 This game is also a research artifact. It was built in 7 calendar days (May 10–16, 2026) by one engineer working with Claude Code (Opus 4, 1M context, Max account) — from blank repo to deployed game.
 
-The study tracked velocity, compression ratios, and workflow patterns across 14 sittings and 37 hours (37:11) at  the keyboard. Every line of code, every JSON event, every sprite, every piece of dialog was created from scratch and pushed to this repo in real time to keep the timestamps honest.
+The study tracked velocity, compression ratios, and workflow patterns across 18 sittings and 37 hours (37:11) at  the keyboard. Every line of code, every JSON event, every sprite, every piece of dialog was created from scratch and pushed to this repo in real time to keep the timestamps honest.
 
 Preliminary & full report forthcoming.
 

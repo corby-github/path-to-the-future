@@ -72,9 +72,16 @@ export function CareerPicker({ onSelect }: Props) {
   // canvas-display-width). Mirrors EndgameScreen / TitleScreen so every
   // non-Game screen sits in the same bounded envelope on the dark page
   // (the dark page wrapper comes from App.tsx's <PageFrame>).
+  //
+  // The aspect ratio is a *minimum*, not a lock: at very short viewports
+  // (e.g. 915×412 → canvas ~286×172) the picker's 5 options + title +
+  // button can't fit inside 0.6× the canvas width, so we let the frame
+  // grow taller and let the page scroll. `containerType: inline-size`
+  // lets the inner padding / gap / fonts size off canvas width via `cqw`
+  // so the layout also tightens proportionally on narrow viewports.
   const screenStyle: CSSProperties = {
     width: 'var(--canvas-display-width)',
-    aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
+    minHeight: `calc(var(--canvas-display-width) * ${ROOM_VIEWBOX.height} / ${ROOM_VIEWBOX.width})`,
     background: palette.background,
     color: palette.ink,
     border: `1px solid ${palette.surface}`,
@@ -85,9 +92,10 @@ export function CareerPicker({ onSelect }: Props) {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
-    gap: 24,
-    overflow: 'hidden',
+    padding: 'clamp(12px, 3.2cqw, 32px)',
+    gap: 'clamp(8px, 2.4cqw, 24px)',
+    overflow: 'visible',
+    containerType: 'inline-size',
   };
 
   // Inner card — width-constrained content column. Outer canvas frame
@@ -100,11 +108,11 @@ export function CareerPicker({ onSelect }: Props) {
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    gap: 20,
+    gap: 'clamp(8px, 2cqw, 20px)',
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: 22,
+    fontSize: 'clamp(14px, 2.2cqw, 22px)',
     fontWeight: 600,
     margin: 0,
     // Matches EndgameScreen / TitleScreen — was -0.01em which read
@@ -113,7 +121,7 @@ export function CareerPicker({ onSelect }: Props) {
   };
 
   const subtitleStyle: CSSProperties = {
-    fontSize: 13,
+    fontSize: 'clamp(10px, 1.3cqw, 13px)',
     color: palette.inkMuted,
     margin: 0,
   };
@@ -121,7 +129,7 @@ export function CareerPicker({ onSelect }: Props) {
   const optionsStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
-    gap: 8,
+    gap: 'clamp(4px, 0.8cqw, 8px)',
   };
 
   return (
@@ -146,7 +154,7 @@ export function CareerPicker({ onSelect }: Props) {
               tagline={c.tagline}
               playable={c.playable}
               selected={pickedId === c.id}
-              onClick={() => c.playable && setPickedId(c.id)}
+              onClick={() => c.playable && onSelect(c.id)}
               palette={palette}
             />
           ))}
@@ -188,7 +196,7 @@ function CareerOption({
     display: 'flex',
     flexDirection: 'column',
     gap: 4,
-    padding: '14px 16px',
+    padding: 'clamp(8px, 1.4cqw, 14px) clamp(10px, 1.6cqw, 16px)',
     border: `1.5px solid ${baseBorder}`,
     borderRadius: 6,
     background: selected ? `${palette.accent}10` : 'transparent',
@@ -202,13 +210,13 @@ function CareerOption({
     display: 'flex',
     alignItems: 'center',
     gap: 8,
-    fontSize: 14,
+    fontSize: 'clamp(11px, 1.4cqw, 14px)',
     fontWeight: 600,
     color: palette.ink,
   };
 
   const lockTagStyle: CSSProperties = {
-    fontSize: 10,
+    fontSize: 'clamp(8px, 1cqw, 10px)',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     color: palette.inkMuted,
@@ -218,7 +226,7 @@ function CareerOption({
   };
 
   const taglineStyle: CSSProperties = {
-    fontSize: 12,
+    fontSize: 'clamp(10px, 1.2cqw, 12px)',
     color: palette.inkMuted,
     fontStyle: 'italic',
   };
@@ -259,11 +267,11 @@ function ContinueButton({ enabled, onClick, palette }: ContinueButtonProps) {
   // size when the input becomes valid.
   const style: CSSProperties = {
     alignSelf: 'center',
-    padding: '12px 32px',
+    padding: 'clamp(8px, 1.2cqw, 12px) clamp(20px, 3.2cqw, 32px)',
     background: 'transparent',
     color: palette.ink,
     border: `1px solid ${palette.ink}`,
-    fontSize: 13,
+    fontSize: 'clamp(11px, 1.3cqw, 13px)',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     cursor: enabled ? 'pointer' : 'not-allowed',

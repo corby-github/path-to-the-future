@@ -285,6 +285,12 @@ export function TitleScreen({ onAcknowledge }: Props) {
     borderRadius: 6,
     overflow: 'hidden',
     fontFamily: 'inherit',
+    // Establish a query container so descendants can size with `cqw`
+    // (1% of canvas width). Wordmark/tagline/prompt previously used
+    // `vw`, which keeps text huge while the canvas itself shrinks under
+    // the (100vh − 240px) × 5/3 cap — causing the marquee to overflow
+    // the frame at short viewports like 915×412.
+    containerType: 'inline-size',
   };
 
   const wordmarkStyle: CSSProperties = {
@@ -300,8 +306,10 @@ export function TitleScreen({ onAcknowledge }: Props) {
     fontFamily: 'inherit',
     fontWeight: 700,
     // Smaller cap than the pixel version — mono chars are ~0.6em wide,
-    // and the 18-char wordmark butts against the canvas at >68px.
-    fontSize: 'clamp(36px, 5.6vw, 64px)',
+    // and the 18-char wordmark butts against the canvas at >68px. Sized
+    // in `cqw` (canvas-width %) rather than `vw` so the marquee shrinks
+    // with the canvas at short viewports instead of overflowing the frame.
+    fontSize: 'clamp(18px, 6.4cqw, 64px)',
     letterSpacing: '0.02em',
     color: palette.ink,
     lineHeight: 1,
@@ -348,7 +356,7 @@ export function TitleScreen({ onAcknowledge }: Props) {
     textAlign: 'center',
     margin: 0,
     color: palette.ink,
-    fontSize: 'clamp(14px, 1.5vw, 18px)',
+    fontSize: 'clamp(11px, 1.8cqw, 18px)',
     fontWeight: 600,
     letterSpacing: '0.04em',
     lineHeight: 1.5,
@@ -366,7 +374,7 @@ export function TitleScreen({ onAcknowledge }: Props) {
     right: 0,
     textAlign: 'center',
     fontStyle: 'italic',
-    fontSize: 'clamp(15px, 1.7vw, 20px)',
+    fontSize: 'clamp(11px, 2cqw, 20px)',
     color: palette.ink,
     opacity: 0.78,
     margin: 0,
@@ -386,7 +394,7 @@ export function TitleScreen({ onAcknowledge }: Props) {
     right: 0,
     textAlign: 'center',
     color: palette.ink,
-    fontSize: 'clamp(13px, 1.2vw, 16px)',
+    fontSize: 'clamp(10px, 1.6cqw, 16px)',
     fontWeight: 700,
     letterSpacing: '0.22em',
     textTransform: 'uppercase',

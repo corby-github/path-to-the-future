@@ -28,9 +28,14 @@ export function NameEntry({ onSubmit }: Props) {
 
   // Outer = canvas frame, matching TitleScreen / EndgameScreen / the
   // other init phases. Dark page wrapper comes from App.tsx's <PageFrame>.
+  // aspectRatio is a *minimum*, not a lock — at very short viewports
+  // the title/input/counter/button can't fit inside 0.6× canvas width,
+  // so we let the frame grow taller and let the page scroll instead of
+  // clipping the header + Continue button. `containerType: inline-size`
+  // lets paddings / gaps / fonts size off canvas width via `cqw`.
   const screenStyle: CSSProperties = {
     width: 'var(--canvas-display-width)',
-    aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
+    minHeight: `calc(var(--canvas-display-width) * ${ROOM_VIEWBOX.height} / ${ROOM_VIEWBOX.width})`,
     background: palette.background,
     color: palette.ink,
     border: `1px solid ${palette.surface}`,
@@ -41,8 +46,9 @@ export function NameEntry({ onSubmit }: Props) {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
-    overflow: 'hidden',
+    padding: 'clamp(12px, 3.2cqw, 32px)',
+    overflow: 'visible',
+    containerType: 'inline-size',
   };
 
   // Inner card — width-constrained content column. Outer canvas frame
@@ -54,11 +60,11 @@ export function NameEntry({ onSubmit }: Props) {
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    gap: 24,
+    gap: 'clamp(10px, 2.4cqw, 24px)',
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: 22,
+    fontSize: 'clamp(14px, 2.2cqw, 22px)',
     fontWeight: 600,
     margin: 0,
     // Matches EndgameScreen / TitleScreen / CareerPicker.
@@ -66,7 +72,7 @@ export function NameEntry({ onSubmit }: Props) {
   };
 
   const subtitleStyle: CSSProperties = {
-    fontSize: 13,
+    fontSize: 'clamp(10px, 1.3cqw, 13px)',
     color: palette.inkMuted,
     margin: 0,
   };
@@ -75,8 +81,8 @@ export function NameEntry({ onSubmit }: Props) {
   // + color). Was a 1.5px surface border which read as chrome rather
   // than "of-the-game."
   const inputStyle: CSSProperties = {
-    fontSize: 18,
-    padding: '12px 14px',
+    fontSize: 'clamp(13px, 1.8cqw, 18px)',
+    padding: 'clamp(8px, 1.2cqw, 12px) clamp(10px, 1.4cqw, 14px)',
     border: `1px solid ${palette.ink}`,
     borderRadius: 4,
     background: palette.background,
@@ -88,7 +94,7 @@ export function NameEntry({ onSubmit }: Props) {
   };
 
   const counterStyle: CSSProperties = {
-    fontSize: 11,
+    fontSize: 'clamp(9px, 1.1cqw, 11px)',
     color: palette.inkMuted,
     alignSelf: 'flex-end',
     letterSpacing: '0.04em',
@@ -98,11 +104,11 @@ export function NameEntry({ onSubmit }: Props) {
   // CreditsScreen Close, EndgameScreen actions. Centered.
   const buttonStyle: CSSProperties = {
     alignSelf: 'center',
-    padding: '12px 32px',
+    padding: 'clamp(8px, 1.2cqw, 12px) clamp(20px, 3.2cqw, 32px)',
     background: 'transparent',
     color: palette.ink,
     border: `1px solid ${palette.ink}`,
-    fontSize: 13,
+    fontSize: 'clamp(11px, 1.3cqw, 13px)',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     cursor: canSubmit ? 'pointer' : 'not-allowed',

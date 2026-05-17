@@ -180,6 +180,28 @@ body {
    `none`, JS that watches `animationend` (e.g., the scene-line-fade in
    ScenePlayer) would stall waiting for an event that never fires. 1ms
    resolves the event synchronously without visible motion. */
+/* HUD stat-chip marquee. The stats column fits all 8-9 chips on a
+   single line in ~430px. Below that, `justify-content: safe center` on
+   the wrap falls back to flex-start and the track overflows the right
+   edge (clipped by `overflow: hidden`). This animation slowly translates
+   the track left, then back, so every chip becomes visible over time.
+   The keyframe end-state is `(track width − container width)` —
+   computed as `100% − 100cqw` — so the scroll exactly matches the
+   overflow, no matter how narrow the column gets. The container query
+   gates the animation: it runs only when the column is too narrow for
+   the chips to fit (the wide / fits-on-one-line case stays static and
+   centered). */
+@keyframes stats-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-1 * (100% - 100cqw))); }
+}
+
+@container (max-width: 429px) {
+  [data-component="Hud"] [data-region="stats-track"] {
+    animation: stats-marquee 25s ease-in-out infinite alternate;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
