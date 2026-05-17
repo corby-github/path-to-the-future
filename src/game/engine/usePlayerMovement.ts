@@ -21,7 +21,21 @@ interface UsePlayerMovementOptions {
   // bounds + static-obstacle resolution handle clamping/collision while
   // the player slides. Clearing the ref returns control to the keyboard.
   externalVelocityRef?: RefObject<Vector2 | null>;
+  // Optional tap-to-move target. When `current` is non-null AND neither
+  // external velocity nor keyboard input is driving the frame, the loop
+  // walks the player toward this point at base speed. Auto-clears when
+  // the player arrives (within TARGET_ARRIVED_DISTANCE) or when keyboard
+  // input picks back up (keyboard wins). Used by DecisionRoom's mobile
+  // path: pointerdown on the canvas sets a target so players without a
+  // physical keyboard can move at all.
+  targetRef?: RefObject<Vector2 | null>;
 }
+
+// Tap-to-move arrival threshold. Larger than 1px so the loop converges
+// cleanly across the floating-point error in velocity * delta + collision
+// resolution, and so the player visibly stops rather than slowly
+// micro-stepping the last fraction of a pixel.
+const TARGET_ARRIVED_DISTANCE = 3;
 
 // v2.0.18 — return shape widened so callers can imperatively reposition the
 // player (e.g. moving-obstacle knockback in DecisionRoom). `state` is the
@@ -51,6 +65,7 @@ export function usePlayerMovement({
   active = true,
   onTick,
   externalVelocityRef,
+  targetRef,
 }: UsePlayerMovementOptions): PlayerControl {
   const input = useKeyboardInput();
 
@@ -179,6 +194,38 @@ export function usePlayerMovement({
       else if (dx < 0) facing = 'left';
       else if (dy > 0) facing = 'down';
       else if (dy < 0) facing = 'up';
+    }
+
+    // Tap-to-move (mobile / mouse-only path). Only runs when neither
+    // external knockback nor keyboard input is driving the frame —
+    // keyboard wins by virtue of setting vx/vy non-zero above. A
+    // non-zero keyboard frame also clears any in-progress target so
+    // subsequent keyboard-idle frames don't snap back to the old tap.
+    if (!ext && targetRef?.current) {
+      if (vx !== 0 || vy !== 0) {
+        targetRef.current = null;
+      } else {
+        const target = targetRef.current;
+        const curPos = stateRef.current.position;
+        const tdx = target.x - curPos.x;
+        const tdy = target.y - curPos.y;
+        const dist = Math.hypot(tdx, tdy);
+        if (dist <= TARGET_ARRIVED_DISTANCE) {
+          targetRef.current = null;
+        } else {
+          vx = (tdx / dist) * speed;
+          vy = (tdy / dist) * speed;
+          // Face toward dominant axis so the sprite reads as walking
+          // *toward* the destination, not just whichever cardinal it
+          // last picked. Same horizontal-favouring tie-break as the
+          // keyboard branch above.
+          if (Math.abs(tdx) > Math.abs(tdy)) {
+            facing = tdx > 0 ? 'right' : 'left';
+          } else {
+            facing = tdy > 0 ? 'down' : 'up';
+          }
+        }
+      }
     }
 
     const desired = {

@@ -23,9 +23,7 @@ import { DecisionModal } from '../ui/DecisionModal';
 import { EventModal } from '../ui/EventModal';
 import { NPCModal } from '../ui/NPCModal';
 import { ArcadeModal } from '../ui/ArcadeModal';
-import { TutorialOverlay, TUTORIAL_KEYS_STEP_INDEX } from '../ui/TutorialOverlay';
-import { KeysWidget } from '../ui/KeysWidget';
-import { useMisclickPrompt } from '../engine/useMisclickPrompt';
+import { TutorialOverlay } from '../ui/TutorialOverlay';
 import { dismissTutorial } from '../state/slices/metaSlice';
 import { persistState } from '../state/persistence';
 import { computeRoomSeed } from './generator/seedRng';
@@ -426,29 +424,30 @@ export function DecisionRoom({ config, onExit }: Props) {
     persistState(store.getState());
   }, [dispatch, store]);
 
-  // `tutorialStepIndex` tracks the current main-tutorial step so the
-  // misclick prompt (below) can suppress while the keys-widget step
-  // is showing. v2.0.32 — the sprint tutorial is now an inline step
-  // of the main coachmark (was a separate time-triggered overlay),
-  // so no separate state machinery is needed here.
+  // `tutorialStepIndex` tracks the current main-tutorial step. Drives
+  // `data-tutorial-step` on the room root for e2e tests + dev tooling;
+  // TutorialOverlay reports each transition via onStepChange.
   const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
 
-  // Issue #89 — misclick prompt. Bound to the canvas wrapper below.
-  // Suppressed during modals + during the keys-widget tutorial step
-  // (no point stacking another keys widget on top of the bubble).
+  // Canvas wrapper ref — kept for the surrounding layout. The misclick
+  // prompt that used to bind here was retired when tap-to-move landed:
+  // a click on the canvas now sets a movement target (handled on the
+  // SVG via onPointerDown below) rather than surfacing a "use the
+  // keyboard" coachmark.
   const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
-  const onKeysWidgetTutorialStep =
-    tutorialActive && tutorialStepIndex === TUTORIAL_KEYS_STEP_INDEX;
-  const misclickSuppressed =
-    tutorialActive ||
-    onKeysWidgetTutorialStep ||
-    activeDecision !== null ||
-    activeEvent !== null ||
-    activeInteractable !== null;
-  const misclickPrompt = useMisclickPrompt({
-    containerRef: canvasWrapperRef,
-    suppressed: misclickSuppressed,
-  });
+
+  // SVG element ref — needed for client → viewBox coordinate conversion
+  // on tap-to-move. Cannot use canvasWrapperRef because the wrapper has
+  // a 1px border that offsets its bounding rect from the SVG's content
+  // box; the SVG's getBoundingClientRect maps 1:1 to ROOM_VIEWBOX space.
+  const svgRef = useRef<SVGSVGElement | null>(null);
+
+  // Tap-to-move target. Set by the SVG's onPointerDown handler; consumed
+  // by usePlayerMovement when neither knockback nor keyboard input is
+  // driving the frame. Auto-clears on arrival or when a movement key
+  // fires. Mobile players (no physical keyboard) use this exclusively;
+  // desktop players can use it as a "click to walk over there" comfort.
+  const tapTargetRef = useRef<Vector2 | null>(null);
 
   // Index into placements of the nearest interactable within proximity, or
   // null when none. Drives the halo / [E] hint and gates the E-key.
@@ -723,6 +722,7 @@ export function DecisionRoom({ config, onExit }: Props) {
     speed: BASE_SPEED * speedMultiplier,
     onTick: handleTick,
     externalVelocityRef: knockbackVelocityRef,
+    targetRef: tapTargetRef,
   });
   const playerState = player.state;
 
@@ -1106,6 +1106,7 @@ export function DecisionRoom({ config, onExit }: Props) {
           }}
         >
         <svg
+          ref={svgRef}
           viewBox={`0 0 ${ROOM_VIEWBOX.width} ${ROOM_VIEWBOX.height}`}
           style={{
             background: palette.background,
@@ -1114,6 +1115,37 @@ export function DecisionRoom({ config, onExit }: Props) {
             height: 'auto',
             opacity: committed ? 0 : 1,
             transition: `opacity ${DOOR_FADE_MS}ms ease`,
+            // Disable the touch-action default (panning / pinch) so a
+            // tap on the canvas doesn't also scroll the page — players
+            // on mobile expect taps to set a walk target, not to scroll
+            // the document.
+            touchAction: 'none',
+          }}
+          onPointerDown={(e) => {
+            // Tap-to-move. Gated on `playerActive` so taps during
+            // modals / tutorial / transitions don't queue a pending
+            // walk that fires when control returns — that read as
+            // disorienting in playtest.
+            if (!playerActive) return;
+            const svg = svgRef.current;
+            if (!svg) return;
+            const rect = svg.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+            const px = ((e.clientX - rect.left) / rect.width) * ROOM_VIEWBOX.width;
+            const py = ((e.clientY - rect.top) / rect.height) * ROOM_VIEWBOX.height;
+            // Clamp the target inside the playable bounds (minus
+            // PLAYER_RADIUS) so a tap on the canvas edge resolves to a
+            // reachable point instead of leaving the player walking
+            // toward a permanently-unreachable target.
+            const tx = Math.max(
+              ROOM_BOUNDS.minX + PLAYER_RADIUS,
+              Math.min(ROOM_BOUNDS.maxX - PLAYER_RADIUS, px),
+            );
+            const ty = Math.max(
+              ROOM_BOUNDS.minY + PLAYER_RADIUS,
+              Math.min(ROOM_BOUNDS.maxY - PLAYER_RADIUS, py),
+            );
+            tapTargetRef.current = { x: tx, y: ty };
           }}
         >
           <rect
@@ -1505,44 +1537,6 @@ export function DecisionRoom({ config, onExit }: Props) {
             </text>
           ))}
         </svg>
-        {/* Issue #89 — misclick prompt. Surfaces the keys widget when
-            the player clicks the canvas (the game is keyboard-only).
-            zIndex 70 sits above gameplay (SVG) but below modals
-            (zIndex 100+) and below the tutorial overlay (zIndex 80).
-            Re-keyed by `version` so each fresh pop replays the
-            pop-in animation. */}
-        {misclickPrompt.visible && (
-          <div
-            key={misclickPrompt.version}
-            data-component="MisclickPrompt"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'none',
-              zIndex: 70,
-              animation: 'decision-modal-dialog-pop 200ms ease-out',
-            }}
-          >
-            <div
-              data-region="bubble"
-              style={{
-                pointerEvents: 'auto',
-                background: palette.background,
-                color: palette.ink,
-                border: `2px solid ${palette.ink}`,
-                borderRadius: 6,
-                padding: '18px 26px',
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
-                fontFamily: 'inherit',
-              }}
-            >
-              <KeysWidget palette={palette} size={42} caption="Use the keyboard" />
-            </div>
-          </div>
-        )}
         </div>
 
         {tutorialActive && (
