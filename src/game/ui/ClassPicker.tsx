@@ -74,10 +74,14 @@ export function ClassPicker({ onSelect }: Props) {
 
   // Outer = canvas frame; inner card is a transparent layout column.
   // Dark page wrapper comes from App.tsx's <PageFrame>. Same pattern as
-  // CareerPicker / NameEntry / IntroScene.
+  // CareerPicker / NameEntry / IntroScene — aspectRatio is a minimum,
+  // not a lock: at very short viewports the 8-tier 2-col grid can't
+  // fit inside 0.6× the canvas width, so we let the frame grow taller
+  // and the page scroll. `containerType: inline-size` lets paddings /
+  // gaps / fonts size off canvas width via `cqw`.
   const screenStyle: CSSProperties = {
     width: 'var(--canvas-display-width)',
-    aspectRatio: `${ROOM_VIEWBOX.width} / ${ROOM_VIEWBOX.height}`,
+    minHeight: `calc(var(--canvas-display-width) * ${ROOM_VIEWBOX.height} / ${ROOM_VIEWBOX.width})`,
     background: palette.background,
     color: palette.ink,
     border: `1px solid ${palette.surface}`,
@@ -88,9 +92,10 @@ export function ClassPicker({ onSelect }: Props) {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
-    gap: 16,
-    overflow: 'hidden',
+    padding: 'clamp(12px, 3.2cqw, 32px)',
+    gap: 'clamp(8px, 1.6cqw, 16px)',
+    overflow: 'visible',
+    containerType: 'inline-size',
   };
 
   const cardStyle: CSSProperties = {
@@ -100,11 +105,11 @@ export function ClassPicker({ onSelect }: Props) {
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    gap: 16,
+    gap: 'clamp(8px, 1.6cqw, 16px)',
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: 22,
+    fontSize: 'clamp(14px, 2.2cqw, 22px)',
     fontWeight: 600,
     margin: 0,
     // Matches EndgameScreen / TitleScreen / CareerPicker.
@@ -112,7 +117,7 @@ export function ClassPicker({ onSelect }: Props) {
   };
 
   const subtitleStyle: CSSProperties = {
-    fontSize: 13,
+    fontSize: 'clamp(10px, 1.3cqw, 13px)',
     color: palette.inkMuted,
     margin: 0,
   };
@@ -120,18 +125,18 @@ export function ClassPicker({ onSelect }: Props) {
   const optionsStyle: CSSProperties = {
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: 8,
+    gap: 'clamp(4px, 0.8cqw, 8px)',
   };
 
   // Outlined modal-button style — matches DecisionModal Continue,
   // CreditsScreen Close, EndgameScreen actions. Centered.
   const buttonStyle: CSSProperties = {
     alignSelf: 'center',
-    padding: '12px 32px',
+    padding: 'clamp(8px, 1.2cqw, 12px) clamp(20px, 3.2cqw, 32px)',
     background: 'transparent',
     color: palette.ink,
     border: `1px solid ${palette.ink}`,
-    fontSize: 13,
+    fontSize: 'clamp(11px, 1.3cqw, 13px)',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     cursor: pickedId ? 'pointer' : 'not-allowed',
@@ -176,7 +181,7 @@ export function ClassPicker({ onSelect }: Props) {
                 xpRange={formatXpRange(c.xpMin, c.xpMax)}
                 playable={playable}
                 selected={pickedId === c.id}
-                onClick={() => playable && setPickedId(c.id)}
+                onClick={() => playable && onSelect(c.id)}
                 palette={palette}
               />
             );
@@ -225,7 +230,7 @@ function ClassOption({
     display: 'flex',
     flexDirection: 'column',
     gap: 2,
-    padding: '12px 14px',
+    padding: 'clamp(6px, 1.2cqw, 12px) clamp(8px, 1.4cqw, 14px)',
     border: `1.5px solid ${baseBorder}`,
     borderRadius: 6,
     background: selected ? `${palette.accent}10` : 'transparent',
@@ -241,13 +246,13 @@ function ClassOption({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 8,
-    fontSize: 13,
+    fontSize: 'clamp(10px, 1.3cqw, 13px)',
     fontWeight: 600,
     color: palette.ink,
   };
 
   const lockTagStyle: CSSProperties = {
-    fontSize: 9,
+    fontSize: 'clamp(8px, 0.9cqw, 9px)',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     color: palette.inkMuted,
@@ -257,13 +262,13 @@ function ClassOption({
   };
 
   const roleStyle: CSSProperties = {
-    fontSize: 11,
+    fontSize: 'clamp(9px, 1.1cqw, 11px)',
     color: palette.inkMuted,
     fontStyle: 'italic',
   };
 
   const xpStyle: CSSProperties = {
-    fontSize: 10,
+    fontSize: 'clamp(8px, 1cqw, 10px)',
     color: palette.inkMuted,
     fontVariantNumeric: 'tabular-nums',
     letterSpacing: '0.02em',

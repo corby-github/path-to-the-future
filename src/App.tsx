@@ -72,20 +72,33 @@ export default function App() {
 // centered fixed-width content) so every non-Game screen sits in the
 // same visual envelope as the rest of the app instead of floating on
 // a stark cream page.
+//
+// Overrides `--canvas-display-width` for its subtree. The global value
+// in global.css reserves 240px of viewport height for Game chrome
+// (DevPanel + HUD + status bar + gaps + padding). Title screen and init
+// flow have NONE of that — only the PageFrame's 48px of padding — so
+// the global formula leaves them with a needlessly small canvas at
+// short viewports (e.g. 915×412 → 287px wide instead of ~553px). The
+// override uses an 80px chrome reserve (48px padding + 32px breathing
+// room) so the canvas fills the available height.
 function PageFrame({ children }: { children: React.ReactNode }) {
   return (
     <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        background: '#1a1a1a',
-        color: '#eee',
-        fontFamily: 'inherit',
-        padding: '16px 0 32px 0',
-      }}
+      style={
+        {
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          background: '#1a1a1a',
+          color: '#eee',
+          fontFamily: 'inherit',
+          padding: '16px 0 32px 0',
+          '--canvas-display-width':
+            'min(100vw, 1000px, calc((100vh - 80px) * 5 / 3))',
+        } as React.CSSProperties
+      }
     >
       {children}
     </div>
@@ -101,21 +114,32 @@ function Game() {
     <CurrentRoomProvider>
       <div
         data-component="Game"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          minHeight: '100vh',
-          fontFamily: 'inherit',
-          background: '#1a1a1a',
-          color: '#eee',
-          gap: 16,
-          // Top 16 (padding) + 16 (gap) = 32px before first element. Mirror
-          // that below the last element with 32px bottom padding so the
-          // canvas has matching breathing room.
-          padding: '16px 0 32px 0',
-        }}
+        style={
+          {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            minHeight: '100vh',
+            fontFamily: 'inherit',
+            background: '#1a1a1a',
+            color: '#eee',
+            gap: 16,
+            // Top 16 (padding) + 16 (gap) = 32px before first element. Mirror
+            // that below the last element with 32px bottom padding so the
+            // canvas has matching breathing room.
+            padding: '16px 0 32px 0',
+            // Match the PageFrame override: trade the strict
+            // "fit-everything-in-viewport" reserve (240px) for a lenient
+            // 80px reserve, so wide-but-short viewports (e.g. 1326×504)
+            // give the canvas the room they have horizontally instead of
+            // collapsing it to 440px. Page may scroll vertically on
+            // short viewports — accepted trade-off; the DevPanel and HUD
+            // visually mismatching a tiny canvas was worse.
+            '--canvas-display-width':
+              'min(100vw, 1000px, calc((100vh - 80px) * 5 / 3))',
+          } as React.CSSProperties
+        }
       >
         {import.meta.env.DEV && <DevPanel />}
         <Hud />
