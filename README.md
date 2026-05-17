@@ -99,3 +99,6 @@ MIT — see [LICENSE](./LICENSE)
 ---
 
 *Built May 2026. All code, graphics, and dialog created from scratch during the 7-day study window.*
+
+*NOTE: Mobile support was out of scope for the research artifact, but realizing many will test it on mobile, it's worth another post-release sprint to provide this capability. 
+These changes were done in the `v2` branch to keep master clean for research purposes. This work was completed in 2h 20m on May 17 (8th calendar day)*
