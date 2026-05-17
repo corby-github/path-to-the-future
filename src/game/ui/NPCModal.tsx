@@ -294,6 +294,16 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
       data-tier={tier}
       data-phase={phase}
       style={backdropStyle}
+      onPointerDown={(e) => {
+        // Backdrop dismiss. Listen on pointerdown rather than click
+        // because the tap that opens this modal can fire `click` on
+        // the freshly-mounted backdrop (the modal mounts between the
+        // opening pointerdown on the canvas and the matching
+        // pointerup/click), which would immediately close it. Only
+        // fire when the gesture started on the backdrop itself, not
+        // on the dialog (where we want internal interactions).
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div
         ref={dialogRef}
@@ -340,7 +350,7 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
             )}
             {tier === 1 && (
               <p style={hintStyle}>
-                {promptComplete ? 'Any key to close' : 'Any key to skip'}
+                {promptComplete ? 'Tap or press any key to close' : 'Tap or press any key to skip'}
               </p>
             )}
           </>
@@ -404,7 +414,7 @@ export function NPCModal({ interactable, dialogue, onClose }: Props) {
               text={interpolate(chosen.flavor ?? '', vars)}
               onAdvance={handleAdvance}
             />
-            <p style={hintStyle}>Press to close</p>
+            <p style={hintStyle}>Tap or press to close</p>
           </>
         )}
         </div>

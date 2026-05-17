@@ -767,11 +767,52 @@ export function DecisionRoom({ config, onExit }: Props) {
   // eslint-disable-next-line react-hooks/immutability
   useEffect(() => { setDamageFloatersRef.current = setDamageFloaters; }, [setDamageFloaters]);
 
+  // Opens the dialogue modal for an adjacent interactable. Extracted so
+  // both the E-key handler (desktop) and the tap-on-NPC handler (mobile)
+  // can call into the same dispatch — feature-flagged routing, requires-
+  // filtering, and random-pick logic live in one place. Caller is
+  // expected to have already verified that `index` is actually adjacent.
+  const triggerInteractionFor = useCallback((index: number) => {
+    if (committed || tutorialActive) return;
+    if (activeDecision || activeEvent || activeInteractable) return;
+    const target = placements[index];
+    if (!target) return;
+    // Feature-flagged interactables (issue #31 arcade) bypass the
+    // dialogue pool and open their feature modal directly. The sprite
+    // and label still come from the InteractableDef; only the modal
+    // routing branches.
+    if (target.def.feature === 'arcade') {
+      setActiveInteractable(target.def);
+      setActiveDialogue(null);
+      return;
+    }
+    const reqCtx = { stats, flags, currentMonth: config.monthId };
+    const eligible = target.def.dialogues.filter((d) =>
+      passesRequires(d.requires, reqCtx),
+    );
+    if (eligible.length === 0) return;
+    // Random pick — fresh variety on repeat interactions, no determinism
+    // needed since the player only encounters this room once.
+    const picked = eligible[Math.floor(Math.random() * eligible.length)];
+    setActiveInteractable(target.def);
+    setActiveDialogue(picked);
+  }, [
+    placements,
+    committed,
+    tutorialActive,
+    activeDecision,
+    activeEvent,
+    activeInteractable,
+    stats,
+    flags,
+    config.monthId,
+  ]);
+
   // E-key opens the nearest interactable's modal when the player is adjacent
-  // and no other modal is active. Picks a random eligible dialogue. The
-  // finale locked door piggybacks on the same key + modal — `nearLocked`
-  // wins over a regular adjacent interactable (the locked door is at the
-  // right edge, where no regular placement would land anyway).
+  // and no other modal is active. The finale locked door piggybacks on the
+  // same key + modal — `nearLocked` wins over a regular adjacent interactable
+  // (the locked door is at the right edge, where no regular placement would
+  // land anyway).
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key !== 'e' && e.key !== 'E') return;
@@ -792,27 +833,7 @@ export function DecisionRoom({ config, onExit }: Props) {
       if (placements.length === 0) return;
       if (adjacentIndex === null) return;
       e.preventDefault();
-      const target = placements[adjacentIndex];
-      if (!target) return;
-      // Feature-flagged interactables (issue #31 arcade) bypass the
-      // dialogue pool and open their feature modal directly. The sprite
-      // and label still come from the InteractableDef; only the modal
-      // routing branches.
-      if (target.def.feature === 'arcade') {
-        setActiveInteractable(target.def);
-        setActiveDialogue(null);
-        return;
-      }
-      const reqCtx = { stats, flags, currentMonth: config.monthId };
-      const eligible = target.def.dialogues.filter((d) =>
-        passesRequires(d.requires, reqCtx),
-      );
-      if (eligible.length === 0) return;
-      // Random pick — fresh variety on repeat interactions, no determinism
-      // needed since the player only encounters this room once.
-      const picked = eligible[Math.floor(Math.random() * eligible.length)];
-      setActiveInteractable(target.def);
-      setActiveDialogue(picked);
+      triggerInteractionFor(adjacentIndex);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -826,9 +847,7 @@ export function DecisionRoom({ config, onExit }: Props) {
     activeInteractable,
     isFinale,
     lockedDoorAdjacent,
-    stats,
-    flags,
-    config.monthId,
+    triggerInteractionFor,
   ]);
 
   const handleInteractableClose = useCallback(() => {
@@ -1122,10 +1141,17 @@ export function DecisionRoom({ config, onExit }: Props) {
             touchAction: 'none',
           }}
           onPointerDown={(e) => {
-            // Tap-to-move. Gated on `playerActive` so taps during
-            // modals / tutorial / transitions don't queue a pending
-            // walk that fires when control returns — that read as
-            // disorienting in playtest.
+            // Tap on the canvas — three branches:
+            //   (1) tap *on* an adjacent interactable → trigger its
+            //       modal (mobile parity for the E-key path);
+            //   (2) tap *on* a non-adjacent interactable → walk
+            //       toward its current position (when the player
+            //       arrives and is adjacent, a second tap fires (1));
+            //   (3) tap on empty floor → walk to that point.
+            // Gated on `playerActive` so taps during modals / tutorial
+            // / transitions don't queue a pending action that fires
+            // when control returns — that read as disorienting in
+            // playtest.
             if (!playerActive) return;
             const svg = svgRef.current;
             if (!svg) return;
@@ -1133,10 +1159,51 @@ export function DecisionRoom({ config, onExit }: Props) {
             if (rect.width === 0 || rect.height === 0) return;
             const px = ((e.clientX - rect.left) / rect.width) * ROOM_VIEWBOX.width;
             const py = ((e.clientY - rect.top) / rect.height) * ROOM_VIEWBOX.height;
-            // Clamp the target inside the playable bounds (minus
-            // PLAYER_RADIUS) so a tap on the canvas edge resolves to a
-            // reachable point instead of leaving the player walking
-            // toward a permanently-unreachable target.
+
+            // Hit-test against interactables. NPCs use their live
+            // wander position (npcPositionsRef.current[i]); objects
+            // use their fixed spawn. Same bounding-box dimensions as
+            // the halo rect rendered below — keeps hit-target visual
+            // identical.
+            let hitIndex: number | null = null;
+            for (let i = 0; i < placements.length; i++) {
+              const p = placements[i];
+              const ipos = p.def.kind === 'npc' ? npcPositionsRef.current[i] : p.spawn;
+              if (!ipos) continue;
+              if (
+                Math.abs(px - ipos.x) <= INTERACTABLE_HALF_W &&
+                Math.abs(py - ipos.y) <= INTERACTABLE_HALF_H
+              ) {
+                hitIndex = i;
+                break;
+              }
+            }
+
+            if (hitIndex !== null) {
+              // (1) Tap on the currently-adjacent interactable → fire
+              // its modal directly. triggerInteractionFor enforces the
+              // committed / tutorial / modal gates internally.
+              if (hitIndex === adjacentIndex) {
+                tapTargetRef.current = null;
+                triggerInteractionFor(hitIndex);
+                return;
+              }
+              // (2) Tap on a different interactable → walk toward
+              // its current position. The player will become adjacent
+              // on arrival; a follow-up tap on the same sprite
+              // triggers (1).
+              const p = placements[hitIndex];
+              const ipos = p.def.kind === 'npc' ? npcPositionsRef.current[hitIndex] : p.spawn;
+              if (ipos) {
+                tapTargetRef.current = { x: ipos.x, y: ipos.y };
+                return;
+              }
+            }
+
+            // (3) Empty floor — clamp inside the playable bounds
+            // (minus PLAYER_RADIUS) so a tap on the canvas edge
+            // resolves to a reachable point instead of leaving the
+            // player walking toward a permanently-unreachable target.
             const tx = Math.max(
               ROOM_BOUNDS.minX + PLAYER_RADIUS,
               Math.min(ROOM_BOUNDS.maxX - PLAYER_RADIUS, px),
@@ -1385,7 +1452,7 @@ export function DecisionRoom({ config, onExit }: Props) {
                       fontWeight={600}
                       fill={palette.ink}
                     >
-                      [E] {p.def.feature === 'arcade' ? 'play' : p.def.kind === 'npc' ? 'talk' : 'look'}
+                      Tap again or [E] {p.def.feature === 'arcade' ? 'play' : p.def.kind === 'npc' ? 'talk' : 'look'}
                     </text>
                     <text
                       data-region="interact-label"

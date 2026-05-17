@@ -68,6 +68,15 @@ export function EventModal({ event, onContinue }: Props) {
         // §4.1 — match DecisionModal entrance choreography.
         animation: 'decision-modal-pop 220ms ease-out',
       }}
+      onPointerDown={(e) => {
+        // Backdrop dismiss (mobile parity). Synonymous with the
+        // Continue button — events aren't forced choices, they're
+        // narrative beats the player reads through. `e.target ===
+        // currentTarget` gates so taps inside the dialog stay
+        // internal. Pointerdown rather than click avoids the
+        // opening-tap-also-closes race (see NPCModal for details).
+        if (e.target === e.currentTarget) onContinue();
+      }}
     >
       <div
         data-region="dialog"
