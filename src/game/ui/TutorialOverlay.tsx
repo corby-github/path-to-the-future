@@ -51,7 +51,7 @@ const STEPS: readonly Step[] = [
   },
   {
     title: 'Move with the keyboard',
-    body: 'Arrow keys or WASD. Clicking won’t do anything — the game is keyboard-only.',
+    body: 'Arrow keys, WASD, or tap a spot to walk there.',
     widget: 'keys',
   },
   {
@@ -97,6 +97,16 @@ export function TutorialOverlay({ onDismiss, onStepChange }: Props) {
     onStepChange?.(step);
   }, [step, onStepChange]);
 
+  // Single advance path used by both the keyboard handler (Space / Enter
+  // / →) and the bubble's onClick (issue: mobile players couldn't get
+  // past step 0 because the tutorial used to be keyboard-only — the
+  // "you must use the keyboard" message itself was unreachable from a
+  // device without a keyboard).
+  const advance = () => {
+    if (isLast) onDismiss();
+    else setStep((s) => s + 1);
+  };
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -121,12 +131,12 @@ export function TutorialOverlay({ onDismiss, onStepChange }: Props) {
       }
       if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
         e.preventDefault();
-        if (isLast) onDismiss();
-        else setStep((s) => s + 1);
+        advance();
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLast, onDismiss, step]);
 
   // Per-step bubble anchor. The overlay is positioned `absolute; inset: 0`
@@ -223,7 +233,15 @@ export function TutorialOverlay({ onDismiss, onStepChange }: Props) {
       aria-label="Tutorial"
       aria-modal="false"
     >
-      <div key={step} data-region="bubble" style={bubbleStyle}>
+      <div
+        key={step}
+        data-region="bubble"
+        data-action="advance-tutorial"
+        style={{ ...bubbleStyle, cursor: 'pointer' }}
+        onClick={advance}
+        role="button"
+        tabIndex={-1}
+      >
         <p style={titleStyle}>{current.title}</p>
         <p style={bodyStyle}>{current.body}</p>
         {current.widget === 'keys' && (
@@ -239,10 +257,10 @@ export function TutorialOverlay({ onDismiss, onStepChange }: Props) {
         )}
         <p style={hintStyle}>
           {step === 0
-            ? 'Any key to continue'
+            ? 'Tap or press any key'
             : isLast
-            ? 'Press Space to start'
-            : 'Press Space to continue'}
+            ? 'Tap or press Space to start'
+            : 'Tap or press Space to continue'}
           {' · '}
           {step + 1}/{STEPS.length}
         </p>
