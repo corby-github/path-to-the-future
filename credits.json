@@ -1,0 +1,53 @@
+{
+  "project": {
+    "title": "Path to the Future",
+    "tagline": "A career of choices.",
+    "version": "v1.0",
+    "copyright": "© 2026 Corby Hoback · Founding Way Research, LLC",
+    "timeSpent": "37h 11m of focused work",
+    "builtWith": "Claude Code · Opus 4.7 · 1M context"
+  },
+  "links": [
+    { "label": "Source on GitHub", "url": "https://github.com/corby-github/path-to-the-future" },
+    { "label": "Corby on LinkedIn", "url": "https://www.linkedin.com/in/corby-linked-in/" }
+  ],
+  "credits": [
+    { "role": "Owner & Producer", "names": ["Corby Hoback"] },
+    { "role": "Project Manager", "names": ["Corby Hoback", "Claude Code"] },
+    { "role": "Architect", "names": ["Corby Hoback"] },
+    { "role": "Creative Director", "names": ["Corby Hoback"] },
+    { "role": "Lead Designer", "names": ["Corby Hoback"] },
+    { "role": "Writer", "names": ["Corby Hoback", "Claude Code"] },
+    { "role": "Engineer", "names": ["Corby Hoback", "Claude Code"] },
+    { "role": "Programmers", "names": ["Corby Hoback", "Claude Code"] },
+    { "role": "Code Reviewer", "names": ["Corby Hoback", "Claude Code"] },
+    { "role": "Artist", "names": ["Claude Code"] },
+    { "role": "QA", "names": ["Corby Hoback"] },
+    { "role": "Bug Reporter", "names": ["Corby Hoback"] },
+    { "role": "Playtester", "names": ["Corby Hoback"] },
+    { "role": "Hotkey Designer", "names": ["Corby Hoback"] },
+    { "role": "Sound Design", "names": ["Deferred to a Day 13 that may never come"] },
+    { "role": "Department of Bittersweet", "names": ["Corby Hoback", "Claude Code"] },
+    { "role": "Off-By-One Error Spotter", "names": ["You, hopefully"] },
+    { "role": "Coffee Wrangler", "names": ["Corby Hoback"] },
+    { "role": "Person Who Said 'What If We Just Use SVG'", "names": ["Corby Hoback"] },
+    { "role": "Person Who Held The Line On Palette Discipline", "names": ["Corby Hoback"] },
+    { "role": "Voice In The Modal Captions", "names": ["Claude Code"] },
+    { "role": "Stacker Mechanic Re-Design Late In Process", "names": ["Corby Hoback"] },
+    { "role": "Department of 'Wait, We Need This To Loop'", "names": ["Corby Hoback"] },
+    { "role": "The Reader of System Reminders", "names": ["Claude Code"] },
+    { "role": "Person Who Knew When To Stop", "names": ["Corby Hoback"] },
+    { "role": "Vibes", "names": ["Corby Hoback"] },
+    { "role": "'Just Ship It' Energy", "names": ["Corby Hoback"] }
+  ],
+  "specialThanks": [
+    "The pandemic, for a quiet decade to set against.",
+    "Every dialog box in every Final Fantasy.",
+    "Kentucky Route Zero, for the register.",
+    "Oregon Trail, for showing us that dying of dysentery doesn't have to be the end of the game.",
+    "Anyone still reading this."
+  ],
+  "timeStatement": "We did this in 37h 11m of focused work.",
+  "closing": "It was less than you'd think. It was more than it sounds. Now begin again. Or don't. The decade was yours.",
+  "legalNotice": "All other names belong to the people who made the things we love. We are not them."
+}

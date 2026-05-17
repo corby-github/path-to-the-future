@@ -1,0 +1,874 @@
+{
+  "decisions": [
+    {
+      "id": "univ-stay-late-vs-log-off",
+      "pool": "universal",
+      "tags": ["work-life-balance"],
+      "weight": 1.0,
+      "prompt": "It's 6:30. The launch is shaky but might survive without you. Your evening is yours if you want it.",
+      "options": [
+        {
+          "label": "Stay until it's stable",
+          "scene": [
+            "The build crashes.",
+            "Panic.",
+            "The build goes green."
+          ],
+          "effects": { "burnout": "+5", "reputation": "+3", "technicalSkill": "+1", "xp": "+150" },
+          "flavor": "You stayed until 10. The build went green at 9:47. You won't forget that moment."
+        },
+        {
+          "label": "Log off — they'll figure it out",
+          "scene": [
+            "You close the laptop.",
+            "The world keeps spinning.",
+            "Dinner is hot."
+          ],
+          "effects": { "burnout": "-2", "reputation": "-1", "health": "+1" },
+          "flavor": "You closed the laptop. The launch was fine without you. You wonder why you sometimes assume it won't be."
+        }
+      ]
+    },
+    {
+      "id": "univ-recruiter-call",
+      "pool": "universal",
+      "tags": ["career-movement", "ambition"],
+      "requires": { "month": ">=4" },
+      "weight": 1.0,
+      "prompt": "A recruiter from a company you've heard of is calling. You don't have to answer.",
+      "options": [
+        {
+          "label": "Take the call",
+          "scene": [
+            "You take the call.",
+            "Pleasantries.",
+            "The job sounds boring."
+          ],
+          "effects": { "network": "+5", "reputation": "+2" },
+          "flavor": "Twenty minutes of pleasantries and a vague 'we should talk again.' Sometimes that's the whole point."
+        },
+        {
+          "label": "Let it go to voicemail",
+          "effects": { "burnout": "-1" },
+          "flavor": "You don't return it. The week is full. The recruiter, presumably, calls someone else."
+        }
+      ]
+    },
+    {
+      "id": "univ-vegas-bonus-vs-rest",
+      "pool": "universal",
+      "tags": ["money", "work-life-balance"],
+      "requires": { "month": ">=7", "savings": ">3000" },
+      "weight": 1.0,
+      "prompt": "The bonus hit. The group chat wants Vegas. Your couch wants you to stay.",
+      "options": [
+        {
+          "label": "Go all in",
+          "scene": [
+            "Boarding pass.",
+            "Neon. Bad hand. Worse hand.",
+            "The flight home is quiet."
+          ],
+          "effects": { "savings": "-1500", "network": "+4", "burnout": "+2", "health": "-2" },
+          "flavor": "You lost $1,500 and gained two stories you'll tell for a decade. Even trade."
+        },
+        {
+          "label": "Low-key — food and a show",
+          "scene": [
+            "A short flight.",
+            "A long dinner.",
+            "You sleep in."
+          ],
+          "effects": { "savings": "-600", "network": "+1", "health": "+1" },
+          "flavor": "You came home rested. The group chat called you boring. You don't mind."
+        },
+        {
+          "label": "Keep the bonus",
+          "effects": { "burnout": "-2" },
+          "flavor": "The bonus stays where it is. Friday, you order in. Saturday, you don't think about work."
+        }
+      ]
+    },
+    {
+      "id": "univ-bury-vs-balance",
+      "pool": "universal",
+      "tags": ["work-life-balance", "ambition"],
+      "requires": { "month": ">=4" },
+      "weight": 1.0,
+      "prompt": "There's more work than there are hours. You can pour yourself into it for a stretch, or hold the line at forty.",
+      "options": [
+        {
+          "label": "Pour yourself in",
+          "scene": [
+            "Mornings start dark.",
+            "Evenings end late.",
+            "Something ships."
+          ],
+          "effects": { "burnout": "+8", "reputation": "+4", "technicalSkill": "+2", "health": "-3", "xp": "+150" },
+          "flavor": "You shipped two months early. People noticed. You haven't seen your friends since spring."
+        },
+        {
+          "label": "Hold the line",
+          "effects": { "burnout": "-2", "reputation": "-1", "health": "+2" },
+          "flavor": "You walked out at five every day. The work got done. A little later than it could have."
+        }
+      ]
+    },
+    {
+      "id": "swe-framework-rewrite-vs-patch",
+      "pool": "swe",
+      "tags": ["technical-debt", "ambition"],
+      "requires": { "month": ">=4", "technicalSkill": ">25" },
+      "weight": 1.0,
+      "prompt": "The legacy module breaks again. You can patch it for the third time, propose a full rewrite, or just write up the debt.",
+      "options": [
+        {
+          "label": "Patch it. Again.",
+          "effects": { "burnout": "+1", "technicalSkill": "+1" },
+          "flavor": "Twenty minutes. It works. You add a comment that says 'TODO: rewrite this someday.'"
+        },
+        {
+          "label": "Pitch the rewrite",
+          "scene": [
+            "A doc. A diagram.",
+            "A meeting that runs long.",
+            "Approval. Cautious."
+          ],
+          "effects": { "burnout": "+5", "reputation": "+5", "technicalSkill": "+3", "xp": "+150" },
+          "flavor": "You got the green light. Three months of your life are now spoken for. Worth it, probably."
+        },
+        {
+          "label": "Write up the debt and move on",
+          "effects": { "reputation": "+2", "technicalSkill": "+1" },
+          "flavor": "You filed the ticket. Someone, someday, will read it. Maybe that someone is you."
+        }
+      ]
+    },
+    {
+      "id": "swe-oncall-volunteer",
+      "pool": "swe",
+      "tags": ["responsibility", "burnout"],
+      "requires": { "month": ">=7" },
+      "weight": 1.0,
+      "prompt": "The on-call rotation is short a body. The lead is asking, gently.",
+      "options": [
+        {
+          "label": "Take the rotation",
+          "scene": [
+            "Your phone is on the rotation now.",
+            "3:14am: a vibrating phone.",
+            "You fix it half-asleep."
+          ],
+          "effects": { "burnout": "+4", "reputation": "+5", "network": "+2", "health": "-2", "xp": "+150" },
+          "flavor": "You took two weeks. One quiet night, one rough one. The lead remembers."
+        },
+        {
+          "label": "Pass this round",
+          "effects": { "burnout": "-1", "reputation": "-1" },
+          "flavor": "You say no, politely. The lead understands, mostly. Someone else takes the rotation."
+        }
+      ]
+    },
+    {
+      "id": "swe-conference-talk-cfp",
+      "pool": "swe",
+      "tags": ["visibility", "ambition"],
+      "requires": { "month": ">=11", "reputation": ">10" },
+      "weight": 0.8,
+      "prompt": "The CFP closes Friday. You have a talk in you, probably. You also have a deadline.",
+      "options": [
+        {
+          "label": "Submit the abstract",
+          "scene": [
+            "A title.",
+            "Two hundred words.",
+            "Send."
+          ],
+          "effects": { "burnout": "+2", "reputation": "+3", "network": "+2", "xp": "+150" },
+          "flavor": "You hit submit at 11:58 Friday. Acceptance or rejection — either way, the abstract exists."
+        },
+        {
+          "label": "Skip it this year",
+          "effects": { "burnout": "-1" },
+          "flavor": "You closed the tab. The CFP closes. The deadline at work, mercifully, slips by a week anyway."
+        }
+      ]
+    },
+    {
+      "id": "univ-standup-too-long",
+      "pool": "universal",
+      "tags": ["meetings", "humor"],
+      "weight": 0.8,
+      "prompt": "The standup is forty-seven minutes long. Three people have stopped speaking. The Slack message that could have replaced it would have been forty words.",
+      "options": [
+        {
+          "label": "Say something",
+          "effects": { "reputation": "+1", "burnout": "-1" },
+          "flavor": "You said 'Maybe we Slack the status next time?' A long pause. Then nods. The next standup was fourteen minutes."
+        },
+        {
+          "label": "Wait it out",
+          "effects": { "burnout": "+2", "reputation": "-1" },
+          "flavor": "Forty-seven minutes. You looked at your unread emails. The standup ended without resolution. As did the emails."
+        }
+      ]
+    },
+    {
+      "id": "univ-mlm-pitch",
+      "pool": "universal",
+      "tags": ["money", "relationship", "humor"],
+      "requires": { "month": ">=4" },
+      "weight": 0.6,
+      "prompt": "A cousin you haven't spoken to in two years messages: 'I have an opportunity I'd love to share with you.' You haven't scrolled down yet.",
+      "options": [
+        {
+          "label": "Hear them out",
+          "scene": [
+            "A long voice memo.",
+            "The word 'downline' six times.",
+            "You stop the audio."
+          ],
+          "effects": { "burnout": "+1" },
+          "flavor": "Forty-five minutes you'll never get back. The cousin sent a follow-up the next morning."
+        },
+        {
+          "label": "Politely decline",
+          "effects": { "network": "-1" },
+          "flavor": "You typed three drafts. The one you sent said 'Not for me, but I hope it goes well.' They left you on read."
+        }
+      ]
+    },
+    {
+      "id": "univ-gym-membership",
+      "pool": "universal",
+      "tags": ["health", "money", "humor"],
+      "weight": 0.7,
+      "prompt": "The gym is running a sign-on special. Forty dollars a month, no commitment. The membership is the easy part.",
+      "options": [
+        {
+          "label": "Sign up. You'll go.",
+          "effects": { "savings": "-480", "health": "+3", "burnout": "-1" },
+          "flavor": "You went four times in January. Twice in February. The membership renewed in August. You meant to cancel."
+        },
+        {
+          "label": "Not this year",
+          "effects": { "health": "-1" },
+          "flavor": "You closed the tab. You'll start running. You'll definitely start running."
+        }
+      ]
+    },
+    {
+      "id": "swe-friday-deploy",
+      "pool": "swe",
+      "tags": ["risk", "engineering-culture", "humor"],
+      "requires": { "month": ">=4" },
+      "weight": 0.7,
+      "prompt": "A small, urgent fix is ready. It is 4:50pm on a Friday. The deploy takes ten minutes. The rollback also takes ten minutes.",
+      "options": [
+        {
+          "label": "Ship it. It's tiny.",
+          "scene": [
+            "The deploy button.",
+            "A green check.",
+            "Then a red one."
+          ],
+          "effects": { "burnout": "+5", "reputation": "-2", "technicalSkill": "+1" },
+          "flavor": "The rollback held. The weekend held, just barely. You wrote 'no Friday deploys' on a sticky note Monday."
+        },
+        {
+          "label": "Monday morning",
+          "effects": { "burnout": "-2", "reputation": "+1" },
+          "flavor": "The fix waited. The world continued. Monday at 10am, the deploy was uneventful."
+        }
+      ]
+    },
+    {
+      "id": "swe-stackoverflow-mentor",
+      "pool": "swe",
+      "tags": ["community", "skill", "humor"],
+      "weight": 0.6,
+      "prompt": "A junior in a public forum posts a question you can answer in your sleep. Three other people have already answered. None of them helpfully.",
+      "options": [
+        {
+          "label": "Write a real answer",
+          "effects": { "reputation": "+2", "burnout": "+1", "technicalSkill": "+1" },
+          "flavor": "Twenty minutes of writing. A code sample. A diagram, even. The asker said 'thank you so much.' Two of the wrong answers got more upvotes."
+        },
+        {
+          "label": "Close the tab",
+          "effects": {},
+          "flavor": "You closed the tab. The internet continued."
+        }
+      ]
+    },
+    {
+      "id": "swe-intern-late-review",
+      "pool": "swe",
+      "tags": ["mentoring", "work-life-balance", "humor"],
+      "requires": { "month": ">=7" },
+      "weight": 0.6,
+      "prompt": "It's 6:12pm Friday. The intern slacks: 'No rush — could you take a look at my PR before Monday?'",
+      "options": [
+        {
+          "label": "Review it now",
+          "scene": [
+            "A four-hundred-line diff.",
+            "Five suggestions.",
+            "Sent."
+          ],
+          "effects": { "burnout": "+2", "reputation": "+2", "network": "+1" },
+          "flavor": "You reviewed it. The intern was waiting. They thanked you and then immediately pushed three more commits."
+        },
+        {
+          "label": "Reply: 'Monday morning, first thing.'",
+          "effects": { "burnout": "-1", "reputation": "+1" },
+          "flavor": "You set the boundary. The intern said 'sounds good!' You realized too late that they had nothing else to do all weekend."
+        }
+      ]
+    },
+    {
+      "id": "univ-buy-house-or-rent",
+      "pool": "universal",
+      "tags": ["money", "life"],
+      "requires": { "month": ">=14", "savings": ">25000" },
+      "weight": 0.6,
+      "prompt": "The down payment math finally works. The interest rate doesn't. You stare at the listing anyway.",
+      "options": [
+        {
+          "label": "Make the offer",
+          "scene": [
+            "An inspection.",
+            "A long signature page.",
+            "Keys. A lot of keys."
+          ],
+          "effects": { "savings": "-25000", "burnout": "+4", "reputation": "+2" },
+          "flavor": "You bought the place. The first month, you noticed every sound the house made. By the third, you didn't."
+        },
+        {
+          "label": "Keep renting, keep saving",
+          "effects": { "savings": "+800", "burnout": "-1" },
+          "flavor": "The listing sold to someone else within the week. You looked at it on Zillow six months later, just to see."
+        },
+        {
+          "label": "Maybe this isn't your city",
+          "effects": { "burnout": "-2" },
+          "flavor": "You closed the tab. You aren't sure where home is. You aren't sure that's a problem."
+        }
+      ]
+    },
+    {
+      "id": "univ-friends-wedding-far",
+      "pool": "universal",
+      "tags": ["relationship", "money"],
+      "requires": { "month": ">=4" },
+      "weight": 0.7,
+      "prompt": "A college friend is getting married. Flight, hotel, rental, suit. The total math is uncomfortable.",
+      "options": [
+        {
+          "label": "Go",
+          "scene": [
+            "A red-eye.",
+            "An open bar.",
+            "A photo you'll keep."
+          ],
+          "effects": { "savings": "-1200", "network": "+5", "burnout": "+2" },
+          "flavor": "You danced with people you hadn't seen in five years. The friend remembered you came. They'll remember for a long time."
+        },
+        {
+          "label": "Send a gift and call that day",
+          "effects": { "savings": "-150", "network": "-1" },
+          "flavor": "You sent the registry's nicest thing in your budget. The friend wrote a sweet note. Something, very quietly, shifted."
+        }
+      ]
+    },
+    {
+      "id": "univ-therapy-first-session",
+      "pool": "universal",
+      "tags": ["mental-health", "money"],
+      "weight": 0.7,
+      "prompt": "A friend mentioned a therapist. You opened the booking page three times this week. Forty-five minutes, a hundred and sixty dollars.",
+      "options": [
+        {
+          "label": "Book it",
+          "scene": [
+            "A waiting room.",
+            "A question you didn't expect.",
+            "A long answer."
+          ],
+          "effects": { "savings": "-160", "burnout": "-5", "health": "+3" },
+          "flavor": "You went. You cried at something small and were surprised by it. You booked the next one before you left."
+        },
+        {
+          "label": "Maybe next month",
+          "effects": { "burnout": "+1" },
+          "flavor": "You closed the tab. The thing that made you open it was still there. You'll try again soon. You said that last month, too."
+        }
+      ]
+    },
+    {
+      "id": "univ-dog",
+      "pool": "universal",
+      "tags": ["life", "money"],
+      "requires": { "month": ">=7" },
+      "weight": 0.6,
+      "prompt": "There is a dog at the shelter with a particular face. You did not go to the shelter to adopt a dog.",
+      "options": [
+        {
+          "label": "Take her home",
+          "scene": [
+            "A leash.",
+            "A bag of food.",
+            "A small wet nose."
+          ],
+          "effects": { "savings": "-600", "burnout": "-4", "health": "+2", "network": "+2" },
+          "flavor": "She slept on the couch the first night. The bed by the second. You weren't a dog person. Apparently, you are now."
+        },
+        {
+          "label": "Walk away",
+          "effects": { "burnout": "+1" },
+          "flavor": "You walked out. You thought about her on the drive home. You thought about her for a week."
+        }
+      ]
+    },
+    {
+      "id": "univ-cash-out-pto",
+      "pool": "universal",
+      "tags": ["work-life-balance", "money"],
+      "requires": { "month": ">=7" },
+      "weight": 0.7,
+      "prompt": "HR's email: you've hit the PTO cap. Use it or cash it out at sixty percent.",
+      "options": [
+        {
+          "label": "Take the time",
+          "scene": [
+            "An out-of-office.",
+            "A couch that finally gets used.",
+            "Sleep you didn't know you needed."
+          ],
+          "effects": { "burnout": "-10", "health": "+4", "network": "+1" },
+          "flavor": "You took two weeks. You came back and didn't remember why anything felt urgent. That feeling lasted four days, then faded."
+        },
+        {
+          "label": "Cash it out",
+          "effects": { "savings": "+1800", "burnout": "+2", "health": "-1" },
+          "flavor": "The deposit hit. You didn't take the time. Next year, you told yourself."
+        }
+      ]
+    },
+    {
+      "id": "univ-charity-donation",
+      "pool": "universal",
+      "tags": ["money", "values"],
+      "requires": { "month": ">=7" },
+      "weight": 0.5,
+      "prompt": "A coworker is fundraising for a cause that matters to them. The goal isn't yours, but you respect them.",
+      "options": [
+        {
+          "label": "Give what they asked",
+          "effects": { "savings": "-200", "network": "+2", "reputation": "+1" },
+          "flavor": "You donated the suggested amount. They sent a thoughtful thank-you. Five other coworkers gave after they saw your name."
+        },
+        {
+          "label": "Give a small amount",
+          "effects": { "savings": "-20", "network": "+1" },
+          "flavor": "You gave twenty. They thanked you with the same warmth. You felt fine about it. Mostly."
+        },
+        {
+          "label": "Pass",
+          "effects": {},
+          "flavor": "You closed the link. Their goal was met three days later anyway."
+        }
+      ]
+    },
+    {
+      "id": "univ-parent-needs-help",
+      "pool": "universal",
+      "tags": ["family", "money"],
+      "requires": { "month": ">=11" },
+      "weight": 0.6,
+      "prompt": "Your parent's car needs a transmission. They mentioned it like it was nothing.",
+      "options": [
+        {
+          "label": "Wire the money",
+          "effects": { "savings": "-2200", "burnout": "+1", "reputation": "+2" },
+          "flavor": "You sent it without asking. They tried to refuse. They didn't refuse hard."
+        },
+        {
+          "label": "Call. Just talk.",
+          "scene": [
+            "A long call.",
+            "A long pause.",
+            "A laugh."
+          ],
+          "effects": { "burnout": "-2", "health": "+1" },
+          "flavor": "You called for an hour. They didn't bring the car up again. You both knew it was on the table."
+        }
+      ]
+    },
+    {
+      "id": "univ-move-cities-for-job",
+      "pool": "universal",
+      "tags": ["career-movement", "life"],
+      "requires": { "month": ">=11" },
+      "weight": 0.5,
+      "prompt": "An offer arrives in another city. Thirty percent more, full relocation. A different climate. Everyone you know is here.",
+      "options": [
+        {
+          "label": "Take it",
+          "scene": [
+            "Movers.",
+            "Empty rooms.",
+            "An unfamiliar key in a new door."
+          ],
+          "effects": { "savings": "+3500", "network": "-12", "burnout": "+5", "reputation": "+4", "xp": "+300" },
+          "flavor": "You moved. The first month was a checklist. The second was lonelier than expected. The third, you started to recognize a barista."
+        },
+        {
+          "label": "Negotiate remote",
+          "effects": { "burnout": "+2", "reputation": "+2" },
+          "flavor": "You wrote a careful email. They said no. You declined. The recruiter said, on a follow-up call, that they'd remember you."
+        },
+        {
+          "label": "Stay put",
+          "effects": { "burnout": "-2", "network": "+1" },
+          "flavor": "You said no. The recruiter understood, mostly. You wondered, briefly, if you'd regret it. The week ate the thought."
+        }
+      ]
+    },
+    {
+      "id": "univ-buy-car",
+      "pool": "universal",
+      "tags": ["money"],
+      "requires": { "month": ">=7" },
+      "weight": 0.6,
+      "prompt": "The check engine light has been on for six weeks. The mechanic gave you a number that ends in 'or you could just get something newer.'",
+      "options": [
+        {
+          "label": "Newer car",
+          "effects": { "savings": "-9000", "burnout": "-2", "health": "+1" },
+          "flavor": "You drove it off the lot. It felt strange to not hear a rattle. By the second week, you'd already gotten a door ding."
+        },
+        {
+          "label": "Patch it. Pray.",
+          "effects": { "savings": "-450", "burnout": "+2" },
+          "flavor": "The mechanic shook his head, very gently. The car ran for another year. You loved it more than you should have."
+        }
+      ]
+    },
+    {
+      "id": "univ-side-project",
+      "pool": "universal",
+      "tags": ["ambition", "work-life-balance"],
+      "requires": { "month": ">=4" },
+      "weight": 0.7,
+      "prompt": "You have an idea. It's been bothering you for a month. You also have a weekend you could give to nothing.",
+      "options": [
+        {
+          "label": "Build it",
+          "scene": [
+            "A blank repo.",
+            "Two long days.",
+            "A working prototype."
+          ],
+          "effects": { "burnout": "+3", "technicalSkill": "+2", "reputation": "+1" },
+          "flavor": "By Sunday night, you had something that worked. By Tuesday, you'd lost interest. The repo is still public, with no commits since."
+        },
+        {
+          "label": "Give yourself the weekend",
+          "effects": { "burnout": "-4", "health": "+2" },
+          "flavor": "You did nothing on purpose. The idea was still there Monday. It would wait."
+        }
+      ]
+    },
+    {
+      "id": "univ-roommate-buyout",
+      "pool": "universal",
+      "tags": ["money", "life"],
+      "requires": { "month": ">=7" },
+      "weight": 0.5,
+      "prompt": "Your roommate's lease is up. You could keep splitting rent or take the whole place yourself.",
+      "options": [
+        {
+          "label": "Live alone",
+          "effects": { "savings": "-3600", "burnout": "-3", "health": "+2" },
+          "flavor": "You signed the new lease. The silence was the best part. The silence was sometimes the loudest part."
+        },
+        {
+          "label": "Find a new roommate",
+          "scene": [
+            "Three tours.",
+            "Two ghostings.",
+            "A handshake."
+          ],
+          "effects": { "burnout": "+2", "network": "+2" },
+          "flavor": "You picked the second one. They were quieter than the last. But... they let their dishes 'soak' a little longer than you prefer."
+        }
+      ]
+    },
+    {
+      "id": "univ-date-app-match",
+      "pool": "universal",
+      "tags": ["relationship", "humor"],
+      "requires": { "relationship": "==null", "month": ">=7" },
+      "weight": 0.6,
+      "prompt": "A match wants coffee Thursday. The bio was witty. The pictures were three years old. Probably.",
+      "options": [
+        {
+          "label": "Go",
+          "scene": [
+            "A coffee shop.",
+            "A laugh.",
+            "Or not."
+          ],
+          "effects": { "burnout": "+1", "network": "+1" },
+          "flavor": "You went. They were taller in person. The conversation was fine. You walked home thinking: maybe."
+        },
+        {
+          "label": "Reschedule indefinitely",
+          "effects": { "burnout": "-1" },
+          "flavor": "You said 'next week' and meant 'never.' They got it. The app unmatched you eight days later."
+        }
+      ]
+    },
+    {
+      "id": "swe-coder-vs-architect",
+      "pool": "swe",
+      "tags": ["career-path"],
+      "requires": { "month": ">=14", "technicalSkill": ">40" },
+      "weight": 0.5,
+      "prompt": "The director pulls you aside. There's a tech-lead role opening, and a senior IC track. Both are yours if you want them.",
+      "options": [
+        {
+          "label": "Stay deep in the code",
+          "effects": { "technicalSkill": "+4", "reputation": "+2", "burnout": "-1", "xp": "+300" },
+          "flavor": "You took the senior IC. You kept your hands on the keyboard. People asked you 'when are you going to be a lead?' for two years."
+        },
+        {
+          "label": "Take the lead role",
+          "effects": { "technicalSkill": "-1", "reputation": "+5", "network": "+4", "burnout": "+3", "xp": "+300" },
+          "flavor": "You took the title. The work changed. You spent more time in docs than in the editor. Sometimes you missed it."
+        }
+      ]
+    },
+    {
+      "id": "swe-people-manager-vs-tech-lead",
+      "pool": "swe",
+      "tags": ["career-path"],
+      "requires": { "month": ">=21", "reputation": ">25" },
+      "weight": 0.5,
+      "prompt": "The org is splitting your team. Two roles need filling: people manager and tech lead. The director is asking which you'd prefer.",
+      "options": [
+        {
+          "label": "People manager",
+          "effects": { "technicalSkill": "-3", "reputation": "+4", "network": "+5", "burnout": "+4", "xp": "+300" },
+          "flavor": "You took it. Your calendar filled with one-on-ones. You learned that the hardest part of management is being patient on Wednesday afternoons."
+        },
+        {
+          "label": "Tech lead",
+          "effects": { "technicalSkill": "+3", "reputation": "+3", "burnout": "+2", "xp": "+300" },
+          "flavor": "You took it. Your calendar filled with design reviews. The code you wrote got smaller and stranger. It was usually load-bearing."
+        }
+      ]
+    },
+    {
+      "id": "swe-masters-degree",
+      "pool": "swe",
+      "tags": ["education", "money"],
+      "requires": { "month": ">=11", "savings": ">10000" },
+      "weight": 0.4,
+      "prompt": "The Master's program admits you. Part-time, two years, twenty thousand. The job won't pay for it. The job won't replace it, either.",
+      "options": [
+        {
+          "label": "Enroll",
+          "scene": [
+            "An acceptance letter.",
+            "A first-night syllabus.",
+            "Coffee at 11pm."
+          ],
+          "effects": { "savings": "-10000", "technicalSkill": "+5", "reputation": "+3", "burnout": "+4", "xp": "+300" },
+          "flavor": "Two years of nights. You finished. You don't know yet if it mattered. You suspect it did, somewhere, quietly."
+        },
+        {
+          "label": "Decline",
+          "effects": { "burnout": "-1" },
+          "flavor": "You said no. The job kept moving. You read three of the textbooks anyway."
+        }
+      ]
+    },
+    {
+      "id": "swe-startup-offer",
+      "pool": "swe",
+      "tags": ["career-movement", "risk"],
+      "requires": { "month": ">=11", "network": ">25" },
+      "weight": 0.4,
+      "prompt": "A former colleague is starting something. They're asking you to be employee five. The salary is lower. The equity is paper.",
+      "options": [
+        {
+          "label": "Join",
+          "scene": [
+            "An offer letter.",
+            "An options grant.",
+            "A folding chair."
+          ],
+          "effects": { "savings": "-3000", "technicalSkill": "+3", "reputation": "+2", "burnout": "+6", "network": "+3", "xp": "+300" },
+          "flavor": "You joined. The first six months were exhilarating. You wrote a small piece of the codebase that will outlive most of the rest of it."
+        },
+        {
+          "label": "Stay put",
+          "effects": { "burnout": "-1", "reputation": "+1" },
+          "flavor": "You said no, warmly. The company shipped, or didn't — you heard secondhand. You wondered what employee-five-you would think of current-you."
+        }
+      ]
+    },
+    {
+      "id": "swe-mentor-junior",
+      "pool": "swe",
+      "tags": ["mentoring"],
+      "requires": { "month": ">=11", "technicalSkill": ">35" },
+      "weight": 0.7,
+      "prompt": "A junior on the team is struggling, not in a way they can name. The lead suggests, gently, that you'd be good at this.",
+      "options": [
+        {
+          "label": "Commit to it",
+          "effects": { "burnout": "+2", "reputation": "+4", "network": "+3", "xp": "+150" },
+          "flavor": "You did the weekly thirties. Six months in, they shipped something hard. They credited you. You credited them. Both were a little true."
+        },
+        {
+          "label": "Be too busy",
+          "effects": { "burnout": "-1", "reputation": "-2" },
+          "flavor": "You said your plate was full. The lead nodded. The junior found mentorship somewhere else. They mentioned it once, lightly."
+        }
+      ]
+    },
+    {
+      "id": "swe-architecture-review-defend",
+      "pool": "swe",
+      "tags": ["engineering-culture", "skill"],
+      "requires": { "month": ">=11", "technicalSkill": ">40" },
+      "weight": 0.6,
+      "prompt": "Architecture review. Your design is right. A staff engineer disagrees, loudly. Three other people are on the call.",
+      "options": [
+        {
+          "label": "Defend it",
+          "scene": [
+            "A whiteboard.",
+            "A long silence.",
+            "A nod."
+          ],
+          "effects": { "technicalSkill": "+3", "reputation": "+5", "burnout": "+3", "xp": "+150" },
+          "flavor": "You held the line. You were respectful. You were also, ten minutes in, clearly correct. The staff engineer sent a friendly message after."
+        },
+        {
+          "label": "Capitulate",
+          "effects": { "reputation": "-3", "burnout": "-2", "technicalSkill": "-1" },
+          "flavor": "You backed down to keep the meeting moving. Six weeks later, you were rewriting the part you'd been right about."
+        }
+      ]
+    },
+    {
+      "id": "swe-hackathon-weekend",
+      "pool": "swe",
+      "tags": ["fun", "work-life-balance"],
+      "requires": { "month": ">=7" },
+      "weight": 0.6,
+      "prompt": "The company hackathon is a sponsored weekend. Sleep on the floor. Build something dumb. The CEO gives out the prize.",
+      "options": [
+        {
+          "label": "Go",
+          "scene": [
+            "A whiteboard at 2am.",
+            "A demo at 9am.",
+            "A standing ovation. For someone else."
+          ],
+          "effects": { "burnout": "+3", "network": "+5", "technicalSkill": "+2", "health": "-2" },
+          "flavor": "You built something genuinely funny. You didn't win. You knew three people now you didn't know on Friday."
+        },
+        {
+          "label": "Take the weekend",
+          "effects": { "burnout": "-3", "health": "+2" },
+          "flavor": "You stayed home. You watched the winning demo on Slack Monday. You smiled. You didn't regret it."
+        }
+      ]
+    },
+    {
+      "id": "swe-throw-colleague-under-bus",
+      "pool": "swe",
+      "tags": ["ethics"],
+      "requires": { "month": ">=11" },
+      "weight": 0.4,
+      "prompt": "A meeting goes sideways. Leadership is asking why the deadline slipped. There's a real reason. There's also a coworker you could name.",
+      "options": [
+        {
+          "label": "Name the coworker",
+          "effects": { "reputation": "+2", "network": "-6", "burnout": "+2" },
+          "flavor": "You named them. Leadership accepted it. The coworker found out on Slack from a friend. Things were never quite the same."
+        },
+        {
+          "label": "Take the loss",
+          "effects": { "reputation": "-3", "network": "+3", "burnout": "-1" },
+          "flavor": "You said 'the scope grew faster than I tracked.' Leadership wasn't thrilled. The coworker, weeks later, said 'I owe you.' You said 'we're fine.'"
+        }
+      ]
+    },
+    {
+      "id": "swe-opensource-maintainer",
+      "pool": "swe",
+      "tags": ["community", "responsibility"],
+      "requires": { "month": ">=14", "technicalSkill": ">40" },
+      "weight": 0.4,
+      "prompt": "The maintainer of a library you depend on asks if you'd take it over. They're burnt out. The community is two thousand users.",
+      "options": [
+        {
+          "label": "Take it",
+          "scene": [
+            "A repo transfer.",
+            "An issue tracker.",
+            "A 3am call."
+          ],
+          "effects": { "burnout": "+5", "reputation": "+6", "network": "+4", "technicalSkill": "+2" },
+          "flavor": "You merged your first PR as maintainer the same week. By month three, you understood why the last one wanted out. You kept going anyway."
+        },
+        {
+          "label": "Decline, gently",
+          "effects": { "burnout": "-1", "reputation": "+1" },
+          "flavor": "You wrote a kind email. They thanked you for the honesty. Someone else took it. The library kept working, mostly."
+        }
+      ]
+    },
+    {
+      "id": "swe-2am-idea",
+      "pool": "swe",
+      "tags": ["stress", "work-life-balance", "humor"],
+      "requires": { "month": ">=4" },
+      "weight": 0.9,
+      "prompt": "You wake at 2:14. The idea has been chewing on you in your sleep. It's almost there. The room is very dark.",
+      "options": [
+        {
+          "label": "Write it down. Go back to sleep.",
+          "scene": [
+            "A reach for the phone.",
+            "Three lines, typed in the dark.",
+            "The screen, off again."
+          ],
+          "effects": { "burnout": "-1", "technicalSkill": "+1" },
+          "flavor": "You typed three lines into the notes app. The third line was the right one. You slept until the alarm. By Tuesday you had it working."
+        },
+        {
+          "label": "Try to sleep through it.",
+          "effects": { "burnout": "+3", "health": "-2" },
+          "flavor": "You watched the ceiling. The idea got worse, then better, then dissolved. You finally slept around 4. The alarm felt personal."
+        },
+        {
+          "label": "Get up. Might as well be productive.",
+          "scene": [
+            "Bare feet on a cold floor.",
+            "A kitchen light, too bright.",
+            "A blinking cursor."
+          ],
+          "effects": { "burnout": "+5", "health": "-3", "technicalSkill": "+2", "reputation": "+1" },
+          "flavor": "You sat at the kitchen table at 2:14. By five you had it working. By nine you regretted being awake. By Friday it shipped. Whether that was worth it is the kind of question you don't ask out loud."
+        }
+      ]
+    }
+  ]
+}

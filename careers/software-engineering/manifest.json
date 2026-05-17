@@ -1,0 +1,145 @@
+{
+  "id": "software-engineering",
+  "name": "Software Engineering",
+  "tagline": "A career of choices.",
+  "eventChance": 0.4,
+
+  "palette": {
+    "background": "#f5f1e8",
+    "ink": "#2c2c2c",
+    "inkMuted": "#888888",
+    "surface": "#cfc8b6",
+    "accent": "#8b6240",
+    "positive": "#7a8f5c",
+    "player": "#4a90e2",
+    "playerInk": "#1f3a5f",
+    "npcAdult": "#f7c98b",
+    "npcAdultInk": "#4b3d0c",
+    "npcChild": "#7aa5b8",
+    "npcChildInk": "#044d62"
+  },
+
+  "eras": {
+    "default":          { "saturation": 1.0,  "lightness": 1.0,  "hueShift":   0 },
+    "pandemic":         { "saturation": 0.55, "lightness": 1.05, "hueShift": -14 },
+    "rebound":          { "saturation": 0.95, "lightness": 1.0,  "hueShift":   0 },
+    "ai-shift":         { "saturation": 1.18, "lightness": 1.02, "hueShift":  10 },
+    "uncertain-future": { "saturation": 0.85, "lightness": 0.95, "hueShift":  -3 }
+  },
+
+  "entryClasses": {
+    "novice": {
+      "label": "Novice Initiate",
+      "startingXp": 0,
+      "startingStats": {
+        "burnout": 10,
+        "savings": 1000,
+        "network": 5,
+        "health": 90,
+        "technicalSkill": 15,
+        "reputation": 0
+      }
+    },
+    "junior": {
+      "label": "Junior Adventurer",
+      "startingXp": 1000,
+      "startingStats": {
+        "burnout": 15,
+        "savings": 8000,
+        "network": 25,
+        "health": 85,
+        "technicalSkill": 30,
+        "reputation": 5
+      }
+    },
+    "skilled": {
+      "label": "Skilled Operative",
+      "startingXp": 5000,
+      "startingStats": {
+        "burnout": 20,
+        "savings": 40000,
+        "network": 60,
+        "health": 80,
+        "technicalSkill": 55,
+        "reputation": 10
+      }
+    },
+    "vanguard": {
+      "label": "Vanguard Strategist",
+      "startingXp": 15000,
+      "startingStats": {
+        "burnout": 28,
+        "savings": 120000,
+        "network": 75,
+        "health": 75,
+        "technicalSkill": 72,
+        "reputation": 28
+      }
+    },
+    "commander": {
+      "label": "Commander Architect",
+      "startingXp": 60000,
+      "startingStats": {
+        "burnout": 35,
+        "savings": 300000,
+        "network": 85,
+        "health": 70,
+        "technicalSkill": 82,
+        "reputation": 50
+      }
+    },
+    "legendary": {
+      "label": "Legendary Leader",
+      "startingXp": 130000,
+      "startingStats": {
+        "burnout": 40,
+        "savings": 700000,
+        "network": 92,
+        "health": 65,
+        "technicalSkill": 88,
+        "reputation": 70
+      }
+    },
+    "mythic": {
+      "label": "Mythic Visionary",
+      "startingXp": 200000,
+      "startingStats": {
+        "burnout": 32,
+        "savings": 1500000,
+        "network": 96,
+        "health": 60,
+        "technicalSkill": 94,
+        "reputation": 85
+      }
+    },
+    "oracle": {
+      "label": "Elite Oracle",
+      "startingXp": 300000,
+      "startingStats": {
+        "burnout": 22,
+        "savings": 4000000,
+        "network": 99,
+        "health": 55,
+        "technicalSkill": 99,
+        "reputation": 95
+      }
+    }
+  },
+
+  "intro": [
+    "It's January 2020.",
+    "{playerName}, there are rumors of a virus.",
+    "A pandemic?",
+    "Each month brings a new problem… and somehow, another step forward."
+  ],
+
+  "monthTransitions": [
+    "... and life goes on",
+    "... another month passes",
+    "... you press on",
+    "... another day, another dollar",
+    "... onward and upward",
+    "... the calendar turns",
+    "... time moves forward"
+  ]
+}
